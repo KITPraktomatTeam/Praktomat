@@ -32,7 +32,7 @@
 		options = {	id:						'',
 					nameSpace:				'',
 					root:					'',
-					previewInWindow:		'width=800, height=600, resizable=yes, scrollbars=yes',
+					previewInWindow:		'', /*width=800, height=600, resizable=yes, scrollbars=yes',*/
 					previewAutoRefresh:		true,
 					previewPosition:		'after',
 					previewTemplatePath:	'~/templates/preview.html',

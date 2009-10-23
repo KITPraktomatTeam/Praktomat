@@ -1,7 +1,8 @@
 {% extends "base.html"%}
 
 {% block content %}
-<form method="post" action=".">
+<form method="post" action="." autocomplete="off">
+{%comment%} autocomplete is a not standardized tag! {%endcomment%}
 	<table>
 		{{ form.as_table }}
 		<tr>

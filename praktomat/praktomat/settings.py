@@ -43,6 +43,7 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
+# All files created at Runtime are stored here (Uploaded files, Sandbox)
 MEDIA_ROOT = '/home/praktomat/Desktop/praktomat/praktomat/static'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
@@ -69,6 +70,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+	'django.middleware.transaction.TransactionMiddleware',
 )
 
 ROOT_URLCONF = 'praktomat.urls'
@@ -84,10 +86,11 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',				# not sure if we really need that!
+    'django.contrib.sites',	
     'django.contrib.admin',
     'django.contrib.admindocs',
-    'django.contrib.markup',
+    # sudo easy_install http://pypi.python.org/packages/source/M/Markdown/Markdown-2.0.tar.gz
+	'django.contrib.markup',
 
 	# http://code.google.com/p/django-command-extensions/
 	# svn checkout http://django-command-extensions.googlecode.com/svn/trunk/ django-command-extensions
@@ -106,9 +109,16 @@ INSTALLED_APPS = (
 
 LOGIN_REDIRECT_URL = '/tasks/'
 
-SOLUTION_SANDBOX = "/home/praktomat/Desktop/praktomat/praktomat/archive"
-
 ACCOUNT_ACTIVATION_DAYS = 5
 
+# The Compiler binarys used to compile a submitted solution
+C_BINARY = 'gcc'
+CXX_BINARY = 'c++'
+JAVA_BINARY = 'javac'
 
+
+# python manage.py dumpdata tasks accounts auth --indent 4 | pbcopy
+
+# wirddasnochgebraucht?
+SOLUTION_SANDBOX = "/home/praktomat/Desktop/praktomat/praktomat/archive"
 TMP_DIR = "/home/praktomat/Desktop/praktomat/praktomat/SANDBOX"

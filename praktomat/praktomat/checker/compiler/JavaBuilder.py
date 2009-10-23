@@ -10,6 +10,7 @@ import string
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from praktomat.checker.models import Builder
+from django.conf import settings
 
 
 class JavaBuilder(Builder):
@@ -17,7 +18,7 @@ class JavaBuilder(Builder):
 
 
 	# Initialization sets own attributes to default values.
-	_compiler	= "javac"
+	_compiler	= settings.JAVA_BINARY
 	_language	= "Java"
 	#_pattern	= "*.java"
 
@@ -70,7 +71,7 @@ class JavaBuilder(Builder):
 	
 	def run(self, env):
 		""" run JavaBuilder """
-		# super.run()
+		# run bilder of upperclass
 		result = Builder.run(self, env)
 
 		# check if 'executable' exists

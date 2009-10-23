@@ -2,6 +2,7 @@ from django.conf.urls.defaults import *
 from django.conf import settings
 from django.core.urlresolvers import reverse
 import sys
+import os
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -16,7 +17,7 @@ urlpatterns = patterns('',
      (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    url(r'^admin/(.*)', admin.site.root),
+    (r'^admin/', include(admin.site.urls)),
 	url(r'^admin/$', admin.site.root, name="admin"), # allows for url admin
     
 	# Login and Registration
@@ -32,6 +33,7 @@ urlpatterns = patterns('',
 # only serve static files through django while in development - for safety and speediness
 if 'runserver' in sys.argv or 'runserver_plus' in sys.argv: 
     urlpatterns += patterns('',
+		(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.dirname(__file__) + '/static/'}),
         (r'^(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
         (r'^favicon.ico$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT, 'path':"favicon.ico"}),
     )

@@ -13,7 +13,7 @@ from praktomat.checker.models import Checker, CheckerResult
 
 class DiffChecker(Checker):
 	
-	upload_dir = "upload/admin/DiffChecker/%Y%m%d%H%M%S/"
+	upload_dir = "AdminFiles/DiffChecker/%Y%m%d%H%M%S/"
 	shell_script = models.FileField(upload_to=upload_dir, help_text=_("The shell script whose output for the given input file is compared to the given output file."))
 	input_file = models.FileField(upload_to=upload_dir, blank=True, help_text=_("The file containing the input for the program."))
 	output_file = models.FileField(upload_to=upload_dir, blank=True, help_text=_("The file containing the output for the program."))
@@ -38,9 +38,9 @@ class DiffChecker(Checker):
 		user_name	 = env.user().get_full_name()
 		program_name = env.program()
 		
-		if self.input_file: shutil.copy (settings.MEDIA_ROOT + '/' + self.input_file.name, test_dir)
-		if self.output_file: shutil.copy (settings.MEDIA_ROOT + '/' + self.output_file.name, test_dir)
-		shutil.copy (settings.MEDIA_ROOT + '/' + self.shell_script.name, test_dir)
+		if self.input_file: shutil.copy (self.input_file.path, test_dir)
+		if self.output_file: shutil.copy (self.output_file.path, test_dir)
+		shutil.copy (self.shell_script.path, test_dir)
 		
 		# old praktomat replaced stuff and used m4:
 		# if program_name:

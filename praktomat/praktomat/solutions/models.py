@@ -6,9 +6,9 @@ from django.contrib.auth.models import User
 from praktomat.tasks.models import Task
 from django.utils.translation import ugettext_lazy as _
 
-import tempfile
-import os
-import shutil
+import os, re, tempfile, shutil
+ 
+
 
 class Solution(models.Model):
 	"""docstring for Solution"""
@@ -19,6 +19,8 @@ class Solution(models.Model):
 	
 	accepted = models.BooleanField( default = True, help_text = _('Indicates whether the solution has passed all public and required tests'))
 	warnings = models.BooleanField( default = False, help_text = _('Indicates whether the solution has at least failed one public and not required tests'))
+	
+	final = models.BooleanField( default = False, help_text = _('Indicates whether the solution the solution is accepted and marked final by the author'))
 	
 	def __unicode__(self):
 		return unicode(self.creation_date)
@@ -49,14 +51,14 @@ class Solution(models.Model):
 		# env.set_task_id(self.task_id())		# set task insted of id
 		
 		# Setting default temp dir location and creating it
-		tempfile.tempdir = settings.TMP_DIR
+		tempfile.tempdir = os.path.join(settings.MEDIA_ROOT, "SolutionSandbox")
 		new_tmpdir = tempfile.mktemp()
 
 		# to access working directory by scripts
 		os.system("export PRAKTOMAT_WORKING_DIR=" + `new_tmpdir`)
 		#misc.log(`new_tmpdir`)
 		env.set_tmpdir(new_tmpdir)
-		os.mkdir(env.tmpdir(), TMP_DIR_MODE)
+		os.makedirs(env.tmpdir(), TMP_DIR_MODE)
 		os.chmod(env.tmpdir(), TMP_DIR_MODE)
 		self.copySolutionFiles(env.tmpdir())
 
@@ -89,6 +91,9 @@ class Solution(models.Model):
 				#self.remove(env.tmpdir())
 			except IOError:
 				pass
+		
+		# Delete temporary directory
+		shutil.rmtree(new_tmpdir)
 		
 		# reset default temp dir location 
 		tempfile.tempdir = None
@@ -168,25 +173,33 @@ class SolutionFile(models.Model):
 	"""docstring for SolutionFile"""
 
 	from django.core.files.storage import FileSystemStorage
-	fs = FileSystemStorage(location=settings.SOLUTION_SANDBOX)
+	fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, "SolutionArchive"))
 	
 	def _get_upload_path(instance, filename):
-		"""docstring for filePath"""
 		solution = instance.solution
-		return solution.author.username + '/'+ unicode(solution.task.id) + '/' + unicode(solution.id) + '/' + filename
+		return 'User_' + solution.author.username + '/Task_'+ unicode(solution.task.id) + '/Solution_' + unicode(solution.id) + '/' + filename
 	
 	solution = models.ForeignKey(Solution)
 	file = models.FileField(upload_to = _get_upload_path, storage=fs) 
+	# File mime content types allowed to upload
+	supported_types_re = re.compile(r'^(text/.*|application/octet-stream)$')
+	# Ignore hidden and OS-specific files in zipfiles
+	# .filename or __MACOSX/bla.txt or /rootdir or ..dirup
+	ignorred_file_names_re = re.compile('^(\..*|__MACOSX/.*|/.*|\.\..*)$')
+	
 	
 	def __unicode__(self):
 		return self.file.name.rpartition('/')[2]
 		
 	def content(self):
 		"""docstring for content"""
-		return unicode(self.file.read()) 
+		try:
+			return unicode(self.file.read()) 
+		except:
+			pass
 		
 	def copyTo(self,directory):
 		""" Copies this file to the given directory """
-		shutil.copy(settings.SOLUTION_SANDBOX + "/" + self.file.name, directory)
+		shutil.copy(self.file.path, directory)
 		
 

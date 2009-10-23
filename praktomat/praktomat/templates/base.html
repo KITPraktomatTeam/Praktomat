@@ -2,7 +2,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}styles/style.css" />
+	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}static/styles/style.css" />
 	{% block styles %}{% endblock %}	
 	{% block script %}{% endblock %}
 	<title>{{ site_name }} {% block title %}{% endblock %}</title>
@@ -16,12 +16,12 @@
 			</div>
 			<div id="user-tools">
 				{% if user.is_authenticated %}
-					{% firstof user.get_full_name user.username %} |
-					<a href="{% url auth_password_change %}">Change Password</a> | 
+					Welcome, {% firstof user.get_full_name user.username %} /
+					<a href="{% url auth_password_change %}">Change Password</a> / 
 					<a href="{% url auth_logout %}">Log-out</a>
-					{% if user.is_staff %}| <a href="{% url admin %}">Admin Panel</a>{%endif%}
+					{% if user.is_staff %}/ <a href="{% url admin %}">Admin Panel</a>{%endif%}
 				{% else %}
-					<a href="{% url auth_login %}">Login</a>
+					<a href="{% url auth_login %}">Login</a> /
 					<a href="{% url registration_register %}">Register</a> 
 				{%endif%}
 			</div>

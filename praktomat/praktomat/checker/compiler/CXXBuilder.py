@@ -7,12 +7,13 @@ A C++ compiler for construction.
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from praktomat.checker.models import Builder
+from django.conf import settings
 
 class CXXBuilder(Builder):
 	""" A C++ compiler for construction. """
 	
 	# override configuration
-	_compiler				= "c++"
+	_compiler				= settings.CXX_BINARY
 	_language				= "C++"
 	#_rx_warnings			= r"^([^ :]*:[^:].*)$"
 	

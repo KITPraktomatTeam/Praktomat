@@ -18,7 +18,6 @@ def register(request):
 
 def activate(request, activation_key):
 	account = UserProfile.activate_user(activation_key)
-	#assert False
 	return render_to_response('registration/registration_activated.html',
 							{ 'account': account, 'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS }, 
 							context_instance=RequestContext(request))

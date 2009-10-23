@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load highlight %} {% load i18n  %}
 {% block styles %}{{ block.super }}
-	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}styles/pygments_friendly.css" />
+	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}static/styles/pygments_friendly.css" />
 {% endblock %}
 {% block script %}{{ block.super }}
-	<script type="text/javascript" src="{{MEDIA_URL}}/script/jquery.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}static/script/jquery.js"></script>
 	<script type="text/javascript">
 		  $(document).ready(function(){
-				$("h3").click(function () {
+				$("h3").css('cursor', 'pointer').click(function () {
 					$(this).next("div").slideToggle("fast");
 			});
 			// Stop the link click from doing its normal thing
@@ -16,6 +16,8 @@
 	</script>
 {% endblock %}
 {% block content %}
+
+<a href={% url solution_list task_id=solution.task.id%}> < {% trans "Back to solution list" %}</a>
 
 <h1>{{solution.task.title}}</h1>
 
@@ -45,6 +47,11 @@
 	</div>
 {%endfor%}
 
-
+{% if not task_solved %}
+	<br/><br/>
+	<form method="post">
+		<input type="submit" value="Submit" /	{% if not solution.accepted %} disabled {% endif %}>
+	</form>
+{% endif %}
 
 {% endblock %}

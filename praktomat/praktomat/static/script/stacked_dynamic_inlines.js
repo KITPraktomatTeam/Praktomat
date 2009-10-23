@@ -188,7 +188,14 @@ function update_id_fields(element, new_position)
         $(this).attr('id', new_id)
     });
     
-    // Are there other element types...? Add here.
+	// Are there other element types...? Add here.
+	
+	
+	// Arr das macht fehler beim löschen!
+	element.find('h3').each(function() {
+		//$(this).html($(this).html().replace(/#[0-9]+/, "#" + (new_position+1)))
+	 });					
+    
 }
 
 

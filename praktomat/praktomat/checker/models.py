@@ -5,12 +5,11 @@ from praktomat.tasks.models import Task
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 import os
 import re
 import subprocess
-#import tempfile
-#import fnmatch
 import string
 	
 # Mode for temporary directories.
@@ -19,23 +18,6 @@ TMP_DIR_MODE = 0770
 # Maximal size of test output read
 MAX_OUTPUT = 1000000
 
-
-class CheckerProxy(models.Model): 
-	pass
-#	""" This Class links a checker subclass to a task trough a gerneric foreign key """
-#	task = models.ForeignKey(Task) 
-#	content_type = models.ForeignKey(ContentType) 
-#	object_id = models.PositiveIntegerField() 
-#	checker = generic.GenericForeignKey('content_type','object_id') 
-#	
-#	position = models.IntegerField(blank = True, null = True, default = 1111) # no integrety enforced, we'll see how that plays out!
-#	
-#	class Meta:
-#		ordering = ('position',)
-#	
-#	def __unicode__(self):
-#		return unicode(self.checker)
-	
 
 class Checker(models.Model):
 	""" A Checker implements some quality assurance.
@@ -51,12 +33,11 @@ class Checker(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 	
 	task = models.ForeignKey(Task)
-	#proxy = generic.GenericRelation(CheckerProxy)
 	
 	public = models.BooleanField(default=True, help_text = _('Test results are displayed to the submitter.'))
 	required = models.BooleanField(default=True, help_text = _('The test must be passed to submit the solution.'))
 	always = models.BooleanField(default=True, help_text = _('The test will run on submission time.'))					# Misleading name?
-
+	
 	class Meta:
 		abstract = True
 		app_label = 'checker'
@@ -186,9 +167,7 @@ class Builder(Checker):
 
 	def get_file_names(self,env):
 		rxarg = re.compile(self.rxarg())
-		#names = map(lambda (name, content): name, env.sources())
-		#return string.join(filter(lambda name: rxarg.match(name), names),' ')
-		return string.join([name for (name,content) in env.sources() if rxarg.match(name)],' ')		
+		return [name for (name,content) in env.sources() if rxarg.match(name)]		
 		
 
 	def exec_file(self, tmpdir, program_name):
@@ -217,13 +196,12 @@ class Builder(Checker):
 		
 		# This propably needs a timeout ....
 		# subprocess.Popen(args, bufsize=0, executable=None, stdin=None, stdout=None, stderr=None, preexec_fn=None, close_fds=False, shell=False, cwd=None, env=None, universal_newlines=False, startupinfo=None, creationflags=0)
-		args = [self.compiler(), self.output_flags(env), self.flags(env), self.get_file_names(env), self.libs()]
-		args = [self.compiler(), self.output_flags(env), self.flags(env), env.main_module()+".java", self.libs()]
+		args = [self.compiler(), self.output_flags(env), self.flags(env)] + self.get_file_names(env) + [self.libs()]
 		args = [arg for arg in args if arg !=""] # trash ""s, cause they produce errors
 		output = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=env.tmpdir()).communicate()[0] #executable = self.compiler(),
 		output = self.enhance_output(env, output)
 		#assert False
-		# The executable must exist and we must not have any warnings.
+		# The executable has to exist and we mustn't have any warnings.
 		passed = not self.has_warnings(output)	
 		result.set_log("<pre>" + output + "</pre>")
 		result.set_passed(passed)
@@ -239,7 +217,6 @@ class CheckerEnvironment:
 		self._tmpdir = None  # Temporary build directory
 		self._program = None # Executable program
 		self._sources = []   # Sources as [(name, content)...]
-		self._virtual_sources = [] # List of names of sources that are added by other checkers like InterfaceChecker 
 		self._source = None
 		self._user = None	# Submitter of this program
 		self._key  = None	# Key of the submitter
@@ -258,10 +235,6 @@ class CheckerEnvironment:
 	def sources(self):
 		""" Returns the list of source files. """
 		return self._sources
-
-	def virtual_sources(self):
-		""" Returns the list of virtual source files. """
-		return self._virtual_sources
 	
 #	def source_names_for_compiler(self):   Keine Virtuellen Quellen mehr und der name ist eh der basenname(oder?)
 #		names = []
@@ -311,11 +284,6 @@ class CheckerEnvironment:
 		"""  Sets the list of source file names. """
 		assert isinstance(sources, list)
 		self._sources = sources
-
-	def add_virtual_source(self, name):
-		""" Append an entry to the list of virtual sources """
-		assert isinstance(name, str)
-		self._virtual_sources.append(name)
 		
 	def set_user(self, user):
 		""" Sets the submitter (class User). """
@@ -341,10 +309,6 @@ class CheckerEnvironment:
 		""" Sets task identifier of the submitter. """
 		assert isinstance(task_id, str)
 		self._task_id = task_id
-
-#	def __repr__(self):
-#		""" For debugging. """
-#		return `self.__dict__`
 
 	def main_module(self):
 		""" Creates the name of the main module from the (first) source file name. """
@@ -382,32 +346,6 @@ class CheckerResult(models.Model):
 		# Vorsicht: das geht ins Auge!
 #		return unicode(self.solution) + ": " + unicode(self.checker)
 	
-#	def __init__(self, checker):
-#		""" Constructor: Creates a new Result for a Checker. """
-#		assert isinstance(checker, Checker)
-#
-#		self._log	  = ""		# Result log (raw)
-#		self._passed   = TRUE	# True if passed
-#
-#		# CHECKER attributes
-#		self._title = checker.title()	   # Title of checker
-#		self._required = checker.required() # Is passing required?
-#		self._public = checker.public()	 # Is check public?
-#		
-#		self._created = time.time() # Creation time
-#
-#	def __repr__(self):
-#		""" Debugging. """
-#		return `self.__dict__`
-#
-#	def log(self):
-#		""" Returns the log of the Checker run. """
-#		return self._log
-#
-#	def passed(self):
-#		""" Checks if the Checker run passed. """
-#		return self._passed
-
 	def title(self):
 		""" Returns the title of the Checker that did run. """
 		return self.checker.title()
@@ -430,39 +368,8 @@ class CheckerResult(models.Model):
 		assert isinstance(passed, int)
 		self.passed = passed
 	
-	
-	
-	
-	
-	
-#	# Printing functions .....
-#
-#	def print_title(self, prefix): 
-#		""" Prints the title and the result of the Checker run. """
-#		assert isinstance(prefix, str)
-#		
-#		print "<H3>" + prefix + self.title() + "</H3>"
-#		if self.passed():
-#			print "<FONT COLOR=" + PASS_COLOR + "><STRONG>"
-#			print _("Ihr Programm hat diese Pr&uuml;fung bestanden:")
-#			print "</FONT></STRONG>"
-#		else:
-#			if self.required():
-#				print "<FONT COLOR=" + FAIL_COLOR + "><STRONG>"
-#			else:
-#				print "<FONT COLOR=" + PASS_MOSTLY_COLOR + "><STRONG>"
-#			print _("Ihr Programm hat diese Pr&uuml;fung nicht bestanden:")
-#			print "</FONT></STRONG>"
-#
-#	def print_log(self):
-#		""" Prints the log of the Checker run. """
-#		print self.log()
-#
-#	def print_conclusion(self):
-#		"""  Prints a conclusion from the result of the Checker run. """
-#		if self.passed():
-#			print "<P>"
-#		else:
+
+
 #			if self.required():
 #				print """<P><FONT COLOR=""" + FAIL_COLOR + """><STRONG>
 #				Ihr Programm kann so nicht angenommen werden.
@@ -474,8 +381,4 @@ class CheckerResult(models.Model):
 #				</STRONG></FONT> Diese Schw&auml;chen wirken sich
 #				negativ in der Beurteilung aus. Wir empfehlen, die
 #				oben aufgef&uuml;hrten Probleme zu korrigieren.</P>"""
-#	def print_all(self, prefix = ""):
-#		""" Print the title, the log and the conclusion of the Checker run. """
-#		self.print_title(prefix)
-#		self.print_log()
-#		self.print_conclusion()
+
