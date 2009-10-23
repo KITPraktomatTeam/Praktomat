@@ -1,0 +1,18 @@
+{% load markup %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}/styles/style.css" />
+    <link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}/styles/pygments_friendly.css" />
+</head>
+
+<body>
+    <div id="container">
+		<div id="content">
+        	{{description|markdown:"codehilite"}}
+    	</div>
+	</div>
+</body>
+</html>

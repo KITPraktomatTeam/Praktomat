@@ -1,0 +1,667 @@
+[
+    {
+        "pk": 1, 
+        "model": "tasks.task", 
+        "fields": {
+            "submission_date": "2009-02-20 00:00:00", 
+            "publication_date": "2009-02-02 00:00:00", 
+            "description": "Im Jahr 1742 hat Christian Goldbach eine Vermutung aufgestellt, nach der jede ungerade Zahl gr\u00f6\u00dfer als f\u00fcnf als Summe dreier Primzahlen dargestellt werden kann.\r\n\r\nDie nach ihm benannte Goldbachsche Vermutung lautet in einer st\u00e4rkeren, heute gebr\u00e4uchlichen Version:\r\n\r\nJede gerade nat\u00fcrliche Zahl (gr\u00f6\u00dfer als zwei) kann als Summe zweier Primzahlen repr\u00e4sentiert werden.\r\n\r\nBeispiele sind: 4 = 2 + 2, 6 = 3 + 3, 8 = 3 + 5, \u2026\r\n\r\nDie Summe mu\u00df nicht eindeutig sein: 5 + 5 = 3 + 7 = 10 .\r\n\r\nDie Vermutung wurde bisher nicht bewiesen. Sie wurde f\u00fcr alle Zahlen bis 1018 (Stand 2007) best\u00e4tigt.\r\n\r\nImplementieren Sie ein Programm, da\u00df f\u00fcr alle geraden Zahlen bis zu einer Obergrenze, zwei Primzahlen findet, deren Summe gleich der Zahl ist. Verwenden Sie das Primzahlsieb zur Berechnung aller Primzahlen bis zu dieser Obergrenze.\r\n        \r\n\t::java\r\n        public void vermutungUeberpruefen() {\r\n            primzahlsieb.primzahlenBerechnen();\r\n            \r\n            for (int zahl = 4; zahl <= n; zahl += 2) {\r\n                System.out.print(zahl + \" \u00fcberpr\u00fcfen:\");\r\n                primzahlPaarSuchen:\r\n                for (int p1 = 2; p1 < zahl; p1++) {\r\n                    for (int p2 = 2; p1 + p2 <= zahl; p2++) {\r\n                        if ( primzahlsieb.isPrim(p1)\r\n                                && primzahlsieb.isPrim(p2) ) {\r\n                            if (p1 + p2 == zahl) {\r\n                                System.out.println(zahl + \" = \" + p1 + \" + \" + ;\r\n                                break primzahlPaarSuchen;\r\n                            }\r\n                        }         \r\n                    }\r\n                }            \r\n            }\r\n        }\r\n        \r\n        public static void main(String [] argv) {\r\n            GoldbachscheVermutung vermutung = new GoldbachscheVermutung(10000);\r\n            vermutung.vermutungUeberpruefen();\r\n        }\r\n", 
+            "title": "Goldbachsche Vermutung \u00fcberpr\u00fcfen"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "tasks.task", 
+        "fields": {
+            "submission_date": "2009-02-28 00:00:00", 
+            "publication_date": "2009-02-02 00:00:00", 
+            "description": "Logische R\u00e4tsel lassen sich formal oft aufl\u00f6sen, indem man Sie aussagenlogisch formuliert.\r\n\r\nIm folgenden R\u00e4tsel von Raymond Smullyan geht es um einen Hutmacher, einen Schnapphase und eine (Hasel-)Maus. Unter diesen drei Verd\u00e4chtigen gibt es einen Dieb. Die Ermittlungen haben folgendes ergeben:\r\n\r\n- Genau einer von den drei ist der Dieb\r\n- Unschuldige sagen immer die Wahrheit\r\n- Der Schnapphase sagt, dass der Hutmacher unschuldig ist\r\n- Der Hutmacher sagt, dass die Haselmaus unschuldig ist\r\n\r\nDieser Sachverhalt kann mit drei booleschen Variablen hutmacher, schnapphase und maus codiert werden. Diese sollen genau dann true sein , wenn die entsprechende Person der Dieb ist.\r\n\r\nWir verwenden die Java-Operatoren !, &, ^, | (und => als Implikation). Die aus den Ermittlungen formalisierten Erkenntnisse sind:\r\n\r\n- hutmacher ^ schnapphase ^ maus\r\n- (hutmacher => ! (schnapphase | maus)) & (schnapphase => ! (hutmacher | maus)) & (maus => ! (hutmacher | schnapphase))\r\n- schnapphase => ! hutmacher\r\n- hutmacher => ! maus\r\n\r\nDie Implikation A => B kann durch ! A | B ersetzt werden.\r\n\r\nImplementieren Sie ein Java-Programm, mit dem derartig formalisierte R\u00e4tsel gel\u00f6st werden k\u00f6nnen. Das R\u00e4tsel ist gel\u00f6st, wenn man eine Belegung der booleschen Variablen gefunden hat, so dass jede der Formeln war ist. Dazu kann man einfach alle Kombinationen der Belegungen aufz\u00e4hlen und ausprobieren. F\u00fcr die drei booleschen Variablen gibt es 23 m\u00f6gliche Kombinationen. Das Programm berechnet also die Wahrheitstafel f\u00fcr die Formel.\r\n\r\nAlle Kombinationen f\u00fcr n boolesche Variablen k\u00f6nnen Sie \u00fcber fortgesetztes Inkrementieren einer int-Zahl z bekommen: die Folge der 0en und 1en in der Bin\u00e4rcodierung der Zahl gibt ihnen die booleschen Wahrheitswerte f\u00fcr die zugeh\u00f6rige boolesche Variable an.\r\n\r\nWenn das dritte Bit von z den Wahrheitswert f\u00fcr die boolesche Variable schnapphase angeben soll, dann bekommen Sie zum Beispiel den booleschen Wert mit schnapphase = (z / 4 % 2) == 1", 
+            "title": "L\u00f6sen logischer R\u00e4tsel"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "tasks.task", 
+        "fields": {
+            "submission_date": "2009-10-16 00:00:00", 
+            "publication_date": "2009-02-02 00:00:00", 
+            "description": "Eine nat\u00fcrliche Zahl n ist eine Giuga-Zahl, wenn alle ihre Primteiler p den Wert n/p - 1 teilen.\r\n\r\nImplementieren Sie Java-Programm, die alle Giuga-Zahlen bis zu einer festen Obergrenze ausgibt.\r\n \r\nHinweis: Jede Primzahl ist eine Giuga-Zahl. Es ist derzeit (2008) nicht bekannt, ob die Umkehrung dieser Aussage gilt. Ihr Programm m\u00fcsste also alle Primzahlen als Giuga-Zahlen identifizieren (und sonst keine). ", 
+            "title": "Giuga-Zahlen berechnen"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "accounts.userprofile", 
+        "fields": {
+            "mat_number": 1232308, 
+            "activation_key": "", 
+            "user": 1, 
+            "degree_course": ""
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "accounts.userprofile", 
+        "fields": {
+            "mat_number": 1, 
+            "activation_key": "b6dc82e90a2d65f0952a4e3495387a8ffdff2594", 
+            "user": 5, 
+            "degree_course": "1"
+        }
+    }, 
+    {
+        "pk": 25, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_userprofile", 
+            "name": "Can add user profile", 
+            "content_type": 9
+        }
+    }, 
+    {
+        "pk": 26, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_userprofile", 
+            "name": "Can change user profile", 
+            "content_type": 9
+        }
+    }, 
+    {
+        "pk": 27, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_userprofile", 
+            "name": "Can delete user profile", 
+            "content_type": 9
+        }
+    }, 
+    {
+        "pk": 22, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_logentry", 
+            "name": "Can add log entry", 
+            "content_type": 8
+        }
+    }, 
+    {
+        "pk": 23, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_logentry", 
+            "name": "Can change log entry", 
+            "content_type": 8
+        }
+    }, 
+    {
+        "pk": 24, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_logentry", 
+            "name": "Can delete log entry", 
+            "content_type": 8
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_group", 
+            "name": "Can add group", 
+            "content_type": 2
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_message", 
+            "name": "Can add message", 
+            "content_type": 4
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_permission", 
+            "name": "Can add permission", 
+            "content_type": 1
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_user", 
+            "name": "Can add user", 
+            "content_type": 3
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_group", 
+            "name": "Can change group", 
+            "content_type": 2
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_message", 
+            "name": "Can change message", 
+            "content_type": 4
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_permission", 
+            "name": "Can change permission", 
+            "content_type": 1
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_user", 
+            "name": "Can change user", 
+            "content_type": 3
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_group", 
+            "name": "Can delete group", 
+            "content_type": 2
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_message", 
+            "name": "Can delete message", 
+            "content_type": 4
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_permission", 
+            "name": "Can delete permission", 
+            "content_type": 1
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_user", 
+            "name": "Can delete user", 
+            "content_type": 3
+        }
+    }, 
+    {
+        "pk": 46, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_anonymitychecker", 
+            "name": "Can add anonymity checker", 
+            "content_type": 16
+        }
+    }, 
+    {
+        "pk": 40, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_checkerproxy", 
+            "name": "Can add checker proxy", 
+            "content_type": 14
+        }
+    }, 
+    {
+        "pk": 43, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_checkerresult", 
+            "name": "Can add checker result", 
+            "content_type": 15
+        }
+    }, 
+    {
+        "pk": 52, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_interface", 
+            "name": "Can add interface", 
+            "content_type": 18
+        }
+    }, 
+    {
+        "pk": 49, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_interfacechecker", 
+            "name": "Can add interface checker", 
+            "content_type": 17
+        }
+    }, 
+    {
+        "pk": 47, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_anonymitychecker", 
+            "name": "Can change anonymity checker", 
+            "content_type": 16
+        }
+    }, 
+    {
+        "pk": 41, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_checkerproxy", 
+            "name": "Can change checker proxy", 
+            "content_type": 14
+        }
+    }, 
+    {
+        "pk": 44, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_checkerresult", 
+            "name": "Can change checker result", 
+            "content_type": 15
+        }
+    }, 
+    {
+        "pk": 53, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_interface", 
+            "name": "Can change interface", 
+            "content_type": 18
+        }
+    }, 
+    {
+        "pk": 50, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_interfacechecker", 
+            "name": "Can change interface checker", 
+            "content_type": 17
+        }
+    }, 
+    {
+        "pk": 48, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_anonymitychecker", 
+            "name": "Can delete anonymity checker", 
+            "content_type": 16
+        }
+    }, 
+    {
+        "pk": 42, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_checkerproxy", 
+            "name": "Can delete checker proxy", 
+            "content_type": 14
+        }
+    }, 
+    {
+        "pk": 45, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_checkerresult", 
+            "name": "Can delete checker result", 
+            "content_type": 15
+        }
+    }, 
+    {
+        "pk": 54, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_interface", 
+            "name": "Can delete interface", 
+            "content_type": 18
+        }
+    }, 
+    {
+        "pk": 51, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_interfacechecker", 
+            "name": "Can delete interface checker", 
+            "content_type": 17
+        }
+    }, 
+    {
+        "pk": 13, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_contenttype", 
+            "name": "Can add content type", 
+            "content_type": 5
+        }
+    }, 
+    {
+        "pk": 14, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_contenttype", 
+            "name": "Can change content type", 
+            "content_type": 5
+        }
+    }, 
+    {
+        "pk": 15, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_contenttype", 
+            "name": "Can delete content type", 
+            "content_type": 5
+        }
+    }, 
+    {
+        "pk": 16, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_session", 
+            "name": "Can add session", 
+            "content_type": 6
+        }
+    }, 
+    {
+        "pk": 17, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_session", 
+            "name": "Can change session", 
+            "content_type": 6
+        }
+    }, 
+    {
+        "pk": 18, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_session", 
+            "name": "Can delete session", 
+            "content_type": 6
+        }
+    }, 
+    {
+        "pk": 19, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_site", 
+            "name": "Can add site", 
+            "content_type": 7
+        }
+    }, 
+    {
+        "pk": 20, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_site", 
+            "name": "Can change site", 
+            "content_type": 7
+        }
+    }, 
+    {
+        "pk": 21, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_site", 
+            "name": "Can delete site", 
+            "content_type": 7
+        }
+    }, 
+    {
+        "pk": 34, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_solution", 
+            "name": "Can add solution", 
+            "content_type": 12
+        }
+    }, 
+    {
+        "pk": 37, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_solutionfile", 
+            "name": "Can add solution file", 
+            "content_type": 13
+        }
+    }, 
+    {
+        "pk": 35, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_solution", 
+            "name": "Can change solution", 
+            "content_type": 12
+        }
+    }, 
+    {
+        "pk": 38, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_solutionfile", 
+            "name": "Can change solution file", 
+            "content_type": 13
+        }
+    }, 
+    {
+        "pk": 36, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_solution", 
+            "name": "Can delete solution", 
+            "content_type": 12
+        }
+    }, 
+    {
+        "pk": 39, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_solutionfile", 
+            "name": "Can delete solution file", 
+            "content_type": 13
+        }
+    }, 
+    {
+        "pk": 31, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_mediafile", 
+            "name": "Can add media file", 
+            "content_type": 11
+        }
+    }, 
+    {
+        "pk": 28, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_task", 
+            "name": "Can add task", 
+            "content_type": 10
+        }
+    }, 
+    {
+        "pk": 32, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_mediafile", 
+            "name": "Can change media file", 
+            "content_type": 11
+        }
+    }, 
+    {
+        "pk": 29, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_task", 
+            "name": "Can change task", 
+            "content_type": 10
+        }
+    }, 
+    {
+        "pk": 33, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_mediafile", 
+            "name": "Can delete media file", 
+            "content_type": 11
+        }
+    }, 
+    {
+        "pk": 30, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_task", 
+            "name": "Can delete task", 
+            "content_type": 10
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "Trainer", 
+            "permissions": [
+                34, 
+                35, 
+                36, 
+                31, 
+                32, 
+                33
+            ]
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "Tutor", 
+            "permissions": []
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "User", 
+            "permissions": []
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "halluzinativ", 
+            "first_name": "Daniel", 
+            "last_name": "Kleinert", 
+            "is_active": true, 
+            "is_superuser": true, 
+            "is_staff": true, 
+            "last_login": "2009-04-25 08:38:03", 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "sha1$cd736$e711411beed3f70ab097278301f902caf9ec6aa8", 
+            "email": "herr.kleinert@gmail.com", 
+            "date_joined": "2009-02-02 06:00:03"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "trainer", 
+            "first_name": "trainer", 
+            "last_name": "trainer", 
+            "is_active": true, 
+            "is_superuser": false, 
+            "is_staff": true, 
+            "last_login": "2009-02-02 13:52:53", 
+            "groups": [
+                1
+            ], 
+            "user_permissions": [], 
+            "password": "sha1$f6bb1$7d445487de38d03461dcd333e91383a7ffa80fb5", 
+            "email": "a@b.de", 
+            "date_joined": "2009-02-02 13:50:29"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "tutor", 
+            "first_name": "tutor", 
+            "last_name": "tutor", 
+            "is_active": true, 
+            "is_superuser": false, 
+            "is_staff": false, 
+            "last_login": "2009-02-02 14:05:12", 
+            "groups": [
+                2
+            ], 
+            "user_permissions": [], 
+            "password": "sha1$b6e3c$fad2d3f603ff36aa20d355cace694b4bda06e080", 
+            "email": "a@b.de", 
+            "date_joined": "2009-02-02 14:05:12"
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "user", 
+            "first_name": "user", 
+            "last_name": "user", 
+            "is_active": true, 
+            "is_superuser": false, 
+            "is_staff": false, 
+            "last_login": "2009-02-02 14:06:05", 
+            "groups": [
+                3
+            ], 
+            "user_permissions": [], 
+            "password": "sha1$ade6f$1dd3a5a8517250616545e1b302467b20841614a9", 
+            "email": "a@b.de", 
+            "date_joined": "2009-02-02 14:06:05"
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "Admin", 
+            "first_name": "Admin", 
+            "last_name": "Admin", 
+            "is_active": true, 
+            "is_superuser": true, 
+            "is_staff": true, 
+            "last_login": "2009-04-16 07:29:30", 
+            "groups": [
+                1
+            ], 
+            "user_permissions": [], 
+            "password": "sha1$c4c37$1b81221d8950f2f838648f67b11780b09519bc6f", 
+            "email": "herr.kleinert@gmail.com", 
+            "date_joined": "2009-04-16 07:29:30"
+        }
+    }
+]

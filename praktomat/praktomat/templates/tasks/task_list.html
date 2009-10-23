@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+
+<div id="upcoming_tasks">
+	<h1>{% trans "Upcoming tasks" %}</h1>
+	{% for task in upcoming_tasks%}
+		<h2><a href={% url taskDetail task_id=task.id%}>{{task.title}}</a></h2>
+		{{ task.submission_date|date }} {{ task.submission_date|time }}
+		<a href={% url upload_solution task_id=task.id%}>{% trans "upload solution"%}</a><br/><br/>
+		{% for solution in task.solution_set.all%}
+			<a href={% url solution_detail solution_id=solution.id%}>Solution {{forloop.counter}}</a><br/>
+		{%endfor%}
+	{%endfor%}
+</div>
+
+<div id="expired_tasks">
+	<h1>{% trans "Expiered tasks" %}</h1>
+	{% for task in expired_tasks %}
+		<h2><a href={% url taskDetail task_id=task.id%}>{{task.title}}</a></h2>
+		{{ task.submission_date|date }} {{ task.submission_date|time }}
+		<br/><br/>
+		{% for solution in task.solution_set.all%}
+			<a href={% url solution_detail solution_id=solution.id%}>Solution {{forloop.counter}}</a><br/>
+		{%endfor%}
+	{%endfor%}
+</div>
+
+{%comment%}
+{% regroup expired_tasks by title as task_list %}
+{% for group in task_list %}
+  <h1>{{group.grouper}}{% if group.grouper %}{% trans "Expiered tasks" %}{% else %}{% trans "Upcoming tasks" %}{% endif %}</h1>
+    {% for task in group.list %}
+    	<h2><a href={% url taskDetail task_id=task.id%}>{{task.title}}</a></h2>
+		{{ task.submission_date|date }}
+		<a href={% url upload_solution task_id=task.id%}>{% trans "upload solution"%}</a><br/><br/>
+    {% endfor %}
+{% endfor %}
+{%endcomment%}
+
+{% endblock %}

@@ -1,0 +1,691 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXFileReference section */
+		7F1B0DE30FB6F3A500541D2B /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
+		7F1B0DE50FB6F3A500541D2B /* CBuilder.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = CBuilder.py; sourceTree = "<group>"; };
+		7F1B0DE70FB6F3A500541D2B /* CXXBuilder.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = CXXBuilder.py; sourceTree = "<group>"; };
+		7F1B0DE80FB6F3A500541D2B /* FortranBuilder.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = FortranBuilder.py; sourceTree = "<group>"; };
+		7F1B0DE90FB6F3A500541D2B /* JavaBuilder.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = JavaBuilder.py; sourceTree = "<group>"; };
+		7F1B0DEA0FB6F3A500541D2B /* JavaGCCBuilder.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = JavaGCCBuilder.py; sourceTree = "<group>"; };
+		7F1B0DEB0FB6F3A500541D2B /* Modula2Builder.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = Modula2Builder.py; sourceTree = "<group>"; };
+		7F1B0DED0FB6F3A500541D2B /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
+		7F1B0DEF0FB6F3A500541D2B /* AnonymityChecker.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = AnonymityChecker.py; sourceTree = "<group>"; };
+		7F1B0DF30FB6F3A500541D2B /* DiffChecker.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = DiffChecker.py; sourceTree = "<group>"; };
+		7F1B0DF50FB6F3A500541D2B /* InterfaceChecker.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = InterfaceChecker.py; sourceTree = "<group>"; };
+		7F1B0DF70FB6F3A500541D2B /* LineCounter.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = LineCounter.py; sourceTree = "<group>"; };
+		7F1B0DF90FB6F3A500541D2B /* LineWidthChecker.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = LineWidthChecker.py; sourceTree = "<group>"; };
+		7F1B0DFB0FB6F3A500541D2B /* TextChecker.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = TextChecker.py; sourceTree = "<group>"; };
+		7F7A5E860FA3448F0085B6A5 /* test_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_data.json; sourceTree = "<group>"; };
+		7F89FE5D0FE7B4B20089C356 /* stacked_dynamic_inlines.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = stacked_dynamic_inlines.js; sourceTree = "<group>"; };
+		7F89FE690FE7B6C00089C356 /* jquery-ui-1.7.2.custom.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "jquery-ui-1.7.2.custom.js"; sourceTree = "<group>"; };
+		7F89FE6A0FE7B6C00089C356 /* ui.core.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ui.core.js; sourceTree = "<group>"; };
+		7F89FE6B0FE7B6C00089C356 /* ui.draggable.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ui.draggable.js; sourceTree = "<group>"; };
+		7F89FE6C0FE7B6C00089C356 /* ui.sortable.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ui.sortable.js; sourceTree = "<group>"; };
+		7F89FE6D0FE7B7230089C356 /* dynamic_inlines_with_sort.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = dynamic_inlines_with_sort.css; sourceTree = "<group>"; };
+		7F89FEAA0FE7C70B0089C356 /* menu-sort.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "menu-sort.js"; sourceTree = "<group>"; };
+		7F8B49D10F8F6E0B00BC1222 /* admin.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = admin.py; sourceTree = "<group>"; };
+		7F8B49E70F8F714000BC1222 /* admin.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = admin.py; path = ../praktomat/tasks/admin.py; sourceTree = SOURCE_ROOT; };
+		7F8B4CAE0F93F7C100BC1222 /* admin.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = admin.py; sourceTree = "<group>"; };
+		7F8E04A70F73E8B900442855 /* manage.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = manage.py; sourceTree = "<group>"; };
+		7F8E04A90F73E8B900442855 /* initial_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = initial_data.json; sourceTree = "<group>"; };
+		7F8E04AB0F73E8B900442855 /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
+		7F8E04AD0F73E8B900442855 /* admin.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = admin.py; sourceTree = "<group>"; };
+		7F8E04B10F73E8B900442855 /* forms.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = forms.py; sourceTree = "<group>"; };
+		7F8E04B30F73E8B900442855 /* models.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = models.py; sourceTree = "<group>"; };
+		7F8E04B50F73E8B900442855 /* urls.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = urls.py; sourceTree = "<group>"; };
+		7F8E04B70F73E8B900442855 /* views.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = views.py; sourceTree = "<group>"; };
+		7F8E04B90F73E8B900442855 /* urls.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = urls.py; sourceTree = "<group>"; };
+		7F8E04BC0F73E8B900442855 /* base_site.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = base_site.html; sourceTree = "<group>"; };
+		7F8E04C00F73E8B900442855 /* base.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = base.html; sourceTree = "<group>"; };
+		7F8E04C10F73E8B900442855 /* error.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = error.html; sourceTree = "<group>"; };
+		7F8E04C30F73E8B900442855 /* login.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = login.html; sourceTree = "<group>"; };
+		7F8E04C40F73E8B900442855 /* password_change_done.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = password_change_done.html; sourceTree = "<group>"; };
+		7F8E04C50F73E8B900442855 /* password_change_form.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = password_change_form.html; sourceTree = "<group>"; };
+		7F8E04C60F73E8B900442855 /* password_reset_complete.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = password_reset_complete.html; sourceTree = "<group>"; };
+		7F8E04C70F73E8B900442855 /* password_reset_confirm.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = password_reset_confirm.html; sourceTree = "<group>"; };
+		7F8E04C80F73E8B900442855 /* password_reset_done.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = password_reset_done.html; sourceTree = "<group>"; };
+		7F8E04C90F73E8B900442855 /* password_reset_email.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = password_reset_email.html; sourceTree = "<group>"; };
+		7F8E04CA0F73E8B900442855 /* password_reset_form.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = password_reset_form.html; sourceTree = "<group>"; };
+		7F8E04CB0F73E8B900442855 /* registration_activated.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = registration_activated.html; sourceTree = "<group>"; };
+		7F8E04CC0F73E8B900442855 /* registration_complete.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = registration_complete.html; sourceTree = "<group>"; };
+		7F8E04CD0F73E8B900442855 /* registration_email.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = registration_email.html; sourceTree = "<group>"; };
+		7F8E04CE0F73E8B900442855 /* registration_form.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = registration_form.html; sourceTree = "<group>"; };
+		7F8E04D00F73E8B900442855 /* solution_detail.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = solution_detail.html; sourceTree = "<group>"; };
+		7F8E04D10F73E8B900442855 /* upload.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = upload.html; sourceTree = "<group>"; };
+		7F8E04D30F73E8B900442855 /* task_detail.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = task_detail.html; sourceTree = "<group>"; };
+		7F8E04D40F73E8B900442855 /* task_list.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = task_list.html; sourceTree = "<group>"; };
+		7F8E04D50F73E8B900442855 /* task_preview.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = task_preview.html; sourceTree = "<group>"; };
+		7F8E04D70F73E8B900442855 /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
+		7F8E04DD0F73E8B900442855 /* models.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = models.py; sourceTree = "<group>"; };
+		7F8E04E00F73E8B900442855 /* urls.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = urls.py; sourceTree = "<group>"; };
+		7F8E04E20F73E8B900442855 /* views.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = views.py; sourceTree = "<group>"; };
+		7F8E04E50F73E8B900442855 /* favicon.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; path = favicon.ico; sourceTree = "<group>"; };
+		7F8E04E70F73E8B900442855 /* jquery.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = jquery.js; sourceTree = "<group>"; };
+		7F8E04E90F73E8B900442855 /* jquery.markitup.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = jquery.markitup.js; sourceTree = "<group>"; };
+		7F8E04EA0F73E8B900442855 /* jquery.markitup.pack.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = jquery.markitup.pack.js; sourceTree = "<group>"; };
+		7F8E04EB0F73E8B900442855 /* readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
+		7F8E04EF0F73E8B900442855 /* bold.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bold.png; sourceTree = "<group>"; };
+		7F8E04F00F73E8B900442855 /* clean.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = clean.png; sourceTree = "<group>"; };
+		7F8E04F10F73E8B900442855 /* image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = image.png; sourceTree = "<group>"; };
+		7F8E04F20F73E8B900442855 /* italic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = italic.png; sourceTree = "<group>"; };
+		7F8E04F30F73E8B900442855 /* link.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = link.png; sourceTree = "<group>"; };
+		7F8E04F40F73E8B900442855 /* picture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picture.png; sourceTree = "<group>"; };
+		7F8E04F50F73E8B900442855 /* preview.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = preview.png; sourceTree = "<group>"; };
+		7F8E04F60F73E8B900442855 /* stroke.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stroke.png; sourceTree = "<group>"; };
+		7F8E04F70F73E8B900442855 /* set.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = set.js; sourceTree = "<group>"; };
+		7F8E04F80F73E8B900442855 /* style.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = style.css; sourceTree = "<group>"; };
+		7F8E04FB0F73E8B900442855 /* bold.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bold.png; sourceTree = "<group>"; };
+		7F8E04FC0F73E8B900442855 /* code.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = code.png; sourceTree = "<group>"; };
+		7F8E04FD0F73E8B900442855 /* h1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = h1.png; sourceTree = "<group>"; };
+		7F8E04FE0F73E8B900442855 /* h2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = h2.png; sourceTree = "<group>"; };
+		7F8E04FF0F73E8B900442855 /* h3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = h3.png; sourceTree = "<group>"; };
+		7F8E05000F73E8B900442855 /* h4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = h4.png; sourceTree = "<group>"; };
+		7F8E05010F73E8B900442855 /* h5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = h5.png; sourceTree = "<group>"; };
+		7F8E05020F73E8B900442855 /* h6.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = h6.png; sourceTree = "<group>"; };
+		7F8E05030F73E8B900442855 /* italic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = italic.png; sourceTree = "<group>"; };
+		7F8E05040F73E8B900442855 /* link.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = link.png; sourceTree = "<group>"; };
+		7F8E05050F73E8B900442855 /* list-bullet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list-bullet.png"; sourceTree = "<group>"; };
+		7F8E05060F73E8B900442855 /* list-numeric.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list-numeric.png"; sourceTree = "<group>"; };
+		7F8E05070F73E8B900442855 /* picture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picture.png; sourceTree = "<group>"; };
+		7F8E05080F73E8B900442855 /* preview.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = preview.png; sourceTree = "<group>"; };
+		7F8E05090F73E8B900442855 /* quotes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = quotes.png; sourceTree = "<group>"; };
+		7F8E050A0F73E8B900442855 /* readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
+		7F8E050B0F73E8B900442855 /* set.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = set.js; sourceTree = "<group>"; };
+		7F8E050C0F73E8B900442855 /* style.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = style.css; sourceTree = "<group>"; };
+		7F8E050F0F73E8B900442855 /* bold.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bold.png; sourceTree = "<group>"; };
+		7F8E05100F73E8B900442855 /* code.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = code.png; sourceTree = "<group>"; };
+		7F8E05110F73E8B900442855 /* h1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = h1.png; sourceTree = "<group>"; };
+		7F8E05120F73E8B900442855 /* h2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = h2.png; sourceTree = "<group>"; };
+		7F8E05130F73E8B900442855 /* h3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = h3.png; sourceTree = "<group>"; };
+		7F8E05140F73E8B900442855 /* h4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = h4.png; sourceTree = "<group>"; };
+		7F8E05150F73E8B900442855 /* h5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = h5.png; sourceTree = "<group>"; };
+		7F8E05160F73E8B900442855 /* h6.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = h6.png; sourceTree = "<group>"; };
+		7F8E05170F73E8B900442855 /* italic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = italic.png; sourceTree = "<group>"; };
+		7F8E05180F73E8B900442855 /* link.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = link.png; sourceTree = "<group>"; };
+		7F8E05190F73E8B900442855 /* list-bullet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list-bullet.png"; sourceTree = "<group>"; };
+		7F8E051A0F73E8B900442855 /* list-numeric.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "list-numeric.png"; sourceTree = "<group>"; };
+		7F8E051B0F73E8B900442855 /* paragraph.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = paragraph.png; sourceTree = "<group>"; };
+		7F8E051C0F73E8B900442855 /* picture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = picture.png; sourceTree = "<group>"; };
+		7F8E051D0F73E8B900442855 /* preview.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = preview.png; sourceTree = "<group>"; };
+		7F8E051E0F73E8B900442855 /* quotes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = quotes.png; sourceTree = "<group>"; };
+		7F8E051F0F73E8B900442855 /* stroke.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stroke.png; sourceTree = "<group>"; };
+		7F8E05200F73E8B900442855 /* readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
+		7F8E05210F73E8B900442855 /* set.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = set.js; sourceTree = "<group>"; };
+		7F8E05220F73E8B900442855 /* style.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = style.css; sourceTree = "<group>"; };
+		7F8E05260F73E8B900442855 /* bg-container.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg-container.png"; sourceTree = "<group>"; };
+		7F8E05270F73E8B900442855 /* bg-editor-bbcode.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg-editor-bbcode.png"; sourceTree = "<group>"; };
+		7F8E05280F73E8B900442855 /* bg-editor-dotclear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg-editor-dotclear.png"; sourceTree = "<group>"; };
+		7F8E05290F73E8B900442855 /* bg-editor-html.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg-editor-html.png"; sourceTree = "<group>"; };
+		7F8E052A0F73E8B900442855 /* bg-editor-json.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg-editor-json.png"; sourceTree = "<group>"; };
+		7F8E052B0F73E8B900442855 /* bg-editor-markdown.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg-editor-markdown.png"; sourceTree = "<group>"; };
+		7F8E052C0F73E8B900442855 /* bg-editor-textile.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg-editor-textile.png"; sourceTree = "<group>"; };
+		7F8E052D0F73E8B900442855 /* bg-editor-wiki.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg-editor-wiki.png"; sourceTree = "<group>"; };
+		7F8E052E0F73E8B900442855 /* bg-editor-xml.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg-editor-xml.png"; sourceTree = "<group>"; };
+		7F8E052F0F73E8B900442855 /* bg-editor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg-editor.png"; sourceTree = "<group>"; };
+		7F8E05300F73E8B900442855 /* handle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = handle.png; sourceTree = "<group>"; };
+		7F8E05310F73E8B900442855 /* menu.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = menu.png; sourceTree = "<group>"; };
+		7F8E05320F73E8B900442855 /* submenu.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = submenu.png; sourceTree = "<group>"; };
+		7F8E05330F73E8B900442855 /* style.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = style.css; sourceTree = "<group>"; };
+		7F8E05360F73E8B900442855 /* handle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = handle.png; sourceTree = "<group>"; };
+		7F8E05370F73E8B900442855 /* menu.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = menu.png; sourceTree = "<group>"; };
+		7F8E05380F73E8B900442855 /* submenu.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = submenu.png; sourceTree = "<group>"; };
+		7F8E05390F73E8B900442855 /* style.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = style.css; sourceTree = "<group>"; };
+		7F8E053B0F73E8B900442855 /* preview.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = preview.css; sourceTree = "<group>"; };
+		7F8E053C0F73E8B900442855 /* preview.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = preview.html; sourceTree = "<group>"; };
+		7F8E053E0F73E8B900442855 /* pygments_friendly.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = pygments_friendly.css; sourceTree = "<group>"; };
+		7F8E053F0F73E8B900442855 /* style.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = style.css; sourceTree = "<group>"; };
+		7F8E05450F73E8B900442855 /* sqlLite3Db */ = {isa = PBXFileReference; lastKnownFileType = file; path = sqlLite3Db; sourceTree = "<group>"; };
+		7F8E05470F73E8B900442855 /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
+		7F8E05490F73E8B900442855 /* forms.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = forms.py; sourceTree = "<group>"; };
+		7F8E054A0F73E8B900442855 /* models.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = models.py; sourceTree = "<group>"; };
+		7F8E054D0F73E8B900442855 /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
+		7F8E054F0F73E8B900442855 /* highlight.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = highlight.py; sourceTree = "<group>"; };
+		7F8E05510F73E8B900442855 /* urls.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = urls.py; sourceTree = "<group>"; };
+		7F8E05530F73E8B900442855 /* views.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = views.py; sourceTree = "<group>"; };
+		7F8E05550F73E8B900442855 /* settings.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = settings.py; sourceTree = "<group>"; };
+		7F8E05590F73E8B900442855 /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
+		7FA358550FDBD4FD0080168F /* DejaGnu.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = DejaGnu.py; sourceTree = "<group>"; };
+		7FA358580FDBD5840080168F /* DejaGnuDefaultDefs.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = DejaGnuDefaultDefs.exp; sourceTree = "<group>"; };
+		7FA7CFDB100B826500EB8EDC /* dynamic_inlines_with_sort.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = dynamic_inlines_with_sort.js; sourceTree = "<group>"; };
+		7FA7CFE0100CD21400EB8EDC /* stacked.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = stacked.html; sourceTree = "<group>"; };
+		7FB81FC70FB0977F00A58373 /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
+		7FC3D4D70F7568DC0064D72B /* models.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = models.py; sourceTree = "<group>"; };
+		7FC3D4D80F7568DC0064D72B /* views.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = views.py; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		08FB7794FE84155DC02AAC07 /* Praktomat */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E04AA0F73E8B900442855 /* accounts */,
+				7FC3D4D50F7568DC0064D72B /* checker */,
+				7F8E05460F73E8B900442855 /* solutions */,
+				7F8E04E40F73E8B900442855 /* static */,
+				7F8E04D60F73E8B900442855 /* tasks */,
+				7F8E04BA0F73E8B900442855 /* templates */,
+				7F8E05560F73E8B900442855 /* SANDBOX */,
+				7F8E05590F73E8B900442855 /* __init__.py */,
+				7F8E04A70F73E8B900442855 /* manage.py */,
+				7F8E04B90F73E8B900442855 /* urls.py */,
+				7F7A5E860FA3448F0085B6A5 /* test_data.json */,
+				7F8E04A90F73E8B900442855 /* initial_data.json */,
+				7F8E05450F73E8B900442855 /* sqlLite3Db */,
+				7F8E05550F73E8B900442855 /* settings.py */,
+			);
+			name = Praktomat;
+			sourceTree = "<group>";
+		};
+		7F1B0DE20FB6F3A500541D2B /* compiler */ = {
+			isa = PBXGroup;
+			children = (
+				7F1B0DE30FB6F3A500541D2B /* __init__.py */,
+				7F1B0DE50FB6F3A500541D2B /* CBuilder.py */,
+				7F1B0DE70FB6F3A500541D2B /* CXXBuilder.py */,
+				7F1B0DE80FB6F3A500541D2B /* FortranBuilder.py */,
+				7F1B0DE90FB6F3A500541D2B /* JavaBuilder.py */,
+				7F1B0DEA0FB6F3A500541D2B /* JavaGCCBuilder.py */,
+				7F1B0DEB0FB6F3A500541D2B /* Modula2Builder.py */,
+			);
+			path = compiler;
+			sourceTree = "<group>";
+		};
+		7F1B0DEC0FB6F3A500541D2B /* tests */ = {
+			isa = PBXGroup;
+			children = (
+				7F1B0DED0FB6F3A500541D2B /* __init__.py */,
+				7F1B0DEF0FB6F3A500541D2B /* AnonymityChecker.py */,
+				7F1B0DF30FB6F3A500541D2B /* DiffChecker.py */,
+				7F1B0DF50FB6F3A500541D2B /* InterfaceChecker.py */,
+				7F1B0DF70FB6F3A500541D2B /* LineCounter.py */,
+				7F1B0DF90FB6F3A500541D2B /* LineWidthChecker.py */,
+				7F1B0DFB0FB6F3A500541D2B /* TextChecker.py */,
+				7FA358550FDBD4FD0080168F /* DejaGnu.py */,
+				7FA358580FDBD5840080168F /* DejaGnuDefaultDefs.exp */,
+			);
+			path = tests;
+			sourceTree = "<group>";
+		};
+		7F89FE680FE7B6C00089C356 /* ui */ = {
+			isa = PBXGroup;
+			children = (
+				7F89FE690FE7B6C00089C356 /* jquery-ui-1.7.2.custom.js */,
+				7F89FE6A0FE7B6C00089C356 /* ui.core.js */,
+				7F89FE6B0FE7B6C00089C356 /* ui.draggable.js */,
+				7F89FE6C0FE7B6C00089C356 /* ui.sortable.js */,
+			);
+			path = ui;
+			sourceTree = "<group>";
+		};
+		7F8E04AA0F73E8B900442855 /* accounts */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E04AB0F73E8B900442855 /* __init__.py */,
+				7F8E04AD0F73E8B900442855 /* admin.py */,
+				7F8E04B10F73E8B900442855 /* forms.py */,
+				7F8E04B30F73E8B900442855 /* models.py */,
+				7F8E04B50F73E8B900442855 /* urls.py */,
+				7F8E04B70F73E8B900442855 /* views.py */,
+			);
+			path = accounts;
+			sourceTree = "<group>";
+		};
+		7F8E04BA0F73E8B900442855 /* templates */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E04BB0F73E8B900442855 /* admin */,
+				7F8E04C00F73E8B900442855 /* base.html */,
+				7F8E04C10F73E8B900442855 /* error.html */,
+				7F8E04C20F73E8B900442855 /* registration */,
+				7F8E04CF0F73E8B900442855 /* solutions */,
+				7F8E04D20F73E8B900442855 /* tasks */,
+			);
+			path = templates;
+			sourceTree = "<group>";
+		};
+		7F8E04BB0F73E8B900442855 /* admin */ = {
+			isa = PBXGroup;
+			children = (
+				7FA7CFE0100CD21400EB8EDC /* stacked.html */,
+				7F8E04BC0F73E8B900442855 /* base_site.html */,
+			);
+			path = admin;
+			sourceTree = "<group>";
+		};
+		7F8E04C20F73E8B900442855 /* registration */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E04C30F73E8B900442855 /* login.html */,
+				7F8E04C40F73E8B900442855 /* password_change_done.html */,
+				7F8E04C50F73E8B900442855 /* password_change_form.html */,
+				7F8E04C60F73E8B900442855 /* password_reset_complete.html */,
+				7F8E04C70F73E8B900442855 /* password_reset_confirm.html */,
+				7F8E04C80F73E8B900442855 /* password_reset_done.html */,
+				7F8E04C90F73E8B900442855 /* password_reset_email.html */,
+				7F8E04CA0F73E8B900442855 /* password_reset_form.html */,
+				7F8E04CB0F73E8B900442855 /* registration_activated.html */,
+				7F8E04CC0F73E8B900442855 /* registration_complete.html */,
+				7F8E04CD0F73E8B900442855 /* registration_email.html */,
+				7F8E04CE0F73E8B900442855 /* registration_form.html */,
+			);
+			path = registration;
+			sourceTree = "<group>";
+		};
+		7F8E04CF0F73E8B900442855 /* solutions */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E04D00F73E8B900442855 /* solution_detail.html */,
+				7F8E04D10F73E8B900442855 /* upload.html */,
+			);
+			path = solutions;
+			sourceTree = "<group>";
+		};
+		7F8E04D20F73E8B900442855 /* tasks */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E04D30F73E8B900442855 /* task_detail.html */,
+				7F8E04D40F73E8B900442855 /* task_list.html */,
+				7F8E04D50F73E8B900442855 /* task_preview.html */,
+			);
+			path = tasks;
+			sourceTree = "<group>";
+		};
+		7F8E04D60F73E8B900442855 /* tasks */ = {
+			isa = PBXGroup;
+			children = (
+				7F8B49E70F8F714000BC1222 /* admin.py */,
+				7F8E04D70F73E8B900442855 /* __init__.py */,
+				7F8E04DD0F73E8B900442855 /* models.py */,
+				7F8E04E00F73E8B900442855 /* urls.py */,
+				7F8E04E20F73E8B900442855 /* views.py */,
+			);
+			path = tasks;
+			sourceTree = "<group>";
+		};
+		7F8E04E40F73E8B900442855 /* static */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E04E50F73E8B900442855 /* favicon.ico */,
+				7F8E04E60F73E8B900442855 /* script */,
+				7F8E053D0F73E8B900442855 /* styles */,
+				7F8E05400F73E8B900442855 /* upload */,
+			);
+			path = static;
+			sourceTree = "<group>";
+		};
+		7F8E04E60F73E8B900442855 /* script */ = {
+			isa = PBXGroup;
+			children = (
+				7FA7CFDB100B826500EB8EDC /* dynamic_inlines_with_sort.js */,
+				7F8E04E70F73E8B900442855 /* jquery.js */,
+				7F89FE5D0FE7B4B20089C356 /* stacked_dynamic_inlines.js */,
+				7F89FE680FE7B6C00089C356 /* ui */,
+				7F8E04E80F73E8B900442855 /* markitup */,
+				7F89FEAA0FE7C70B0089C356 /* menu-sort.js */,
+			);
+			path = script;
+			sourceTree = "<group>";
+		};
+		7F8E04E80F73E8B900442855 /* markitup */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E04E90F73E8B900442855 /* jquery.markitup.js */,
+				7F8E04EA0F73E8B900442855 /* jquery.markitup.pack.js */,
+				7F8E04EB0F73E8B900442855 /* readme.txt */,
+				7F8E04EC0F73E8B900442855 /* sets */,
+				7F8E05230F73E8B900442855 /* skins */,
+				7F8E053A0F73E8B900442855 /* templates */,
+			);
+			path = markitup;
+			sourceTree = "<group>";
+		};
+		7F8E04EC0F73E8B900442855 /* sets */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E04ED0F73E8B900442855 /* default */,
+				7F8E04F90F73E8B900442855 /* markdown */,
+				7F8E050D0F73E8B900442855 /* textile */,
+			);
+			path = sets;
+			sourceTree = "<group>";
+		};
+		7F8E04ED0F73E8B900442855 /* default */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E04EE0F73E8B900442855 /* images */,
+				7F8E04F70F73E8B900442855 /* set.js */,
+				7F8E04F80F73E8B900442855 /* style.css */,
+			);
+			path = default;
+			sourceTree = "<group>";
+		};
+		7F8E04EE0F73E8B900442855 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E04EF0F73E8B900442855 /* bold.png */,
+				7F8E04F00F73E8B900442855 /* clean.png */,
+				7F8E04F10F73E8B900442855 /* image.png */,
+				7F8E04F20F73E8B900442855 /* italic.png */,
+				7F8E04F30F73E8B900442855 /* link.png */,
+				7F8E04F40F73E8B900442855 /* picture.png */,
+				7F8E04F50F73E8B900442855 /* preview.png */,
+				7F8E04F60F73E8B900442855 /* stroke.png */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
+		7F8E04F90F73E8B900442855 /* markdown */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E04FA0F73E8B900442855 /* images */,
+				7F8E050A0F73E8B900442855 /* readme.txt */,
+				7F8E050B0F73E8B900442855 /* set.js */,
+				7F8E050C0F73E8B900442855 /* style.css */,
+			);
+			path = markdown;
+			sourceTree = "<group>";
+		};
+		7F8E04FA0F73E8B900442855 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E04FB0F73E8B900442855 /* bold.png */,
+				7F8E04FC0F73E8B900442855 /* code.png */,
+				7F8E04FD0F73E8B900442855 /* h1.png */,
+				7F8E04FE0F73E8B900442855 /* h2.png */,
+				7F8E04FF0F73E8B900442855 /* h3.png */,
+				7F8E05000F73E8B900442855 /* h4.png */,
+				7F8E05010F73E8B900442855 /* h5.png */,
+				7F8E05020F73E8B900442855 /* h6.png */,
+				7F8E05030F73E8B900442855 /* italic.png */,
+				7F8E05040F73E8B900442855 /* link.png */,
+				7F8E05050F73E8B900442855 /* list-bullet.png */,
+				7F8E05060F73E8B900442855 /* list-numeric.png */,
+				7F8E05070F73E8B900442855 /* picture.png */,
+				7F8E05080F73E8B900442855 /* preview.png */,
+				7F8E05090F73E8B900442855 /* quotes.png */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
+		7F8E050D0F73E8B900442855 /* textile */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E050E0F73E8B900442855 /* images */,
+				7F8E05200F73E8B900442855 /* readme.txt */,
+				7F8E05210F73E8B900442855 /* set.js */,
+				7F8E05220F73E8B900442855 /* style.css */,
+			);
+			path = textile;
+			sourceTree = "<group>";
+		};
+		7F8E050E0F73E8B900442855 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E050F0F73E8B900442855 /* bold.png */,
+				7F8E05100F73E8B900442855 /* code.png */,
+				7F8E05110F73E8B900442855 /* h1.png */,
+				7F8E05120F73E8B900442855 /* h2.png */,
+				7F8E05130F73E8B900442855 /* h3.png */,
+				7F8E05140F73E8B900442855 /* h4.png */,
+				7F8E05150F73E8B900442855 /* h5.png */,
+				7F8E05160F73E8B900442855 /* h6.png */,
+				7F8E05170F73E8B900442855 /* italic.png */,
+				7F8E05180F73E8B900442855 /* link.png */,
+				7F8E05190F73E8B900442855 /* list-bullet.png */,
+				7F8E051A0F73E8B900442855 /* list-numeric.png */,
+				7F8E051B0F73E8B900442855 /* paragraph.png */,
+				7F8E051C0F73E8B900442855 /* picture.png */,
+				7F8E051D0F73E8B900442855 /* preview.png */,
+				7F8E051E0F73E8B900442855 /* quotes.png */,
+				7F8E051F0F73E8B900442855 /* stroke.png */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
+		7F8E05230F73E8B900442855 /* skins */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E05240F73E8B900442855 /* markitup */,
+				7F8E05340F73E8B900442855 /* simple */,
+			);
+			path = skins;
+			sourceTree = "<group>";
+		};
+		7F8E05240F73E8B900442855 /* markitup */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E05250F73E8B900442855 /* images */,
+				7F8E05330F73E8B900442855 /* style.css */,
+			);
+			path = markitup;
+			sourceTree = "<group>";
+		};
+		7F8E05250F73E8B900442855 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E05260F73E8B900442855 /* bg-container.png */,
+				7F8E05270F73E8B900442855 /* bg-editor-bbcode.png */,
+				7F8E05280F73E8B900442855 /* bg-editor-dotclear.png */,
+				7F8E05290F73E8B900442855 /* bg-editor-html.png */,
+				7F8E052A0F73E8B900442855 /* bg-editor-json.png */,
+				7F8E052B0F73E8B900442855 /* bg-editor-markdown.png */,
+				7F8E052C0F73E8B900442855 /* bg-editor-textile.png */,
+				7F8E052D0F73E8B900442855 /* bg-editor-wiki.png */,
+				7F8E052E0F73E8B900442855 /* bg-editor-xml.png */,
+				7F8E052F0F73E8B900442855 /* bg-editor.png */,
+				7F8E05300F73E8B900442855 /* handle.png */,
+				7F8E05310F73E8B900442855 /* menu.png */,
+				7F8E05320F73E8B900442855 /* submenu.png */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
+		7F8E05340F73E8B900442855 /* simple */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E05350F73E8B900442855 /* images */,
+				7F8E05390F73E8B900442855 /* style.css */,
+			);
+			path = simple;
+			sourceTree = "<group>";
+		};
+		7F8E05350F73E8B900442855 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E05360F73E8B900442855 /* handle.png */,
+				7F8E05370F73E8B900442855 /* menu.png */,
+				7F8E05380F73E8B900442855 /* submenu.png */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
+		7F8E053A0F73E8B900442855 /* templates */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E053B0F73E8B900442855 /* preview.css */,
+				7F8E053C0F73E8B900442855 /* preview.html */,
+			);
+			path = templates;
+			sourceTree = "<group>";
+		};
+		7F8E053D0F73E8B900442855 /* styles */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E053E0F73E8B900442855 /* pygments_friendly.css */,
+				7F8E053F0F73E8B900442855 /* style.css */,
+				7F89FE6D0FE7B7230089C356 /* dynamic_inlines_with_sort.css */,
+			);
+			path = styles;
+			sourceTree = "<group>";
+		};
+		7F8E05400F73E8B900442855 /* upload */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E05410F73E8B900442855 /* admin */,
+			);
+			path = upload;
+			sourceTree = "<group>";
+		};
+		7F8E05410F73E8B900442855 /* admin */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = admin;
+			sourceTree = "<group>";
+		};
+		7F8E05460F73E8B900442855 /* solutions */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E054C0F73E8B900442855 /* templatetags */,
+				7F8B4CAE0F93F7C100BC1222 /* admin.py */,
+				7F8E05470F73E8B900442855 /* __init__.py */,
+				7F8E05490F73E8B900442855 /* forms.py */,
+				7F8E054A0F73E8B900442855 /* models.py */,
+				7F8E05510F73E8B900442855 /* urls.py */,
+				7F8E05530F73E8B900442855 /* views.py */,
+			);
+			path = solutions;
+			sourceTree = "<group>";
+		};
+		7F8E054C0F73E8B900442855 /* templatetags */ = {
+			isa = PBXGroup;
+			children = (
+				7F8E054D0F73E8B900442855 /* __init__.py */,
+				7F8E054F0F73E8B900442855 /* highlight.py */,
+			);
+			path = templatetags;
+			sourceTree = "<group>";
+		};
+		7F8E05560F73E8B900442855 /* SANDBOX */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = SANDBOX;
+			sourceTree = "<group>";
+		};
+		7FC3D4D50F7568DC0064D72B /* checker */ = {
+			isa = PBXGroup;
+			children = (
+				7FB81FC70FB0977F00A58373 /* __init__.py */,
+				7F1B0DE20FB6F3A500541D2B /* compiler */,
+				7F1B0DEC0FB6F3A500541D2B /* tests */,
+				7F8B49D10F8F6E0B00BC1222 /* admin.py */,
+				7FC3D4D70F7568DC0064D72B /* models.py */,
+				7FC3D4D80F7568DC0064D72B /* views.py */,
+			);
+			path = checker;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		D28A88AD04BDD90700651E21 /* Praktomat */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "$(ACTION)";
+			buildConfigurationList = 1DEB918F08733D9F0010E9CD /* Build configuration list for PBXLegacyTarget "Praktomat" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			dependencies = (
+			);
+			name = Praktomat;
+			passBuildSettingsInEnvironment = 1;
+			productName = Praktomat;
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB919308733D9F0010E9CD /* Build configuration list for PBXProject "Praktomat" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 1;
+			mainGroup = 08FB7794FE84155DC02AAC07 /* Praktomat */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D28A88AD04BDD90700651E21 /* Praktomat */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB919008733D9F0010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = Praktomat;
+			};
+			name = Debug;
+		};
+		1DEB919108733D9F0010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = Praktomat;
+			};
+			name = Release;
+		};
+		1DEB919408733D9F0010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.5;
+			};
+			name = Debug;
+		};
+		1DEB919508733D9F0010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.5;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB918F08733D9F0010E9CD /* Build configuration list for PBXLegacyTarget "Praktomat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB919008733D9F0010E9CD /* Debug */,
+				1DEB919108733D9F0010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB919308733D9F0010E9CD /* Build configuration list for PBXProject "Praktomat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB919408733D9F0010E9CD /* Debug */,
+				1DEB919508733D9F0010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}

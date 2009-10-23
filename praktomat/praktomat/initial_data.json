@@ -1,0 +1,43 @@
+[
+{
+    "pk": 1, 
+    "model": "auth.group", 
+    "fields": {
+        "name": "Trainer", 
+        "permissions": [
+            34, 
+            31, 
+            35, 
+            32, 
+            36, 
+            33
+        ]
+    }
+}, 
+{
+    "pk": 2, 
+    "model": "auth.group", 
+    "fields": {
+        "name": "Tutor", 
+        "permissions": []
+    }
+}, 
+{
+    "pk": 3, 
+    "model": "auth.group", 
+    "fields": {
+        "name": "User", 
+        "permissions": []
+    }
+},
+	
+    {
+        "pk": 1,
+         "model": "sites.site",
+         "fields": 
+        {
+            "domain": "localhost:8001",
+             "name": "Praktomat"
+        }
+    }
+]

@@ -1,0 +1,15 @@
+{% extends "admin/change_form.html" %}
+{% block extrahead %}{{ block.super }}
+	<script type="text/javascript" src="{{MEDIA_URL}}/script/jquery.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}/script/markitup/jquery.markitup.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}/script/markitup/sets/markdown/set.js"></script>
+	<script type="text/javascript" >
+   	$(document).ready(function() {
+      	$("#id_description").markItUp(mySettings);
+   	});
+	</script>
+	<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}/script/markitup/skins/simple/style.css" />
+	<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}/script/markitup/sets/markdown/style.css" />
+{% endblock %}
+
+

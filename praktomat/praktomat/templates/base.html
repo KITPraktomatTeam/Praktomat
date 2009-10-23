@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}styles/style.css" />
+	{% block styles %}{% endblock %}	
+	{% block script %}{% endblock %}
+	<title>{{ site_name }} {% block title %}{% endblock %}</title>
+</head>
+
+<body>
+	<div id="container">
+		<div id="header">
+			<div id="title">
+				<h1>Praktomat</h1>
+			</div>
+			<div id="user-tools">
+				{% if user.is_authenticated %}
+					{% firstof user.get_full_name user.username %} |
+					<a href="{% url auth_password_change %}">Change Password</a> | 
+					<a href="{% url auth_logout %}">Log-out</a>
+					{% if user.is_staff %}| <a href="{% url admin %}">Admin Panel</a>{%endif%}
+				{% else %}
+					<a href="{% url auth_login %}">Login</a>
+					<a href="{% url registration_register %}">Register</a> 
+				{%endif%}
+			</div>
+		</div>
+		<div id="content">
+			{% block content %}{% endblock %}
+		</div>
+	</div>
+</body>
+</html>
