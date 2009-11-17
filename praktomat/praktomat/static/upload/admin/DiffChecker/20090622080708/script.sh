@@ -1,1 +1,0 @@
-echo "Knowledge is Power"
