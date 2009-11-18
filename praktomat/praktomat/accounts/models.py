@@ -6,10 +6,24 @@ from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
 
+class Tutorial(models.Model):
+	name = models.CharField(max_length=100, blank=True, help_text=_("The name of the tutorial"))
+	# A Tutorial may have many tutors as well as a Tutor may have multiple tutorials
+	tutors = models.ManyToManyField(User, limit_choices_to = {'groups__name': 'Tutor'}, help_text = _("The tutors in charge of the tutorium."))
+	
+	def tutors_flat(self):
+		return reduce(lambda x, y: x.get_full_name() + ', ' + y.get_full_name(), self.tutors.all())
+	tutors_flat.short_description = _('Tutors')
+
+	def __unicode__(self):
+		return("%s: %s" % (self.name, self.tutors_flat()))
 
 class UserProfile(models.Model):
 	user = models.ForeignKey(User, unique=True)
 	activation_key=models.CharField(_('activation key'), max_length=40, editable=False)
+	
+	# If the User is a Student he participates in a tutorial
+	tutorial = models.ForeignKey(Tutorial, null=True, blank=True, help_text = _("The tutorial the student belogs to."))
 	
 	#ACTIVATED = u"ALREADY_ACTIVATED"
 	
@@ -79,3 +93,14 @@ class UserProfile(models.Model):
 	# The rest is completely up to you...
 	mat_number = models.IntegerField()
 	degree_course = models.CharField(max_length=30)
+	
+	def is_tutor(self):
+		return True
+		return self.user.groups.filter(name='Tutor').count() > 0
+		
+	def is_trainer(self):
+		return self.user.groups.filter(name='Trainer').count() > 0
+
+
+	
+	

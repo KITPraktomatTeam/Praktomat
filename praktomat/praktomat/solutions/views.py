@@ -62,13 +62,3 @@ def solution_detail(request,solution_id):
 		return HttpResponseRedirect(reverse('solution_list', args=[solution.task.id]))
 	else:	
 		return object_detail(request, Solution.objects.all(), solution_id, extra_context={'task_solved': task_solved}, template_object_name='solution' )
-
-@login_required
-def attestation(request,task_id):
-	task = get_object_or_404(Task,pk=task_id)
-	if not (request.user.groups.filter(name='Trainer').values('name') or user.is_superuser):
-		return render_to_response('error.html', context_instance=RequestContext(request))
-	solution_count = task.solution_set.filter(final=True).count()
-	from django.contrib.auth.models import Group
-	user_count = Group.objects.get(name='User').user_set.count()
-	return render_to_response("solutions/attestation.html", {'task':task, 'solution_count': solution_count,'user_count': user_count}, context_instance=RequestContext(request))

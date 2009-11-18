@@ -313,6 +313,13 @@
 		7F3EF4EF10A5DB0700AD614D /* java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = java; sourceTree = "<group>"; };
 		7F3EF4F010A5DB0700AD614D /* java.policy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = java.policy; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.java; };
 		7F3EF4F110A5DB0700AD614D /* javac */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = javac; sourceTree = "<group>"; };
+		7F4C101710B2D7D800E77D4A /* Praktomat Sampels */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "Praktomat Sampels"; path = "../Praktomat Sampels"; sourceTree = SOURCE_ROOT; };
+		7F4C104E10B2FE6600E77D4A /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
+		7F4C104F10B2FE6600E77D4A /* models.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = models.py; sourceTree = "<group>"; };
+		7F4C105110B2FE6600E77D4A /* views.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = views.py; sourceTree = "<group>"; };
+		7F4C105B10B331A900E77D4A /* urls.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = urls.py; sourceTree = "<group>"; };
+		7F4C10AA10B33BBB00E77D4A /* statistics.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = statistics.html; sourceTree = "<group>"; };
+		7F4C10C810B3F82200E77D4A /* attestation_list.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = attestation_list.html; sourceTree = "<group>"; };
 		7F5E31D21071128C00CED596 /* change_list.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = change_list.html; sourceTree = "<group>"; };
 		7F5E31FD10727A5A00CED596 /* import.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = import.html; sourceTree = "<group>"; };
 		7F75C80C1030A6ED008B3FB0 /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
@@ -377,7 +384,6 @@
 		7FB81FC70FB0977F00A58373 /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
 		7FB905431025C76E00CDAA0F /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
 		7FB905441025C76E00CDAA0F /* in_group.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = in_group.py; sourceTree = "<group>"; };
-		7FB906E010263F0700CDAA0F /* attestation.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = attestation.html; sourceTree = "<group>"; };
 		7FB9071B1026461E00CDAA0F /* ui-bg_diagonals-thick_18_b81900_40x40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ui-bg_diagonals-thick_18_b81900_40x40.png"; sourceTree = "<group>"; };
 		7FB9071C1026461E00CDAA0F /* ui-bg_diagonals-thick_20_666666_40x40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ui-bg_diagonals-thick_20_666666_40x40.png"; sourceTree = "<group>"; };
 		7FB9071D1026461E00CDAA0F /* ui-bg_flat_10_000000_40x100.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ui-bg_flat_10_000000_40x100.png"; sourceTree = "<group>"; };
@@ -409,19 +415,21 @@
 		08FB7794FE84155DC02AAC07 /* Praktomat */ = {
 			isa = PBXGroup;
 			children = (
-				7FEB3887107E00D90054AD6B /* apache */,
 				7F8E04AA0F73E8B900442855 /* accounts */,
-				7FC3D4D50F7568DC0064D72B /* checker */,
-				7F8E05460F73E8B900442855 /* solutions */,
-				7F8E04E40F73E8B900442855 /* static */,
 				7F8E04D60F73E8B900442855 /* tasks */,
+				7F8E05460F73E8B900442855 /* solutions */,
+				7FC3D4D50F7568DC0064D72B /* checker */,
+				7F4C104D10B2FE6600E77D4A /* attestation */,
 				7F8E04BA0F73E8B900442855 /* templates */,
+				7FEB3887107E00D90054AD6B /* apache */,
+				7F8E04E40F73E8B900442855 /* static */,
 				7F8E05590F73E8B900442855 /* __init__.py */,
-				7F8E04A70F73E8B900442855 /* manage.py */,
 				7F8E04B90F73E8B900442855 /* urls.py */,
+				7F8E05550F73E8B900442855 /* settings.py */,
+				7F8E04A70F73E8B900442855 /* manage.py */,
 				7F7A5E860FA3448F0085B6A5 /* test_data.json */,
 				7F8E04A90F73E8B900442855 /* initial_data.json */,
-				7F8E05550F73E8B900442855 /* settings.py */,
+				7F4C101710B2D7D800E77D4A /* Praktomat Sampels */,
 			);
 			name = Praktomat;
 			sourceTree = "<group>";
@@ -1630,6 +1638,26 @@
 			path = scripts;
 			sourceTree = "<group>";
 		};
+		7F4C104D10B2FE6600E77D4A /* attestation */ = {
+			isa = PBXGroup;
+			children = (
+				7F4C104E10B2FE6600E77D4A /* __init__.py */,
+				7F4C105B10B331A900E77D4A /* urls.py */,
+				7F4C104F10B2FE6600E77D4A /* models.py */,
+				7F4C105110B2FE6600E77D4A /* views.py */,
+			);
+			path = attestation;
+			sourceTree = "<group>";
+		};
+		7F4C10A910B33BBB00E77D4A /* attestation */ = {
+			isa = PBXGroup;
+			children = (
+				7F4C10AA10B33BBB00E77D4A /* statistics.html */,
+				7F4C10C810B3F82200E77D4A /* attestation_list.html */,
+			);
+			path = attestation;
+			sourceTree = "<group>";
+		};
 		7F5E31D01071128C00CED596 /* tasks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1682,6 +1710,7 @@
 		7F8E04BA0F73E8B900442855 /* templates */ = {
 			isa = PBXGroup;
 			children = (
+				7F4C10A910B33BBB00E77D4A /* attestation */,
 				7F8E04BB0F73E8B900442855 /* admin */,
 				7F8E04C00F73E8B900442855 /* base.html */,
 				7F8E04C10F73E8B900442855 /* error.html */,
@@ -1724,7 +1753,6 @@
 		7F8E04CF0F73E8B900442855 /* solutions */ = {
 			isa = PBXGroup;
 			children = (
-				7FB906E010263F0700CDAA0F /* attestation.html */,
 				7F8E04D00F73E8B900442855 /* solution_detail.html */,
 				7F8E04D10F73E8B900442855 /* solution_list.html */,
 			);
@@ -1744,10 +1772,10 @@
 		7F8E04D60F73E8B900442855 /* tasks */ = {
 			isa = PBXGroup;
 			children = (
-				7F8B49E70F8F714000BC1222 /* admin.py */,
 				7F8E04D70F73E8B900442855 /* __init__.py */,
-				7F8E04DD0F73E8B900442855 /* models.py */,
 				7F8E04E00F73E8B900442855 /* urls.py */,
+				7F8B49E70F8F714000BC1222 /* admin.py */,
+				7F8E04DD0F73E8B900442855 /* models.py */,
 				7F8E04E20F73E8B900442855 /* views.py */,
 			);
 			path = tasks;
@@ -1779,10 +1807,10 @@
 			children = (
 				7F8E054C0F73E8B900442855 /* templatetags */,
 				7F8E05470F73E8B900442855 /* __init__.py */,
+				7F8E05510F73E8B900442855 /* urls.py */,
 				7F8B4CAE0F93F7C100BC1222 /* admin.py */,
 				7F8E05490F73E8B900442855 /* forms.py */,
 				7F8E054A0F73E8B900442855 /* models.py */,
-				7F8E05510F73E8B900442855 /* urls.py */,
 				7F8E05530F73E8B900442855 /* views.py */,
 			);
 			path = solutions;

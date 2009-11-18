@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Django settings for praktomat project.
 
 import os
@@ -114,7 +115,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     # sudo easy_install http://pypi.python.org/packages/source/M/Markdown/Markdown-2.0.tar.gz
-	'django.contrib.markup',
+	'django.contrib.markup', #Benötigt Pygments
 
 	# http://code.google.com/p/django-command-extensions/
 	# svn checkout http://django-command-extensions.googlecode.com/svn/trunk/ django-command-extensions
@@ -127,6 +128,7 @@ INSTALLED_APPS = (
 	'praktomat.accounts',
     'praktomat.tasks',
 	'praktomat.solutions',
+	'praktomat.attestation',
 	'praktomat.checker',
 )
 

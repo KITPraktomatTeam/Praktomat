@@ -10,8 +10,11 @@
 		{% if user|in_group:"User" %}
 			<a href={% url solution_list task_id=task.id%}>{% trans "Solutions"%}</a>
 		{% endif %}
-		{% if user.is_superuser or user|in_group:"Trainer,Tutor"%}
-			<a href={% url attestation task_id=task.id%}>{% trans "Attestation"%}</a>
+		{% if user.is_superuser or user|in_group:"Tutor"%}
+			<a href={% url attestation_list task_id=task.id%}>{% trans "Attestation"%}</a>
+		{% endif %}
+		{% if user.is_superuser or user|in_group:"Trainer"%}
+			<a href={% url statistics task_id=task.id%}>{% trans "Statistics"%}</a>
 		{% endif %} <br/><br/>
 	{%endfor%}
 </div>
@@ -24,8 +27,11 @@
 		{% if user|in_group:"User" %}
 			<a href={% url solution_list task_id=task.id%}>{% trans "Solutions"%}</a>
 		{% endif %}
-		{% if user.is_superuser or user|in_group:"Trainer,Tutor"%}
-			<a href={% url attestation task_id=task.id%}>{% trans "Attestation"%}</a>
+		{% if user.is_superuser or user|in_group:"Tutor"%}
+			<a href={% url attestation_list task_id=task.id%}>{% trans "Attestation"%}</a>
+		{% endif %}
+		{% if user.is_superuser or user|in_group:"Trainer"%}
+			<a href={% url statistics task_id=task.id%}>{% trans "Statistics"%}</a>
 		{% endif %} <br/><br/>
 	{%endfor%}
 </div>
