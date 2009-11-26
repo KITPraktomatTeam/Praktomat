@@ -29,7 +29,6 @@
             "title": "Giuga-Zahlen berechnen"
         }
     }, 
-  [ 
     {
         "pk": 1, 
         "model": "auth.group", 
@@ -147,5 +146,4 @@
             "date_joined": "2009-04-16 07:29:30"
         }
     }
-]
 ]

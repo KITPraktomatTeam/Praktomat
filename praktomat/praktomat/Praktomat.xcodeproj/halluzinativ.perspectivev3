@@ -279,7 +279,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 99}, {334, 819}}</string>
+							<string>{{0, 14}, {334, 819}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -328,7 +328,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>7F4C113110B43BA600E77D4A</string>
+										<string>7FD65C7410BE7CA60003ED71</string>
 										<key>history</key>
 										<array>
 											<string>7FC3D5460F76C6A10064D72B</string>
@@ -352,7 +352,6 @@
 											<string>7FEB376310739E940054AD6B</string>
 											<string>7FEB385E107CF38E0054AD6B</string>
 											<string>7FEB38BD107F4FFC0054AD6B</string>
-											<string>7FEB38C5107F50890054AD6B</string>
 											<string>7FEB38C8107F50890054AD6B</string>
 											<string>7FEB3924107FA7940054AD6B</string>
 											<string>7FEB3934107FACA20054AD6B</string>
@@ -413,7 +412,6 @@
 											<string>7F3EF52810A5FF7400AD614D</string>
 											<string>7F1A740D10A87F7200078140</string>
 											<string>7F1A741110A87F7200078140</string>
-											<string>7F1A741210A87F7200078140</string>
 											<string>7F1A741710A87F7200078140</string>
 											<string>7F1A741810A87F7200078140</string>
 											<string>7F1A741D10A87F7200078140</string>
@@ -433,7 +431,6 @@
 											<string>7F11207010AB004800FE04B1</string>
 											<string>7F11207110AB004800FE04B1</string>
 											<string>7F4C0FB710B2BD3200E77D4A</string>
-											<string>7F4C0FB810B2BD3200E77D4A</string>
 											<string>7F4C103110B2D9C000E77D4A</string>
 											<string>7F4C103310B2D9C000E77D4A</string>
 											<string>7F4C103510B2D9C000E77D4A</string>
@@ -465,7 +462,7 @@
 											<string>7F4C112310B4376D00E77D4A</string>
 											<string>7F4C112D10B439B200E77D4A</string>
 											<string>7F4C113010B43BA600E77D4A</string>
-											<string>7F4C111210B4334E00E77D4A</string>
+											<string>7F4C114210BDA0B000E77D4A</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -479,18 +476,18 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1015, 582}}</string>
+								<string>{{0, 0}, {1015, 570}}</string>
 								<key>RubberWindowFrame</key>
 								<string>69 0 1371 878 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>582pt</string>
+							<string>570pt</string>
 						</dict>
 						<dict>
 							<key>Proportion</key>
-							<string>250pt</string>
+							<string>262pt</string>
 							<key>Tabs</key>
 							<array>
 								<dict>
@@ -504,7 +501,9 @@
 									<key>GeometryConfiguration</key>
 									<dict>
 										<key>Frame</key>
-										<string>{{10, 27}, {1015, 223}}</string>
+										<string>{{10, 27}, {1015, 235}}</string>
+										<key>RubberWindowFrame</key>
+										<string>69 0 1371 878 0 0 1440 878 </string>
 									</dict>
 									<key>Module</key>
 									<string>XCDetailModule</string>
@@ -521,8 +520,6 @@
 									<dict>
 										<key>Frame</key>
 										<string>{{10, 27}, {1015, 223}}</string>
-										<key>RubberWindowFrame</key>
-										<string>69 0 1371 878 0 0 1440 878 </string>
 									</dict>
 									<key>Module</key>
 									<string>PBXProjectFindModule</string>
@@ -609,11 +606,11 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>7F4C108310B331CA00E77D4A</string>
+				<string>7FD65C7510BE7CA60003ED71</string>
 				<string>1CA23ED40692098700951B8B</string>
-				<string>7F4C108410B331CA00E77D4A</string>
+				<string>7FD65C7610BE7CA60003ED71</string>
 				<string>7F8EF7980F73E09C00442855</string>
-				<string>7F4C108510B331CA00E77D4A</string>
+				<string>7FD65C7710BE7CA60003ED71</string>
 				<string>1CA23EDF0692099D00951B8B</string>
 				<string>1CA23EE00692099D00951B8B</string>
 				<string>1CA23EE10692099D00951B8B</string>

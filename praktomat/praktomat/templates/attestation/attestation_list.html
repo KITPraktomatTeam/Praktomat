@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load i18n %}{% block content %}
+
+<a href={% url task_list %}> < {% trans "Back to task list" %}</a>
+
+<h1>{{task.title}}</h1>
+
+<h2>{% trans "Solutions ready to be attested" %}</h2>
+
+<div id="Solutions">
+	{% for solution in solution_list%}
+		{% if solution.attestation%}
+			{% if solution.attestation.final%}
+				<b>fin</b>
+			{% else %}
+				<b>con</b>
+			{% endif %}
+		{% else %}
+			<b>new</b>
+		{% endif %}
+		<a href={% url taskDetail task_id=solution.task.id%}>Solution {{forloop.counter}}</a>
+	{%endfor%}
+</div>
+
+{% endblock %}
