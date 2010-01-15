@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from praktomat.tasks.models import Task
 from praktomat.solutions.models import Solution, SolutionFile
 from django.utils.translation import ugettext_lazy as _
+import difflib
 
 class Attestation(models.Model):
 	""""""
@@ -23,6 +24,16 @@ class AnnotatedSolutionFile(models.Model):
 	attestation = models.ForeignKey(Attestation)
 	solution_file = models.ForeignKey(SolutionFile)
 	content = models.TextField(help_text = _('The content of the solution file annotated by the tutor.'))
+	
+	def content_diff(self):
+		d = difflib.Differ()
+		original = self.solution_file.content().splitlines(1)
+		anotated = self.content.replace("\r","").splitlines(1)
+		result = list(d.compare(original, anotated))
+		return "".join(result)
+	
+	def __unicode__(self):
+		return self.solution_file.__unicode__()
 	
 class RatingAspect(models.Model):
 	""" describes an review aspect which the reviewer has to evaluate """	

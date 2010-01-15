@@ -23,12 +23,6 @@ def taskDetail(Request,task_id):
 	my_solutions = Task.objects.get(pk=task_id).solution_set.filter(author = Request.user)
 	return object_detail(Request, Task.objects.all(), task_id, extra_context={'solutions': my_solutions}, template_object_name='task')
 
-def taskPreview(Request):
-	# Ajax preview for task description markup
-	return render_to_response( 'tasks/task_preview.html',
-                              {'description':Request.POST['data'],},
-                              context_instance=RequestContext(Request))
-
 class ImportForm(forms.Form):
 	file = forms.FileField()
 

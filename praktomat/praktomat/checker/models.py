@@ -55,23 +55,14 @@ class Checker(models.Model):
 	def title(self):
 		""" Returns the title for this checker category. To be overloaded in subclasses. """
 		return u"Prüfung"
-		
-	#def task(self): # untestet
-	#	return self.proxy.task
 
 	def requires(self):
 		""" Returns the list of passed Checkers required by this checker.
 		Overloaded by subclasses. """ 
-		return []
-
-#	def description(self):
-#		""" Returns a description for this Checker.
-#		Overloaded by subclasses. """
-#		pass		
+		return []		
 			   			
 
-#		
-#	def htmlize_output(self, log, env): # no not here! --------------------------------------------------------
+#	def htmlize_output(self, log, env): # no not here! propablz as template tag--------------------------------------------------------
 #		""" Prepares the output for presentation.
 #		Includes cleanup and highlighting. """
 #		# Clean the output
@@ -118,20 +109,6 @@ class CheckerEnvironment:
 	def sources(self):
 		""" Returns the list of source files. """
 		return self._sources
-	
-#	def source_names_for_compiler(self):   Keine Virtuellen Quellen mehr und der name ist eh der basenname(oder?)
-#		names = []
-#		
-#		for (name, content) in self._sources:
-#			#FIX
-#			name = os.path.basename(name)
-#			names.append(name)
-#				
-#		for name in self._virtual_sources:
-#			name = os.path.basename(name)
-#			names.append(name)
-#				
-#		return names
 
 	def user(self):
 		""" Returns the submitter of this program (class User). """
@@ -225,10 +202,6 @@ class CheckerResult(models.Model):
 	log = models.TextField(help_text=_('Text result of the checker'))
 	creation_date = models.DateTimeField(auto_now_add=True)
 	
-#	def __unicode__(self):
-		# Vorsicht: das geht ins Auge!
-#		return unicode(self.solution) + ": " + unicode(self.checker)
-	
 	def title(self):
 		""" Returns the title of the Checker that did run. """
 		return self.checker.title()
@@ -243,25 +216,11 @@ class CheckerResult(models.Model):
 
 	def set_log(self, log):
 		""" Sets the log of the Checker run. """
-		#assert isinstance(log, str)     Oder auch mal unicode
 		self.log = log
 
 	def set_passed(self, passed):
 		""" Sets the passing state of the Checker. """
 		assert isinstance(passed, int)
 		self.passed = passed
-	
 
-
-#			if self.required():
-#				print """<P><FONT COLOR=""" + FAIL_COLOR + """><STRONG>
-#				Ihr Programm kann so nicht angenommen werden.
-#				</STRONG></FONT> Bitte korrigieren Sie die oben
-#				aufgef&uuml;hrten Probleme.</P>"""
-#			else:
-#				print """<P><FONT COLOR=""" + PASS_MOSTLY_COLOR + """><STRONG>
-#				Ihr Programm hat einige Schw&auml;chen.
-#				</STRONG></FONT> Diese Schw&auml;chen wirken sich
-#				negativ in der Beurteilung aus. Wir empfehlen, die
-#				oben aufgef&uuml;hrten Probleme zu korrigieren.</P>"""
 

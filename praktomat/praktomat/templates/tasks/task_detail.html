@@ -2,30 +2,6 @@
 {% load markup  %} {% load i18n  %} {% load in_group %} 
 {% block styles %}{{ block.super }}
 <link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}static/styles/pygments_friendly.css" />
-<script type="text/javascript" src="{{MEDIA_URL}}static/script/syntaxhighlighter/scripts/shCore.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}static/script/syntaxhighlighter/scripts/shBrushBash.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}static/script/syntaxhighlighter/scripts/shBrushCpp.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}static/script/syntaxhighlighter/scripts/shBrushCSharp.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}static/script/syntaxhighlighter/scripts/shBrushCss.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}static/script/syntaxhighlighter/scripts/shBrushDelphi.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}static/script/syntaxhighlighter/scripts/shBrushDiff.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}static/script/syntaxhighlighter/scripts/shBrushGroovy.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}static/script/syntaxhighlighter/scripts/shBrushJava.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}static/script/syntaxhighlighter/scripts/shBrushJScript.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}static/script/syntaxhighlighter/scripts/shBrushPhp.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}static/script/syntaxhighlighter/scripts/shBrushPlain.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}static/script/syntaxhighlighter/scripts/shBrushPython.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}static/script/syntaxhighlighter/scripts/shBrushRuby.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}static/script/syntaxhighlighter/scripts/shBrushScala.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}static/script/syntaxhighlighter/scripts/shBrushSql.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}static/script/syntaxhighlighter/scripts/shBrushVb.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}static/script/syntaxhighlighter/scripts/shBrushXml.js"></script>
-<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}static/script/syntaxhighlighter/styles/shCore.css"/>
-<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}static/script/syntaxhighlighter/styles/shThemeEclipse.css"/>
-<script type="text/javascript">
-	SyntaxHighlighter.config.clipboardSwf = '{{MEDIA_URL}}static/script/syntaxhighlighter/scripts/clipboard.swf';
-	SyntaxHighlighter.all();
-</script>
 {% endblock %}
 {% block content %}
 

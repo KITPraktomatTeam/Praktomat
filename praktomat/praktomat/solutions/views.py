@@ -53,7 +53,7 @@ def solution_list(request, task_id):
 @login_required
 def solution_detail(request,solution_id):
 	solution = get_object_or_404(Solution, pk=solution_id)
-	task_solved = bool(solution.task.solution_set.filter(final = True))
+	submission_possible = not bool(solution.task.solution_set.filter(author=request.user).filter(final = True))
 	if solution.author != request.user:
 		return render_to_response('error.html', context_instance=RequestContext(request))
 	if (request.method == "POST" and solution.accepted):
@@ -61,4 +61,4 @@ def solution_detail(request,solution_id):
 		solution.save()
 		return HttpResponseRedirect(reverse('solution_list', args=[solution.task.id]))
 	else:	
-		return object_detail(request, Solution.objects.all(), solution_id, extra_context={'task_solved': task_solved}, template_object_name='solution' )
+		return object_detail(request, Solution.objects.all(), solution_id, extra_context={'submission_possible': submission_possible}, template_object_name='solution' )

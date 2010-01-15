@@ -1,4 +1,7 @@
-/* @override http://localhost:8000/styles/style.css */
+/* @override 
+	http://localhost:8000/styles/style.css
+	http://localhost:8000/static/styles/style.css
+*/
 
 /* @group Page Structure */
 
@@ -75,6 +78,10 @@ div.file {
 
 /* @end */
 
+div.changed {
+	background-color: #c4ff6f;
+}
+
 label {
 	bottom: auto;
 	position: relative;
@@ -101,4 +108,5 @@ th {
 	text-align: right;
 	vertical-align: top;
 }
+
 

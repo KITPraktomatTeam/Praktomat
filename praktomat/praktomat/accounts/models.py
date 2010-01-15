@@ -10,7 +10,7 @@ class Tutorial(models.Model):
 	name = models.CharField(max_length=100, blank=True, help_text=_("The name of the tutorial"))
 	# A Tutorial may have many tutors as well as a Tutor may have multiple tutorials
 	tutors = models.ManyToManyField(User, limit_choices_to = {'groups__name': 'Tutor'}, help_text = _("The tutors in charge of the tutorium."))
-	
+
 	def tutors_flat(self):
 		return reduce(lambda x, y: x.get_full_name() + ', ' + y.get_full_name(), self.tutors.all())
 	tutors_flat.short_description = _('Tutors')

@@ -1,6 +1,7 @@
 from django import template
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
+import re
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import get_lexer_by_name,guess_lexer, guess_lexer_for_filename, ClassNotFound
@@ -29,4 +30,10 @@ def colorize_table(value,arg=None):
     except ClassNotFound:
         return value
 
-    
+
+rx_diff = re.compile('^<span class=".*?">(\+|-|\?).*$')   
+@register.filter
+def highlight_diff(value):
+	"enclose highlighted lines beginning with an +-? in a span"
+	result = map(lambda line: "<div class='changed'>" + line + "</div>" if bool(rx_diff.match(line)) else line,  value.splitlines(1))
+	return mark_safe("".join(result))

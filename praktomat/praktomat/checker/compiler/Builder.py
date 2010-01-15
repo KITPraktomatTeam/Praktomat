@@ -93,7 +93,7 @@ class Builder(Checker):
 
 		# The executable has to exist and we mustn't have any warnings.
 		passed = not self.has_warnings(output)	
-		result.set_log("<pre>" + output + "</pre>")
+		result.set_log("<pre>" + output + "</pre>" if output else "")
 		result.set_passed(passed)
 
 		return result

@@ -47,7 +47,7 @@
 	</div>
 {%endfor%}
 
-{% if not task_solved %}
+{% if submission_possible %}
 	<br/><br/>
 	<form method="post">
 		<input type="submit" value="Submit" /	{% if not solution.accepted %} disabled {% endif %}>

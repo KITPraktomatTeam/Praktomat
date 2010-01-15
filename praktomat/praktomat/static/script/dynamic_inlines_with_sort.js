@@ -3,10 +3,10 @@
 /* Use, distribute and modify freely */
 
 // "Add"-link html code. Defaults to Django's "+" image icon, but could use text instead.
-add_link_html = '<img src="/media/admin/img/admin/icon_addlink.gif" ' +
+add_link_html = '<img src="/media/img/admin/icon_addlink.gif" ' +
     'width="10" height="10" alt="Add new row" style="margin:0.5em 1em;" />';
 // "Delete"-link html code. Defaults to Django's "x" image icon, but could use text instead.
-delete_link_html = '<img src="/media/admin/img/admin/icon_deletelink.gif" ' +
+delete_link_html = '<img src="/media/img/admin/icon_deletelink.gif" ' +
     'width="10" height="10" alt="Delete row" style="margin-top:0.5em" />';
 position_field = 'position'; // Name of inline model field (integer) used for ordering. Defaults to "position".
 

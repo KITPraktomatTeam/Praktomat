@@ -104,8 +104,8 @@ class DejaGnuTester(Checker, DejaGnu):
 		testsuite = self.testsuite_dir(env)
 		program_name = env.program()
 		
-		cmd = "ulimit -t 30; " # Set timeout to 30 sec
-		cmd += "chmod -R g+rx .; "
+		#cmd = "ulimit -t 30; " # Timeout is set by java.sh
+		cmd = "chmod -R g+rx .; "
 		cmd += "touch site.exp; "
 		cmd += "runtest --tool " + program_name + " tests.exp"
 		environ = os.environ

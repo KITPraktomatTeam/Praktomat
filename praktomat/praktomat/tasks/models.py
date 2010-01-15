@@ -1,11 +1,10 @@
 from django.db import models
 from django.db import transaction
 from django.core import serializers
-from django.conf import settings
-from datetime import date
+from datetime import date, datetime
 import tempfile
 import zipfile
-    
+
 class Task(models.Model):
 	title = models.CharField(max_length=100)
 	description = models.TextField()
@@ -24,7 +23,7 @@ class Task(models.Model):
 		
 	def expiered(self):
 		"""docstring for expiered"""
-		return submission_date + datetime.timedelta(hour=1) > datetime.now()
+		return self.submission_date + datetime.timedelta(hour=1) > datetime.now()
 		
 	@classmethod
 	def export_Tasks(cls, qureyset):
@@ -85,10 +84,6 @@ class Task(models.Model):
 					file_field_instance.save(file_field_instance.name, File(temp_file))
 				deserialized_object.save()
 				
-   
 class MediaFile(models.Model):
     task = models.ForeignKey(Task)
-    media_file = models.FileField(upload_to='TaskMediaFiles/')    
-
-#   def __unicode__(self):
-#	    return self.media_file.name
+    media_file = models.FileField(upload_to='TaskMediaFiles/')

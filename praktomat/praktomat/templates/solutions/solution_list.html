@@ -33,6 +33,13 @@
 			<b>err</b>
 		{% endif %}{% endif %}{% endif %}
 		{{solution.creation_date|date}} {{solution.creation_date|time}} <a href={% url solution_detail solution_id=solution.id%}>Solution {{forloop.counter}}</a><br/>
+		
+		{% for attest in solution.attestation_set.all %}
+			{% if attest.final %}
+				<a href={% url view_attestation attestation_id=attest.id%}>Attestation by {{attest.author.get_full_name}}</a><br/>
+			{% endif %}
+		{%endfor%}
+		
 	{%endfor%}
 {% endif %}
 

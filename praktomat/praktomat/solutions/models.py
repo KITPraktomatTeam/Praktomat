@@ -33,7 +33,7 @@ class Solution(models.Model):
 		for file in self.solutionfile_set.all():
 			file.copyTo(toTempDir)
 	
-	def check(self, run_secret = 0): #task, user, key, course_id,
+	def check(self, run_secret = 0): 
 		"""Builds and tests this solution."""
 
 		# Delete previous results if the checker have allready been run
@@ -45,12 +45,7 @@ class Solution(models.Model):
 		for file in self.solutionfile_set.all(): 
 			sources.append((unicode(file),file.content()))
 		env.set_sources(sources)
-		#if self.tab_width() > 0:				# unsure about that
-		#	env.set_tab_width(self.tab_width())
 		env.set_user(self.author)
-		# env.set_key(key)						# what is the key?
-		# env.set_course_id(course_id)			
-		# env.set_task_id(self.task_id())		# set task insted of id
 		
 		try:
 			# Setting default temp dir location and creating it
@@ -70,8 +65,8 @@ class Solution(models.Model):
 			tempfile.tempdir = None
 			# Delete temporary directory
 			try:
-				pass
-				#shutil.rmtree(new_tmpdir)
+				# pass
+				shutil.rmtree(new_tmpdir)
 			except IOError:
 				pass
 		
@@ -146,6 +141,9 @@ class Solution(models.Model):
 						passed_checkers.append(checker)
 
 		self.save()
+		
+	def attestations_by(self, user):
+		return self.attestation_set.filter(author=user)
 	
 
 class SolutionFile(models.Model):
