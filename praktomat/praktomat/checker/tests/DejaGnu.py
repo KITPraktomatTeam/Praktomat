@@ -7,7 +7,6 @@ DejaGnu Tests.
 import os
 import string
 import re
-import time
 import subprocess
 
 from django.db import models

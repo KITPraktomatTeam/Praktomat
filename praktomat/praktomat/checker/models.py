@@ -20,8 +20,8 @@ class Checker(models.Model):
 	 
 	A Checker has three indicators:
 		1. It is *public* - the results are presented to the user
-		2. It is *required* - it must be passed for submission
-		3. It is run *always* - it is run before submission.
+It is *required* - it must be passed for submission
+		3. It is run .
 
 	If a Checker is not run always, it is only run if a *task_maker*
 	starts the complete rerun of all Checkers. """
@@ -79,8 +79,6 @@ class Checker(models.Model):
 #		
 #		# Every line that contains a failure message is to be enhanced.
 #		return (re.sub(RXFAIL, r"\\1<B><FONT COLOR=" + FAIL_COLOR + ">" +	r"\\2</FONT></B>\\3",	log))
-
-
 
 
 class CheckerEnvironment:
@@ -222,5 +220,4 @@ class CheckerResult(models.Model):
 		""" Sets the passing state of the Checker. """
 		assert isinstance(passed, int)
 		self.passed = passed
-
 

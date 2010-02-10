@@ -12,6 +12,7 @@ if __name__ == "__main__":
 
     import sys
 
+    command = ''
     if len(sys.argv) > 1:
         command = sys.argv[1]
 
@@ -41,4 +42,4 @@ if __name__ == "__main__":
 
         autoreload.main = main
 
-        execute_manager(settings)
+    execute_manager(settings)

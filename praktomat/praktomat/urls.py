@@ -23,6 +23,7 @@ urlpatterns = patterns('',
 	url(r'^tasks/$', 'praktomat.tasks.views.taskList', name = 'task_list'),
 	url(r'^tasks/(?P<task_id>\d+)/$', 'praktomat.tasks.views.taskDetail', name='taskDetail'),
 	url(r'^tasks/(?P<task_id>\d+)/solutionupload/$', 'praktomat.solutions.views.solution_list', name='solution_list'),
+	url(r'^checkerprogress/$', 'praktomat.checker.views.checker_progress', name='checker_progress'),
 
 	# Solutions
 	url(r'^solutions/(?P<solution_id>\d+)/$', 'praktomat.solutions.views.solution_detail', name='solution_detail'),
@@ -38,7 +39,7 @@ urlpatterns = patterns('',
 
 
 # only serve static files through django while in development - for safety and speediness
-if 'runserver' in sys.argv or 'runserver_plus' in sys.argv: 
+if 'runserver' in sys.argv or 'runserver_plus' in sys.argv or 'runconcurrentserver' in sys.argv: 
     urlpatterns += patterns('',
 		(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.dirname(__file__) + '/static/'}),
         (r'^(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),

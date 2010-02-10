@@ -24,12 +24,21 @@ if environment == 'Dennis':
 
 MANAGERS = ADMINS
 
-DATABASE_ENGINE = 'sqlite3'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = basedir + '/PraktomatSupport/DataBase'   # Or path to database file if using sqlite3.
-DATABASE_USER = ''             # Not used with sqlite3.
+#DATABASE_ENGINE = 'sqlite3'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+#DATABASE_NAME = basedir + '/PraktomatSupport/DataBase'   # Or path to database file if using sqlite3.
+#DATABASE_USER = ''             # Not used with sqlite3.
+#DATABASE_PASSWORD = ''         # Not used with sqlite3.
+#DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
+#DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+
+DATABASE_ENGINE = 'mysql'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+DATABASE_NAME ='Praktomat'   # Or path to database file if using sqlite3.
+DATABASE_USER = 'root'             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+
+#CACHE_BACKEND = 'db://my_cache_table'
 
 if environment == 'Daniel':
 	# DEFAULT_FROM_EMAIL = ""
@@ -124,6 +133,13 @@ INSTALLED_APPS = (
 	# ./manage.py runserver_plus allows for debugging on werkzeug traceback page. invoke error with assert false
 	# not needed for production
 	'django_extensions',
+	
+	# the concurrent test server allows to make an ajax request to the server while the server handles an other request
+	# example: getting the upload status while the server runs all checker
+	# http://github.com/jaylett/django_concurrent_test_server
+	# no need to install the app, its allready in the praktomat folder
+	# ./manage.py runconcurrentserver
+	'django_concurrent_test_server',
 	
 	'praktomat.accounts',
     'praktomat.tasks',

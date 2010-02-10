@@ -5,7 +5,7 @@
 {% endblock %}
 {% block content %}
 
-<a href={% url task_list %}> < {% trans "Back to task list" %}</a>
+<span class="icon ui-icon-carat-1-w"></span><a href={% url task_list %}>{% trans "Back to task list" %}</a>
 
 <h1>{{task.title}}</h1>
 <span id="subtitle">{% blocktrans with task.publication_date.date as pub_date and task.submission_date.date as sub_date %}

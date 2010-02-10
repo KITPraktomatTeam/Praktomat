@@ -10,8 +10,8 @@ class RatingScaleAdmin(admin.ModelAdmin):
 	inlines = [RatingScaleItemInline]
 	
 	class Media:
-		js = [	'static/script/jquery.js', 
-				'static/script/jquery-ui.js', 
+		js = [	'static/frameworks/jquery/jquery.js', 
+				'static/frameworks/jquery/jquery-ui.js', 
 				'static/script/dynamic_inlines_with_sort.js', ]
 		
 		css = { 'all' : ['static/styles/dynamic_inlines_with_sort.css',], }

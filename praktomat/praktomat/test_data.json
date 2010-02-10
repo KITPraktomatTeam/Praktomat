@@ -1,72 +1,37 @@
 [
-    {
+   {
         "pk": 1, 
-        "model": "tasks.task", 
+        "model": "accounts.tutorial", 
         "fields": {
-            "submission_date": "2009-02-20 00:00:00", 
-            "publication_date": "2009-02-02 00:00:00", 
-            "description": "Im Jahr 1742 hat Christian Goldbach eine Vermutung aufgestellt, nach der jede ungerade Zahl gr\u00f6\u00dfer als f\u00fcnf als Summe dreier Primzahlen dargestellt werden kann.\r\n\r\nDie nach ihm benannte Goldbachsche Vermutung lautet in einer st\u00e4rkeren, heute gebr\u00e4uchlichen Version:\r\n\r\nJede gerade nat\u00fcrliche Zahl (gr\u00f6\u00dfer als zwei) kann als Summe zweier Primzahlen repr\u00e4sentiert werden.\r\n\r\nBeispiele sind: 4 = 2 + 2, 6 = 3 + 3, 8 = 3 + 5, \u2026\r\n\r\nDie Summe mu\u00df nicht eindeutig sein: 5 + 5 = 3 + 7 = 10 .\r\n\r\nDie Vermutung wurde bisher nicht bewiesen. Sie wurde f\u00fcr alle Zahlen bis 1018 (Stand 2007) best\u00e4tigt.\r\n\r\nImplementieren Sie ein Programm, da\u00df f\u00fcr alle geraden Zahlen bis zu einer Obergrenze, zwei Primzahlen findet, deren Summe gleich der Zahl ist. Verwenden Sie das Primzahlsieb zur Berechnung aller Primzahlen bis zu dieser Obergrenze.\r\n        \r\n\t::java\r\n        public void vermutungUeberpruefen() {\r\n            primzahlsieb.primzahlenBerechnen();\r\n            \r\n            for (int zahl = 4; zahl <= n; zahl += 2) {\r\n                System.out.print(zahl + \" \u00fcberpr\u00fcfen:\");\r\n                primzahlPaarSuchen:\r\n                for (int p1 = 2; p1 < zahl; p1++) {\r\n                    for (int p2 = 2; p1 + p2 <= zahl; p2++) {\r\n                        if ( primzahlsieb.isPrim(p1)\r\n                                && primzahlsieb.isPrim(p2) ) {\r\n                            if (p1 + p2 == zahl) {\r\n                                System.out.println(zahl + \" = \" + p1 + \" + \" + ;\r\n                                break primzahlPaarSuchen;\r\n                            }\r\n                        }         \r\n                    }\r\n                }            \r\n            }\r\n        }\r\n        \r\n        public static void main(String [] argv) {\r\n            GoldbachscheVermutung vermutung = new GoldbachscheVermutung(10000);\r\n            vermutung.vermutungUeberpruefen();\r\n        }\r\n", 
-            "title": "Goldbachsche Vermutung \u00fcberpr\u00fcfen"
-        }
-    }, 
-    {
-        "pk": 2, 
-        "model": "tasks.task", 
-        "fields": {
-            "submission_date": "2009-02-28 00:00:00", 
-            "publication_date": "2009-02-02 00:00:00", 
-            "description": "Logische R\u00e4tsel lassen sich formal oft aufl\u00f6sen, indem man Sie aussagenlogisch formuliert.\r\n\r\nIm folgenden R\u00e4tsel von Raymond Smullyan geht es um einen Hutmacher, einen Schnapphase und eine (Hasel-)Maus. Unter diesen drei Verd\u00e4chtigen gibt es einen Dieb. Die Ermittlungen haben folgendes ergeben:\r\n\r\n- Genau einer von den drei ist der Dieb\r\n- Unschuldige sagen immer die Wahrheit\r\n- Der Schnapphase sagt, dass der Hutmacher unschuldig ist\r\n- Der Hutmacher sagt, dass die Haselmaus unschuldig ist\r\n\r\nDieser Sachverhalt kann mit drei booleschen Variablen hutmacher, schnapphase und maus codiert werden. Diese sollen genau dann true sein , wenn die entsprechende Person der Dieb ist.\r\n\r\nWir verwenden die Java-Operatoren !, &, ^, | (und => als Implikation). Die aus den Ermittlungen formalisierten Erkenntnisse sind:\r\n\r\n- hutmacher ^ schnapphase ^ maus\r\n- (hutmacher => ! (schnapphase | maus)) & (schnapphase => ! (hutmacher | maus)) & (maus => ! (hutmacher | schnapphase))\r\n- schnapphase => ! hutmacher\r\n- hutmacher => ! maus\r\n\r\nDie Implikation A => B kann durch ! A | B ersetzt werden.\r\n\r\nImplementieren Sie ein Java-Programm, mit dem derartig formalisierte R\u00e4tsel gel\u00f6st werden k\u00f6nnen. Das R\u00e4tsel ist gel\u00f6st, wenn man eine Belegung der booleschen Variablen gefunden hat, so dass jede der Formeln war ist. Dazu kann man einfach alle Kombinationen der Belegungen aufz\u00e4hlen und ausprobieren. F\u00fcr die drei booleschen Variablen gibt es 23 m\u00f6gliche Kombinationen. Das Programm berechnet also die Wahrheitstafel f\u00fcr die Formel.\r\n\r\nAlle Kombinationen f\u00fcr n boolesche Variablen k\u00f6nnen Sie \u00fcber fortgesetztes Inkrementieren einer int-Zahl z bekommen: die Folge der 0en und 1en in der Bin\u00e4rcodierung der Zahl gibt ihnen die booleschen Wahrheitswerte f\u00fcr die zugeh\u00f6rige boolesche Variable an.\r\n\r\nWenn das dritte Bit von z den Wahrheitswert f\u00fcr die boolesche Variable schnapphase angeben soll, dann bekommen Sie zum Beispiel den booleschen Wert mit schnapphase = (z / 4 % 2) == 1", 
-            "title": "L\u00f6sen logischer R\u00e4tsel"
-        }
-    }, 
-    {
-        "pk": 3, 
-        "model": "tasks.task", 
-        "fields": {
-            "submission_date": "2009-10-16 00:00:00", 
-            "publication_date": "2009-02-02 00:00:00", 
-            "description": "Eine nat\u00fcrliche Zahl n ist eine Giuga-Zahl, wenn alle ihre Primteiler p den Wert n/p - 1 teilen.\r\n\r\nImplementieren Sie Java-Programm, die alle Giuga-Zahlen bis zu einer festen Obergrenze ausgibt.\r\n \r\nHinweis: Jede Primzahl ist eine Giuga-Zahl. Es ist derzeit (2008) nicht bekannt, ob die Umkehrung dieser Aussage gilt. Ihr Programm m\u00fcsste also alle Primzahlen als Giuga-Zahlen identifizieren (und sonst keine). ", 
-            "title": "Giuga-Zahlen berechnen"
+            "tutors": [
+                3
+            ], 
+            "name": "Tutorium 1"
         }
     }, 
     {
         "pk": 1, 
-        "model": "auth.group", 
+        "model": "accounts.userprofile", 
         "fields": {
-            "name": "Trainer", 
-            "permissions": [
-                25, 
-                26, 
-                27, 
-                7, 
-                8, 
-                9, 
-                34, 
-                31, 
-                35, 
-                32, 
-                36, 
-                33
-            ]
+            "mat_number": 12345, 
+            "activation_key": "", 
+            "user": 4, 
+            "tutorial": 1, 
+            "degree_course": "1"
         }
     }, 
     {
         "pk": 2, 
-        "model": "auth.group", 
+        "model": "accounts.userprofile", 
         "fields": {
-            "name": "Tutor", 
-            "permissions": []
+            "mat_number": 12346, 
+            "activation_key": "", 
+            "user": 6, 
+            "tutorial": 1, 
+            "degree_course": "1"
         }
     }, 
-    {
-        "pk": 3, 
-        "model": "auth.group", 
-        "fields": {
-            "name": "User", 
-            "permissions": []
-        }
-    }, 
-    {
+	 {
         "pk": 2, 
         "model": "auth.user", 
         "fields": {
@@ -76,7 +41,7 @@
             "is_active": true, 
             "is_superuser": false, 
             "is_staff": true, 
-            "last_login": "2009-11-18 07:46:00", 
+            "last_login": "2010-02-03 06:28:35", 
             "groups": [
                 1
             ], 
@@ -145,5 +110,55 @@
             "email": "herr.kleinert@gmail.com", 
             "date_joined": "2009-04-16 07:29:30"
         }
-    }
+    }, 
+    {
+        "pk": 6, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "user2", 
+            "first_name": "Ulli", 
+            "last_name": "User", 
+            "is_active": true, 
+            "is_superuser": false, 
+            "is_staff": false, 
+            "last_login": "2010-02-03 06:32:14", 
+            "groups": [
+                3
+            ], 
+            "user_permissions": [], 
+            "password": "sha1$73438$4aacbe6b0576b4836e8e19b0b8cc205b66c8d811", 
+            "email": "", 
+            "date_joined": "2010-02-03 06:32:14"
+        }
+    },
+	{
+        "pk": 1, 
+        "model": "tasks.task", 
+        "fields": {
+            "submission_date": "2009-02-20 00:00:00", 
+            "publication_date": "2009-02-02 00:00:00", 
+            "description": "Im Jahr 1742 hat Christian Goldbach eine Vermutung aufgestellt, nach der jede ungerade Zahl gr\u00f6\u00dfer als f\u00fcnf als Summe dreier Primzahlen dargestellt werden kann.\r\n\r\nDie nach ihm benannte Goldbachsche Vermutung lautet in einer st\u00e4rkeren, heute gebr\u00e4uchlichen Version:\r\n\r\nJede gerade nat\u00fcrliche Zahl (gr\u00f6\u00dfer als zwei) kann als Summe zweier Primzahlen repr\u00e4sentiert werden.\r\n\r\nBeispiele sind: 4 = 2 + 2, 6 = 3 + 3, 8 = 3 + 5, \u2026\r\n\r\nDie Summe mu\u00df nicht eindeutig sein: 5 + 5 = 3 + 7 = 10 .\r\n\r\nDie Vermutung wurde bisher nicht bewiesen. Sie wurde f\u00fcr alle Zahlen bis 1018 (Stand 2007) best\u00e4tigt.\r\n\r\nImplementieren Sie ein Programm, da\u00df f\u00fcr alle geraden Zahlen bis zu einer Obergrenze, zwei Primzahlen findet, deren Summe gleich der Zahl ist. Verwenden Sie das Primzahlsieb zur Berechnung aller Primzahlen bis zu dieser Obergrenze.\r\n        \r\n\t::java\r\n        public void vermutungUeberpruefen() {\r\n            primzahlsieb.primzahlenBerechnen();\r\n            \r\n            for (int zahl = 4; zahl <= n; zahl += 2) {\r\n                System.out.print(zahl + \" \u00fcberpr\u00fcfen:\");\r\n                primzahlPaarSuchen:\r\n                for (int p1 = 2; p1 < zahl; p1++) {\r\n                    for (int p2 = 2; p1 + p2 <= zahl; p2++) {\r\n                        if ( primzahlsieb.isPrim(p1)\r\n                                && primzahlsieb.isPrim(p2) ) {\r\n                            if (p1 + p2 == zahl) {\r\n                                System.out.println(zahl + \" = \" + p1 + \" + \" + ;\r\n                                break primzahlPaarSuchen;\r\n                            }\r\n                        }         \r\n                    }\r\n                }            \r\n            }\r\n        }\r\n        \r\n        public static void main(String [] argv) {\r\n            GoldbachscheVermutung vermutung = new GoldbachscheVermutung(10000);\r\n            vermutung.vermutungUeberpruefen();\r\n        }\r\n", 
+            "title": "Goldbachsche Vermutung \u00fcberpr\u00fcfen"
+        }
+    }, 
+	{
+        "pk": 2, 
+        "model": "tasks.task", 
+        "fields": {
+            "submission_date": "2009-02-28 00:00:00", 
+            "publication_date": "2009-02-02 00:00:00", 
+            "description": "Logische R\u00e4tsel lassen sich formal oft aufl\u00f6sen, indem man Sie aussagenlogisch formuliert.\r\n\r\nIm folgenden R\u00e4tsel von Raymond Smullyan geht es um einen Hutmacher, einen Schnapphase und eine (Hasel-)Maus. Unter diesen drei Verd\u00e4chtigen gibt es einen Dieb. Die Ermittlungen haben folgendes ergeben:\r\n\r\n- Genau einer von den drei ist der Dieb\r\n- Unschuldige sagen immer die Wahrheit\r\n- Der Schnapphase sagt, dass der Hutmacher unschuldig ist\r\n- Der Hutmacher sagt, dass die Haselmaus unschuldig ist\r\n\r\nDieser Sachverhalt kann mit drei booleschen Variablen hutmacher, schnapphase und maus codiert werden. Diese sollen genau dann true sein , wenn die entsprechende Person der Dieb ist.\r\n\r\nWir verwenden die Java-Operatoren !, &, ^, | (und => als Implikation). Die aus den Ermittlungen formalisierten Erkenntnisse sind:\r\n\r\n- hutmacher ^ schnapphase ^ maus\r\n- (hutmacher => ! (schnapphase | maus)) & (schnapphase => ! (hutmacher | maus)) & (maus => ! (hutmacher | schnapphase))\r\n- schnapphase => ! hutmacher\r\n- hutmacher => ! maus\r\n\r\nDie Implikation A => B kann durch ! A | B ersetzt werden.\r\n\r\nImplementieren Sie ein Java-Programm, mit dem derartig formalisierte R\u00e4tsel gel\u00f6st werden k\u00f6nnen. Das R\u00e4tsel ist gel\u00f6st, wenn man eine Belegung der booleschen Variablen gefunden hat, so dass jede der Formeln war ist. Dazu kann man einfach alle Kombinationen der Belegungen aufz\u00e4hlen und ausprobieren. F\u00fcr die drei booleschen Variablen gibt es 23 m\u00f6gliche Kombinationen. Das Programm berechnet also die Wahrheitstafel f\u00fcr die Formel.\r\n\r\nAlle Kombinationen f\u00fcr n boolesche Variablen k\u00f6nnen Sie \u00fcber fortgesetztes Inkrementieren einer int-Zahl z bekommen: die Folge der 0en und 1en in der Bin\u00e4rcodierung der Zahl gibt ihnen die booleschen Wahrheitswerte f\u00fcr die zugeh\u00f6rige boolesche Variable an.\r\n\r\nWenn das dritte Bit von z den Wahrheitswert f\u00fcr die boolesche Variable schnapphase angeben soll, dann bekommen Sie zum Beispiel den booleschen Wert mit schnapphase = (z / 4 % 2) == 1", 
+            "title": "L\u00f6sen logischer R\u00e4tsel"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "tasks.task", 
+        "fields": {
+            "submission_date": "2009-10-16 00:00:00", 
+            "publication_date": "2009-02-02 00:00:00", 
+            "description": "Eine nat\u00fcrliche Zahl n ist eine Giuga-Zahl, wenn alle ihre Primteiler p den Wert n/p - 1 teilen.\r\n\r\nImplementieren Sie Java-Programm, die alle Giuga-Zahlen bis zu einer festen Obergrenze ausgibt.\r\n \r\nHinweis: Jede Primzahl ist eine Giuga-Zahl. Es ist derzeit (2008) nicht bekannt, ob die Umkehrung dieser Aussage gilt. Ihr Programm m\u00fcsste also alle Primzahlen als Giuga-Zahlen identifizieren (und sonst keine). ", 
+            "title": "Giuga-Zahlen berechnen"
+        }
+    } 
 ]

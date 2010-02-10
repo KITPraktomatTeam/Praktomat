@@ -64,7 +64,7 @@ log "STRT $$ ($PPID)"
 # wird der Prozess nach dieser Zeit abgeschossen. Dies ist notwendig, da
 # die Browser nur eine begrenzte Zeit auf eine Ausgabe des Web-Servers
 # warten, bevor sie die Verbindung trennen.  Das hat zur Folge, dass
-# Ã¼berhaupt keine Ausgaben, also auch keine Teilausgaben, angezeigt
+# Ÿberhaupt keine Ausgaben, also auch keine Teilausgaben, angezeigt
 # werden werden.
 (sleep 100;\
  echo; echo; echo ABBRUCH DURCH ZEITUEBERSCHREITUNG; echo;\

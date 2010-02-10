@@ -1,17 +1,13 @@
 {% extends "base.html" %}
 {% load highlight %} {% load i18n  %}
-{% block styles %}{{ block.super }}
-	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}static/styles//ui-lightness/jquery-ui-1.7.2.custom.css" />
-{% endblock %}
-{% block script %}{{ block.super }}
-	<script type="text/javascript" src="{{MEDIA_URL}}static/script/jquery.js"></script>
-	<script type="text/javascript" src="{{MEDIA_URL}}static/script/jquery-ui.js"></script>
+{% block extrahead %}{{ block.super }}
+	{% include "helper/jquery-ui.html" %}
 	<script type="text/javascript">
-	$(function() {
-		$("#progressbar").progressbar({
-			value: {{solution_count}} / {{user_count}} * 100
+		$(function() {
+			$("#progressbar").progressbar({
+				value: {{solution_count}} / {{user_count}} * 100
+			});
 		});
-	});
 	</script>
 {% endblock %}
 {% block content %}

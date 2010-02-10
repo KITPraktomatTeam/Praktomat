@@ -6,7 +6,26 @@
 /* @group Page Structure */
 
 #container { position:relative; width:100%; min-width:760px; padding:0; }
-#content { margin:10px 15px; }
+#content {
+	width: 800px;
+	margin-right: auto;
+	margin-left: auto;
+	margin-bottom: 10px;
+	padding-right: 20px;
+	padding-bottom: 20px;
+}
+
+div.left {
+	float: left;
+	width: 48%;
+	padding-right: 2%;
+}
+
+div.right {
+	float: right;
+	width: 48%;
+	padding-left: 2%;
+}
 #header { width:100%; }
 #content-main { float:left; width:100%; }
 #content-related { float:right; width:18em; position:relative; margin-right:-19em; }
@@ -74,10 +93,80 @@ div.file {
 	overflow:hidden;
 }
 
+/* @end */
+
+
+/* @group Attestation */
+
+.activeFile {
+	font-weight: bold;
+}
+   
+.ui-tabs .ui-tabs-hide, .hidden_form {
+	/* override display:none of hidden tab to instantiate bespin 
+	 see http://jqueryui.com/demos/tabs/ */
+    position: absolute;
+    left: -10000px;
+}
+
+h3.result {
+	text-decoration: none;
+}
+
+div.result span.icon {
+	float:left; 
+	margin-right: .3em; 
+	width:16px; 
+	height:16px;
+}
+
+.file2 {
+	margin:5px; 
+	cursor:pointer;
+}
+
+.bespin {
+	margin: 0;
+	margin-top: 10px;
+	padding: 0; 
+	border: 0; 
+	height: 500px; 
+	border: 10px 
+	solid #ddd; 
+	-moz-border-radius: 10px; 
+	-webkit-border-radius: 10px;
+}
 
 
 /* @end */
 
+.icon { 
+	height: 16px;
+	width: 16px;
+	
+	position: relative;
+	margin-right: .3em;
+	
+	display: inline-block;
+	overflow: hidden;
+	background-image: url(../images/ui-icons_222222_256x240.png);
+	background-repeat: no-repeat;
+	text-indent: -99999px;
+	vertical-align: sub;
+}
+
+.icon-green {
+	background-image: url(../images/ui-icons_41af1d_256x240.png);
+}
+.icon-orange {
+	background-image: url(../images/ui-icons_e09524_256x240.png); 
+}
+.icon-red {
+	background-image: url(../images/ui-icons_c31818_256x240.png);
+}
+.icon-none {
+	background-image: none;
+}
 div.changed {
 	background-color: #c4ff6f;
 }
@@ -107,6 +196,17 @@ label {
 th {
 	text-align: right;
 	vertical-align: top;
+}
+
+/* @group Attestation */
+
+
+
+/* @end */
+
+div.attestation {
+	position: relative;
+	left: 20px;
 }
 
 

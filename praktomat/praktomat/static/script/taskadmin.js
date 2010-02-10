@@ -1,9 +1,7 @@
 $().ready(function() {
-	  SyntaxHighlighter.config.clipboardSwf = '/static/script/syntaxhighlighter/scripts/clipboard.swf';
-	  SyntaxHighlighter.all();
 	  $('#id_description').tinymce({
 			// Location of TinyMCE script
-			script_url : '/static/script/tiny_mce/tiny_mce.js',
+			script_url : '/static/frameworks/tiny_mce/tiny_mce.js',
 			
 			// General options
 			theme : "advanced",
