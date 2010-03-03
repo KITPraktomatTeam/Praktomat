@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load i18n %}{% block content %}
+
+<span class="icon ui-icon-carat-1-w"></span><a href={% url task_list %}>{% trans "Back to task list" %}</a>
+
+<h1>{{task.title}}</h1>
+
+<h2>{% trans "Solutions ready to be attested" %}</h2>
+
+<div id="Solutions">
+	{% for solution, allow_new_attest in solution_list%}
+		<h3>Solution {{forloop.counter}}</h3>
+		{% for attestation in solution.attestation_set.all %}
+			<div class='attestation'>
+				{%ifequal attestation.author requestuser %} 
+					{% if attestation.final %}
+						<span class="icon ui-icon-check icon-green"></span>
+						<a href={% url view_attestation attestation_id=attestation.id%}>{% trans "View your Attestation" %}</a>
+					{% else %}
+						<span class="icon ui-icon-radio-on icon-orange"></span>
+						<a href={% url edit_attestation attestation_id=attestation.id%}>{% trans "Edit your Attestation" %}</a>
+					{% endif %}
+				{% else %}
+					<span class="icon ui-icon-search"></span>
+					<a href={% url view_attestation attestation_id=attestation.id%}>
+						{% blocktrans with attestation.author.get_full_name as author %}
+							View Attestation by {{author}}
+						{% endblocktrans %}
+					</a>
+				{% endifequal %}<br/> 
+			</div>
+		{% endfor %}
+		{% if allow_new_attest %}
+			<div class='attestation'>
+				<span class="icon ui-icon-plus icon-orange"></span>
+				<a href={% url new_attestation solution_id=solution.id%}>{% trans "Add Attestation" %}</a>
+			</div>
+		{% endif %}<br/>
+	{%endfor%}
+</div>
+
+{% endblock %}

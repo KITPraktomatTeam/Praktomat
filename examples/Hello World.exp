@@ -1,0 +1,4 @@
+`tests.exp' template
+# Insert test cases in the format
+# PROGRAM_test "[input]" "[expected_output]"
+PROGRAM_test "" "Hello, World!"

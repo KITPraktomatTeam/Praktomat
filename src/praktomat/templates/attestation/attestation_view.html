@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load highlight %}{% load i18n  %}
+{% block extrahead %}{{ block.super }}
+	<link type="text/css" rel="stylesheet" href="/static/styles/pygments_friendly.css" />
+	<script type="text/javascript">
+		  $(document).ready(function(){
+				$("h3").css('cursor', 'pointer').click(function () {
+					$(this).next("div").slideToggle("fast");
+			});
+			// Stop the link click from doing its normal thing
+			return false;
+		  });
+	</script>
+{% endblock %}{% block content %}
+
+<span class="icon ui-icon-carat-1-w"></span><a href={% url task_list %}>{% trans "Back to task list" %}</a>
+
+<h1>{% trans "Attestation"%}: {{attest.solution.task.title}}</h1>
+<span id='author'>by {{attest.author.get_full_name}}</span>
+
+<h2>Comment</h2>
+<div class="Coment">
+	{{attest.public_comment}}	
+</div>
+
+<h2>Ratings</h2>
+{% for ratingresult in attest.ratingresult_set.all%}
+	<div class="result">
+		<h3 href="#">{{ratingresult.aspect.name}}: {{ratingresult.mark}}</h3>
+		{{ratingresult.aspect.description}}
+	</div>
+{%endfor%}
+
+<h2>{% trans "Annotated Files" %}</h2>
+{% for anotfile in attest.annotatedsolutionfile_set.all%}
+	<div class="file">
+		<h3 href="#">{{anotfile}}</h3>
+		<div class="content">{{anotfile.content_diff|highlight_table:anotfile.solution_file.file.name|highlight_diff}}</div>
+	</div>
+{%endfor%}
+
+
+{% if submitable %}
+	<br/><br/>
+	<form method="post">
+		<input type="submit" value="Publish" />
+	</form>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,101 @@
+#!/bin/bash
+#set -x
+# $Id: java,v 1.1 2002/07/19 12:22:10 krinke Exp $
+
+#
+# Sicherheitsaspekte: siehe javac.
+#
+
+#
+# Konfiguration:
+#
+
+JAVA_HOME=/usr/lib/jvm/java-6-sun
+KILL_LOG=kill.log
+CLASSPATH=$CLASSPATH
+#
+# Fallback:
+#
+
+sig_hup(){
+    log "TERM*$$*($PPID)*[$ret_code] HUP"
+    exit $ret_code
+}
+
+sig_term(){
+    log "TERM*$$*($PPID)*[$ret_code] TERM"
+    exit $ret_code
+}
+
+sig_int(){
+    log "TERM*$$*($PPID)*[$ret_code] INT"
+    exit $ret_code
+}
+
+sig_trap(){
+    log "TERM*$$*($PPID)*[$ret_code]"
+    exit $ret_code
+}
+
+trap sig_hup  SIGHUP
+trap sig_int  SIGINT
+trap sig_term SIGTERM
+
+trap sig_trap SIGPIPE SIGIO
+
+#
+# Logging
+#
+
+log(){
+    echo "`date '+%y%m%d %H%M%S'` $*" >> $KILL_LOG
+}
+
+#
+# Setup und starten
+#
+
+ulimit -t 60
+chmod g+rwx .
+
+log "STRT $$ ($PPID)"
+
+# Das Programm hat eine maximale Zeit, in der es beendet sein muss. Sonst
+# wird der Prozess nach dieser Zeit abgeschossen. Dies ist notwendig, da
+# die Browser nur eine begrenzte Zeit auf eine Ausgabe des Web-Servers
+# warten, bevor sie die Verbindung trennen.  Das hat zur Folge, dass
+# Ÿberhaupt keine Ausgaben, also auch keine Teilausgaben, angezeigt
+# werden werden.
+(sleep 100;\
+ echo; echo; echo ABBRUCH DURCH ZEITUEBERSCHREITUNG; echo;\
+ log "KILL*$$*($PPID)"
+ kill $$ >> $KILL_LOG 2>&1
+ sleep 10
+ kill -9 $$ >> $KILL_LOG 2>&1)&
+
+#echo `pwd`
+#echo "/usr/bin/sudo -u tester \
+# $JAVA_HOME/bin/java \
+# -Djava.security.manager \
+# -Djava.security.policy=/praktomat/lib/praktomat.policy \
+# -cp .:..:/praktomat/lib/classes:$CLASSPATH \"$@\" 2>&1"
+
+
+#/usr/bin/sudo -u tester \
+# $JAVA_HOME/bin/java \
+# -Djava.security.manager \
+# -Djava.security.policy=/praktomat/lib/praktomat.policy \
+# -cp .:..:/praktomat/lib/classes:$CLASSPATH "$@" 2>&1
+ 
+
+java \
+ -cp .:..:$CLASSPATH "$@" 2>&1
+
+ret_code=$?
+
+#
+# Ende.
+# 
+log "EXIT $$ ($PPID) [$ret_code]"
+exit $ret_code
+

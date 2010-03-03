@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load i18n %} {% load in_group %}
+{% block content %}
+
+<div id="welcome">
+	<h1>{% trans "Welcome" %}, {% firstof user.get_full_name user.username %}!</h1>
+	{% if tutors %}
+		
+	{% endif %}
+	
+	<p>Non eram nescius, Brute, cum, quae summis ingeniis exquisitaque doctrina philosophi Graeco sermone tractavissent, ea Latinis litteris mandaremus, fore ut hic noster labor in varias reprehensiones incurreret. nam quibusdam, et iis quidem non admodum indoctis, totum hoc displicet philosophari. quidam autem non tam id reprehendunt, si remissius agatur, sed tantum studium tamque multam operam ponendam in eo non arbitrantur. erunt etiam, et ii quidem eruditi Graecis litteris, contemnentes Latinas, qui se dicant in Graecis legendis operam malle consumere. postremo aliquos futuros suspicor, qui me ad alias litteras vocent, genus hoc scribendi, etsi sit elegans, personae tamen et dignitatis esse negent.</p>
+</div>
+
+<div id="upcoming_tasks" class='left'>
+		<h1>{% trans "Upcoming tasks" %}</h1>
+		{% for task in upcoming_tasks%}
+			<h2><a href={% url taskDetail task_id=task.id%}>{{task.title}}</a></h2>
+			{{ task.submission_date|date }} {{ task.submission_date|time }}
+			{% if user|in_group:"User" %}
+				<a href={% url solution_list task_id=task.id%}>{% trans "Solutions"%}</a>
+			{% endif %}
+			{% if user.is_superuser or user|in_group:"Tutor"%}
+				<a href={% url attestation_list task_id=task.id%}>{% trans "Attestation"%}</a>
+			{% endif %}
+			{% if user.is_superuser or user|in_group:"Trainer"%}
+				<a href={% url statistics task_id=task.id%}>{% trans "Statistics"%}</a>
+			{% endif %} <br/><br/>
+		{% empty %}
+			<a>{% trans "Nothing to do right now! Yay!" %}</a>
+		{% endfor %}
+</div>
+
+{% if expired_tasks%}
+	<div id="expired_tasks" class='right'>
+		<h1>{% trans "Expiered tasks" %}</h1>
+		{% for task in expired_tasks %}
+			<h2><a href={% url taskDetail task_id=task.id%}>{{task.title}}</a></h2>
+			{{ task.submission_date|date }} {{ task.submission_date|time }}
+			{% if user|in_group:"User" %}
+				<a href={% url solution_list task_id=task.id%}>{% trans "Solutions"%}</a>
+			{% endif %}
+			{% if user.is_superuser or user|in_group:"Tutor"%}
+				<a href={% url attestation_list task_id=task.id%}>{% trans "Attestation"%}</a>
+			{% endif %}
+			{% if user.is_superuser or user|in_group:"Trainer"%}
+				<a href={% url statistics task_id=task.id%}>{% trans "Statistics"%}</a>
+			{% endif %} <br/><br/>
+		{%endfor%}
+	</div>
+{% endif %}
+
+
+
+
+
+{% endblock %}

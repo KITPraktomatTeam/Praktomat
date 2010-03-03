@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load i18n %}{% load markup  %}
+{% block extrahead %}{{ block.super }}
+	<link type="text/css" rel="stylesheet" href="/static/frameworks/bespin/BespinEmbedded.css" />
+	<script type="text/javascript" src="/static/frameworks/bespin/BespinEmbedded.js"></script>
+	{% include "attestation/checker_results_js.html" %}
+	<script type="text/javascript">		
+		$(function() {
+			// instanciate tabs
+			$("#tabs").tabs({
+   				// call dimensionsChanged of bespin when the tab is opend
+				show: function(event, ui) {
+	    			if (ui.panel.id == "annotated_solution_files") {
+						$('#editor').attr('bespin').dimensionsChanged(); 
+	    			}
+				}
+			})
+		});
+		
+		var currentTextarea;
+		function loadFileInEditor(index) {
+			var newTextarea = $("#id_attestfiles-"+(index-1)+"-content");
+			var bespin = $('#editor').attr('bespin');
+			if (currentTextarea) {
+				currentTextarea.val(bespin.getContent()); }
+			bespin.setContent(newTextarea.val());
+			currentTextarea = newTextarea;
+			$("#annotated_solution_files").children("a").removeClass("activeFile");
+			$("#file"+index).addClass("activeFile");
+		}
+	</script>
+{% endblock %}{% block content %}
+
+<span class="icon ui-icon-carat-1-w"></span><a href={% url attestation_list solution.task_id %}>{% trans "Back to attestation list" %}</a>
+
+<h1>{{solution.task.title}}</h1>
+
+
+<div id="tabs">
+	<ul>
+		<li><a href="#task">Task</a></li>
+		<li><a href="#model_solution">Model solution</a></li>
+		<li><a href="#checker_results">Checker results</a></li>
+		<li><a href="#annotated_solution_files">Annotate solution files</a></li>
+		<li><a href="#attestation">Attest solution</a></li>
+	</ul>
+	
+	<div id="task">
+		{{solution.task.description|markdown:"codehilite"}}
+	</div>
+	
+	<div id="model_solution">
+		<h3>comming soon ...</h3>
+	</div>
+	
+	
+	<div id="checker_results">
+		{% with solution.checkerresult_set.all as results %}
+			{% include "attestation/checker_results.html" %}
+		{% endwith %}
+	</div>
+	
+	
+	<div id="annotated_solution_files">
+		{% for file in solution.solutionfile_set.all  %}
+			<a id="file{{forloop.counter}}" class="file" onclick="loadFileInEditor({{forloop.counter}})">{{file}}</a>
+        {% endfor %}
+		<div id="editor" class="bespin" data-bespinoptions='{ "settings": { "strictlines": true }, "stealFocus": true }'></div>
+	</div>
+
+
+	<div id="attestation">
+		<form enctype="multipart/form-data" method="post" action="">			
+			<div class="hidden_form">
+				{{ attestFileFormSet.management_form }}
+				{% for form in attestFileFormSet.forms %}
+					{{form.as_p}}
+				{% endfor %}
+			</div>
+			<table>
+				{{ attestForm.non_form_errors }}
+				{{ attestFileFormSet.non_form_errors }}
+				{{ ratingResultFormSet.non_form_errors }}
+				{{ attestForm }}
+				{{ ratingResultFormSet }}
+				<tr>
+					<td></td>
+					<td>
+					<input type="submit" value="Save/Preview"  onclick="loadFileInEditor(1);"/></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</div>	
+{% endblock %}

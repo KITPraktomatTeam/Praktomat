@@ -1,0 +1,212 @@
+/* @override 
+	http://localhost:8000/styles/style.css
+	http://localhost:8000/static/styles/style.css
+*/
+
+/* @group Page Structure */
+
+#container { position:relative; width:100%; min-width:760px; padding:0; }
+#content {
+	width: 800px;
+	margin-right: auto;
+	margin-left: auto;
+	margin-bottom: 10px;
+	padding-right: 20px;
+	padding-bottom: 20px;
+}
+
+div.left {
+	float: left;
+	width: 48%;
+	padding-right: 2%;
+}
+
+div.right {
+	float: right;
+	width: 48%;
+	padding-left: 2%;
+}
+#header { width:100%; }
+#content-main { float:left; width:100%; }
+#content-related { float:right; width:18em; position:relative; margin-right:-19em; }
+#footer { clear:both; padding:10px; }
+
+body {
+	background:#FFFFFF none repeat scroll 0 0;
+	color:#333333;
+	font-family:"Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
+	font-size:12px;
+	margin:0;
+	padding:0;
+}
+
+
+
+/* @end */
+
+/* @group Header */
+
+#header { background:#123069; color:white; overflow:hidden; }
+#header a:link, #header a:visited { color:white; }
+#header a:hover { text-decoration:underline; }
+#title h1 { padding:0 10px; font-size:18px; margin:8px 0; font-weight:normal; color:white; }
+#title h2 { padding:0 10px; font-size:14px; margin:-8px 0 8px 0; font-weight:normal; color:#ffc; }
+#user-tools { position:absolute; top:0; right:0; padding:1.2em 10px; font-size:11px; text-align:right; }
+
+
+
+/* @end */
+
+/* @group Solution */
+
+.error {
+	color: #f00;
+}
+.warning {
+	color: #ff7600;
+}
+.passed {
+	color: #008500;
+}
+
+div.result div.log {
+	left: 20px;
+	position: relative;
+	overflow:hidden;
+}
+
+div.file div.content {
+	left: 20px;
+	position: relative;
+	overflow:hidden;
+}
+
+div.result {
+	left: 20px;
+	position: relative;
+	overflow:hidden;
+}
+
+div.file {
+	left: 20px;
+	position: relative;
+	overflow:hidden;
+}
+
+/* @end */
+
+
+/* @group Attestation */
+
+.activeFile {
+	font-weight: bold;
+}
+   
+.ui-tabs .ui-tabs-hide, .hidden_form {
+	/* override display:none of hidden tab to instantiate bespin 
+	 see http://jqueryui.com/demos/tabs/ */
+    position: absolute;
+    left: -10000px;
+}
+
+h3.result {
+	text-decoration: none;
+}
+
+div.result span.icon {
+	float:left; 
+	margin-right: .3em; 
+	width:16px; 
+	height:16px;
+}
+
+.file2 {
+	margin:5px; 
+	cursor:pointer;
+}
+
+.bespin {
+	margin: 0;
+	margin-top: 10px;
+	padding: 0; 
+	border: 0; 
+	height: 500px; 
+	border: 10px 
+	solid #ddd; 
+	-moz-border-radius: 10px; 
+	-webkit-border-radius: 10px;
+}
+
+
+/* @end */
+
+.icon { 
+	height: 16px;
+	width: 16px;
+	
+	position: relative;
+	margin-right: .3em;
+	
+	display: inline-block;
+	overflow: hidden;
+	background-image: url(../images/ui-icons_222222_256x240.png);
+	background-repeat: no-repeat;
+	text-indent: -99999px;
+	vertical-align: sub;
+}
+
+.icon-green {
+	background-image: url(../images/ui-icons_41af1d_256x240.png);
+}
+.icon-orange {
+	background-image: url(../images/ui-icons_e09524_256x240.png); 
+}
+.icon-red {
+	background-image: url(../images/ui-icons_c31818_256x240.png);
+}
+.icon-none {
+	background-image: none;
+}
+div.changed {
+	background-color: #c4ff6f;
+}
+
+label {
+	bottom: auto;
+	position: relative;
+	top: 3px;
+	color: #656565;
+	font-weight: bold;
+	font-size: 10pt;
+	font-family: sans-serif;
+	vertical-align: top;
+}
+
+.errorlist {
+	padding: 0px;
+	margin-left: 0px;
+	margin-bottom: 2px;
+	margin-right: 0px;
+	margin-top: 2px;
+	list-style-type: none;
+	color: red;
+	
+}
+
+th {
+	text-align: right;
+	vertical-align: top;
+}
+
+/* @group Attestation */
+
+
+
+/* @end */
+
+div.attestation {
+	position: relative;
+	left: 20px;
+}
+
+

@@ -1,0 +1,5 @@
+/* To make row height of saved items same as others */
+/* http://www.djangosnippets.org/snippets/1489/ */
+
+.inline-group .tabular tr.has_original td { padding-top:0.5em; }
+.inline-group .tabular tr.has_original td.original p { display:none; }

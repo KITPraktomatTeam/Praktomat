@@ -1,0 +1,63 @@
+10
+
+dir
+0
+svn+ssh://kleinert@ssh.info.uni-karlsruhe.de/ben/local/SVN/giffhorn/Django-Praktomat/praktomat/praktomat/src/praktomat/django_concurrent_test_server
+svn+ssh://kleinert@ssh.info.uni-karlsruhe.de/ben/local/SVN/giffhorn
+add
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+81e6b769-b0d5-4359-94ed-cdb3f441ba95
+
+servers.py
+file
+
+
+
+add
+
+LICENSE
+file
+
+
+
+add
+
+__init__.py
+file
+
+
+
+add
+
+management
+dir
+
+
+
+add
+
+README
+file
+
+
+
+add
+

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load markup  %} {% load i18n  %} {% load in_group %} 
+{% block extrahead %}{{ block.super }}
+<link type="text/css" rel="stylesheet" href="/static/styles/pygments_friendly.css" />
+{% endblock %}
+{% block content %}
+
+<span class="icon ui-icon-carat-1-w"></span><a href={% url task_list %}>{% trans "Back to task list" %}</a>
+
+<h1>{{task.title}}</h1>
+<span id="subtitle">{% blocktrans with task.publication_date.date as pub_date and task.submission_date.date as sub_date %}
+	Publication date: {{pub_date}}, Submission date: {{sub_date}}
+{% endblocktrans %}</span>
+
+{{task.description|markdown:"codehilite"}}
+
+{% endblock %}

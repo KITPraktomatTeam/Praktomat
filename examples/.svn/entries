@@ -1,0 +1,119 @@
+10
+
+dir
+0
+svn+ssh://kleinert@ssh.info.uni-karlsruhe.de/ben/local/SVN/giffhorn/Django-Praktomat/praktomat/praktomat/examples
+svn+ssh://kleinert@ssh.info.uni-karlsruhe.de/ben/local/SVN/giffhorn
+add
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+81e6b769-b0d5-4359-94ed-cdb3f441ba95
+
+DejaGnuDefaultDefs.exp
+file
+
+
+
+add
+
+ggt
+dir
+
+
+
+add
+
+HelloDate.java
+file
+
+
+
+add
+
+runner.sh
+file
+
+
+
+add
+
+
+
+
+
+has-props
+has-prop-mods
+
+Power.sh
+file
+
+
+
+add
+
+Hello World.exp
+file
+
+
+
+add
+
+HelloJava.zip
+file
+
+
+
+add
+
+
+
+
+
+has-props
+has-prop-mods
+
+ls.sh
+file
+
+
+
+add
+
+.HelloWorld.cpp
+file
+
+
+
+add
+
+HelloWorld.java
+file
+
+
+
+add
+
+HelloWorld.cpp
+file
+
+
+
+add
+
