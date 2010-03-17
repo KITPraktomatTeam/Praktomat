@@ -21,8 +21,8 @@ def solution_list(request, task_id):
 	my_solutions = task.solution_set.filter(author = request.user)
 	submission_possible = task.submission_date > datetime.now()	and not my_solutions.filter(final = True)
 	
-	if request.method == "POST":
-			
+	if request.method == "POST":	
+		
 		solution = Solution(task = task, author=request.user)
 		formset = SolutionFormSet(request.POST, request.FILES, instance=solution)
 		if formset.is_valid():

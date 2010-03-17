@@ -106,14 +106,12 @@ class DejaGnuTester(Checker, DejaGnu):
 		#cmd = "ulimit -t 30; " # Timeout is set by java.sh
 		cmd = "chmod -R g+rx .; "
 		cmd += "touch site.exp; "
-		cmd += "runtest --tool " + program_name + " tests.exp"
+		cmd += settings.DEJAGNU_RUNTEST + " --tool " + program_name + " tests.exp"
 		environ = os.environ
 		environ['USER'] = env.user().get_full_name() # sh_quote removed
 		environ['HOME'] = testsuite
 		
 		[output, error] = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=testsuite, env=environ, shell=True).communicate()
-		
-
 
 		try:
 			summary = open(os.path.join(testsuite, program_name + ".sum")).read()
