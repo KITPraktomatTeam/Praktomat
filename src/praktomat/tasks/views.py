@@ -10,7 +10,7 @@ from django import forms
 from django.core import urlresolvers
 
 
-#@login_required
+@login_required
 def taskList(Request):
 	now = datetime.now()
 	upcoming_tasks = Task.objects.filter(publication_date__lte = now).filter(submission_date__gt = now).order_by('-submission_date')
@@ -27,7 +27,7 @@ def taskDetail(Request,task_id):
 class ImportForm(forms.Form):
 	file = forms.FileField()
 
-#@staff_member_required
+@staff_member_required
 def import_tasks(request):
 	""" View in the admin """
 	if request.method == 'POST': 
