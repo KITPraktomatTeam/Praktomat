@@ -5,22 +5,27 @@
 	<script type="text/javascript" src="{{MEDIA_URL}}/frameworks/bespin/BespinEmbedded.js"></script>
 	{% include "attestation/checker_results_js.html" %}
 	<script type="text/javascript">		
-		$(function() {
-			// instanciate tabs
-			$("#tabs").tabs({
-   				// call dimensionsChanged of bespin when the tab is opend
-				show: function(event, ui) {
-	    			if (ui.panel.id == "annotated_solution_files") {
-						$('#editor').get(0).bespin.dimensionsChanged();
-	    			}
+		var bespin
+		
+		$(document).ready(function(){
+			$("#file_form_set").addClass("hidden");
+			$("#file_form_set_replacement").removeClass("hidden");
+			$(".heading").addClass("hidden");
+			$("#tabs").tabs({ // instanciate tabs
+				show: function(event, ui) { 	// call dimensionsChanged of bespin when the tab is opend
+	    			if (ui.panel.id == "annotated_solution_files") { bespin.dimensionsChanged();}
 				}
 			})
 		});
 		
+		window.onBespinLoad = function() {
+            bespin = $('#editor').get(0).bespin;
+			loadFileInEditor(1);
+		}
+		
 		var currentTextarea;
 		function loadFileInEditor(index) {
 			var newTextarea = $("#id_attestfiles-"+(index-1)+"-content");
-			var bespin = $('#editor').get(0).bespin;
 			if (currentTextarea) {
 				currentTextarea.val(bespin.value); }
 			bespin.value = newTextarea.val();
@@ -35,51 +40,57 @@
 
 <h1>{{solution.task.title}}</h1>
 
-
-<div id="tabs">
-	<ul>
-		<li><a href="#task">Task</a></li>
-		<li><a href="#model_solution">Model solution</a></li>
-		<li><a href="#checker_results">Checker results</a></li>
-		<li><a href="#annotated_solution_files">Annotate solution files</a></li>
-		<li><a href="#attestation">Attest solution</a></li>
-	</ul>
+<form enctype="multipart/form-data" method="post" action="">{% csrf_token %}	
 	
-	<div id="task">
-		{{solution.task.description|markdown:"codehilite"}}
-	</div>
-	
-	<div id="model_solution">
-		<h3>comming soon ...</h3>
-	</div>
-	
-	
-	<div id="checker_results">
-		{% with solution.checkerresult_set.all as results %}
-			{% include "attestation/checker_results.html" %}
-		{% endwith %}
-	</div>
-	
-	
-	<div id="annotated_solution_files">
-		{% for file in solution.solutionfile_set.all  %}
-			<a id="file{{forloop.counter}}" class="file" onclick="loadFileInEditor({{forloop.counter}})">{{file}}</a>
-        {% endfor %}
-		<div id="editor" class="bespin" data-bespinoptions='{ "syntax": "js", "stealFocus": true }'></div>
-	</div>
-
-
-	<div id="attestation">
-		<form enctype="multipart/form-data" method="post" action="">{% csrf_token %}			
-			<div class="hidden_form">
-				{{ attestFileFormSet.management_form }}
-				{% for form in attestFileFormSet.forms %}
-					{{form.as_p}}
-				{% endfor %}
+	<div id="tabs">
+		<ul>
+			<li><a href="#task">Task</a></li>
+			<li><a href="#model_solution">Model solution</a></li>
+			<li><a href="#checker_results">Checker results</a></li>
+			<li><a href="#annotated_solution_files">Annotate solution files</a></li>
+			<li><a href="#attestation">Attest solution</a></li>
+		</ul>
+		
+		<div id="task">
+			<h1 class="heading">Task</h1>
+			{{solution.task.description|markdown:"codehilite"}}
+		</div>
+		
+		<div id="model_solution">
+			<h1 class="heading">Model Solution</h1>
+			<p>comming soon ...</p>
+		</div>
+		
+		
+		<div id="checker_results">
+			<h1 class="heading">Checker results</h1>
+			{% with solution.checkerresult_set.all as results %}
+				{% include "attestation/checker_results.html" %}
+			{% endwith %}
+		</div>
+		
+		
+		<div id="annotated_solution_files">
+			<h1 class="heading">Annotated solution files</h1>
+			{{ attestFileFormSet.non_form_errors }}
+			<div id="file_form_set">
+				<table>
+					{{ attestFileFormSet }}
+				</table>
 			</div>
+			<div id="file_form_set_replacement" class="hidden">
+				{% for file in solution.solutionfile_set.all %}
+					<a id="file{{forloop.counter}}" class="file" onclick="loadFileInEditor({{forloop.counter}})">{{file}}</a>
+		        {% endfor %}
+				<div id="editor" class="bespin" data-bespinoptions='{ "syntax": "js", "stealFocus": true }'></div>
+			</div>
+		</div>
+	
+	
+		<div id="attestation">
+			<h1 class="heading">Attestation</h1>
 			<table>
 				{{ attestForm.non_form_errors }}
-				{{ attestFileFormSet.non_form_errors }}
 				{{ ratingResultFormSet.non_form_errors }}
 				{{ attestForm }}
 				{{ ratingResultFormSet }}
@@ -89,7 +100,8 @@
 					<input type="submit" value="Save/Preview"  onclick="loadFileInEditor(1);"/></td>
 				</tr>
 			</table>
-		</form>
+		</div>
 	</div>
-</div>	
+	
+</form>	
 {% endblock %}

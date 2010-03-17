@@ -102,7 +102,7 @@ div.file {
 	font-weight: bold;
 }
    
-.ui-tabs .ui-tabs-hide, .hidden_form {
+.ui-tabs .ui-tabs-hide, .hidden {
 	/* override display:none of hidden tab to instantiate bespin 
 	 see http://jqueryui.com/demos/tabs/ */
     position: absolute;
