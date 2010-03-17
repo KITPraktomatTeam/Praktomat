@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8">
+
+	<title>Bespin Startup Options</title>
+
+	<link rel="stylesheet" type="text/css" href="../css/reset.css">
+	<link rel="stylesheet" type="text/css" href="../css/stylesheet.css" media="screen,projection">
+	<link rel="stylesheet" type="text/css" href="../css/colorful.css">
+</head>
+<body>
+
+<!-- MAIN CONTAINER -->
+<div id="main-container">
+
+<!-- MENU -->
+<ul id="menu">
+	<li><a href="../index.html" title="Home">Home</a></li>
+	<li><a href="../pluginguide/index.html" title="Plugin Guide">Creating Plugins</a></li>
+	<li class="current"><a href="../embedding/index.html" title="Embedding Bespin in your app">Embedding</a></li>
+	<li><a href="../devguide/index.html" title="Developer's Guide">Developing Bespin</a></li>
+</ul>
+<!-- / MENU -->
+
+<h1 id="web-title">Bespin Startup Options</h1>
+
+
+<!-- INDEX PAGE -->
+
+<!-- MAIN COLUMN -->
+<div id="maincol">
+<h1>Bespin Startup Options</h1>
+<p>See the main <a href="index.html" title="Bespin embedding documentation">Bespin embedding documentation</a> for details on how to use these
+options.</p>
+<h2>initialContent</h2>
+<p>This option allows you to replace the startup content of an element with some
+custom content. For example:</p>
+<div class="codehilite"><pre><span class="nt">&lt;textarea</span> <span class="na">id=</span><span class="s">&quot;edit&quot;</span><span class="nt">&gt;&lt;/textarea&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+<span class="nx">tiki</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;Embedded&quot;</span><span class="p">).</span><span class="nx">useBespin</span><span class="p">(</span><span class="s2">&quot;edit&quot;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">initialContent</span><span class="o">:</span> <span class="s2">&quot;Hello, World!&quot;</span>
+<span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span>
+</pre></div>
+
+
+<p>This is an alternative to the simpler:</p>
+<div class="codehilite"><pre><span class="nt">&lt;textarea</span> <span class="na">id=</span><span class="s">&quot;edit&quot;</span><span class="nt">&gt;</span>Hello, World!<span class="nt">&lt;/textarea&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+<span class="nx">tiki</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;Embedded&quot;</span><span class="p">).</span><span class="nx">useBespin</span><span class="p">(</span><span class="s2">&quot;edit&quot;</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span>
+</pre></div>
+
+
+<p>For use when the initial content is computed in some way. This option is also
+available for use with data-bespinoptions, however there is little benefit over
+placing the content in the element for this case, so that option is preferred.</p>
+<h2>noAutoresize</h2>
+<p>The embedded editor needs to be notified via a call to
+<code>dimensionsChanged()</code> whenever its position or size changes. By default, Bespin
+will hook the <code>window.onresize</code> event and call that function automatically, so
+you don't need to worry about it unless you're manipulating the DOM in a way
+that will cause the embedded Bespin component to move around. If you don't want
+<code>dimensionsChanged()</code> to be called whenever the window resizes, you can supply
+a value of <code>true</code> for this setting, and <code>window.onresize</code> will be left alone.</p>
+<h2>settings</h2>
+<p>It's possible to insert any settings (as in those defined by the 'set' command
+where the command line is available) using the settings option. For example:</p>
+<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;bespin&quot;</span> <span class="na">data-bespinoptions=</span><span class="s">&#39;{&quot;settings&quot;:{&quot;tabsize&quot;:2}}&#39;</span><span class="nt">/&gt;</span>
+</pre></div>
+
+
+<p>Or using the manual API:</p>
+<div class="codehilite"><pre><span class="nt">&lt;textarea</span> <span class="na">id=</span><span class="s">&quot;edit&quot;</span><span class="nt">&gt;&lt;/textarea&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+<span class="nx">tiki</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;Embedded&quot;</span><span class="p">).</span><span class="nx">useBespin</span><span class="p">(</span><span class="s2">&quot;edit&quot;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">settings</span><span class="o">:</span> <span class="p">{</span> <span class="nx">tabsize</span><span class="o">:</span><span class="mi">2</span> <span class="p">}</span>
+<span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span>
+</pre></div>
+
+
+<p>Any of the standard settings are available.</p>
+<p>This is equivalent to calling <code>bespin.set("tabsize", 2);</code> on page load.</p>
+<h2>stealFocus</h2>
+<p>On startup it's sometimes useful to instruct the browser to begin with some
+specific component having the focus. For example:</p>
+<div class="codehilite"><pre><span class="nx">tiki</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;Embedded&quot;</span><span class="p">).</span><span class="nx">useBespin</span><span class="p">(</span><span class="s2">&quot;edit&quot;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">stealFocus</span><span class="o">:</span> <span class="kc">true</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>This is equivalent to calling <code>bespin.setFocus(true);</code> on page load.
+<code>stealFocus</code> is also available when using the element upgrade option.</p>
+<h2>lineNumber</h2>
+<p>It might be useful to start with the cursor set to a specific line on startup.
+You can do this with the <code>lineNumber</code> startup option. For example:</p>
+<div class="codehilite"><pre><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;bespin&quot;</span> <span class="na">data-bespinoptions=</span><span class="s">&#39;{ &quot;lineNumber&quot;:1000 }&#39;</span><span class="nt">/&gt;</span>
+</pre></div>
+
+
+<p>This is equivalent to calling <code>bespin.setLineNumber(1000);</code> on page load.
+<code>lineNumber</code> is also available when using the element upgrade option.</p>
+</div>
+<!-- / MAIN COLUMN -->
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+
+
+
+
+<h2 class="compact">Contents</h2>
+<ul class="compact">
+<li><a href="index.html">Introduction</a></li>
+<li><a href="building.html">Creating a Custom, Embedded Bespin</a></li>
+<li><a href="bespinoptions.html">Bespin Startup Options</a></li>
+</ul>
+
+
+
+
+
+</div>
+<!-- / SIDEBAR -->
+
+<!-- / MAIN CONTAINER -->
+</div>
+
+<!-- FOOTER -->
+<div id="footer">
+	<!-- COLUMN ONE -->
+	<div>
+	<h2 class="compact">Useful Links</h2>
+	<ul class="compact">
+		<li><a href="http://mozillalabs.com/bespin/">Bespin project home page</a></li>
+		<li><a href="https://wiki.mozilla.org/Labs/Bespin">Wiki</a></li>
+		<li><a href="https://wiki.mozilla.org/Labs/Bespin/UserGuide">User's Guide</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN ONE -->
+
+	<!-- COLUMN TWO -->
+	<div>
+	<h2 class="compact">Developer Resources</h2>
+	<ul class="compact">
+	  <li><a href="http://hg.mozilla.org/labs/bespinclient/">Main Code Repository</a></li>
+	  <li><a href="http://hg.mozilla.org/labs/bespinserver/">Python server repository</a></li>
+		<li><a href="http://groups.google.com/group/bespin-core/">bespin-core mailing list for developers</a></li>
+		<li><a href="http://groups.google.com/group/bespin-commits/">bespin-commits mailing list for repository commit messages</a></li>
+		<li><a href="https://bugzilla.mozilla.org/buglist.cgi?product=bespin">Bug List</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN TWO -->
+
+	<!-- COLUMN THREE -->
+	<div>
+	<h2 class="compact">Get Help</h2>
+	<ul class="compact">
+		<li>The <a href="http://groups.google.com/group/bespin/">Bespin mailing list</a></li>
+		<li>Via IRC: <a href="irc://irc.mozilla.org/bespin">#bespin on irc.mozilla.org</a></li>
+	</ul>
+
+	<h2 class="compact">Documentation Template</h2>
+	<ul class="compact">
+		<li>Adapted from a design by <a href="http://www.mgrabovsky.is-game.com/">Matěj Grabovský</a></li>
+	</ul>
+	</div>
+	<!-- / COLUMN THREE -->
+</div>
+<!-- / FOOTER -->
+
+</body>
+</html>

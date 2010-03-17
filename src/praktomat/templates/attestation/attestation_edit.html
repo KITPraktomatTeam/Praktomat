@@ -11,7 +11,7 @@
    				// call dimensionsChanged of bespin when the tab is opend
 				show: function(event, ui) {
 	    			if (ui.panel.id == "annotated_solution_files") {
-						$('#editor').attr('bespin').dimensionsChanged(); 
+						$('#editor').get(0).bespin.dimensionsChanged();
 	    			}
 				}
 			})
@@ -20,10 +20,10 @@
 		var currentTextarea;
 		function loadFileInEditor(index) {
 			var newTextarea = $("#id_attestfiles-"+(index-1)+"-content");
-			var bespin = $('#editor').attr('bespin');
+			var bespin = $('#editor').get(0).bespin;
 			if (currentTextarea) {
-				currentTextarea.val(bespin.getContent()); }
-			bespin.setContent(newTextarea.val());
+				currentTextarea.val(bespin.value); }
+			bespin.value = newTextarea.val();
 			currentTextarea = newTextarea;
 			$("#annotated_solution_files").children("a").removeClass("activeFile");
 			$("#file"+index).addClass("activeFile");
@@ -65,7 +65,7 @@
 		{% for file in solution.solutionfile_set.all  %}
 			<a id="file{{forloop.counter}}" class="file" onclick="loadFileInEditor({{forloop.counter}})">{{file}}</a>
         {% endfor %}
-		<div id="editor" class="bespin" data-bespinoptions='{ "settings": { "strictlines": true }, "stealFocus": true }'></div>
+		<div id="editor" class="bespin" data-bespinoptions='{ "syntax": "js", "stealFocus": true }'></div>
 	</div>
 
 
