@@ -77,7 +77,7 @@
 	{% if submission_possible %}{% trans "Please corect the errors below and try again!" %}{% endif %}</p>
 {% endif %}
 {% if submission_possible %}
-	<form method="post">
+	<form method="post">{% csrf_token %}
 		<input type="submit" value="Commit" /	{% if not solution.accepted %} disabled {% endif %}>
 	</form>
 {% endif %}

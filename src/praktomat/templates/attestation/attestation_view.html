@@ -42,7 +42,7 @@
 
 {% if submitable %}
 	<br/><br/>
-	<form method="post">
+	<form method="post">{% csrf_token %}
 		<input type="submit" value="Publish" />
 	</form>
 {% endif %}

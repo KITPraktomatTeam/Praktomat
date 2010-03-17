@@ -1,7 +1,7 @@
 {% extends "base.html"%}
 
 {% block content %}
-<form method="post" action="." autocomplete="off">
+<form method="post" action="." autocomplete="off"> {% csrf_token %}
 {%comment%} autocomplete is a not standardized tag! {%endcomment%}
 	<table>
 		{{ form.as_table }}

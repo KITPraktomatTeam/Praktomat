@@ -70,7 +70,7 @@
 
 
 	<div id="attestation">
-		<form enctype="multipart/form-data" method="post" action="">			
+		<form enctype="multipart/form-data" method="post" action="">{% csrf_token %}			
 			<div class="hidden_form">
 				{{ attestFileFormSet.management_form }}
 				{% for form in attestFileFormSet.forms %}

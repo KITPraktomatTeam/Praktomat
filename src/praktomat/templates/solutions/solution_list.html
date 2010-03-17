@@ -70,7 +70,7 @@ $(function() {
 	{% if submission_possible %}
 		<a>{%trans "Time left:" %} {{ task.submission_date|timeuntil }}</a><br/><br/>
 		<iframe name="frame" style="display:none;"></iframe><!--target="frame"-->
-		<form enctype="multipart/form-data" method="post" action="" >
+		<form enctype="multipart/form-data" method="post" action="" > {% csrf_token %}
 			<table>
 				{{ formset.non_form_errors }}
 				{{ formset }}

@@ -19,7 +19,7 @@
 
 {% block content %}<div id="content-main">
 
-<form enctype="multipart/form-data" action="." method="post">
+<form enctype="multipart/form-data" action="." method="post">{% csrf_token %}
 <div>
 {% if form.errors %}
     <p class="errornote">
