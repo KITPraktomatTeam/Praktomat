@@ -5,6 +5,7 @@ DejaGnu Tests.
 """
 
 import os
+from os.path import dirname, join
 import string
 import re
 import subprocess
@@ -108,6 +109,8 @@ class DejaGnuTester(Checker, DejaGnu):
 		cmd += "touch site.exp; "
 		cmd += settings.DEJAGNU_RUNTEST + " --tool " + program_name + " tests.exp"
 		environ = os.environ
+		environ['JAVA'] = settings.JVM
+		environ['POLICY'] = join(join(dirname(dirname(__file__)),"scripts"),"praktomat.policy")
 		environ['USER'] = env.user().get_full_name() # sh_quote removed
 		environ['HOME'] = testsuite
 		
@@ -138,7 +141,7 @@ DEFAULT_TEST_CASES = """# `tests.exp' template
 
 class DejaGnuSetup(Checker, DejaGnu):
 
-	test_defs = models.FileField(storage=settings.STORAGE, upload_to="AdminFiles/DejaGnuTestCases/%Y%m%d%H%M%S/", help_text=_(u"Das Setup benutzt den <A HREF=\"http://www.gnu.org/software/dejagnu/dejagnu.html\">DejaGnu-Testrahmen</A>, um die Programme zu testen. Die in dieser Datei enthaltenen Definitionen gelten für alle Testfälle dieser Aufgabe. Sie werden beim Testen in die DejaGnu-Datei <TT>default.exp</TT> geschrieben. (Vergl. hierzuden Abschnitt <EM>Target dependent procedures</EM> im	<A HREF=\"http://www.gnu.org/manual/dejagnu/\" TARGET=\"_blank\">DejaGnu-Handbuch</A>.)"))
+	test_defs = models.FileField(storage=settings.STORAGE, upload_to="AdminFiles/DejaGnuTestCases/%Y%m%d%H%M%S/", help_text=_(u"Das Setup benutzt den <A HREF=\"http://www.gnu.org/software/dejagnu/dejagnu.html\">DejaGnu-Testrahmen</A>, um die Programme zu testen. Die in dieser Datei enthaltenen Definitionen gelten für alle Testfälle dieser Aufgabe. Sie werden beim Testen in die DejaGnu-Datei <TT>default.exp</TT> geschrieben. (Vergl. hierzuden Abschnitt <EM>Target dependent procedures</EM> im	<A HREF=\"http://www.gnu.org/manual/dejagnu/\" TARGET=\"_blank\">DejaGnu-Handbuch</A>.) Die Variablen PROGRAM und JAVA werden mit dem Programmnamen bzw. dem Pfad zur Java-Runtime ersetzt."))
 
 	def title(self):
 		return "Tests einrichten"
@@ -158,6 +161,7 @@ class DejaGnuSetup(Checker, DejaGnu):
 		default_exp = os.path.join(self.config_dir(env), "default.exp")
 		fd = open(default_exp, 'w')
 		defs = string.replace(self.test_defs.read(), "PROGRAM", env.program())
+		defs = string.replace(defs, "JAVA", join(join(dirname(dirname(__file__)),"scripts"),"java"))
 		fd.write(defs)
 		fd.close()
 

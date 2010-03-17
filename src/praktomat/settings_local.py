@@ -84,5 +84,6 @@ C_BINARY = 'gcc'
 CXX_BINARY = 'c++'
 JAVA_BINARY = 'javac'
 JAVA_GCC_BINARY = 'gcj'
+JVM = "java"
 FORTRAN_BINARY = 'g77'
 DEJAGNU_RUNTEST = '/opt/local/bin/runtest'

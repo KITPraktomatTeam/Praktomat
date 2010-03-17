@@ -1,18 +1,11 @@
 #!/bin/bash
-#set -x
+# set -x
 # $Id: java,v 1.1 2002/07/19 12:22:10 krinke Exp $
-
-#
 # Sicherheitsaspekte: siehe javac.
-#
 
-#
 # Konfiguration:
-#
-
-JAVA_HOME=/usr/lib/jvm/java-6-sun
 KILL_LOG=kill.log
-CLASSPATH=$CLASSPATH
+
 #
 # Fallback:
 #
@@ -72,23 +65,13 @@ log "STRT $$ ($PPID)"
  kill $$ >> $KILL_LOG 2>&1
  sleep 10
  kill -9 $$ >> $KILL_LOG 2>&1)&
-
-#echo `pwd`
-#echo "/usr/bin/sudo -u tester \
-# $JAVA_HOME/bin/java \
-# -Djava.security.manager \
-# -Djava.security.policy=/praktomat/lib/praktomat.policy \
-# -cp .:..:/praktomat/lib/classes:$CLASSPATH \"$@\" 2>&1"
-
-
-#/usr/bin/sudo -u tester \
-# $JAVA_HOME/bin/java \
-# -Djava.security.manager \
-# -Djava.security.policy=/praktomat/lib/praktomat.policy \
-# -cp .:..:/praktomat/lib/classes:$CLASSPATH "$@" 2>&1
  
 
-java \
+#echo `pwd`
+#/usr/bin/sudo -u praktomat_tester \
+ $JAVA \
+ -Djava.security.manager \
+ -Djava.security.policy=$POLICY \
  -cp .:..:$CLASSPATH "$@" 2>&1
 
 ret_code=$?
