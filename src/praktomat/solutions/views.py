@@ -47,6 +47,8 @@ def solution_list(request, task_id):
 				solution.check(request.session)
 				# the form's submit targets an iframe, this allaows webkit based browsers (and probably others) to make ajax calls while posting
 				# so we are returning an javascript which will redirect the parent window of the iframe 
+				#import time
+				#time.sleep(600)
 				return render_to_response("solutions/js_redirect.html", {"redirect_url": reverse('solution_detail', args=[solution.id])}, context_instance=RequestContext(request))
 				#return HttpResponseRedirect(reverse('solution_detail', args=[solution.id]))
 			except:

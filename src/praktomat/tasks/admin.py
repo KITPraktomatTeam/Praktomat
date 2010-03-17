@@ -42,7 +42,7 @@ admin.autodiscover()
 
 class MediaInline(admin.StackedInline): 
 	model = MediaFile
-	extra = 1
+	extra = 0
 
 class TaskAdmin(admin.ModelAdmin):
 	model = Task
@@ -85,21 +85,11 @@ class TaskAdmin(admin.ModelAdmin):
 	
 	
 	class Media:
-		js = [	'frameworks/jquery/jquery.js', 
-				'frameworks/jquery/jquery-ui.js', 
-				'script/stacked_dynamic_inlines.js',
-				#'script/dynamic_inlines_with_sort.js',
-				
-				'frameworks/tiny_mce/jquery.tinymce.js',
+		js = [	'frameworks/tiny_mce/tiny_mce.js',
 				'script/taskadmin.js',
 			]
-		
-		css = { 'all' : [ #'styles/dynamic_inlines_with_sort.css',
-						], }
-						
-		
-		
-	
+
+
 admin.site.register(Task, TaskAdmin)
 
 

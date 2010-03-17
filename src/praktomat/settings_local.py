@@ -58,25 +58,6 @@ EMAIL_HOST_USER = "praktomat@googlemail.com"
 EMAIL_HOST_PASSWORD = "baertram"
 EMAIL_USE_TLS = True
 
-#ADMINS = (
-#    # ('Your Name', 'your_email@domain.com'),
-#    ('Dennis Giffhorn', 'giffhorn@ipd.info.uni-karlsruhe.de')
-#)
-#
-#DATABASE_ENGINE = 'sqlite3'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-#DATABASE_NAME = '/PraktomatSupport/DataBase'   # Or path to database file if using sqlite3.
-#DATABASE_USER = ''             # Not used with sqlite3.
-#DATABASE_PASSWORD = ''         # Not used with sqlite3.
-#DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-#DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
-#
-#DEFAULT_FROM_EMAIL = "giffhorn@ipd.info.uni-karlsruhe.de"
-#EMAIL_HOST = "smtp.ipd.info.uni-karlsruhe.de"
-#EMAIL_PORT = 25
-#EMAIL_HOST_USER = None
-#EMAIL_HOST_PASSWORD = None
-#EMAIL_USE_TLS = False 
-
 MANAGERS = ADMINS
 
 # The Compiler binarys used to compile a submitted solution

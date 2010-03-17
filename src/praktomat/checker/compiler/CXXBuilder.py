@@ -4,7 +4,6 @@
 A C++ compiler for construction.
 """
 
-from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from praktomat.checker.compiler.Builder import Builder
 from django.conf import settings
@@ -17,12 +16,13 @@ class CXXBuilder(Builder):
 	_language				= "C++"
 	#_rx_warnings			= r"^([^ :]*:[^:].*)$"
 
-from praktomat.checker.admin import CheckerInline, addChangedFieldForm
+from praktomat.checker.admin import CheckerInline
+from django.forms import ModelForm
 
-class CheckerForm(addChangedFieldForm):
+class CheckerForm(ModelForm):
 	def __init__(self, **args):
 		""" override default values for the model fields """
-		super(addChangedFieldForm, self).__init__(**args)
+		super(ModelForm, self).__init__(**args)
 		#self.fields["_flags"].initial = "-Wall"
 		self.fields["_output_flags"].initial = ""
 		#self.fields["_libs"].initial = ""
