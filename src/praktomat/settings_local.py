@@ -19,20 +19,25 @@ TIME_ZONE = 'Europe/Berlin'
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
 
-# Absolute path to the directory that holds media.
-# Example: "/home/media/media.lawrence.com/"
-# All files created at Runetime are stored here (Uploaded files, Sandbox)
-MEDIA_ROOT = "/Users/halluzinativ/Documents/Arbeit/PraktomatSupport/"
-
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash if there is a path component (optional in other cases).
+# URL that serves the static media files (CSS, JavaScript and images) of praktomat contained in 'media/'.
+# Make sure to use a trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = 'http://localhost/upload/'
+MEDIA_URL = 'http://localhost/media/'
 
-# URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
-# trailing slash.
+# URL prefix for the administration site media (CSS, JavaScript and images) contained in the django package. 
+# Make sure to use a trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/adminmedia/'
+ADMIN_MEDIA_PREFIX = '/media/admin/'
+
+# Absolute path to the directory that shall hold all uploaded files as well as files created at runtime.
+# Example: "/home/media/media.lawrence.com/"
+UPLOAD_ROOT = "/Users/halluzinativ/Documents/Arbeit/PraktomatSupport/"
+
+# URL that serves the uploaded files. 
+# You need to configure the rights to download these in your webserver!
+# Make sure to use a trailing slash if there is a path component (optional in other cases).
+# Examples: "http://upload.lawrence.com", "http://example.com/upload/"
+UPLOAD_URL = 'http://localhost/upload/'
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),

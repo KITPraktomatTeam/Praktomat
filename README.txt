@@ -18,14 +18,16 @@ This is the source distribution of Praktomat, a programming course manager.
 
 5. run "./bin/praktomat syncdb" to populate the database with the required tables
 	(This will only install new tables and wont update existing ones. You can however reset all Tables with 'reset_db'.)
+	
+	5.1 install initial data with "./bin/praktomat loaddata src/praktomat/initial_data.json"
+	
+	5.2 (optional) install some test data with "./bin/praktomat loaddata documentation/test_data.json" this will give you some users to play with
+	Logins: user, tutor, trainer, admin (username=password)
 
 6. it should now be possible to start the developmet server with "./praktomat runserver" or "./praktomat runserver_plus"
 
-7. (optional) install some test data with "./bin/praktomat loaddata documentation/test_data.json" this will give you some users to play with
-	Logins: user, tutor, trainer, admin (username=password)
+7. setup an administration account with "./bin/praktomat createsuperuser" if you haven't installed the test data which includes an "admin" account.
 
-8. setup an administration account with "./bin/praktomat createsuperuser" if you skipped step 6.
+8. set up the domain name in the admin panel of the webapp
 
-9. set up the domain name in the admin panel of the webapp
-
-10. If you want to deploy the project using mod_wsgi in apache you could use documentation/apache_praktomat_wsgi.conf as a starting point
+9. If you want to deploy the project using mod_wsgi in apache you could use documentation/apache_praktomat_wsgi.conf as a starting point

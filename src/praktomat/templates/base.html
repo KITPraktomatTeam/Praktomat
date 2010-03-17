@@ -2,10 +2,10 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<script type="text/javascript" src="/static/frameworks/jquery/jquery.js"></script>
-	<script type="text/javascript" src="/static/frameworks/jquery/jquery-ui.js"></script>
-	<link type="text/css" rel="stylesheet" href="/static/frameworks/jquery/smoothness/jquery-ui-1.7.2.custom.css" />
-	<link type="text/css" rel="stylesheet" href="/static/styles/style.css" />
+	<script type="text/javascript" src="{{MEDIA_URL}}frameworks/jquery/jquery.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}frameworks/jquery/jquery-ui.js"></script>
+	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}frameworks/jquery/smoothness/jquery-ui-1.7.2.custom.css" />
+	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}styles/style.css" />
 	{% block extrahead %}{% endblock %}	
 	<title>{{ site_name }} {% block title %}{% endblock %}</title>
 </head>

@@ -51,7 +51,7 @@ class Solution(models.Model):
 		
 		try:
 			# Setting default temp dir location and creating it
-			tempfile.tempdir = os.path.join(settings.MEDIA_ROOT, "SolutionSandbox")
+			tempfile.tempdir = os.path.join(settings.UPLOAD_ROOT, "SolutionSandbox")
 			new_tmpdir = tempfile.mktemp()
 
 			# to access working directory by scripts
@@ -162,7 +162,7 @@ class SolutionFile(models.Model):
 		return 'SolutionArchive/Task_' + unicode(solution.task.id) + '/User_' + solution.author.username + '/Solution_' + unicode(solution.id) + '/' + filename
 	
 	solution = models.ForeignKey(Solution)
-	file = models.FileField(upload_to = _get_upload_path) 
+	file = models.FileField(storage=settings.STORAGE, upload_to = _get_upload_path) 
 	# File mime content types allowed to upload
 	supported_types_re = re.compile(r'^(text/.*|application/octet-stream)$')
 	# Ignore hidden and OS-specific files in zipfiles

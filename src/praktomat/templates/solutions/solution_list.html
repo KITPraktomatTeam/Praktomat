@@ -1,7 +1,7 @@
 {% extends "base.html"%}
 {% load i18n %}
 {% block extrahead %}{{ block.super }}
-<script type="text/javascript" src="/static/frameworks/jquery/jquery.tools.min.js"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}/frameworks/jquery/jquery.tools.min.js"></script>
 <style>
 /* the overlayed element */ 
 .simple_overlay {  
@@ -69,8 +69,8 @@ $(function() {
 	<h2>{%trans "Upload solution" %}</h2> 
 	{% if submission_possible %}
 		<a>{%trans "Time left:" %} {{ task.submission_date|timeuntil }}</a><br/><br/>
-		<iframe name="frame" style="display:none;"></iframe>
-		<form enctype="multipart/form-data" method="post" action="" target="frame">
+		<iframe name="frame" style="display:none;"></iframe><!--target="frame"-->
+		<form enctype="multipart/form-data" method="post" action="" >
 			<table>
 				{{ formset.non_form_errors }}
 				{{ formset }}

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load highlight %}{% load i18n  %}
 {% block extrahead %}{{ block.super }}
-	<link type="text/css" rel="stylesheet" href="/static/styles/pygments_friendly.css" />
+	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}/styles/pygments_friendly.css" />
 	<script type="text/javascript">
 		  $(document).ready(function(){
 				$("h3").css('cursor', 'pointer').click(function () {

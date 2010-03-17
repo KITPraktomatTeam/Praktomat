@@ -85,5 +85,6 @@ class Task(models.Model):
 				deserialized_object.save()
 				
 class MediaFile(models.Model):
-    task = models.ForeignKey(Task)
-    media_file = models.FileField(upload_to='TaskMediaFiles/')
+	task = models.ForeignKey(Task)
+	from django.conf import settings
+	media_file = models.FileField(storage=settings.STORAGE, upload_to='TaskMediaFiles/')

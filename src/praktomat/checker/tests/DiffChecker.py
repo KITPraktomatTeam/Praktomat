@@ -12,11 +12,11 @@ from django.utils.translation import ugettext_lazy as _
 from praktomat.checker.models import Checker, CheckerResult
 
 class DiffChecker(Checker):
-	
+    
 	upload_dir = "AdminFiles/DiffChecker/%Y%m%d%H%M%S/"
-	shell_script = models.FileField(upload_to=upload_dir, help_text=_("The shell script whose output for the given input file is compared to the given output file."))
-	input_file = models.FileField(upload_to=upload_dir, blank=True, help_text=_("The file containing the input for the program."))
-	output_file = models.FileField(upload_to=upload_dir, blank=True, help_text=_("The file containing the output for the program."))
+	shell_script = models.FileField(storage=settings.STORAGE, upload_to=upload_dir, help_text=_("The shell script whose output for the given input file is compared to the given output file."))
+	input_file = models.FileField(storage=settings.STORAGE, upload_to=upload_dir, blank=True, help_text=_("The file containing the input for the program."))
+	output_file = models.FileField(storage=settings.STORAGE, upload_to=upload_dir, blank=True, help_text=_("The file containing the output for the program."))
 	
 	def title(self):
 		""" Returns the title for this checker category. """

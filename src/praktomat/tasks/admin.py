@@ -85,16 +85,16 @@ class TaskAdmin(admin.ModelAdmin):
 	
 	
 	class Media:
-		js = [	'static/frameworks/jquery/jquery.js', 
-				'static/frameworks/jquery//jquery-ui.js', 
-				'static/script/stacked_dynamic_inlines.js',
-				#'static/script/dynamic_inlines_with_sort.js',
+		js = [	'frameworks/jquery/jquery.js', 
+				'frameworks/jquery/jquery-ui.js', 
+				'script/stacked_dynamic_inlines.js',
+				#'script/dynamic_inlines_with_sort.js',
 				
-				'static/frameworks/tiny_mce/jquery.tinymce.js',
-				'static/script/taskadmin.js',
+				'frameworks/tiny_mce/jquery.tinymce.js',
+				'script/taskadmin.js',
 			]
 		
-		css = { 'all' : [ #'static/styles/dynamic_inlines_with_sort.css',
+		css = { 'all' : [ #'styles/dynamic_inlines_with_sort.css',
 						], }
 						
 		

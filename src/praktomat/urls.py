@@ -40,10 +40,10 @@ urlpatterns = patterns('',
 
 # only serve static files through django while in development - for safety and speediness
 if 'runserver' in sys.argv or 'runserver_plus' in sys.argv or 'runconcurrentserver' in sys.argv: 
-    static_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'static')
-    urlpatterns += patterns('',
-		(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': static_path}),
-        (r'^(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
-        (r'^favicon.ico$', 'django.views.static.serve', {'document_root': static_path, 'path':"favicon.ico"}),
+	media_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'media')
+	urlpatterns += patterns('',
+		(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': media_path}),
+        (r'^upload/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.UPLOAD_ROOT}),
+        (r'^favicon.ico$', 'django.views.static.serve', {'document_root': media_path, 'path':"favicon.ico"}),
     )
-    
+

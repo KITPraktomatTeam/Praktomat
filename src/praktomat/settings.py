@@ -76,6 +76,9 @@ LOGIN_REDIRECT_URL = '/tasks/'
 ACCOUNT_ACTIVATION_DAYS = 5
 
 try: 
-	from settings_local import * 
+    from settings_local import * 
 except ImportError: 
-	pass 
+    pass 
+
+from django.core.files.storage import FileSystemStorage
+STORAGE = FileSystemStorage(location=UPLOAD_ROOT, base_url=UPLOAD_URL)
