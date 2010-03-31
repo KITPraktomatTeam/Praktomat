@@ -1,10 +1,9 @@
 
-
 This is the source distribution of Praktomat, a programming course manager.
 
 
-	Installation with buildout
-==================================
+	Installation 
+===================
 
 1. download praktomat from svn (svn+ssh://user@ssh.info.uni-karlsruhe.de/ben/local/SVN/giffhorn/Django-Praktomat)  
 
@@ -16,18 +15,27 @@ This is the source distribution of Praktomat, a programming course manager.
 
 	4.1 make sure your database accepts 'utf-8' encoding
 
-5. run "./bin/praktomat syncdb" to populate the database with the required tables
-	(This will only install new tables and wont update existing ones. You can however reset all Tables with 'reset_db'.)
+5. run "./bin/praktomat syncdb" to populate the database with the required tables of 3rd party applications
 	
-	5.1 install initial data with "./bin/praktomat loaddata src/praktomat/initial_data.json"
+6. run "./bin/praktomat migrate" to install the praktomat database tables
 	
-	5.2 (optional) install some test data with "./bin/praktomat loaddata documentation/test_data.json" this will give you some users to play with
+	6.2 (optional) install some test data with "./bin/praktomat loaddata documentation/test_data.json" this will give you some users to play with
 	Logins: user, tutor, trainer, admin (username=password)
 
-6. it should now be possible to start the developmet server with "./praktomat runserver" or "./praktomat runserver_plus"
+7. it should now be possible to start the developmet server with "./praktomat runserver" or "./praktomat runserver_plus"
 
-7. setup an administration account with "./bin/praktomat createsuperuser" if you haven't installed the test data which includes an "admin" account.
+8. setup an administration account with "./bin/praktomat createsuperuser" if you haven't installed the test data which includes an "admin" account.
 
-8. set up the domain name in the admin panel of the webapp
+9. set up the domain name in the admin panel of the webapp
 
-9. If you want to deploy the project using mod_wsgi in apache you could use documentation/apache_praktomat_wsgi.conf as a starting point
+10. If you want to deploy the project using mod_wsgi in apache you could use documentation/apache_praktomat_wsgi.conf as a starting point
+
+
+	Update 
+==============
+
+1. update the source with svn
+
+2. update python dependencies with "./bin/buildout"
+
+3. backup your database(seriously!) and run "./bin/praktomat syncdb" to install any new 3rd party tables as well as "./bin/praktomat migrate" to update praktomats tables

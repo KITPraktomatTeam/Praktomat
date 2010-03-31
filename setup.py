@@ -28,6 +28,7 @@ setup(
                         'Pygments >= 1.1.1',
                         'Werkzeug >= 0.5.1',
                         'django-extensions >= 0.4.1',
+                        'South', #intelligent schema and data migrations
                         ],
 
     classifiers = [

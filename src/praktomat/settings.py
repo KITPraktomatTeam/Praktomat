@@ -57,6 +57,9 @@ INSTALLED_APPS = (
 	# not needed for production
 	'django_extensions',
 	
+    # intelligent schema and data migrations
+    'south', 
+    
 	# the concurrent test server allows to make an ajax request to the server while the server handles an other request
 	# example: getting the upload status while the server runs all checker
 	# http://github.com/jaylett/django_concurrent_test_server
