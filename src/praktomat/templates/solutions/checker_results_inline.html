@@ -1,0 +1,21 @@
+{% comment %}
+	include the folowing depenencies once in the including pages head:
+	<script type="text/javascript" src="{{MEDIA_URL}}/script/solution_inlines.js"></script>
+	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}frameworks/jquery/smoothness/jquery-ui.css" />
+{% endcomment %}
+
+
+{% for result in results %} 
+	<div class="result">
+		<h3 class="{{result.log|yesno:'clickable,'}} result">
+			<span class="ui-icon {{result.log|yesno:'ui-icon-triangle-1-s,icon-none'}}"></span> 
+			{{result.title}} <span class="{{result.public|yesno:',ui-icon ui-icon-locked icon-orange'}}"></span>: 
+			<span class="{% if result.passed %} passed {% else %}{% if result.required %} error {% else %} warning {% endif %}{% endif %}">
+				{{result.passed|yesno:_("passed, failed")}}
+			</span>
+		</h3>
+		<div class="log">
+			{{result.log|safe}}
+		</div>
+	</div>
+{%endfor%}

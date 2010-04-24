@@ -19,20 +19,22 @@ class SolutionFileForm(ModelForm):
 		data = self.cleaned_data['file']
 		if data:
 			if not (SolutionFile.supported_types_re.match(data.content_type) or ziptype_re.match(data.content_type)):
-				raise forms.ValidationError(_('The file of Type %s is not supported.' %data.content_type))
+				raise forms.ValidationError(_('The file of type %s is not supported.' %data.content_type))
 			if ziptype_re.match(data.content_type):
 				try:
 					zip = zipfile.ZipFile(data)
 					if zip.testzip():
-						raise forms.ValidationError(_('The zipfile seams to be corrupt.'))
+						raise forms.ValidationError(_('The zip file seams to be corrupt.'))
 					for fileinfo in zip.infolist():
 						(type, encoding) = mimetypes.guess_type(fileinfo.filename)
 						ignorred = SolutionFile.ignorred_file_names_re.match(fileinfo.filename)
 						supported = type and SolutionFile.supported_types_re.match(type)
 						if not ignorred and not supported:
-							raise forms.ValidationError(_('The file %(file)s of Type %(type)s in this zipfile is not supported.' %{'file':fileinfo.filename, 'type':type}))
+							raise forms.ValidationError(_("The file '%(file)s' of guessed mime type '%(type)s' in this zip file is not supported." %{'file':fileinfo.filename, 'type':type}))
+				except forms.ValidationError:
+					raise
 				except:
-					raise forms.ValidationError(_('The zipfile seams to be corrupt.'))
+					raise forms.ValidationError(_('Uhoh - something unexpected happened.'))
 			return data
 
 class MyBaseInlineFormSet(BaseInlineFormSet):
@@ -42,3 +44,4 @@ class MyBaseInlineFormSet(BaseInlineFormSet):
 			raise forms.ValidationError(_('You must at least choose one file.'))
 
 SolutionFormSet = inlineformset_factory(Solution, SolutionFile, form=SolutionFileForm, formset=MyBaseInlineFormSet, can_delete=False, extra=3)
+ModelSolutionFormSet = inlineformset_factory(Solution, SolutionFile, form=SolutionFileForm, formset=MyBaseInlineFormSet, can_delete=False, extra=1)

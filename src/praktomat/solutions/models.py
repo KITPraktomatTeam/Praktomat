@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import zipfile
+import tempfile
+
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
-from praktomat.tasks.models import Task
 from django.utils.translation import ugettext_lazy as _
 
 import os, re, tempfile, shutil
@@ -13,7 +15,7 @@ import os, re, tempfile, shutil
 class Solution(models.Model):
 	"""docstring for Solution"""
 	
-	task = models.ForeignKey(Task)
+	task = models.ForeignKey('tasks.task')
 	author = models.ForeignKey(User)
 	creation_date = models.DateTimeField(auto_now_add=True)
 	
@@ -162,13 +164,25 @@ class SolutionFile(models.Model):
 		return 'SolutionArchive/Task_' + unicode(solution.task.id) + '/User_' + solution.author.username + '/Solution_' + unicode(solution.id) + '/' + filename
 	
 	solution = models.ForeignKey(Solution)
-	file = models.FileField(storage=settings.STORAGE, upload_to = _get_upload_path) 
+	file = models.FileField(storage=settings.STORAGE, upload_to = _get_upload_path,  help_text = _('Source code file as part of a solution or Zip file containing multiple solution files.')) 
 	# File mime content types allowed to upload
 	supported_types_re = re.compile(r'^(text/.*|application/octet-stream)$')
 	# Ignore hidden and OS-specific files in zipfiles
 	# .filename or __MACOSX/bla.txt or /rootdir or ..dirup
 	ignorred_file_names_re = re.compile('^(\..*|__MACOSX/.*|/.*|\.\..*)$')
 	
+	def save(self, force_insert=False, force_update=False, using=None):
+		""" override save method to automatically expand zip files"""
+		if self.file.name[-3:].upper() == 'ZIP':
+			zip = zipfile.ZipFile(solution_file.file, 'r')
+			for zip_file_name in zip.namelist():
+				if not ignorred_file_names_re.match(zip_file_name):
+					new_solution_file = SolutionFile(solution=self.solution)
+					temp_file = tempfile.NamedTemporaryFile()									# autodeleted
+					temp_file.write(zip.open(zip_file_name).read()) 
+					new_solution_file.file.save(zip_file_name, File(temp_file), save=True)		# need to check for filenames begining with / or ..?
+		else:
+			models.Model.save(self, force_insert, force_update, using)
 	
 	def __unicode__(self):
 		return self.file.name.rpartition('/')[2]

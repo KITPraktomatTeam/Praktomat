@@ -56,7 +56,7 @@ def edit_attestation(request, attestation_id):
 	#	return render_to_response('error.html', context_instance=RequestContext(request))
 	attest = get_object_or_404(Attestation, pk=attestation_id)
 	solution = attest.solution
-	
+	model_solution = solution.task.model_solution
 	if attest.final or attest.author != request.user:
 		# If if this attestation is allready final or not by this user redirect to view_attestation
 		return HttpResponseRedirect(reverse('view_attestation', args=[attestation_id]))
@@ -74,7 +74,7 @@ def edit_attestation(request, attestation_id):
 		attestForm = AttestationForm(instance=attest, prefix='attest')
 		attestFileFormSet = AnnotatedFileFormSet(instance=attest, prefix='attestfiles')
 		ratingResultFormSet = RatingResultFormSet(instance=attest, prefix='ratingresult')
-	return render_to_response("attestation/attestation_edit.html", {"attestForm": attestForm, "attestFileFormSet": attestFileFormSet, "ratingResultFormSet":ratingResultFormSet, "solution": solution},	context_instance=RequestContext(request))
+	return render_to_response("attestation/attestation_edit.html", {"attestForm": attestForm, "attestFileFormSet": attestFileFormSet, "ratingResultFormSet":ratingResultFormSet, "solution": solution, "model_solution":model_solution},	context_instance=RequestContext(request))
 	
 def view_attestation(request, attestation_id):
 	

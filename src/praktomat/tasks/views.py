@@ -1,7 +1,8 @@
-from praktomat.tasks.models import Task
+# -*- coding: utf-8 -*-
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect 
 from django.views.generic.list_detail import object_detail
 from django.template.context import RequestContext
@@ -9,6 +10,9 @@ from datetime import datetime
 from django import forms
 from django.core import urlresolvers
 
+from praktomat.tasks.models import Task
+from praktomat.solutions.forms import ModelSolutionFormSet
+from praktomat.solutions.models import Solution, SolutionFile
 
 @login_required
 def taskList(Request):
@@ -45,3 +49,28 @@ def import_tasks(request):
 	else:
 		form = ImportForm()
 	return render_to_response('admin/tasks/task/import.html', {'form': form, 'title':"Import Task"  }, RequestContext(request))
+
+@staff_member_required
+def model_solution(request, task_id):
+	""" View in the admin """
+	task = get_object_or_404(Task,pk=task_id)
+	
+	if request.method == "POST":	
+		solution = Solution(task = task, author=request.user)
+		formset = ModelSolutionFormSet(request.POST, request.FILES, instance=solution)
+		if formset.is_valid():
+			try:
+				solution.save(); 
+				task.model_solution.delete()
+				task.model_solution = solution;
+				task.save()
+				formset.save()		
+				solution.check(request.session)
+			except:
+				solution.delete()	# delete files 
+				raise				# dont commit db changes
+	else:
+		formset = ModelSolutionFormSet()
+	context = {"formset": formset, "task": task, 'title': "Model Solution", 'is_popup': True, }
+	return render_to_response("admin/tasks/task/model_solution.html", context, context_instance=RequestContext(request))
+

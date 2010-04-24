@@ -4,6 +4,7 @@ from django.shortcuts import render_to_response
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 from praktomat.tasks.models import Task, MediaFile
+from praktomat.solutions.models import Solution, SolutionFile
 from praktomat.attestation.admin import RatingAdminInline
 
 from praktomat.checker.tests.AnonymityChecker import AnonymityCheckerInline
@@ -22,6 +23,9 @@ from praktomat.checker.compiler.JavaBuilder import JavaBuilderInline
 from praktomat.checker.compiler.JavaGCCBuilder import JavaGCCBuilderInline
 from praktomat.checker.compiler.FortranBuilder import FortranBuilderInline
 
+# Importing like that would be cleaner, but would result in bad ordering.
+#from praktomat.checker.admin import CheckerInline
+#CheckerInline.__subclasses__
 CheckerInlines = [	AnonymityCheckerInline,
 					LineCounterInline,
 					CreateFileCheckerInline,
@@ -56,7 +60,7 @@ class TaskAdmin(admin.ModelAdmin):
 	search_fields = ['title']
 	date_hierarchy = 'publication_date'
 	save_on_top = True
-	inlines = [MediaInline] + CheckerInlines + [RatingAdminInline]
+	inlines = [MediaInline] + CheckerInlines + [ RatingAdminInline]
 	actions = ['export_tasks', 'run_all_checkers']
 	
 	def export_tasks(self, request, queryset):
@@ -74,7 +78,6 @@ class TaskAdmin(admin.ModelAdmin):
 				solution.check(True)
 				solution_count += 1
 		self.message_user(request, "%s solutions were successfully checked." % solution_count)
-
 
 	def get_urls(self):
 		""" Add URL to task import """

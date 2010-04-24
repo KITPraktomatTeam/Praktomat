@@ -1,60 +1,9 @@
 {% extends "base.html" %}
-{% load highlight %} {% load i18n  %}
+{% load i18n  %}
 {% block extrahead %}{{ block.super }}
+	<script type="text/javascript" src="{{MEDIA_URL}}/script/solution_inlines.js"></script>
 	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}/styles/pygments_friendly.css" />
-	<script type="text/javascript" src="{{MEDIA_URL}}/frameworks/jquery/jquery.tools.min.js"></script>
-	{% include "attestation/checker_results_js.html" %}
-	<script type="text/javascript">	
-		// perform JavaScript after the document is scriptable. 
-		$(function() { 
-		    // setup ul.tabs to work as tabs for each div directly under div.panes 
-		    $(".file>h3").remove();
-			$("ul.tabs").css('display', 'block').tabs(".file > div.content");
-		}); 
-	</script>
-	<style>
-				
-		/* root element for tabs  */
-		ul.tabs {  
-			margin:0 !important; 
-			padding:0;
-			height:30px;	 	
-		}
-		
-		/* single tab */
-		ul.tabs li {  
-			float:left;	 
-			padding:0; 
-			margin:0;  
-			list-style-type:none;	
-		}
-		
-		/* link inside the tab. uses a background image */
-		ul.tabs a { 
-			float:left;
-			font-size:13px;
-			display:block;
-			padding:5px 30px;	
-			text-decoration:none;
-			height:18px;
-			color:#777;
-			margin-right:2px;
-			position:relative;
-			top:1px;	
-		}
-		
-		ul.tabs a:hover {
-			color:#333;
-		}
-			
-		/* selected tab */
-		ul.tabs a.current {	
-			color:#000;	
-			cursor:default;
-		}
-	</style>	
-{% endblock %}
-{% block content %}
+{% endblock %}{% block content %}
 
 <span class="icon ui-icon-carat-1-w"></span><a href={% url solution_list task_id=solution.task.id%}>{% trans "Back to solution list" %}</a>
 
@@ -83,24 +32,13 @@
 {% endif %}
 
 <h2>{% trans "Results" %}</h2>
-
 {% with solution.publicCheckerResults as results %}
-	{% include "attestation/checker_results.html" %}
+	{% include "solutions/checker_results_inline.html" %}
 {% endwith %}
 
 <h2>{% trans "Files" %}</h2>
-
-<ul class="tabs" style="display: none;">
-	{% for solutionfile in solution.solutionfile_set.all%}
-    	<li><a>{{solutionfile}}</a></li> 
-    {%endfor%} 
-</ul> 
-
-{% for solutionfile in solution.solutionfile_set.all%}
-	<div class="file">
-		<h3>{{solutionfile}}</h3>
-		<div class="content">{{solutionfile.content|highlight_table:solutionfile.file.name}}</div>
-	</div>
-{%endfor%}
+{% with solution.solutionfile_set.all as solutionfiles %}
+	{% include "solutions/solution_files_inline.html" %}
+{% endwith %}
 
 {% endblock %}

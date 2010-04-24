@@ -1,11 +1,12 @@
-/* @override 
-	http://localhost:8000/styles/style.css
-	http://localhost:8000/static/styles/style.css
-*/
-
 /* @group Page Structure */
 
-#container { position:relative; width:100%; min-width:760px; padding:0; }
+#container {
+	position: relative;
+	width: 100%;
+	min-width: 760px;
+	padding: 0;
+}
+
 #content {
 	width: 800px;
 	margin-right: auto;
@@ -26,87 +27,95 @@ div.right {
 	width: 48%;
 	padding-left: 2%;
 }
-#header { width:100%; }
-#content-main { float:left; width:100%; }
-#content-related { float:right; width:18em; position:relative; margin-right:-19em; }
-#footer { clear:both; padding:10px; }
 
-body {
-	background:#FFFFFF none repeat scroll 0 0;
-	color:#333333;
-	font-family:"Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
-	font-size:12px;
-	margin:0;
-	padding:0;
+#header {
+	width: 100%;
 }
 
+#content-main {
+	float: left;
+	width: 100%;
+}
 
+#content-related {
+	float: right;
+	width: 18em;
+	position: relative;
+	margin-right: -19em;
+}
+
+#footer {
+	clear: both;
+	padding: 10px;
+}
+
+body {
+	background: #FFFFFF none repeat scroll 0 0;
+	color: #333333;
+	font-family: "Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
+	font-size: 12px;
+	margin: 0;
+	padding: 0;
+}
 
 /* @end */
 
 /* @group Header */
 
-#header { background:#123069; color:white; overflow:hidden; }
-#header a:link, #header a:visited { color:white; }
-#header a:hover { text-decoration:underline; }
-#title h1 { padding:0 10px; font-size:18px; margin:8px 0; font-weight:normal; color:white; }
-#title h2 { padding:0 10px; font-size:14px; margin:-8px 0 8px 0; font-weight:normal; color:#ffc; }
-#user-tools { position:absolute; top:0; right:0; padding:1.2em 10px; font-size:11px; text-align:right; }
-
-
-
-/* @end */
-
-/* @group Solution */
-
-.error {
-	color: #f00;
-}
-.warning {
-	color: #ff7600;
-}
-.passed {
-	color: #008500;
+#header {
+	background: #123069;
+	color: white;
+	overflow: hidden;
 }
 
-div.result div.log {
-	left: 20px;
-	position: relative;
-	overflow:hidden;
+#header a:link, #header a:visited {
+	color: white;
 }
 
-div.file div.content {
-	left: 20px;
-	position: relative;
-	overflow:hidden;
+#header a:hover {
+	text-decoration: underline;
 }
 
-div.result {
-	left: 20px;
-	position: relative;
-	overflow:hidden;
+#title h1 {
+	padding: 0 10px;
+	font-size: 18px;
+	margin: 8px 0;
+	font-weight: normal;
+	color: white;
 }
 
-div.file {
-	left: 20px;
-	position: relative;
-	overflow:hidden;
+#title h2 {
+	padding: 0 10px;
+	font-size: 14px;
+	margin: -8px 0 8px 0;
+	font-weight: normal;
+	color: #ffc;
+}
+
+#user-tools {
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding: 1.2em 10px;
+	font-size: 11px;
+	text-align: right;
 }
 
 /* @end */
-
 
 /* @group Attestation */
 
 .activeFile {
 	font-weight: bold;
 }
-   
+
 .ui-tabs .ui-tabs-hide, .hidden {
-	/* override display:none of hidden tab to instantiate bespin 
+	
+
+/* override display:none of hidden tab to instantiate bespin 
 	 see http://jqueryui.com/demos/tabs/ */
     position: absolute;
-    left: -10000px;
+	left: -10000px;
 }
 
 h3.result {
@@ -114,59 +123,36 @@ h3.result {
 }
 
 div.result span.icon {
-	float:left; 
-	margin-right: .3em; 
-	width:16px; 
-	height:16px;
+	float: left;
+	margin-right: .3em;
+	width: 16px;
+	height: 16px;
 }
 
 .file2 {
-	margin:5px; 
-	cursor:pointer;
+	margin: 5px;
+	cursor: pointer;
 }
 
 .bespin {
 	margin: 0;
 	margin-top: 10px;
-	padding: 0; 
-	border: 0; 
-	height: 500px; 
+	padding: 0;
+	border: 0;
+	height: 500px;
 	border: 10px 
-	solid #ddd; 
-	-moz-border-radius: 10px; 
+	solid #ddd;
+	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
 }
 
+div.attestation {
+	position: relative;
+	left: 20px;
+}
 
 /* @end */
 
-.icon { 
-	height: 16px;
-	width: 16px;
-	
-	position: relative;
-	margin-right: .3em;
-	
-	display: inline-block;
-	overflow: hidden;
-	background-image: url(../images/ui-icons_222222_256x240.png);
-	background-repeat: no-repeat;
-	text-indent: -99999px;
-	vertical-align: sub;
-}
-
-.icon-green {
-	background-image: url(../images/ui-icons_41af1d_256x240.png);
-}
-.icon-orange {
-	background-image: url(../images/ui-icons_e09524_256x240.png); 
-}
-.icon-red {
-	background-image: url(../images/ui-icons_c31818_256x240.png);
-}
-.icon-none {
-	background-image: none;
-}
 div.changed {
 	background-color: #c4ff6f;
 }
@@ -190,7 +176,6 @@ label {
 	margin-top: 2px;
 	list-style-type: none;
 	color: red;
-	
 }
 
 th {
@@ -198,15 +183,127 @@ th {
 	vertical-align: top;
 }
 
-/* @group Attestation */
+/* @group Inlines */
+
+/* @group solution files */
+
+div.file div.content {
+	overflow: hidden;
+}
+
+/* root element for tabs  */
+
+ul.tabs {
+	margin: 0 !important;
+	padding: 0;
+	height: 30px;
+}
+
+/* single tab */
+
+ul.tabs li {
+	float: left;
+	padding: 0;
+	margin: 0;
+	list-style-type: none;
+}
+
+/* link inside the tab. uses a background image */
+
+ul.tabs a {
+	float: left;
+	font-size: 13px;
+	display: block;
+	padding: 5px 30px;
+	text-decoration: none;
+	height: 18px;
+	color: #777;
+	margin-right: 2px;
+	position: relative;
+	top: 1px;
+}
+
+ul.tabs a:hover {
+	color: #333;
+}
+
+/* selected tab */
+
+ul.tabs a.current {
+	color: #000;
+	cursor: default;
+}
+
+/* @end */
+
+/* @group checker results */
+
+.error {
+	color: #f00;
+}
+
+.warning {
+	color: #ff7600;
+}
+
+.passed {
+	color: #008500;
+}
+
+div.result {
+	left: 0px;
+	position: relative;
+	overflow: hidden;
+}
+
+div.result div.log {
+	left: 40px;
+	position: relative;
+	overflow: hidden;
+}
+
+/* @end */
+
+/* @end */
+
+/* @group Icons */
+
+.icon {
+	height: 16px;
+	width: 16px;
+	position: relative;
+	margin-right: .3em;
+	display: inline-block;
+	overflow: hidden;
+	background-image: url(../images/ui-icons_222222_256x240.png);
+	background-repeat: no-repeat;
+	text-indent: -99999px;
+	vertical-align: sub;
+}
+
+.icon-green {
+	background-image: url(../images/ui-icons_41af1d_256x240.png);
+}
+
+.icon-orange {
+	background-image: url(../images/ui-icons_e09524_256x240.png);
+}
+
+.icon-red {
+	background-image: url(../images/ui-icons_c31818_256x240.png);
+}
+
+.icon-none {
+	background-image: none !important;
+}
+
+.ui-icon {
+	position: relative;
+	margin-right: .3em;
+	display: inline-block !important;
+	vertical-align: sub;
+}
 
 
 
 /* @end */
-
-div.attestation {
-	position: relative;
-	left: 20px;
-}
-
-

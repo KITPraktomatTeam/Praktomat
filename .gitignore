@@ -11,3 +11,5 @@ parts
 src/*.egg-info
 build
 .tmp_*
+.project
+.pydevproject

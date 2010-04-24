@@ -5,11 +5,13 @@ from datetime import date, datetime
 import tempfile
 import zipfile
 
+
 class Task(models.Model):
 	title = models.CharField(max_length=100)
 	description = models.TextField()
 	publication_date = models.DateTimeField()
 	submission_date = models.DateTimeField()
+	model_solution = models.OneToOneField('solutions.Solution', blank=True, null=True, related_name='yetAnotherTaskLink')
 	
 	def __unicode__(self):
 		return self.title

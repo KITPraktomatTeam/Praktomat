@@ -1,0 +1,7 @@
+{{ formset.non_form_errors }}
+{{ formset.management_form }}
+<fieldset class="module aligned">
+    {% for form in formset.forms %}	
+		{% include "forms/form_as_div.html" %}
+	{% endfor %}
+</fieldset>

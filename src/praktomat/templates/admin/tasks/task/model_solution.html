@@ -1,0 +1,33 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+{% block extrahead %}{{ block.super }}
+	<script type="text/javascript" src="{{MEDIA_URL}}frameworks/jquery/jquery.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}frameworks/jquery/jquery-ui.js"></script>
+	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}frameworks/jquery/smoothness/jquery-ui.css" />
+	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}styles/style.css" />
+		<script type="text/javascript" src="{{MEDIA_URL}}/script/solution_inlines.js"></script>
+	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}/styles/pygments_friendly.css" />
+{% endblock %}
+{% block content %}
+<form enctype="multipart/form-data" method="post" action="">{% csrf_token %}
+    <div>
+    	{% include "forms/formset_as_div.html" %}
+        <div class="submit-row" style="overflow: auto;">
+            <input type="submit" value="Save" class="default" name="_save">
+        </div>
+    </div>
+</form>
+
+<div class='module aligned'>
+	<h2>Checker results</h2>
+	{% with task.model_solution.checkerresult_set.all as results %}
+		{% include "solutions/checker_results_inline.html" %}
+	{% endwith %}
+</div>
+<div class='module aligned'>
+	<h2>Files</h2>
+	{% with task.model_solution.solutionfile_set.all as solutionfiles %}
+		{% include "solutions/solution_files_inline.html" %}
+	{% endwith %}
+</div>
+{% endblock %}
