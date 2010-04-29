@@ -60,6 +60,9 @@ INSTALLED_APPS = (
     # intelligent schema and data migrations
     'south', 
     
+    # contains a widget to render a form field as a TinyMCE editor
+    'tinymce',
+    
 	# the concurrent test server allows to make an ajax request to the server while the server handles an other request
 	# example: getting the upload status while the server runs all checker
 	# http://github.com/jaylett/django_concurrent_test_server
@@ -67,6 +70,7 @@ INSTALLED_APPS = (
 	# ./manage.py runconcurrentserver
 	#'django_concurrent_test_server',
 	
+	'praktomat.pagechunks',
 	'praktomat.accounts',
     'praktomat.tasks',
 	'praktomat.solutions',
@@ -83,6 +87,25 @@ try:
     from settings_local import * 
 except ImportError: 
     pass 
+   
+# TinyMCE
+TINYMCE_JS_URL = MEDIA_URL+'frameworks/tiny_mce/tiny_mce_src.js'
+TINYMCE_DEFAULT_CONFIG = {
+    'plugins': 'safari,pagebreak,table,advhr,advimage,advlink,emotions,iespell,inlinepopups,media,searchreplace,print,contextmenu,paste,fullscreen,noneditable,visualchars,nonbreaking,syntaxhl',
+    
+    'theme': "advanced",
+    'theme_advanced_buttons1' : "formatselect,|,bold,italic,underline,strikethrough,|,forecolor,|,bullist,numlist,|,sub,sup,|,outdent,indent,blockquote,syntaxhl,|,visualchars,nonbreaking,|,link,unlink,anchor,image,cleanup,help,code,|,print,|,fullscreen",
+	'theme_advanced_buttons2' : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,undo,redo,|,tablecontrols,|,hr,removeformat,visualaid,|,charmap,emotions,iespell,media,advhr",				   
+	'theme_advanced_toolbar_location' : "top",
+	'theme_advanced_toolbar_align' : "left",
+	'theme_advanced_statusbar_location' : "bottom",
+	'theme_advanced_resizing' : True,
+	'extended_valid_elements' : "textarea[cols|rows|disabled|name|readonly|class]" ,
+	
+	'content_css' : MEDIA_URL+'/styles/style.css',
+}
+TINYMCE_SPELLCHECKER = False
+TINYMCE_COMPRESSOR = False
 
 from django.core.files.storage import FileSystemStorage
 STORAGE = FileSystemStorage(location=UPLOAD_ROOT, base_url=UPLOAD_URL)

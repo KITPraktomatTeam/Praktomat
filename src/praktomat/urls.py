@@ -20,6 +20,9 @@ urlpatterns = patterns('',
 	# Login and Registration
 	(r'^accounts/', include('praktomat.accounts.urls')),
 	
+	# tinyMCE 
+	#(r'^tinymce/', include('tinymce.urls')),
+	
 	#Tasks
 	url(r'^tasks/$', 'praktomat.tasks.views.taskList', name = 'task_list'),
 	url(r'^tasks/(?P<task_id>\d+)/$', 'praktomat.tasks.views.taskDetail', name='taskDetail'),

@@ -11,7 +11,7 @@ setup(
     url='http://pp.info.uni-karlsruhe.de/project.php?id=34&lang=en',
     license = 'GPL',
     description='Quality control for programming assignments',
-    long_description = read('README.txt'),
+    long_description = read('README.md'),
 
     author='IPD Snelting, KIT',
     author_email='praktomat@googlemail.com',
@@ -28,7 +28,8 @@ setup(
                         'Pygments >= 1.1.1',
                         'Werkzeug >= 0.5.1',
                         'django-extensions >= 0.4.1',
-                        'South', #intelligent schema and data migrations
+                        'South', # intelligent schema and data migrations
+                        'django-tinymce', # widget to render a form field as a TinyMCE editor 
                         ],
 
     classifiers = [
