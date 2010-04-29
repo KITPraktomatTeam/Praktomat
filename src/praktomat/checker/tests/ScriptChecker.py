@@ -31,7 +31,7 @@ class ScriptChecker(Checker):
 
 		# Setup
 		test_dir	 = env.tmpdir()
-		from praktomat.checker.tests.Preprozessor import copy_processed_file
+		from praktomat.checker.tests.Preprocessor import copy_processed_file
 		copy_processed_file(self.shell_script.path, test_dir, env)
 		
 		# Run the tests -- execute dumped shell script 'script.sh'

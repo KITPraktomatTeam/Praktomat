@@ -24,11 +24,8 @@ class DiffChecker(Checker):
 	
 	def description(self):
 		""" Returns a description for this Checker. """
-		return u"""Diese Prüfung wird bestanden, wenn erwartete
-		und tatsächliche Ausgabe übereinstimmen."""
+		return u"""Diese Prüfung wird bestanden, wenn erwartete und tatsächliche Ausgabe übereinstimmen."""
 	
-
-		
 	def run(self, env):
 		""" Runs tests in a special environment. Here's the actual work. 
 		This runs the check in the environment ENV, returning a CheckerResult. """
@@ -37,7 +34,7 @@ class DiffChecker(Checker):
 		test_dir	 = env.tmpdir()
 		if self.input_file: shutil.copy (self.input_file.path, test_dir)
 		if self.output_file: shutil.copy (self.output_file.path, test_dir)
-		from praktomat.checker.tests.Preprozessor import copy_processed_file
+		from praktomat.checker.tests.Preprocessor import copy_processed_file
 		copy_processed_file(self.shell_script.path, test_dir, env)
 		args = ["sh",  os.path.basename(self.shell_script.name)]
 		environ = os.environ
