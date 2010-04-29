@@ -62,13 +62,6 @@ INSTALLED_APPS = (
     
     # contains a widget to render a form field as a TinyMCE editor
     'tinymce',
-    
-	# the concurrent test server allows to make an ajax request to the server while the server handles an other request
-	# example: getting the upload status while the server runs all checker
-	# http://github.com/jaylett/django_concurrent_test_server
-	# no need to install the app, its allready in the praktomat folder
-	# ./manage.py runconcurrentserver
-	#'django_concurrent_test_server',
 	
 	'praktomat.pagechunks',
 	'praktomat.accounts',
