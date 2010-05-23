@@ -42,7 +42,7 @@ def import_tasks(request):
 				request.user.message_set.create(message="The import was successfull.")
 				return HttpResponseRedirect(urlresolvers.reverse('admin:tasks_task_changelist'))
 			except:
-				#raise
+				raise
 				from django.forms.util import ErrorList
 				msg = "An Error occured. The import file was propably malformed."
 				form._errors["file"] = ErrorList([msg]) 			
@@ -61,7 +61,8 @@ def model_solution(request, task_id):
 		if formset.is_valid():
 			try:
 				solution.save(); 
-				task.model_solution.delete()
+				if task.model_solution:
+					task.model_solution.delete()
 				task.model_solution = solution;
 				task.save()
 				formset.save()		

@@ -1,4 +1,17 @@
+/* @override http://localhost/media/styles/style.css */
+
+/* @group Global */
+
 /* @group Page Structure */
+
+body {
+	background: #FFFFFF none repeat scroll 0 0;
+	color: #333333;
+	font-family: "Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
+	font-size: 12px;
+	margin: 0;
+	padding: 0;
+}
 
 #container {
 	position: relative;
@@ -16,46 +29,9 @@
 	padding-bottom: 20px;
 }
 
-div.left {
-	float: left;
-	width: 48%;
-	padding-right: 2%;
-}
-
-div.right {
-	float: right;
-	width: 48%;
-	padding-left: 2%;
-}
-
-#header {
-	width: 100%;
-}
-
-#content-main {
-	float: left;
-	width: 100%;
-}
-
-#content-related {
-	float: right;
-	width: 18em;
-	position: relative;
-	margin-right: -19em;
-}
-
 #footer {
 	clear: both;
 	padding: 10px;
-}
-
-body {
-	background: #FFFFFF none repeat scroll 0 0;
-	color: #333333;
-	font-family: "Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
-	font-size: 12px;
-	margin: 0;
-	padding: 0;
 }
 
 /* @end */
@@ -66,6 +42,7 @@ body {
 	background: #123069;
 	color: white;
 	overflow: hidden;
+	width: 100%;
 }
 
 #header a:link, #header a:visited {
@@ -103,7 +80,111 @@ body {
 
 /* @end */
 
+/* @group Forms */
+
+th {
+	text-align: right;
+	vertical-align: top;
+}
+
+label {
+	bottom: auto;
+	position: relative;
+	top: 3px;
+	color: #656565;
+	font-weight: bold;
+	font-size: 10pt;
+	font-family: sans-serif;
+	vertical-align: top;
+}
+
+.errorlist {
+	padding: 0px;
+	margin-left: 0px;
+	margin-bottom: 2px;
+	margin-right: 0px;
+	margin-top: 2px;
+	list-style-type: none;
+	color: red;
+}
+
+
+
+/* @end */
+
+/* @group Icons */
+
+.icon {
+	height: 16px;
+	width: 16px;
+	position: relative;
+	margin-right: .3em;
+	display: inline-block;
+	overflow: hidden;
+	background-image: url(../images/ui-icons_222222_256x240.png);
+	background-repeat: no-repeat;
+	text-indent: -99999px;
+	vertical-align: sub;
+}
+
+.icon-green {
+	background-image: url(../images/ui-icons_41af1d_256x240.png);
+}
+
+.icon-orange {
+	background-image: url(../images/ui-icons_e09524_256x240.png);
+}
+
+.icon-red {
+	background-image: url(../images/ui-icons_c31818_256x240.png);
+}
+
+.icon-none {
+	background-image: none !important;
+}
+
+.ui-icon {
+	position: relative;
+	margin-right: .3em;
+	display: inline-block !important;
+	vertical-align: sub;
+}
+
+
+
+/* @end */
+
+
+
+/* @end */
+
+/* @group Task */
+
+/* @group Task List */
+
+div.left {
+	float: left;
+	width: 48%;
+	padding-right: 2%;
+}
+
+div.right {
+	float: right;
+	width: 48%;
+	padding-left: 2%;
+}
+
+
+
+/* @end */
+
+
+
+/* @end */
+
 /* @group Attestation */
+
+/* @group Attestation Edit */
 
 .activeFile {
 	font-weight: bold;
@@ -129,11 +210,6 @@ div.result span.icon {
 	height: 16px;
 }
 
-.file2 {
-	margin: 5px;
-	cursor: pointer;
-}
-
 .bespin {
 	margin: 0;
 	margin-top: 10px;
@@ -146,42 +222,42 @@ div.result span.icon {
 	-webkit-border-radius: 10px;
 }
 
+
+
+/* @end */
+
+/* @group Attestation List */
+
+#comment {
+	color: #c0c0c0;
+	width: 80%;
+	float: right;
+}
+
 div.attestation {
 	position: relative;
 	left: 20px;
 }
 
+#Solutions form {
+	margin-top: 40px;
+}
+
+
+
 /* @end */
+
+/* @group Attestation View */
 
 div.changed {
 	background-color: #c4ff6f;
 }
 
-label {
-	bottom: auto;
-	position: relative;
-	top: 3px;
-	color: #656565;
-	font-weight: bold;
-	font-size: 10pt;
-	font-family: sans-serif;
-	vertical-align: top;
-}
 
-.errorlist {
-	padding: 0px;
-	margin-left: 0px;
-	margin-bottom: 2px;
-	margin-right: 0px;
-	margin-top: 2px;
-	list-style-type: none;
-	color: red;
-}
 
-th {
-	text-align: right;
-	vertical-align: top;
-}
+/* @end */
+
+/* @end */
 
 /* @group Inlines */
 
@@ -263,47 +339,5 @@ div.result div.log {
 }
 
 /* @end */
-
-/* @end */
-
-/* @group Icons */
-
-.icon {
-	height: 16px;
-	width: 16px;
-	position: relative;
-	margin-right: .3em;
-	display: inline-block;
-	overflow: hidden;
-	background-image: url(../images/ui-icons_222222_256x240.png);
-	background-repeat: no-repeat;
-	text-indent: -99999px;
-	vertical-align: sub;
-}
-
-.icon-green {
-	background-image: url(../images/ui-icons_41af1d_256x240.png);
-}
-
-.icon-orange {
-	background-image: url(../images/ui-icons_e09524_256x240.png);
-}
-
-.icon-red {
-	background-image: url(../images/ui-icons_c31818_256x240.png);
-}
-
-.icon-none {
-	background-image: none !important;
-}
-
-.ui-icon {
-	position: relative;
-	margin-right: .3em;
-	display: inline-block !important;
-	vertical-align: sub;
-}
-
-
 
 /* @end */

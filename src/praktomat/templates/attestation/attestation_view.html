@@ -43,7 +43,9 @@
 {% if submitable %}
 	<br/><br/>
 	<form method="post">{% csrf_token %}
-		<input type="submit" value="Publish" />
+		{% include "forms/form_as_div.html" %}
+		<input type="submit" value="Save" />
+		<input type="button" value="Edit again" onClick="parent.location='{% url edit_attestation attest.id %}'">
 	</form>
 {% endif %}
 {% endblock %}

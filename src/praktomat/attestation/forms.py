@@ -11,8 +11,12 @@ from praktomat.attestation.models import Attestation, AnnotatedSolutionFile, Rat
 class AttestationForm(ModelForm):
 	class Meta:
 		model = Attestation
-		exclude = ('solution', 'author', 'final')
-
+		exclude = ('solution', 'author', 'final', 'published')
+	
+class AttestationPreviewForm(ModelForm):
+	class Meta:
+		model = Attestation
+		fields = ('final',)
 
 class AnnotatedFileForm(ModelForm):
 	class Meta:

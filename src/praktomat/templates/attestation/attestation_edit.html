@@ -105,7 +105,9 @@
 				<tr>
 					<td></td>
 					<td>
-					<input type="submit" value="Save/Preview"  onclick="loadFileInEditor(1);"/></td>
+						<input type="submit" value="Save/Preview"  onclick="loadFileInEditor(1);"/>
+						<input type="button" value="Discard/Back" onClick="parent.location='{% url attestation_list solution.task_id %}'">
+					</td>
 				</tr>
 			</table>
 		</div>

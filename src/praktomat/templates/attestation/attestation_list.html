@@ -14,8 +14,13 @@
 			<div class='attestation'>
 				{%ifequal attestation.author requestuser %} 
 					{% if attestation.final %}
-						<span class="icon ui-icon-check icon-green"></span>
-						<a href={% url view_attestation attestation_id=attestation.id%}>{% trans "View your Attestation" %}</a>
+						{% if attestation.published %}
+							<span class="icon ui-icon-circle-check icon-green"></span>
+							<a href={% url view_attestation attestation_id=attestation.id%}>{% trans "View your Attestation" %}</a>
+						{% else %}
+							<span class="icon ui-icon-check icon-green"></span>
+							<a href={% url edit_attestation attestation_id=attestation.id%}>{% trans "Edit your Attestation" %}</a>
+						{% endif %}
 					{% else %}
 						<span class="icon ui-icon-radio-on icon-orange"></span>
 						<a href={% url edit_attestation attestation_id=attestation.id%}>{% trans "Edit your Attestation" %}</a>
@@ -27,7 +32,9 @@
 							View Attestation by {{author}}
 						{% endblocktrans %}
 					</a>
-				{% endifequal %}<br/> 
+				{% endifequal %} 
+				<span id='comment'>{{ attestation.private_comment|truncatewords:15}}</span>
+				<br/>
 			</div>
 		{% endfor %}
 		{% if allow_new_attest %}
@@ -37,6 +44,16 @@
 			</div>
 		{% endif %}<br/>
 	{%endfor%}
+	
+	<form enctype="multipart/form-data" method="post" action="">{% csrf_token %}	
+		<input type="submit" value="Publish all" {% if not publishable or published %} disabled {% endif %}/>
+		{% if published %}	
+			<span id='comment'>Allready published</span> 
+		{% else %}
+			{% if not publishable %} <span id='comment'>Not all attestations are read to be published.</span> {% endif %}
+		{% endif %}
+	</form>
+	
 </div>
 
 {% endblock %}
