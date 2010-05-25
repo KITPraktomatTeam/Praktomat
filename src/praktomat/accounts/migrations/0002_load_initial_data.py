@@ -15,6 +15,10 @@ class Migration(DataMigration):
 	)
 	
 	def forwards(self, orm):
+		
+		#send signal post_syncdb so that permissions will be created even if the corresponding model was created in this migration
+		db.send_pending_create_signals()
+		
 		group = orm['auth.group'].objects.get_or_create(name="Trainer")[0]
 		permissions =orm['auth.Permission'].objects.filter(codename__in=[
 			u'add_tutorial', u'change_tutorial', u'delete_tutorial', 

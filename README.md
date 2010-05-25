@@ -3,7 +3,7 @@ This is the source distribution of Praktomat, a programming course manager.
 Installation 
 ============
 
-1. download praktomat from svn (svn+ssh://user@ssh.info.uni-karlsruhe.de/ben/local/SVN/giffhorn/Django-Praktomat)  
+1. download praktomat from github (http://github.com/danielkleinert/Praktomat)  
 
 2. run "python2.6 bootstrap.py" from praktomat root directory (Python < 2.6 is not supported!)
 
@@ -32,7 +32,7 @@ Installation
 Update 
 ======
 
-1. update the source with svn
+1. update the source with git or svn from github
 
 2. update python dependencies with "./bin/buildout"
 
