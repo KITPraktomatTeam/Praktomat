@@ -61,7 +61,7 @@ INSTALLED_APPS = (
     'south', 
     
     # contains a widget to render a form field as a TinyMCE editor
-    'tinymce',
+    #'tinymce',
 	
 	'praktomat.pagechunks',
 	'praktomat.accounts',

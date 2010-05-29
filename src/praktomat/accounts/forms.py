@@ -1,6 +1,6 @@
 import datetime
 import random
-import sha
+import hashlib
 
 from django.conf import settings
 from django.db import models
@@ -46,8 +46,9 @@ class MyRegistrationForm(UserCreationForm):
 		user.save()
 		
 		# The activation key will be a SHA1 hash, generated from a combination of the username and a random salt.
-		salt = sha.new(str(random.random())).hexdigest()[:5]
-		activation_key = sha.new(salt+user.username).hexdigest()
+		sha = hashlib.sha1()
+		sha.update( str(random.random()) + user.username)
+		activation_key = sha.hexdigest()
 		
 		profile = UserProfile(user=user, activation_key=activation_key,
 							degree_course=self.cleaned_data.get("degree_course"),
