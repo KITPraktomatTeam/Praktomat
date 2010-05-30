@@ -1,7 +1,7 @@
 from django.db import models
 from django.db import transaction
 from django.core import serializers
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 import tempfile
 import zipfile
 
@@ -23,9 +23,9 @@ class Task(models.Model):
 	def checker(self):
 		return self.AnonymityChecker_set.all() + self.LineCounter_set.all()
 		
-	def expiered(self):
+	def expired(self):
 		"""docstring for expiered"""
-		return self.submission_date + datetime.timedelta(hour=1) > datetime.now()
+		return self.submission_date + timedelta(hours=1) < datetime.now()
 		
 	@classmethod
 	def export_Tasks(cls, qureyset):

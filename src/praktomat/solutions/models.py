@@ -35,10 +35,8 @@ class Solution(models.Model):
 		for file in self.solutionfile_set.all():
 			file.copyTo(toTempDir)
 	
-	def check(self, session, run_secret = 0): 
+	def check(self, run_secret = 0): 
 		"""Builds and tests this solution."""
-		
-		session['checker_progress'] = 0
 		
 		# Delete previous results if the checker have allready been run
 		self.checkerresult_set.all().delete()
@@ -63,7 +61,7 @@ class Solution(models.Model):
 			os.makedirs(env.tmpdir(), TMP_DIR_MODE)
 			os.chmod(env.tmpdir(), TMP_DIR_MODE)
 			self.copySolutionFiles(env.tmpdir())
-			self.run_checks(env, session, run_secret)
+			self.run_checks(env, run_secret)
 		finally:
 			# reset default temp dir location 
 			tempfile.tempdir = None
@@ -76,7 +74,7 @@ class Solution(models.Model):
 		
 		
 	
-	def run_checks(self, env, session, run_all): # , task
+	def run_checks(self, env, run_all): # , task
 		""" Check program. The case `Nothing submitted' is handled by the Saver.  Also,
 		this does not work when submitting archives, since at this
 		point, archives are not unpacked yet, and hence,
@@ -105,9 +103,6 @@ class Solution(models.Model):
 						task.fortranbuilder_set.all(),
 						task.dejagnusetup_set.all(), 
 						task.dejagnutester_set.all() ]
-		
-		number_of_checkers_total = sum(map(lambda x:x.count(), checkersets))
-		number_of_finished_checkers = 0
 		
 		for checkers in checkersets:
 			for checker in checkers:
@@ -145,11 +140,6 @@ class Solution(models.Model):
 							
 					if result.passed:
 						passed_checkers.append(checker)
-				
-				number_of_finished_checkers += 1 	
-				session['checker_progress'] = int(100.0 * number_of_finished_checkers / number_of_checkers_total)
-				session.save()
-
 		self.save()
 		
 	def attestations_by(self, user):

@@ -2,10 +2,57 @@
 
 /* @group Global */
 
-/* @group Page Structure */
+/* @group Browser reset */
+
+h1, h2, h3, h4, h5, h6 {
+	margin-bottom: 10px;
+}
+
+h1{
+	font-size: 20px;
+	margin-bottom: 20px;
+}
+h2{
+	font-size: 16px;
+	margin-bottom: 16px;
+}
+
+#help_icon {
+	float: right;
+}
+h3{
+	font-size: 12px;
+}
+
+p, ol, pre, input{
+	margin-bottom: 10px;
+}
+
+pre{
+	left: -14px;
+	padding-left: 20px;
+}
+
+ul li{
+	list-style-type: disc;
+}
+
+ol li{
+	list-style-type: decimal;	
+}
+
+li {
+	padding-left: 20px;
+	margin-bottom: 10px;
+	list-style-position: inside;
+}
+
+/* @end */
+
+/* @group Page structure */
 
 body {
-	background: #FFFFFF none repeat scroll 0 0;
+	background: #fff none repeat scroll 0 0;
 	color: #333333;
 	font-family: "Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
 	font-size: 12px;
@@ -17,7 +64,6 @@ body {
 	position: relative;
 	width: 100%;
 	min-width: 760px;
-	padding: 0;
 }
 
 #content {
@@ -25,8 +71,7 @@ body {
 	margin-right: auto;
 	margin-left: auto;
 	margin-bottom: 10px;
-	padding-right: 20px;
-	padding-bottom: 20px;
+	padding: 20px;
 }
 
 #footer {
@@ -45,44 +90,62 @@ body {
 	width: 100%;
 }
 
-#header a:link, #header a:visited {
-	color: white;
+#sub_header {
+	background: #005094;
+	overflow: hidden;
+	width: 100%;
+	color: #eaeaea;
+	font-size: 11px;
+	padding-top: 3px;
+	padding-bottom: 4px;
 }
 
-#header a:hover {
-	text-decoration: underline;
+.inner {
+	width: 800px;
+	margin-right: auto;
+	margin-left: auto;
+	padding-left: 20px;
+	padding-right: 20px;
 }
 
 #title h1 {
-	padding: 0 10px;
+
 	font-size: 18px;
-	margin: 8px 0;
 	font-weight: normal;
 	color: white;
-}
-
-#title h2 {
-	padding: 0 10px;
-	font-size: 14px;
-	margin: -8px 0 8px 0;
-	font-weight: normal;
-	color: #ffc;
+	float: left;
+	margin-top: 8px;
+	margin-bottom: 8px;
 }
 
 #user-tools {
-	position: absolute;
-	top: 0;
-	right: 0;
-	padding: 1.2em 10px;
-	font-size: 11px;
-	text-align: right;
+	float: right;
+	margin-top: 12px;
+}
+
+#header a:link, #header a:visited{
+	color: white;
+	text-decoration: none;
+}
+
+#sub_header a:link, #sub_header a:visited, #sub_header a{
+	color: #eaeaea;
+	text-decoration: none;
+}
+
+#sub_header a:hover{
+	text-decoration: underline;
+}
+
+#header a:hover{
+	text-decoration: underline;
 }
 
 /* @end */
 
 /* @group Forms */
 
-th {
+form th {
 	text-align: right;
 	vertical-align: top;
 }
@@ -96,6 +159,14 @@ label {
 	font-size: 10pt;
 	font-family: sans-serif;
 	vertical-align: top;
+	float: left;
+	width: 8em;
+	display: block;
+}
+
+form .help{
+	margin-left: 9em;
+	color: #999999;
 }
 
 .errorlist {
@@ -139,6 +210,11 @@ label {
 	background-image: url(../images/ui-icons_c31818_256x240.png);
 }
 
+.icon-white {
+	background-image: url(../images/ui-icons_ffffff_256x240.png);
+}
+
+
 .icon-none {
 	background-image: none !important;
 }
@@ -160,18 +236,88 @@ label {
 
 /* @group Task */
 
+/* @group Task Detail */
+
+#task_detail #submission_date {
+	float: right;
+}
+
+/* @end */
+
 /* @group Task List */
 
-div.left {
+#task_list div.left {
 	float: left;
 	width: 48%;
 	padding-right: 2%;
 }
 
-div.right {
+#task_list div.right {
 	float: right;
 	width: 48%;
 	padding-left: 2%;
+}
+
+
+
+/* @end */
+
+
+
+/* @end */
+
+/* @group Solution */
+
+/* @group Solution Detail */
+
+#solution_detail #commit_text {
+	display: inline;
+}
+
+#solution_detail form  {
+	display: inline;
+}
+
+
+
+/* @end */
+
+/* @group Solution Upload */
+
+#soluion_upload div.left {
+	float: left;
+	width: 48%;
+	padding-right: 2%;
+}
+
+#soluion_upload div.right {
+	float: right;
+	width: 48%;
+	padding-left: 2%;
+}
+
+#soluion_upload div.left a {
+	float: right;
+}
+
+#soluion_upload .simple_overlay {  
+    /* must be initially hidden */ 
+    display:none; 
+          
+    /* styling */ 
+    color:#fff; 
+    width: 30%;     
+    min-height:200px; 
+   	padding:35px;
+	font-size: 20px;
+} 
+
+#soluion_upload img#spinner {
+	display: inline;
+	float: left;
+	position: relative;
+	top: 4px;
+	margin-right: 10px;
 }
 
 
@@ -186,61 +332,60 @@ div.right {
 
 /* @group Attestation Edit */
 
-.activeFile {
+#attestation_edit .activeFile {
 	font-weight: bold;
 }
 
-.ui-tabs .ui-tabs-hide, .hidden {
-	
-
+#attestation_edit .ui-tabs .ui-tabs-hide, .hidden {
 /* override display:none of hidden tab to instantiate bespin 
 	 see http://jqueryui.com/demos/tabs/ */
     position: absolute;
 	left: -10000px;
 }
 
-h3.result {
+#attestation_edit h3.result {
 	text-decoration: none;
 }
 
-div.result span.icon {
+#attestation_edit div.result span.icon {
 	float: left;
 	margin-right: .3em;
 	width: 16px;
 	height: 16px;
 }
 
-.bespin {
+#attestation_edit .bespin {
 	margin: 0;
 	margin-top: 10px;
 	padding: 0;
 	border: 0;
 	height: 500px;
-	border: 10px 
-	solid #ddd;
+	border: 10px solid #ddd;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
 }
-
-
 
 /* @end */
 
 /* @group Attestation List */
 
-#comment {
+#attestation_list #comment {
 	color: #c0c0c0;
 	width: 80%;
 	float: right;
 }
 
-div.attestation {
+#attestation_list div.attestation {
 	position: relative;
 	left: 20px;
 }
 
-#Solutions form {
+#attestation_list #Solutions form {
 	margin-top: 40px;
+}
+
+#soluion_upload div.attestation {
+	margin-left: 15px;
 }
 
 
@@ -249,8 +394,13 @@ div.attestation {
 
 /* @group Attestation View */
 
-div.changed {
+#attestation_view div.changed {
 	background-color: #c4ff6f;
+}
+
+#attestation_view form .help {
+	display: inline;
+	margin-left: 60px;
 }
 
 

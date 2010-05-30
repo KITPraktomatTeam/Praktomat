@@ -3,9 +3,9 @@
 {% block extrahead %}{{ block.super }}
 	<script type="text/javascript" src="{{MEDIA_URL}}/script/solution_inlines.js"></script>
 	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}/styles/pygments_friendly.css" />
-{% endblock %}{% block content %}
-
-<span class="icon ui-icon-carat-1-w"></span><a href={% url solution_list task_id=solution.task.id%}>{% trans "Back to solution list" %}</a>
+{% endblock %}
+{% block breadcrumbs %} {{block.super}} > <a href={% url taskDetail task_id=solution.task.id%}>{{solution.task.title}}</a> > <a href={% url solution_list task_id=solution.task.id%}>My solutions</a> > Solution {{solution.id}} {% endblock %}
+{% block content %}<div id='solution_detail'>
 
 <h1>{{solution.task.title}}</h1>
 
@@ -13,23 +13,25 @@
 	<p>You have commited this Solution.</p>
 {% endif %}
 
+{% if submission_possible %}
+	<form method="post">{% csrf_token %}
+		<input type="submit" value="Commit" {% if not solution.accepted %} disabled {% endif %} />
+	</form>
+{% endif %}
+
 {% if solution.accepted %}
 	{% if solution.warnings %}
-		<p class="warning">{% trans "You have passed all required tests." %} 
+		<p class="warning" id='commit_text'>{% trans "You have passed all required tests." %} 
 		{% if submission_possible %}{% trans "Nevertheless you've got at least one warning and should consider correcting it before submitting." %}{% endif %}</p>
 	{% else %}
-		<p class="passed">{% trans "Congratulations you have passed all required tests." %}
+		<p class="passed" id='commit_text'>{% trans "Congratulations you have passed all required tests." %}
 		{% if submission_possible %}{% trans "You can go ahead an make your submission final." %}{% endif %}</p>
 	{% endif %}
 {% else %}
-	<p class="error">{% trans "Sorry, you haven't passed all required tests." %}
+	<p class="error" id='commit_text'>{% trans "Sorry, you haven't passed all required tests." %}
 	{% if submission_possible %}{% trans "Please corect the errors below and try again!" %}{% endif %}</p>
 {% endif %}
-{% if submission_possible %}
-	<form method="post">{% csrf_token %}
-		<input type="submit" value="Commit" /	{% if not solution.accepted %} disabled {% endif %}>
-	</form>
-{% endif %}
+
 
 <h2>{% trans "Results" %}</h2>
 {% with solution.publicCheckerResults as results %}
@@ -41,4 +43,4 @@
 	{% include "solutions/solution_files_inline.html" %}
 {% endwith %}
 
-{% endblock %}
+</div>{% endblock %}

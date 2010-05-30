@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %} {% load in_group %} {% load chunks %}
-{% block content %}
+{% block breadcrumbs %}<span class="icon icon-white ui-icon-home"></span>Home{% endblock %}
+{% block content %}<div id='task_list'>
 
 <div id="welcome">
 	<h1>{% trans "Welcome" %}, {% firstof user.get_full_name user.username %}!</h1>
@@ -20,7 +21,7 @@
 			{% if user|in_group:"User" %}
 				<a href={% url solution_list task_id=task.id%}>{% trans "Solutions"%}</a>
 			{% endif %}
-			{% if user.is_superuser or user|in_group:"Tutor"%}
+			{% if user|in_group:"Tutor"%}
 				<a href={% url attestation_list task_id=task.id%}>{% trans "Attestation"%}</a>
 			{% endif %}
 			{% if user.is_superuser or user|in_group:"Trainer"%}
@@ -40,7 +41,7 @@
 			{% if user|in_group:"User" %}
 				<a href={% url solution_list task_id=task.id%}>{% trans "Solutions"%}</a>
 			{% endif %}
-			{% if user.is_superuser or user|in_group:"Tutor"%}
+			{% if user|in_group:"Tutor"%}
 				<a href={% url attestation_list task_id=task.id%}>{% trans "Attestation"%}</a>
 			{% endif %}
 			{% if user.is_superuser or user|in_group:"Trainer"%}
@@ -54,4 +55,4 @@
 
 
 
-{% endblock %}
+</div>{% endblock %}

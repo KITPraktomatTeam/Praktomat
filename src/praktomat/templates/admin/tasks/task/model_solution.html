@@ -18,16 +18,20 @@
     </div>
 </form>
 
-<div class='module aligned'>
-	<h2>Checker results</h2>
-	{% with task.model_solution.checkerresult_set.all as results %}
-		{% include "solutions/checker_results_inline.html" %}
-	{% endwith %}
-</div>
-<div class='module aligned'>
-	<h2>Files</h2>
-	{% with task.model_solution.solutionfile_set.all as solutionfiles %}
-		{% include "solutions/solution_files_inline.html" %}
-	{% endwith %}
-</div>
+{% if task.model_solution.checkerresult_set %}
+	<div class='module aligned'>
+		<h2>Checker results</h2>
+		{% with task.model_solution.checkerresult_set.all as results %}
+			{% include "solutions/checker_results_inline.html" %}
+		{% endwith %}
+	</div>
+{% endif %}
+{% if task.model_solution.solutionfile_set.all %}
+	<div class='module aligned'>
+		<h2>Files</h2>
+		{% with task.model_solution.solutionfile_set.all as solutionfiles %}
+			{% include "solutions/solution_files_inline.html" %}
+		{% endwith %}
+	</div>
+{% endif %}
 {% endblock %}

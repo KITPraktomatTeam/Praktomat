@@ -31,7 +31,6 @@ urlpatterns = patterns('',
 	url(r'^solutions/(?P<solution_id>\d+)/$', 'praktomat.solutions.views.solution_detail', name='solution_detail'),
 	url(r'^solutions/(?P<solution_id>\d+)/attestation/$', 'praktomat.attestation.views.new_attestation', name='new_attestation'),
 	url(r'^tasks/(?P<task_id>\d+)/solutionupload/$', 'praktomat.solutions.views.solution_list', name='solution_list'),
-	url(r'^checkerprogress/$', 'praktomat.checker.views.checker_progress', name='checker_progress'),
 
 	#Attestation
 	url(r'^tasks/(?P<task_id>\d+)/attestation/statistics$', 'praktomat.attestation.views.statistics', name='statistics'),

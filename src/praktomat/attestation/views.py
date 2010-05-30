@@ -29,12 +29,15 @@ def attestation_list(request, task_id):
 	# don't allow a new attestation if one already exists
 	solution_list = map(lambda solution:(solution, not solution.attestations_by(requestuser)), solutions)
 	# first published => all published
-	published = solutions[0].attestations_by(requestuser)[0].published
-	all_solutions_attested = not reduce(lambda x,y: x or y, [new_attest_possible for (solution, new_attest_possible) in solution_list])
+	try:
+		published = solutions[0].attestations_by(requestuser)[0].published
+	except IndexError:
+		published = False
+	all_solutions_attested = not reduce(lambda x,y: x or y, [new_attest_possible for (solution, new_attest_possible) in solution_list], False)
 	all_attestations_final = reduce(lambda x,y: x and y, 
 								map(lambda attestation: attestation.final , 
-									sum([list(solution.attestations_by(requestuser)) for solution in solutions],[])))
-	publishable = all_solutions_attested and all_attestations_final
+									sum([list(solution.attestations_by(requestuser)) for solution in solutions],[])), True)
+	publishable = all_solutions_attested and all_attestations_final and task.expired()
 	if request.method == "POST" and publishable:
 		for solution in solutions:
 			for attestation in solution.attestations_by(requestuser):

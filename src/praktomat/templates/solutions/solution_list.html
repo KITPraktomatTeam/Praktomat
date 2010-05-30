@@ -2,34 +2,11 @@
 {% load i18n %}
 {% block extrahead %}{{ block.super }}
 <script type="text/javascript" src="{{MEDIA_URL}}/frameworks/jquery/jquery.tools.min.js"></script>
-<style>
-/* the overlayed element */ 
-.simple_overlay {  
-    /* must be initially hidden */ 
-    display:none; 
-          
-    /* styling */ 
-    color:#fff; 
-    width:60%;     
-    min-height:200px; 
-   	padding:35px;    
-} 
-</style>
-<script type="text/javascript">		
-// Add upload progress for multipart forms.
-$(function() {
-    $('form[enctype=multipart/form-data]').submit(function(){ 
-        // Prevent multiple submits
-        if ($.data(this, 'submitted')) return false;
 
-        var freq = 500; // freqency of update in ms
-        var progress_url = '{% url checker_progress %}'; // ajax view serving progress info 
-        
-		$("#progressbar").progressbar({
-			value: 0
-		});
-		
-      	$("#progress").overlay({ 
+<script type="text/javascript">	
+$(function(){ 
+	$('form[enctype=multipart/form-data]').submit(function(){ 
+	  	$("#progress").overlay({ 
 	    	top: 272, 
 	    	api: true,
 			closeOnClick: false,
@@ -40,64 +17,38 @@ $(function() {
 	        	opacity: 0.9 
 		    }, 
 		}).load();
-
-        // Update progress bar
-        function update_progress_info() {
-            $.getJSON(progress_url, {}, function(data, status){ 
-                if (data) {
-                    var progresse = parseInt(data.progress);
-                    $('#progressbar div').animate({width: progresse + '%' },{ queue:'false', duration:500, easing:"swing" }); 
-                }
-                window.setTimeout(update_progress_info, freq);
-            });
-        };
-        window.setTimeout(update_progress_info, freq);
-
-        $.data(this, 'submitted', true); // mark form as submitted.
-    });
+	});
 });
 
+
 </script>
-{% endblock %}{% block content %}
+{% endblock %}
+{% block breadcrumbs %} {{block.super}} > <a href={% url taskDetail task_id=task.id%}>{{task.title}}</a> > My solutions{% endblock %}
 
-
-<span class="icon ui-icon-carat-1-w"></span><a href={% url task_list %}>{% trans "Back to task list" %}</a>
+{% block content %}<div id='soluion_upload'>
 
 <h1>{{task.title}}</h1>
 
 <div class='left'>
-	<h2>{%trans "Upload solution" %}</h2> 
 	{% if submission_possible %}
-		<a>{%trans "Time left:" %} {{ task.submission_date|timeuntil }}</a><br/><br/>
-		<iframe name="frame" style="display:none;"></iframe><!--target="frame"-->
+		<a>{%trans "Time left:" %} {{ task.submission_date|timeuntil }}</a>
+		<h2>{%trans "Upload solution" %}</h2>
 		<form enctype="multipart/form-data" method="post" action="" > {% csrf_token %}
-			<table>
-				{{ formset.non_form_errors }}
-				{{ formset }}
-				<tr>
-					<td></td>
-					<td>
-						<input type="submit" value="upload" />
-					</td>
-					
-				</tr>
-			</table>
+			{% include "forms/formset_as_div.html" %}
+			<input type="submit" value="upload" />
 		</form>
 	{% else %}
-		{%trans "You've allreay commited a solution. Therefore resubmission is not possible." %}
+		<h2>{%trans "Upload solution" %}</h2> 
+		{%trans "You've allreay commited a solution or the deadline has past. Therefore (re)submission is not possible." %}
 	{% endif %}
 </div>
 
-
-
-
-
-
-
-
-{% if solutions %}<div class='right'>
+<div class='right'>
+	<div id='help_icon'><span class="icon icon-orange ui-icon-info"></span></div>
+	<div class="tooltip"> 
+    
+	</div> 
 	<h2>{% trans "Submitted solutions" %}</h2>
-	
 	{% for solution in solutions %}
 		<div class='solution'>
 			{% spaceless %} 
@@ -129,14 +80,15 @@ $(function() {
 					<span class="icon ui-icon-script"></span><a href={% url view_attestation attestation_id=attest.id%}>Attestation</a> by {{attest.author.get_full_name}}<br/>
 				{% endif %}
 			</div>
-		{%endfor%}
-		
-	{%endfor%}</div>
-{% endif %}
-
+		{%endfor%}		
+	{% empty %}
+		{%trans "You have't uploaded any solutions jet." %}
+	{%endfor%}
+</div>
 <div class="simple_overlay" id="progress"> 
-    <p>Uploading & testing solution ...</p>
-	<div id="progressbar"></div>
+	<!-- spinner from http://ajaxload.info/ -->
+	<img id="spinner" src="{{MEDIA_URL}}/images/loading.gif" alt="loading" />
+    <p>Please wait while your solution is examined.</p>
 </div> 
 
-{% endblock %}
+</div>{% endblock %}

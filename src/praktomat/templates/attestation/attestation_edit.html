@@ -36,9 +36,9 @@
 			$("#file"+index).addClass("activeFile");
 		}
 	</script>
-{% endblock %}{% block content %}
-
-<span class="icon ui-icon-carat-1-w"></span><a href={% url attestation_list solution.task_id %}>{% trans "Back to attestation list" %}</a>
+{% endblock %}
+{% block breadcrumbs %} {{block.super}} > <a href={% url taskDetail task_id=solution.task.id%}>{{solution.task.title}}</a> > <a href={% url attestation_list solution.task_id %}>My attestations</a> > Attestation {% endblock %}
+{% block content %}<div id='attestation_edit'>
 
 <h1>{{solution.task.title}}</h1>
 
@@ -80,11 +80,10 @@
 		
 		<div id="annotated_solution_files">
 			<h1 class="heading">Annotated solution files</h1>
-			{{ attestFileFormSet.non_form_errors }}
 			<div id="file_form_set">
-				<table>
-					{{ attestFileFormSet }}
-				</table>
+				{% with attestFileFormSet as formset %}	
+					{% include "forms/formset_as_div.html" %}
+				{% endwith %}
 			</div>
 			<div id="file_form_set_replacement" class="hidden">
 				{% for file in solution.solutionfile_set.all %}
@@ -97,21 +96,18 @@
 	
 		<div id="attestation">
 			<h1 class="heading">Attestation</h1>
-			<table>
-				{{ attestForm.non_form_errors }}
-				{{ ratingResultFormSet.non_form_errors }}
-				{{ attestForm }}
-				{{ ratingResultFormSet }}
-				<tr>
-					<td></td>
-					<td>
-						<input type="submit" value="Save/Preview"  onclick="loadFileInEditor(1);"/>
-						<input type="button" value="Discard/Back" onClick="parent.location='{% url attestation_list solution.task_id %}'">
-					</td>
-				</tr>
-			</table>
+
+				{% with attestForm as form %}	
+					{% include "forms/form_as_div.html" %}
+				{% endwith %}
+				{% with ratingResultFormSet as formset %}	
+					{% include "forms/formset_as_div.html" %}
+				{% endwith %}
+				<input type="submit" value="Save/Preview"  onclick="loadFileInEditor(1);"/>
+				<input type="button" value="Discard/Back" onClick="parent.location='{% url attestation_list solution.task_id %}'">
+
 		</div>
 	</div>
 	
 </form>	
-{% endblock %}
+</div>{% endblock %}

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% load i18n %}{% block content %}
-
-<span class="icon ui-icon-carat-1-w"></span><a href={% url task_list %}>{% trans "Back to task list" %}</a>
+{% load i18n %}
+{% block breadcrumbs %} {{block.super}} > <a href={% url taskDetail task_id=task.id%}>{{task.title}}</a> > Attestations{% endblock %}
+{% block content %}<div id='attestation_list'>
 
 <h1>{{task.title}}</h1>
 
@@ -12,7 +12,7 @@
 		<h3>Solution {{forloop.counter}}</h3>
 		{% for attestation in solution.attestation_set.all %}
 			<div class='attestation'>
-				{%ifequal attestation.author requestuser %} 
+				{% if attestation.author = requestuser %} 
 					{% if attestation.final %}
 						{% if attestation.published %}
 							<span class="icon ui-icon-circle-check icon-green"></span>
@@ -32,7 +32,7 @@
 							View Attestation by {{author}}
 						{% endblocktrans %}
 					</a>
-				{% endifequal %} 
+				{% endif %} 
 				<span id='comment'>{{ attestation.private_comment|truncatewords:15}}</span>
 				<br/>
 			</div>
@@ -43,6 +43,8 @@
 				<a href={% url new_attestation solution_id=solution.id%}>{% trans "Add Attestation" %}</a>
 			</div>
 		{% endif %}<br/>
+	{% empty %}
+		<p>There are no solutions yet.</p>
 	{%endfor%}
 	
 	<form enctype="multipart/form-data" method="post" action="">{% csrf_token %}	
@@ -50,10 +52,10 @@
 		{% if published %}	
 			<span id='comment'>Allready published</span> 
 		{% else %}
-			{% if not publishable %} <span id='comment'>Not all attestations are read to be published.</span> {% endif %}
+			{% if not publishable %} <span id='comment'>Not all attestations are read to be published or the submission deadline isn't reached.</span> {% endif %}
 		{% endif %}
 	</form>
 	
 </div>
 
-{% endblock %}
+</div>{% endblock %}

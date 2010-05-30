@@ -23,7 +23,7 @@ def taskList(Request):
 	return render_to_response('tasks/task_list.html',{'upcoming_tasks':upcoming_tasks, 'expired_tasks':expired_tasks, 'tutors':tutors}, context_instance=RequestContext(Request))
 	#return object_list(Request, Task.objects.all(), template_object_name='tasks')
 
-#@login_required
+@login_required
 def taskDetail(Request,task_id):
 	my_solutions = Task.objects.get(pk=task_id).solution_set.filter(author = Request.user)
 	return object_detail(Request, Task.objects.all(), task_id, extra_context={'solutions': my_solutions}, template_object_name='task')

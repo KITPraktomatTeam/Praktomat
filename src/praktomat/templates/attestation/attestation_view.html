@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load highlight %}{% load i18n  %}
+{% load highlight %}{% load i18n  %}{% load in_group %} 
 {% block extrahead %}{{ block.super }}
 	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}/styles/pygments_friendly.css" />
 	<script type="text/javascript">
@@ -11,25 +11,39 @@
 			return false;
 		  });
 	</script>
-{% endblock %}{% block content %}
-
-<span class="icon ui-icon-carat-1-w"></span><a href={% url task_list %}>{% trans "Back to task list" %}</a>
+{% endblock %}
+{% block breadcrumbs %} {{block.super}} > <a href={% url taskDetail task_id=attest.solution.task.id%}>{{attest.solution.task.title}}</a> 
+{% if user|in_group:"Tutor"%}
+	> <a href={% url attestation_list attest.solution.task_id %}>My attestations</a> 
+	> <a href={% url edit_attestation attest.id %}>Attestation</a>
+	> Preview
+{% else %}
+	> <a href={% url solution_list task_id=attest.solution.task.id%}>My solutions</a> 
+	> <a href={% url solution_detail solution_id=attest.solution.id%}>Solution {{attest.solution.id}}</a> 
+	> Attestation {{attest.id}}
+{% endif %}
+{% endblock %}
+{% block content %}<div id='attestation_view'>
 
 <h1>{% trans "Attestation"%}: {{attest.solution.task.title}}</h1>
-<span id='author'>by {{attest.author.get_full_name}}</span>
+<p id='author'>by {{attest.author.get_full_name}}</p>
 
-<h2>Comment</h2>
-<div class="Coment">
-	{{attest.public_comment}}	
-</div>
-
-<h2>Ratings</h2>
-{% for ratingresult in attest.ratingresult_set.all%}
-	<div class="result">
-		<h3 href="#">{{ratingresult.aspect.name}}: {{ratingresult.mark}}</h3>
-		{{ratingresult.aspect.description}}
+{% if attest.public_comment %}
+	<h2>Comment</h2>
+	<div class="Coment">
+		{{attest.public_comment}}	
 	</div>
-{%endfor%}
+{% endif %}
+
+{% if attest.ratingresult_set.all %}
+	<h2>Ratings</h2>
+	{% for ratingresult in attest.ratingresult_set.all%}
+		<div class="result">
+			<h3 href="#">{{ratingresult.aspect.name}}: {{ratingresult.mark}}</h3>
+			{{ratingresult.aspect.description}}
+		</div>
+	{%endfor%}
+{% endif %}
 
 <h2>{% trans "Annotated Files" %}</h2>
 {% for anotfile in attest.annotatedsolutionfile_set.all%}
@@ -38,7 +52,6 @@
 		<div class="content">{{anotfile.content_diff|highlight_table:anotfile.solution_file.file.name|highlight_diff}}</div>
 	</div>
 {%endfor%}
-
 
 {% if submitable %}
 	<br/><br/>
