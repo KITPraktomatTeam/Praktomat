@@ -76,7 +76,7 @@ $(function(){
 		
 		{% for attest in solution.attestation_set.all %}
 			<div class='attestation'>
-				{% if attest.final %}
+				{% if attest.published %}
 					<span class="icon ui-icon-script"></span><a href={% url view_attestation attestation_id=attest.id%}>Attestation</a> by {{attest.author.get_full_name}}<br/>
 				{% endif %}
 			</div>
