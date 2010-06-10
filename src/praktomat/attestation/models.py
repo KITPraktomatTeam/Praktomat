@@ -14,7 +14,7 @@ class Attestation(models.Model):
 
 	public_comment = models.TextField(blank=True, help_text = _('Comment which is shown to the user.'))
 	private_comment = models.TextField(blank=True, help_text = _('Comment which is only visible to tutors'))
-	final_grade = models.CharField(blank=True, max_length=2,  help_text = _('The final grade only visible to tutors.'))
+	final_grade = models.CharField(blank=True, max_length=100,  help_text = _('The final grade only visible to tutors.'))
 	
 	final = models.BooleanField(default = False, help_text = _('Indicates whether the attestation is ready to be published'))
 	published = models.BooleanField(default = False, help_text = _('Indicates whether the user can see the attestation.'))
