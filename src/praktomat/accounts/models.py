@@ -94,12 +94,6 @@ class UserProfile(models.Model):
 	mat_number = models.IntegerField()
 	degree_course = models.CharField(max_length=30)
 	
-	def is_tutor(self):
-		return True
-		return self.user.groups.filter(name='Tutor').count() > 0
-		
-	def is_trainer(self):
-		return self.user.groups.filter(name='Trainer').count() > 0
 
 
 	
