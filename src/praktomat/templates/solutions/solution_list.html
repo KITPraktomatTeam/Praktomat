@@ -2,8 +2,17 @@
 {% load i18n %}
 {% block extrahead %}{{ block.super }}
 <script type="text/javascript" src="{{MEDIA_URL}}/frameworks/jquery/jquery.tools.min.js"></script>
-
+<script type="text/javascript" src="{{MEDIA_URL}}frameworks/jquery.formset/jquery.formset.min.js"></script>
 <script type="text/javascript">	
+$(function() {
+	$('fieldset.module .form-row').formset({ 
+		prefix: '{{ formset.prefix }}',
+		deleteText: '',
+		addText: '',
+		addCssClass: 'icon icon-orange ui-icon-circle-plus'
+	});
+})
+
 $(function(){ 
 	$('form[enctype=multipart/form-data]').submit(function(){ 
 	  	$("#progress").overlay({ 
