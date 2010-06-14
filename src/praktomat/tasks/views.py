@@ -61,8 +61,9 @@ def model_solution(request, task_id):
 		if formset.is_valid():
 			try:
 				solution.save(); 
-				if task.model_solution:
-					task.model_solution.delete()
+				# no deleting the old solution:
+				# delete will cascade on db level deleting checker results and checker 
+				# as this isn't easily prevented just keep the old solution around until the task is deleted
 				task.model_solution = solution;
 				task.save()
 				formset.save()		
