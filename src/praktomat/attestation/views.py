@@ -4,6 +4,8 @@ from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
 from django.core.urlresolvers import reverse
 from django.views.generic.list_detail import object_list, object_detail
+from django.db.models import Count
+import datetime
 
 from praktomat.tasks.models import Task
 from praktomat.solutions.models import Solution, SolutionFile
@@ -19,7 +21,31 @@ def statistics(request,task_id):
 	solution_count = task.solution_set.filter(final=True).count()
 	from django.contrib.auth.models import Group
 	user_count = Group.objects.get(name='User').user_set.count()
-	return render_to_response("attestation/statistics.html", {'task':task, 'solution_count': solution_count,'user_count': user_count}, context_instance=RequestContext(request))
+	
+	submissions = []
+	submissions_final = []
+	acc_submissions = [0]
+	creation_dates = map(lambda dict:dict['creation_date'].date(),task.solution_set.values('creation_date'))
+	creation_dates_final = map(lambda dict:dict['creation_date'].date(),task.solution_set.filter(final=True).values('creation_date'))
+	for date in daterange(task.publication_date.date(), min(task.submission_date.date(), datetime.date.today())):
+		submissions.append(creation_dates.count(date))
+		submissions_final.append(creation_dates_final.count(date))
+		acc_submissions.append(acc_submissions[-1]+submissions_final[-1])
+	acc_submissions.pop(0)
+	acc_submissions = map(lambda submissions: float(submissions)/user_count, acc_submissions)
+	
+	creation_times = map(lambda dict:[(dict['creation_date'].time().hour*3600+dict['creation_date'].time().minute*60)*1000, dict['creation_date'].weekday()],task.solution_set.filter(final=False).values('creation_date'))
+	creation_times_final = map(lambda dict:[(dict['creation_date'].time().hour*3600+dict['creation_date'].time().minute*60)*1000, dict['creation_date'].weekday()],task.solution_set.filter(final=True).values('creation_date'))
+	
+	attestations = Attestation.objects.filter(solution__task__id=task.id).filter(final=True).filter(published=False).aggregate(final=Count('id'))
+	attestations.update( Attestation.objects.filter(solution__task__id=task.id).filter(published=True).aggregate(published=Count('id')) )
+	attestations.update( Solution.objects.filter(task__id=task.id).filter(final=True).aggregate(all=Count('id')) )
+	
+	return render_to_response("attestation/statistics.html", {'task':task, 'submissions':submissions, 'submissions_final':submissions_final, 'creation_times':creation_times, 'creation_times_final':creation_times_final, 'attestations':attestations, 'acc_submissions':acc_submissions, 'solution_count': solution_count,'user_count': user_count}, context_instance=RequestContext(request))
+
+def daterange(start_date, end_date):
+    for n in range((end_date - start_date).days + 1):
+        yield start_date + datetime.timedelta(n)
 	
 @login_required
 def attestation_list(request, task_id):

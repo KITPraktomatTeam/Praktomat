@@ -1,23 +1,266 @@
 {% extends "base.html" %}
 {% load highlight %} {% load i18n  %}
 {% block extrahead %}{{ block.super }}
-	<script type="text/javascript">
-		$(function() {
-			$("#progressbar").progressbar({
-				value: {{solution_count}} / {{user_count}} * 100
-			});
-		});
-	</script>
-{% endblock %}
-{% block content %}
-
-<a href={% url task_list %}> < {% trans "Back to task list" %}</a>
-
-<h1>{{task.title}}</h1>
-
+<script src="{{MEDIA_URL}}/frameworks/highcharts/highcharts.src.js" type="text/javascript">
+</script>
+<!--[if IE]>
+    <script src="{{MEDIA_URL}}/frameworks/highcharts/excanvas.compiled.js" type="text/javascript"></script>
+<![endif]-->
+<script type="text/javascript">
+            $(document).ready(function(){
+                var submission_chart = new Highcharts.Chart({
+                    chart: {
+                        renderTo: 'submission_chart',
+                        defaultSeriesType: 'line',
+        				alignTicks: false,
+                        margin: [80, 100, 60, 100],
+                    },
+                    title: {
+                        text: 'Solution Submission Rate',
+        
+                    },
+                    xAxis: {
+                        type: 'datetime',
+                        title: {
+                            text: 'Date'
+                        },
+        				max: Date.parse('{{task.submission_date|date:"SHORT_DATE_FORMAT"}}'),
+                    },
+                    yAxis: [{
+                        title: {
+                            text: '(Final) Submissions',
+        					style: {
+                    			color: '#AA4643'
+                 			},
+                        },
+        				labels: {
+        			         style: {
+        			            color: '#AA4643'
+        			         }
+        			      },
+        				min: 0,
+                    }, {
+                        title: {
+                            text: 'Submissions Total',
+        					style: {
+                    			color: '#4572A7'
+                 			},
+                        },
+        				labels: {
+        			         formatter: function() {
+        			            return this.value * 100 +' %';
+        			         },
+        			         style: {
+        			            color: '#4572A7'
+        			         }
+        			      },
+                        opposite: true,
+        				max: 1,
+        				min: 0,
+        				gridLineWidth: 0
+                    }],
+        			legend: {
+        				enabled:false
+        			},
+        			credits: {
+        				enabled: false
+        			},
+                    tooltip: {
+                        formatter: function(){
+                            date = new Date(this.x);
+        					date_str = date.getDate() + '.' + date.getMonth() +'.'+ date.getFullYear();
+        					if (this.series.name == 'Submissions Total') {
+        						return '<b>' + this.series.name + '</b><br/>' + date_str + ': ' + Math.round(this.y*100) + '%' ;
+        					} else {
+        						return '<b>' + this.series.name + '</b><br/>' + date_str + ': ' + this.y ;
+        					}
+        					
+                        }
+                    },
+        			plotOptions: {
+        				area: {
+        					fillOpacity:0.75,
+        				},
+        				line: {
+        					lineWidth:3,
+        				},
+        			},
+                    series: [{
+                        type: 'area',
+                        name: 'Submissions Total',
+        				color: '#4572A7',
+        				yAxis: 1,
+                        pointInterval: 24 * 3600 * 1000,
+                        pointStart: Date.parse('{{task.publication_date|date:"SHORT_DATE_FORMAT"}}'),
+                        data: {{acc_submissions}}
+                    }, {
+                        type: 'line',
+                        name: 'Final Submissions',
+        				color: '#AA4643',
+                        pointInterval: 24 * 3600 * 1000,
+                        pointStart: Date.parse('{{task.publication_date|date:"SHORT_DATE_FORMAT"}}'),
+                        data: {{submissions_final}}
+                    }, {
+                        type: 'line',
+                        name: 'Submissions',
+        				color: '#89A54E',
+                        pointInterval: 24 * 3600 * 1000,
+                        pointStart: Date.parse('{{task.publication_date|date:"SHORT_DATE_FORMAT"}}'),
+                        data: {{submissions}}
+                    }]
+                });
+                
+    			
+    			
+    			var time_chart = new Highcharts.Chart({
+       chart: {
+          renderTo: 'punchcard', 
+          defaultSeriesType: 'scatter',
+		  margin: [80, 100, 60, 100],
+       },
+       title: {
+          text: 'Submission Activity by Day and Hour'
+       },
+	   credits: {
+        				enabled: false
+        			},
+       xAxis: {
+          title: {
+             enabled: true,
+             text: 'Time'
+          },
+		  type: "datetime",	
+		  min: 0,
+		  max: 24*3600*1000,
+       },
+       yAxis: {
+          title: {
+             text: 'Day',
+			 margin: 80,
+          },
+		  categories: ['Monday', 'Tuesday', 'Wendnesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+		  min:0,
+		  max:6,
+		  startOnTick:false,
+		  endOnTick:false,
+		  reversed:true
+       },
+       tooltip: {
+          formatter: function() {
+		  		date = new Date(this.x);
+                return '<b>'+ this.series.name +'</b><br/>' + ['Monday', 'Tuesday', 'Wendnesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][this.y] + ' ' + date.getHours() +':'+ date.getMinutes();
+          }
+       },
+       legend: {
+          layout: 'vertical',
+          style: {
+             left: '100px',
+             top: '70px',
+             bottom: 'auto'
+          },
+          backgroundColor: '#FFFFFF',
+          borderWidth: 1
+       },
+       plotOptions: {
+          scatter: {
+             marker: {
+                radius: 5,
+                states: {
+                   hover: {
+                      enabled: true,
+                      lineColor: 'rgb(100,100,100)'
+                   }
+                }
+             },
+             states: {
+                hover: {
+                   marker: {
+                      enabled: false
+                   }
+                }
+             }
+          }
+       },
+       series: [{
+          name: 'Submissions',
+          color: '#89A54E',
+          data: {{creation_times}}
+    
+       }, {
+          name: 'Final Submissions',
+          color: '#AA4643',
+          data: {{creation_times_final}}
+    
+       }]
+    });
+	
+	
+	
+	var chart = new Highcharts.Chart({
+   chart: {
+      renderTo: 'attestation_chart',
+      defaultSeriesType: 'bar',
+	  margin: [80, 100, 60, 100],
+	  height:200,
+   },
+   title: {
+      text: 'Attestations'
+   },
+   credits: {
+        				enabled: false
+   },
+   xAxis: {
+      categories: ['All'],
+	  
+   },
+   yAxis: {
+	  max:{{attestations.all}},
+	  tickInterval:1,
+	  title: {
+	  	enabled:false,
+	  },
+   },
+   legend: {
+      style: {
+         left: 'auto',
+         bottom: 'auto',
+         right: '70px',
+         top: '35px'
+      },
+      backgroundColor: '#FFFFFF',
+      borderColor: '#CCC',
+      borderWidth: 1,
+      shadow: false
+   },
+   tooltip: {
+      formatter: function() {
+         return '<b>'+ this.x +'</b><br/>'+
+             this.series.name +': '+ this.y +'';
+      }
+   },
+   plotOptions: {
+      series: {
+         stacking: 'normal'
+      }
+   },
+   series: [{
+      name: 'published',
+      data: [{{attestations.published}}]
+   }, {
+      name: 'ready',
+      data: [{{attestations.final}}]
+   }]
+});
+	
+	
+            });
+</script>
+{% endblock %} 
+{% block breadcrumbs %} {{block.super}} > <a href={% url taskDetail task_id=task.id%}>{{task.title}}  </a>
+> Statistics {% endblock %}
+{% block content %}<h1>{{task.title}}</h1>
 <h2>{% trans "Statistics" %}</h2>
-
-{% blocktrans %} {{solution_count}} of {{user_count}} users have finished this task. {% endblocktrans %}
-<div id="progressbar"></div>
-
+<div id="submission_chart"></div>
+<div id="punchcard"></div>
+{% if task.expired %} <div id="attestation_chart"></div>{% endif %}
 {% endblock %}
