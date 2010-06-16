@@ -1,15 +1,19 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n %}{% load in_group %}
 {% block breadcrumbs %} {{block.super}} > <a href={% url taskDetail task_id=task.id%}>{{task.title}}</a> > Attestations{% endblock %}
 {% block content %}<div id='attestation_list'>
 
 <h1>{{task.title}}</h1>
 
-<h2>{% trans "Solutions ready to be attested" %}</h2>
+<h2>{% trans "Attested solutions" %}</h2>
 
 <div id="Solutions">
 	{% for solution, allow_new_attest in solution_list%}
-		<h3>Solution {{forloop.counter}}</h3>
+		{% if requestuser|in_group:'Trainer'%}
+			<h3>Solution by {{solution.author.get_full_name}}</h3>
+		{% else %}
+			<h3>Solution {{forloop.counter}}</h3>
+		{% endif %}
 		{% for attestation in solution.attestation_set.all %}
 			<div class='attestation'>
 				{% if attestation.author = requestuser %} 
@@ -47,15 +51,16 @@
 		<p>There are no solutions yet.</p>
 	{%endfor%}
 	
-	<form enctype="multipart/form-data" method="post" action="">{% csrf_token %}	
-		<input type="submit" value="Publish all" {% if not publishable or published %} disabled {% endif %}/>
-		{% if published %}	
-			<span id='comment'>Allready published</span> 
-		{% else %}
-			{% if not publishable %} <span id='comment'>Not all attestations are read to be published or the submission deadline isn't reached.</span> {% endif %}
-		{% endif %}
-	</form>
-	
+	{% if not requestuser|in_group:'Trainer'%}
+		<form enctype="multipart/form-data" method="post" action="">{% csrf_token %}	
+			<input type="submit" value="Publish all" {% if not publishable or published %} disabled {% endif %}/>
+			{% if published %}	
+				<span id='comment'>Allready published</span> 
+			{% else %}
+				{% if not publishable %} <span id='comment'>Not all attestations are read to be published or the submission deadline isn't reached.</span> {% endif %}
+			{% endif %}
+		</form>
+	{% endif %}
 </div>
 
 </div>{% endblock %}

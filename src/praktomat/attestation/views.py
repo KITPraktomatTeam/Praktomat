@@ -12,6 +12,7 @@ from praktomat.solutions.models import Solution, SolutionFile
 from praktomat.solutions.forms import SolutionFormSet
 from praktomat.attestation.models import Attestation, AnnotatedSolutionFile, RatingResult
 from praktomat.attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm
+from praktomat.accounts.templatetags.in_group import in_group
 
 @login_required
 def statistics(request,task_id):
@@ -51,19 +52,24 @@ def daterange(start_date, end_date):
 def attestation_list(request, task_id):
 	task = Task.objects.get(pk=task_id)
 	requestuser = request.user
-	solutions = Solution.objects.filter(task__id=task_id).filter(final=True).filter(author__userprofile__tutorial__tutors__pk=request.user.id).all()
+	solutions = Solution.objects.filter(task__id=task_id).filter(final=True).all()
+	if not in_group(requestuser,'Trainer'):
+		solutions = solutions.filter(author__userprofile__tutorial__tutors__pk=request.user.id)
 	# don't allow a new attestation if one already exists
-	solution_list = map(lambda solution:(solution, not solution.attestations_by(requestuser)), solutions)
+	solution_list = map(lambda solution:(solution,not in_group(requestuser,'Trainer') and not solution.attestations_by(requestuser)), solutions)
+	
 	# first published => all published
 	try:
 		published = solutions[0].attestations_by(requestuser)[0].published
 	except IndexError:
 		published = False
+	
 	all_solutions_attested = not reduce(lambda x,y: x or y, [new_attest_possible for (solution, new_attest_possible) in solution_list], False)
 	all_attestations_final = reduce(lambda x,y: x and y, 
 								map(lambda attestation: attestation.final , 
 									sum([list(solution.attestations_by(requestuser)) for solution in solutions],[])), True)
 	publishable = all_solutions_attested and all_attestations_final and task.expired()
+	
 	if request.method == "POST" and publishable:
 		for solution in solutions:
 			for attestation in solution.attestations_by(requestuser):
@@ -133,7 +139,7 @@ def view_attestation(request, attestation_id):
 			return HttpResponseRedirect(reverse('attestation_list', args=[attest.solution.task.id]))
 	else:
 		form = AttestationPreviewForm(instance=attest)
-		submitable = attest.author == request.user
+		submitable = attest.author == request.user and not attest.published
 		return render_to_response("attestation/attestation_view.html", {"attest": attest, 'submitable':submitable, 'form':form},	context_instance=RequestContext(request))
 
 

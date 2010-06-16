@@ -296,6 +296,10 @@ form .help{
 	padding-left: 2%;
 }
 
+a.add-row {
+	
+}
+
 #soluion_upload div.left a {
 	float: right;
 }
@@ -371,8 +375,8 @@ form .help{
 
 #attestation_list #comment {
 	color: #c0c0c0;
-	width: 80%;
-	float: right;
+	width: 60%;
+	margin-left: 30px;
 }
 
 #attestation_list div.attestation {
