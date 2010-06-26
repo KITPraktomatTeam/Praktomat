@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
 from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
 from django.views.generic.list_detail import object_list, object_detail
 from django.db.models import Count
 import datetime
@@ -21,7 +22,7 @@ def statistics(request,task_id):
 		return render_to_response('error.html', context_instance=RequestContext(request))
 	solution_count = task.solution_set.filter(final=True).count()
 	from django.contrib.auth.models import Group
-	user_count = Group.objects.get(name='User').user_set.count()
+	user_count = Group.objects.get(name='User').user_set.filter(is_active=True).count()
 	
 	submissions = []
 	submissions_final = []
@@ -142,6 +143,31 @@ def view_attestation(request, attestation_id):
 		submitable = attest.author == request.user and not attest.published
 		return render_to_response("attestation/attestation_view.html", {"attest": attest, 'submitable':submitable, 'form':form},	context_instance=RequestContext(request))
 
+def rating_overview(request):
+	
+	attestations = Attestation.objects.filter(published=True)
+	
+	attestation_dict = {} 	#{(task_id:user_id):rating}
+	for attestation in attestations:
+			attestation_dict[attestation.solution.task_id, attestation.solution.author_id] = attestation
+	
+	task_id_list = Task.objects.filter(submission_date__lt = datetime.datetime.now).order_by('publication_date','submission_date').values_list('id', flat=True)
+	user_id_list = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name').values_list('id', flat=True)
+	
+	task_list = map(lambda task_id:Task.objects.get(id=task_id), task_id_list)	
+	
+	rating_list = []
+	for user_id in user_id_list:
+		rating_for_user_list = [User.objects.get(id=user_id)]
+		for task_id in task_id_list:
+			try:
+				rating = attestation_dict[task_id,user_id]
+			except KeyError:
+				rating = None
+			rating_for_user_list.append(rating)
+		rating_list.append(rating_for_user_list)
+		
+	return render_to_response("attestation/rating_overview.html", {'rating_list':rating_list, 'task_list':task_list},	context_instance=RequestContext(request))
 
 
 

@@ -16,10 +16,6 @@ h2{
 	font-size: 16px;
 	margin-bottom: 16px;
 }
-
-#help_icon {
-	float: right;
-}
 h3{
 	font-size: 12px;
 }
@@ -45,6 +41,10 @@ li {
 	padding-left: 20px;
 	margin-bottom: 10px;
 	list-style-position: inside;
+}
+
+td, th{
+	padding: 5px;
 }
 
 /* @end */
@@ -495,3 +495,42 @@ div.result div.log {
 /* @end */
 
 /* @end */
+
+/* @group Rating */
+
+#rating .odd {
+	background-color: #e9edf1;
+}
+
+#rating .noLinkHighlight a:link, .noLinkHighlight a:visited {
+	color: #333;
+	text-decoration: none;
+}
+
+#rating .noLinkHighlight a:hover {
+	text-decoration: underline;
+}	
+
+#rating .heading {
+	width:50px;
+	margin-bottom: 10px;
+     -moz-transform: rotate(-45deg);  /* FF3.5+ */
+       -o-transform: rotate(-45deg);  /* Opera 10.5 */
+  -webkit-transform: rotate(-45deg);  /* Saf3.1+, Chrome */
+             filter:  progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand', 
+                     M11=0.7071067811865476, M12=0.7071067811865475, M21=-0.7071067811865475, M22=0.7071067811865476); /* IE6,IE7 */
+         -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', 
+                     M11=0.7071067811865476, M12=0.7071067811865475, M21=-0.7071067811865475, M22=0.7071067811865476)"; /* IE8 */
+               zoom: 1;
+}
+
+#rating table {
+	margin-top: 40px;
+}
+  
+
+/* @end */
+
+#help_icon {
+	float: right;
+}

@@ -37,6 +37,7 @@ urlpatterns = patterns('',
 	url(r'^tasks/(?P<task_id>\d+)/attestation/$', 'praktomat.attestation.views.attestation_list', name='attestation_list'),
 	url(r'^attestation/(?P<attestation_id>\d+)/new$', 'praktomat.attestation.views.edit_attestation', name='edit_attestation'),
 	url(r'^attestation/(?P<attestation_id>\d+)$', 'praktomat.attestation.views.view_attestation', name='view_attestation'),
+	url(r'^attestation/rating_overview$', 'praktomat.attestation.views.rating_overview', name='rating_overview'),
 )
 
 

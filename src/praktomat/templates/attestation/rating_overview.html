@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load highlight %} {% load i18n  %}
+{% block extrahead %}{{ block.super }}{% endblock %} 
+{% block breadcrumbs %} {{block.super}} > Rating Overview {% endblock %}
+{% block content %}<div id="rating">
+<h2>{% trans "Rating Overview" %}</h2>
+
+<table class="noLinkHighlight">
+	<tr>
+		<th>User</th>
+		{% for task in task_list %}
+			<th><div class="heading"><a href="{% url taskDetail task_id=task.id  %}">{{task.title}}</a></div></th>
+		{% endfor %}
+	</tr>
+	{% for user_row in rating_list %}
+		<tr class="{% cycle 'odd' 'even' %}">
+			{% for attestation in user_row %}
+				{% if forloop.first %}
+					<td>{{attestation.get_full_name}}</td>
+				{% else %}
+					{% if attestation %}
+						<td><a href="{% url view_attestation attestation_id=attestation.id%}">{{attestation.final_grade}}</a></td>
+					{% else %}
+						<td>-</td>
+					{% endif %}
+				{% endif %}		
+			{% endfor %}
+		</tr>
+	{% endfor %}
+</table>
+</div>{% endblock %}
