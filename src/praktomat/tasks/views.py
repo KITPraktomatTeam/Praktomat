@@ -17,11 +17,9 @@ from praktomat.solutions.models import Solution, SolutionFile
 @login_required
 def taskList(Request):
 	now = datetime.now()
-	upcoming_tasks = Task.objects.filter(publication_date__lte = now).filter(submission_date__gt = now).order_by('-submission_date')
-	expired_tasks = Task.objects.filter(publication_date__lte = now).filter(submission_date__lte = now).order_by('submission_date')
+	tasks = Task.objects.filter(publication_date__lte = now).order_by('submission_date')
 	tutors = Request#.user.userprofile_set.all()[0].tutorial.tutors.all()
-	return render_to_response('tasks/task_list.html',{'upcoming_tasks':upcoming_tasks, 'expired_tasks':expired_tasks, 'tutors':tutors}, context_instance=RequestContext(Request))
-	#return object_list(Request, Task.objects.all(), template_object_name='tasks')
+	return render_to_response('tasks/task_list.html',{'tasks':tasks, 'tutors':tutors}, context_instance=RequestContext(Request))
 
 @login_required
 def taskDetail(Request,task_id):

@@ -10,12 +10,19 @@
 	{% endif %}
 	
 	{% chunk "Welcome Message" %}
-
+	
+	{% if user|in_group:"Trainer"%}
+		<a href={% url rating_overview %}>{% trans "Rating overview"%}</a>
+	{% endif %}
 </div>
 
-<div id="upcoming_tasks" class='left'>
-		<h1>{% trans "Upcoming tasks" %}</h1>
-		{% for task in upcoming_tasks%}
+{% regroup tasks by expired as grouped_tasks %}
+
+<div>
+{% for group in grouped_tasks %}
+    <div id="{% if group.grouper %}expired_tasks{% else %}upcoming_tasks{% endif %}" class="{% if group.grouper %}right{% else %}left{% endif %}" >
+		<h1>{% if group.grouper %}{% trans "Expiered tasks" %}{% else %}{% trans "Upcoming tasks" %}{% endif %}</h1>
+		{% for task in group.list%}
 			<h2><a href={% url taskDetail task_id=task.id%}>{{task.title}}</a></h2>
 			{{ task.submission_date|date }} {{ task.submission_date|time }}
 			{% if user|in_group:"User" %}
@@ -28,31 +35,11 @@
 				<a href={% url statistics task_id=task.id%}>{% trans "Statistics"%}</a>
 			{% endif %} <br/><br/>
 		{% empty %}
-			<a>{% trans "Nothing to do right now! Yay!" %}</a>
+			<a>{% if not group.grouper %}{% trans "Nothing to do right now! Yay!" %}{% endif %}</a>
 		{% endfor %}
-</div>
-
-{% if expired_tasks%}
-	<div id="expired_tasks" class='right'>
-		<h1>{% trans "Expiered tasks" %}</h1>
-		{% for task in expired_tasks %}
-			<h2><a href={% url taskDetail task_id=task.id%}>{{task.title}}</a></h2>
-			{{ task.submission_date|date }} {{ task.submission_date|time }}
-			{% if user|in_group:"User" %}
-				<a href={% url solution_list task_id=task.id%}>{% trans "Solutions"%}</a>
-			{% endif %}
-			{% if user|in_group:"Tutor" or user|in_group:"Trainer"%}
-				<a href={% url attestation_list task_id=task.id%}>{% trans "Attestation"%}</a>
-			{% endif %}
-			{% if user|in_group:"Trainer"%}
-				<a href={% url statistics task_id=task.id%}>{% trans "Statistics"%}</a>
-			{% endif %} <br/><br/>
-		{%endfor%}
 	</div>
-{% endif %}
+{% endfor %}
 
-
-
-
+</div>
 
 </div>{% endblock %}
