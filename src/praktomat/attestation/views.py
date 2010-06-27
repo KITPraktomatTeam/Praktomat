@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.views.generic.list_detail import object_list, object_detail
 from django.db.models import Count
+from django.forms.models import modelformset_factory
 import datetime
 
 from praktomat.tasks.models import Task
@@ -14,6 +15,7 @@ from praktomat.solutions.forms import SolutionFormSet
 from praktomat.attestation.models import Attestation, AnnotatedSolutionFile, RatingResult
 from praktomat.attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm
 from praktomat.accounts.templatetags.in_group import in_group
+from praktomat.accounts.models import UserProfile
 
 @login_required
 def statistics(request,task_id):
@@ -167,7 +169,19 @@ def rating_overview(request):
 			rating_for_user_list.append(rating)
 		rating_list.append(rating_for_user_list)
 		
-	return render_to_response("attestation/rating_overview.html", {'rating_list':rating_list, 'task_list':task_list},	context_instance=RequestContext(request))
+	FinalGradeFormSet = modelformset_factory(UserProfile, fields=('final_grade',), extra=0)
+	# corresponding userprofiles to user_id_list in reverse order! important for easy displaying in template
+	user_profiles = UserProfile.objects.filter(user__groups__name='User').filter(user__is_active=True).order_by('-user__last_name','-user__first_name')
+	
+	if request.method == "POST":
+		final_grade_formset = FinalGradeFormSet(request.POST, request.FILES, queryset = user_profiles)
+		if final_grade_formset.is_valid():
+			final_grade_formset.save()
+	else:
+		final_grade_formset = FinalGradeFormSet(queryset = user_profiles)
+	
+	
+	return render_to_response("attestation/rating_overview.html", {'rating_list':rating_list, 'task_list':task_list, 'final_grade_formset':final_grade_formset},	context_instance=RequestContext(request))
 
 
 

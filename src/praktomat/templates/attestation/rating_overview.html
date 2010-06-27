@@ -5,27 +5,38 @@
 {% block content %}<div id="rating">
 <h2>{% trans "Rating Overview" %}</h2>
 
-<table class="noLinkHighlight">
-	<tr>
-		<th>User</th>
-		{% for task in task_list %}
-			<th><div class="heading"><a href="{% url taskDetail task_id=task.id  %}">{{task.title}}</a></div></th>
-		{% endfor %}
-	</tr>
-	{% for user_row in rating_list %}
-		<tr class="{% cycle 'odd' 'even' %}">
-			{% for attestation in user_row %}
-				{% if forloop.first %}
-					<td>{{attestation.get_full_name}}</td>
-				{% else %}
-					{% if attestation %}
-						<td><a href="{% url view_attestation attestation_id=attestation.id%}">{{attestation.final_grade}}</a></td>
-					{% else %}
-						<td>-</td>
-					{% endif %}
-				{% endif %}		
+<div><form method="post" action="">{% csrf_token %}
+    {{ final_grade_formset.management_form }}
+	<table class="noLinkHighlight">
+		<tr>
+			<th>User</th>
+			{% for task in task_list %}
+				<th><div class="heading"><a href="{% url taskDetail task_id=task.id  %}">{{task.title}}</a></div></th>
 			{% endfor %}
+			<th>Final grade</th>
 		</tr>
-	{% endfor %}
-</table>
+		{% for user_row in rating_list %}
+			<tr class="{% cycle 'odd' 'even' %}">
+				{% for attestation in user_row %}
+					{% if forloop.first %}
+						<td>{{attestation.get_full_name}}</td>
+					{% else %}
+						{% if attestation %}
+							<td><a href="{% url view_attestation attestation_id=attestation.id%}">{{attestation.final_grade}}</a></td>
+						{% else %}
+							<td>-</td>
+						{% endif %}
+					{% endif %}		
+				{% endfor %}
+				<td>
+					{% with final_grade_formset.forms.pop as form %}
+						{% for field in form.hidden_fields %} {{field}} {% endfor %}
+						{{ form.final_grade }}
+					{% endwith %}
+				</td>
+			</tr>
+		{% endfor %}
+	</table>
+	<input type="submit" value="Save" />
+</form></div>
 </div>{% endblock %}

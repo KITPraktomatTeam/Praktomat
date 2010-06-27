@@ -27,6 +27,8 @@ class UserProfile(models.Model):
 	
 	#ACTIVATED = u"ALREADY_ACTIVATED"
 	
+	final_grade = models.CharField( null=True, blank=True, max_length=100,  help_text = _('The final grade for the hole class.'))
+	
 	def activation_key_expired(self):
 		"""
 		Determine whether the activation key has expired, returning a boolean 
