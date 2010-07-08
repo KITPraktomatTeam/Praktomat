@@ -243,6 +243,15 @@ form .help{
 
 /* @group Task List */
 
+
+#task_list #welcome {
+	margin-bottom: 40px;
+}
+
+#task_list #tutors {
+	margin-top: 30px;
+}
+
 #task_list div.left {
 	float: left;
 	width: 48%;

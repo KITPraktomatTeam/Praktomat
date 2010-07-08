@@ -70,7 +70,7 @@ INSTALLED_APPS = (
     'south', 
     
     # contains a widget to render a form field as a TinyMCE editor
-    #'tinymce',
+    'tinymce',
 	
 	'praktomat.pagechunks',
 	'praktomat.accounts',
@@ -98,6 +98,8 @@ TINYMCE_DEFAULT_CONFIG = {
     'theme': "advanced",
     'theme_advanced_buttons1' : "formatselect,|,bold,italic,underline,strikethrough,|,forecolor,|,bullist,numlist,|,sub,sup,|,outdent,indent,blockquote,syntaxhl,|,visualchars,nonbreaking,|,link,unlink,anchor,image,cleanup,help,code,|,print,|,fullscreen",
 	'theme_advanced_buttons2' : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,undo,redo,|,tablecontrols,|,hr,removeformat,visualaid,|,charmap,emotions,iespell,media,advhr",				   
+	'theme_advanced_buttons3' : "",
+	'theme_advanced_buttons4' : "",
 	'theme_advanced_toolbar_location' : "top",
 	'theme_advanced_toolbar_align' : "left",
 	'theme_advanced_statusbar_location' : "bottom",

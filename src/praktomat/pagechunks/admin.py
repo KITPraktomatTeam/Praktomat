@@ -1,7 +1,8 @@
 from django.contrib import admin
+from django.db import models
 from models import Chunk
-# Django-TinyMCE 1.5 conflicts with django 1.2 - wait for 1.6
-#from tinymce.widgets import TinyMCE
+
+from tinymce.widgets import TinyMCE
 
 class ChunkAdmin(admin.ModelAdmin):
 	list_display = ('key', 'content')
@@ -12,7 +13,7 @@ class ChunkAdmin(admin.ModelAdmin):
 	readonly_fields = ('key',)
 	
 	formfield_overrides = {
-#        models.TextField: {'widget': TinyMCE()},
+        models.TextField: {'widget': TinyMCE()},
     }
 
 admin.site.register(Chunk, ChunkAdmin)

@@ -5,15 +5,19 @@
 
 <div id="welcome">
 	<h1>{% trans "Welcome" %}, {% firstof user.get_full_name user.username %}!</h1>
-	{% if tutors %}
-		
-	{% endif %}
 	
 	{% chunk "Welcome Message" %}
 	
 	{% if user|in_group:"Trainer"%}
-		<a href={% url rating_overview %}>{% trans "Rating overview"%}</a>
+		<span class="icon ui-icon-triangle-1-e"></span><a href={% url rating_overview %}>{% trans "Rating overview"%}</a>
 	{% endif %}
+	
+	{% if tutors %}<div id="tutors">
+		<a> Got Problems? Contact your tutors: </a>
+		{% for tutor in tutors %}
+			<a href="mailto:{{tutor.email}}">{{tutor.get_full_name}}</a>	
+		{% endfor %} 
+	</div>{% endif %}
 </div>
 
 {% regroup tasks by expired as grouped_tasks %}

@@ -9,7 +9,7 @@ class Migration(DataMigration):
 	def forwards(self, orm):
 	
 		depends_on = (
-			("accounts", "0001_initial"),
+			("accounts", "0002_load_initial_data"),
 		)
 		
 		trainer = orm['auth.group'].objects.get_or_create(name="Trainer")[0]

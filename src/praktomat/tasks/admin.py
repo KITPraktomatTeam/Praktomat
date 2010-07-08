@@ -2,6 +2,9 @@ from django.contrib import admin
 from django.contrib.contenttypes import generic
 from django.shortcuts import render_to_response
 from django.contrib.auth.admin import UserAdmin
+from django.db import models
+from tinymce.widgets import TinyMCE
+
 from praktomat.tasks.models import Task, MediaFile
 from praktomat.solutions.models import Solution, SolutionFile
 from praktomat.attestation.admin import RatingAdminInline
@@ -62,6 +65,10 @@ class TaskAdmin(admin.ModelAdmin):
 	inlines = [MediaInline] + CheckerInlines + [ RatingAdminInline]
 	actions = ['export_tasks', 'run_all_checkers']
 	
+	formfield_overrides = {
+        models.TextField: {'widget': TinyMCE()},
+    }
+	
 	def export_tasks(self, request, queryset):
 		""" Export Task action """
 		from django.http import HttpResponse
@@ -85,13 +92,6 @@ class TaskAdmin(admin.ModelAdmin):
 		my_urls = patterns('', (r'^import/$', 'praktomat.tasks.views.import_tasks')) 
 		return my_urls + urls
 	
-	
-	class Media:
-		js = [	'frameworks/tiny_mce/tiny_mce.js',
-				'script/taskadmin.js',
-			]
-
-
 admin.site.register(Task, TaskAdmin)
 
 
