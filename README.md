@@ -17,8 +17,8 @@ Installation
 	
 7. run "./bin/praktomat migrate" to install the praktomat database tables
 	
-	- (optional) install some test data with "./bin/praktomat loaddata documentation/test_data.json" this will give you some users to play with
-	Logins: user, tutor, trainer, admin (username=password)
+	- (optional) install a test database by copying the contents of "./examples/PraktomatSupport" to folder 'UPLOAD_ROOT' configured in settings_local.py and change your database to the contained SQLite-database 'Database'  
+	Logins: userXY, tutorX, trainer, admin (password='demo') X in [1,3], Y in [1,5]
 
 8. it should now be possible to start the developmet server with "./bin/praktomat runserver" or "./bin/praktomat runserver_plus"
 

@@ -1,0 +1,4 @@
+# $Id: pubmore.exp 901 2005-02-23 16:45:23Z stoerzer $
+
+PROGRAM_test "10000 1550"  "ggT(10000, 1550) = 50"
+PROGRAM_test "111111 99"   "ggT(111111, 99) = 33"
