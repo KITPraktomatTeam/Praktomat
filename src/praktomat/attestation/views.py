@@ -3,10 +3,10 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
 from django.views.generic.list_detail import object_list, object_detail
 from django.db.models import Count
 from django.forms.models import modelformset_factory
+from django.contrib.auth.models import Group
 import datetime
 
 from praktomat.tasks.models import Task
@@ -15,7 +15,8 @@ from praktomat.solutions.forms import SolutionFormSet
 from praktomat.attestation.models import Attestation, AnnotatedSolutionFile, RatingResult
 from praktomat.attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm
 from praktomat.accounts.templatetags.in_group import in_group
-from praktomat.accounts.models import UserProfile
+from praktomat.accounts.models import User
+
 
 @login_required
 def statistics(request,task_id):
@@ -23,7 +24,6 @@ def statistics(request,task_id):
 	if not (request.user.groups.filter(name='Trainer').values('name') or request.user.is_superuser):
 		return render_to_response('error.html', context_instance=RequestContext(request))
 	solution_count = task.solution_set.filter(final=True).count()
-	from django.contrib.auth.models import Group
 	user_count = Group.objects.get(name='User').user_set.filter(is_active=True).count()
 	
 	submissions = []
@@ -57,7 +57,7 @@ def attestation_list(request, task_id):
 	requestuser = request.user
 	solutions = Solution.objects.filter(task__id=task_id).filter(final=True).all()
 	if not in_group(requestuser,'Trainer'):
-		solutions = solutions.filter(author__userprofile__tutorial__tutors__pk=request.user.id)
+		solutions = solutions.filter(author__tutorial__tutors__pk=request.user.id)
 	# don't allow a new attestation if one already exists
 	solution_list = map(lambda solution:(solution,not in_group(requestuser,'Trainer') and not solution.attestations_by(requestuser)), solutions)
 	
@@ -169,16 +169,16 @@ def rating_overview(request):
 			rating_for_user_list.append(rating)
 		rating_list.append(rating_for_user_list)
 		
-	FinalGradeFormSet = modelformset_factory(UserProfile, fields=('final_grade',), extra=0)
-	# corresponding userprofiles to user_id_list in reverse order! important for easy displaying in template
-	user_profiles = UserProfile.objects.filter(user__groups__name='User').filter(user__is_active=True).order_by('-user__last_name','-user__first_name')
+	FinalGradeFormSet = modelformset_factory(User, fields=('final_grade',), extra=0)
+	# corresponding user to user_id_list in reverse order! important for easy displaying in template
+	user = User.objects.filter(groups__name='User').filter(is_active=True).order_by('-last_name','-first_name')
 	
 	if request.method == "POST":
-		final_grade_formset = FinalGradeFormSet(request.POST, request.FILES, queryset = user_profiles)
+		final_grade_formset = FinalGradeFormSet(request.POST, request.FILES, queryset = user)
 		if final_grade_formset.is_valid():
 			final_grade_formset.save()
 	else:
-		final_grade_formset = FinalGradeFormSet(queryset = user_profiles)
+		final_grade_formset = FinalGradeFormSet(queryset = user)
 	
 	
 	return render_to_response("attestation/rating_overview.html", {'rating_list':rating_list, 'task_list':task_list, 'final_grade_formset':final_grade_formset},	context_instance=RequestContext(request))

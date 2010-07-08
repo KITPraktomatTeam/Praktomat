@@ -18,7 +18,10 @@ from praktomat.solutions.models import Solution, SolutionFile
 def taskList(Request):
 	now = datetime.now()
 	tasks = Task.objects.filter(publication_date__lte = now).order_by('submission_date')
-	tutors = Request#.user.userprofile_set.all()[0].tutorial.tutors.all()
+	try:
+		tutors = Request.user.tutorial.tutors.all()
+	except:
+		tutors = None
 	return render_to_response('tasks/task_list.html',{'tasks':tasks, 'tutors':tutors}, context_instance=RequestContext(Request))
 
 @login_required

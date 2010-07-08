@@ -1,10 +1,11 @@
-from praktomat.accounts.forms import MyRegistrationForm
+#from praktomat.accounts.forms import MyRegistrationForm
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.template import RequestContext
 from django.conf import settings
-from praktomat.accounts.models import UserProfile
+from praktomat.accounts.forms import MyRegistrationForm
+from praktomat.accounts.models import User
 
 def register(request):
 	if request.method == 'POST':
@@ -18,7 +19,5 @@ def register(request):
 
 
 def activate(request, activation_key):
-	account = UserProfile.activate_user(activation_key)
-	return render_to_response('registration/registration_activated.html',
-							{ 'account': account, 'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS }, 
-							context_instance=RequestContext(request))
+	account = User.activate_user(activation_key)
+	return render_to_response('registration/registration_activated.html', { 'account': account, 'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS }, context_instance=RequestContext(request))

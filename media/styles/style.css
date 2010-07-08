@@ -155,12 +155,14 @@ label {
 	font-family: sans-serif;
 	vertical-align: top;
 	float: left;
-	width: 8em;
+	width: 150px;
 	display: block;
 }
 
 form .help{
-	margin-left: 9em;
+	margin-left: 150px;
+	margin-top: 5px;
+	margin-bottom: 15px;
 	color: #999999;
 }
 
@@ -393,8 +395,24 @@ a.add-row {
 
 /* @group Attestation View */
 
+#attestation_view div.section {
+	margin-top: 30px;
+	margin-bottom: 30px;
+}
+
 #attestation_view div.changed {
 	background-color: #c4ff6f;
+}
+
+#attestation_view span.mark {
+	left: 15px;
+	position: relative;
+	font-weight: normal;
+}
+
+#attestation_view div.result p {
+	color: #999999;
+	margin-left: 20px;
 }
 
 #attestation_view form .help {

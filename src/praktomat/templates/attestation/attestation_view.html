@@ -29,20 +29,22 @@
 <p id='author'>by {{attest.author.get_full_name}}</p>
 
 {% if attest.public_comment %}
-	<h2>Comment</h2>
-	<div class="Coment">
-		{{attest.public_comment}}	
+	<div class="section">
+		<h2>Comment</h2>
+		<p>{{attest.public_comment}}</p>	
 	</div>
 {% endif %}
 
 {% if attest.ratingresult_set.all %}
-	<h2>Ratings</h2>
-	{% for ratingresult in attest.ratingresult_set.all%}
-		<div class="result">
-			<h3 href="#">{{ratingresult.aspect.name}}: {{ratingresult.mark}}</h3>
-			{{ratingresult.aspect.description}}
-		</div>
-	{%endfor%}
+	<div class="section">
+		<h2>Ratings</h2>
+		{% for ratingresult in attest.ratingresult_set.all%}
+			<div class="result">
+				<h3 href="#">{{ratingresult.aspect.name}}: <span class="mark">{{ratingresult.mark}}</h3>
+				<p>{{ratingresult.aspect.description}}</p>
+			</div>
+		{%endfor%}
+	</div>
 {% endif %}
 
 <h2>{% trans "Annotated Files" %}</h2>

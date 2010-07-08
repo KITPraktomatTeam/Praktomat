@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.contrib.contenttypes import generic
 from django.shortcuts import render_to_response
-from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 from praktomat.tasks.models import Task, MediaFile
 from praktomat.solutions.models import Solution, SolutionFile

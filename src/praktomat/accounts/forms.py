@@ -6,29 +6,26 @@ from django.conf import settings
 from django.db import models
 from django.template import Context, loader
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
 from django.contrib.sites.models import Site
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from praktomat.accounts.models import UserProfile
+from django.contrib.auth.forms import UserCreationForm as UserBaseCreationForm, UserChangeForm as UserBaseChangeForm
 from django.core.mail import send_mail
 from django.utils.http import int_to_base36
 
-class MyRegistrationForm(UserCreationForm):
+from praktomat.accounts.models import User
+
+class MyRegistrationForm(UserBaseCreationForm):
 	
 	# overriding modelfields to ensure required fields are provided
 	first_name = forms.CharField(max_length = 30,required=True)
 	last_name = forms.CharField(max_length = 30,required=True)
 	email = forms.EmailField(required=True)
 	
-	# add profile fields 
-	degree_course = forms.CharField(max_length = 30,required=True)
-	mat_number = forms.IntegerField(required=True)
-	
 	# adding first and last name, email to the form
 	class Meta:
 		model = User
-		fields = ("username","first_name","last_name","email")
+		fields = ("username","first_name","last_name","email", "mat_number")
 	
 #	def clean_email(self):
 #		data = super(MyRegistrationForm, self).clean_email()
@@ -43,16 +40,16 @@ class MyRegistrationForm(UserCreationForm):
 		 
 		# disable user until activated via email
 		user.is_active=False
-		user.save()
 		
 		# The activation key will be a SHA1 hash, generated from a combination of the username and a random salt.
 		sha = hashlib.sha1()
 		sha.update( str(random.random()) + user.username)
 		activation_key = sha.hexdigest()
+		user.activation_key=activation_key
 		
-		profile = UserProfile(user=user, activation_key=activation_key,
-							degree_course=self.cleaned_data.get("degree_course"),
-		 					mat_number=self.cleaned_data.get("mat_number")).save()
+		user.mat_number=self.cleaned_data.get("mat_number")
+		
+		user.save()
 		
 		# Send activation email
 		current_site = Site.objects.get_current()
@@ -72,3 +69,11 @@ class MyRegistrationForm(UserCreationForm):
 		send_mail(_("Account activation on %s") % site_name, t.render(Context(c)), None, [user.email])
 		
 		return user
+	
+class UserCreationForm(UserBaseCreationForm):
+	class Meta:
+		model = User
+		
+class UserChangeForm(UserBaseChangeForm):
+	class Meta:
+		model = User

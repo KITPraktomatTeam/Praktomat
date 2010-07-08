@@ -8,11 +8,9 @@
             {% endfor %}
         {% endif %}
 		
-		<div>
             {{ field.errors }}
-            <label for="{{ field.html_name }}" class="{{field.required|yesno:'required,'}}">{{ field.label }}:</label> {{ field }}
-			{% if field.help_text %}<p class="help">{{ field.help_text }}</p> {% endif %}
-		</div>
-		
+            <label for="{{ field.html_name }}" class="{{field.required|yesno:'required,'}}">{{ field.label }}:</label> 
+			{{ field }} {% if field.help_text %}<p class="help">{{ field.help_text }}</p> {% endif %}
+
     </div>
 {% endfor %}

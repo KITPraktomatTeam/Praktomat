@@ -4,30 +4,26 @@ import re
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User as BasicUser, UserManager
+from django.db.models import signals
 
-class Tutorial(models.Model):
-	name = models.CharField(max_length=100, blank=True, help_text=_("The name of the tutorial"))
-	# A Tutorial may have many tutors as well as a Tutor may have multiple tutorials
-	tutors = models.ManyToManyField(User, limit_choices_to = {'groups__name': 'Tutor'}, help_text = _("The tutors in charge of the tutorium."))
+from praktomat.accounts.templatetags.in_group import in_group
 
-	def tutors_flat(self):
-		return reduce(lambda x, y: x.get_full_name() + ', ' + y.get_full_name(), self.tutors.all())
-	tutors_flat.short_description = _('Tutors')
 
-	def __unicode__(self):
-		return("%s: %s" % (self.name, self.tutors_flat()))
-
-class UserProfile(models.Model):
-	user = models.ForeignKey(User, unique=True)
+class User(BasicUser):
+	
+	# all fields need to be null-able in order to create user 
+	tutorial = models.ForeignKey('Tutorial', null=True, blank=True, help_text = _("The tutorial the student belongs to."))
+	mat_number = models.IntegerField( null=True )
+	final_grade = models.CharField( null=True, blank=True, max_length=100,  help_text = _('The final grade for the hole class.'))
+	
 	activation_key=models.CharField(_('activation key'), max_length=40, editable=False)
 	
-	# If the User is a Student he participates in a tutorial
-	tutorial = models.ForeignKey(Tutorial, null=True, blank=True, help_text = _("The tutorial the student belogs to."))
+	# Use UserManager to get the create_user method, etc.
+	objects = UserManager()
 	
-	#ACTIVATED = u"ALREADY_ACTIVATED"
-	
-	final_grade = models.CharField( null=True, blank=True, max_length=100,  help_text = _('The final grade for the hole class.'))
+	def __unicode__(self):
+		return self.get_full_name() or self.username
 	
 	def activation_key_expired(self):
 		"""
@@ -79,22 +75,45 @@ class UserProfile(models.Model):
 		SHA1_RE = re.compile('^[a-f0-9]{40}$')
 		if SHA1_RE.search(activation_key):
 			try:
-				profile = UserProfile.objects.get(activation_key=activation_key)
-			except UserProfile.DoesNotExist:
+				user = User.objects.get(activation_key=activation_key)
+			except User.DoesNotExist:
 				return False
-			if not profile.activation_key_expired():
-				user = profile.user
+			if not user.activation_key_expired():
 				user.is_active = True
+				user.activation_key = u"ALREADY_ACTIVATED"
 				user.save()
-				profile.activation_key = u"ALREADY_ACTIVATED"
-				profile.save()
 				return user
 			return False
 	activate_user = staticmethod(activate_user)
 	
-	# The rest is completely up to you...
-	mat_number = models.IntegerField()
-	degree_course = models.CharField(max_length=30)
+#	def save(self, force_insert=False, force_update=False, *args, **kwargs):
+#		""" prevent redundancy: staff iff. superuser or trainer """
+#		# the the instance needs to have a primary key value before a many-to-many relationship groups can be used so save it twice
+#		super(User, self).save(force_insert=force_insert, force_update=force_update, *args, **kwargs)
+#		# Bug: groups are not saved at this point!
+#		self.is_staff = (self.is_superuser or in_group(self,'Trainer'))
+#		super(User, self).save(force_insert=False, force_update=force_update, *args, **kwargs)
+	
+def create_user_for_basicuser(sender, **kwargs):
+	""" Model inheritance is archived through joining of the base- and subclass's tables. to prevent inconsistencies a User is created every time a BaseUser is created. (ex. manage.py create_superuser)"""
+	if kwargs['created']:
+		u = User() 
+		u.__dict__.update(kwargs['instance'].__dict__)
+		u.save()
+signals.post_save.connect(create_user_for_basicuser, sender=BasicUser)
+
+class Tutorial(models.Model):
+	name = models.CharField(max_length=100, blank=True, help_text=_("The name of the tutorial"))
+	# A Tutorial may have many tutors as well as a Tutor may have multiple tutorials
+	tutors = models.ManyToManyField('User', limit_choices_to = {'groups__name': 'Tutor'}, related_name='tutored_tutorials', help_text = _("The tutors in charge of the tutorium."))
+
+	def tutors_flat(self):
+		return reduce(lambda x, y: x.get_full_name() + ', ' + y.get_full_name(), self.tutors.all())
+	tutors_flat.short_description = _('Tutors')
+
+	def __unicode__(self):
+		return("%s: %s" % (self.name, self.tutors_flat()))
+
 	
 
 

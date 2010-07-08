@@ -5,12 +5,11 @@ import tempfile
 
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 import os, re, tempfile, shutil
  
-
+from praktomat.accounts.models import User
 
 class Solution(models.Model):
 	"""docstring for Solution"""

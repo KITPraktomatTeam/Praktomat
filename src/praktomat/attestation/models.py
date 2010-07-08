@@ -1,9 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import User
 from praktomat.tasks.models import Task
 from praktomat.solutions.models import Solution, SolutionFile
 from django.utils.translation import ugettext_lazy as _
 import difflib
+
+from praktomat.accounts.models import User
 
 class Attestation(models.Model):
 	""""""
