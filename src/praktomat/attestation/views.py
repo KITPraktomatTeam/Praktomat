@@ -7,6 +7,7 @@ from django.views.generic.list_detail import object_list, object_detail
 from django.db.models import Count
 from django.forms.models import modelformset_factory
 from django.contrib.auth.models import Group
+from django.views.decorators.cache import cache_control
 import datetime
 
 from praktomat.tasks.models import Task
@@ -52,6 +53,7 @@ def daterange(start_date, end_date):
         yield start_date + datetime.timedelta(n)
 	
 @login_required
+@cache_control(must_revalidate=True, no_cache=True, no_store=True, max_age=0) #reload the page from the server even if the user used the back button
 def attestation_list(request, task_id):
 	task = Task.objects.get(pk=task_id)
 	requestuser = request.user

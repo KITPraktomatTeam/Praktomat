@@ -7,14 +7,14 @@ from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
 from django.core.urlresolvers import reverse
 from django.views.generic.list_detail import object_detail
-
-
+from django.views.decorators.cache import cache_control
 
 from praktomat.tasks.models import Task
 from praktomat.solutions.models import Solution, SolutionFile
 from praktomat.solutions.forms import SolutionFormSet
 
 @login_required
+@cache_control(must_revalidate=True, no_cache=True, no_store=True, max_age=0) #reload the page from the server even if the user used the back button
 def solution_list(request, task_id):
 	task = get_object_or_404(Task,pk=task_id)
 	my_solutions = task.solution_set.filter(author = request.user)
