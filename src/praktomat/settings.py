@@ -78,6 +78,7 @@ INSTALLED_APPS = (
 	'praktomat.solutions',
 	'praktomat.attestation',
 	'praktomat.checker',
+	'praktomat.utilities',
 )
 
 
