@@ -2,7 +2,9 @@
 
 {% load i18n %}
 
-{% block title %}{% trans 'Registration successful' %}{% endblock %}
+{% block breadcrumbs %}
+	{{ block.super }} > {% trans 'Registration' %}
+{% endblock %}
 
 {% block content %}
 

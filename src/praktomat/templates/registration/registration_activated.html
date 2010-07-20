@@ -1,8 +1,8 @@
 {% extends "base.html"%}
 {% load i18n %}
 
-{% block title %}
-	{{ account|yesno:_("Activation successful,Activation unsuccessful") }}
+{% block breadcrumbs %}
+	{{ block.super }} > {% trans "Activation" %}
 {% endblock %}
 
 {% block content %}

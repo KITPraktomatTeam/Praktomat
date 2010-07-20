@@ -1,16 +1,8 @@
 {% extends "base.html" %}
 {% load highlight %}{% load i18n  %}{% load in_group %} 
 {% block extrahead %}{{ block.super }}
+	<script type="text/javascript" src="{{MEDIA_URL}}script/solution_inlines.js"></script>
 	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}/styles/pygments_friendly.css" />
-	<script type="text/javascript">
-		  $(document).ready(function(){
-				$("h3").css('cursor', 'pointer').click(function () {
-					$(this).next("div").slideToggle("fast");
-			});
-			// Stop the link click from doing its normal thing
-			return false;
-		  });
-	</script>
 {% endblock %}
 {% block breadcrumbs %} {{block.super}} > <a href={% url taskDetail task_id=attest.solution.task.id%}>{{attest.solution.task.title}}</a> 
 {% if user|in_group:"Tutor"%}
@@ -26,7 +18,16 @@
 {% block content %}<div id='attestation_view'>
 
 <h1>{% trans "Attestation"%}: {{attest.solution.task.title}}</h1>
-<p id='author'>by {{attest.author.get_full_name}}</p>
+<p id='author'>by {{attest.author.get_full_name}} {% if user|in_group:"Trainer" %} <span class="private">for {{attest.solution.author}}</span> {% endif %}</p>
+
+{% if attest.private_comment %}
+	{% if user|in_group:"Trainer" or user|in_group:"Tutor"  %}
+		<div class="section private">
+			<h2>Private Comment</h2>
+			<p>{{attest.private_comment}}</p>	
+		</div>
+	{% endif %}
+{% endif %}
 
 {% if attest.public_comment %}
 	<div class="section">
@@ -44,16 +45,39 @@
 				<p>{{ratingresult.aspect.description}}</p>
 			</div>
 		{%endfor%}
+		{% if user|in_group:"Trainer" or user|in_group:"Tutor" %} 
+			<div class="result private">
+				<h3 href="#">Final grade: <span class="mark">{{attest.final_grade}}</h3>
+			</div>
+		{% endif %}
+	</div>
+{% endif %}
+
+
+{% if user|in_group:"Trainer" or user|in_group:"Tutor" %}
+	<div class="section private">
+		<h2>Checker results</h2>
+		{% with attest.solution.checkerresult_set.all as results %}
+			{% include "solutions/checker_results_inline.html" %}
+		{% endwith %}
 	</div>
 {% endif %}
 
 <h2>{% trans "Annotated Files" %}</h2>
-{% for anotfile in attest.annotatedsolutionfile_set.all%}
-	<div class="file">
-		<h3 href="#">{{anotfile}}</h3>
-		<div class="content">{{anotfile.content_diff|highlight_table:anotfile.solution_file.file.name|highlight_diff}}</div>
-	</div>
-{%endfor%}
+<div id="filetabs">
+	<ul>
+		{% for anotfile in attest.annotatedsolutionfile_set.all%}
+			<li><a href="#{{anotfile|cut:"."}}">{{anotfile}}{% if anotfile.has_anotations%}<span class="has_anotations">*</span>{% endif %}</a></li> 
+		{%endfor%} 
+	</ul> 	
+
+	{% for anotfile in attest.annotatedsolutionfile_set.all%}
+		<div class="file" id="{{anotfile|cut:"."}}">
+			<h3>{{solutionfile}}</h3>
+			<div class="content">{{anotfile.content_diff|highlight_table:anotfile.solution_file.file.name|highlight_diff}}</div>
+		</div>
+	{%endfor%}
+</div>
 
 {% if submitable %}
 	<br/><br/>

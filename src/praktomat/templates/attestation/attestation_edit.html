@@ -3,7 +3,6 @@
 {% block extrahead %}{{ block.super }}
 	<script type="text/javascript" src="{{MEDIA_URL}}script/solution_inlines.js"></script>
 	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}styles/pygments_friendly.css" />
-	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}frameworks/jquery/smoothness/jquery-ui.css" />
 	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}frameworks/bespin/BespinEmbedded.css" />
 	<script type="text/javascript" src="{{MEDIA_URL}}frameworks/bespin/BespinEmbedded.js"></script>
 	<script type="text/javascript">		
@@ -32,7 +31,7 @@
 				currentTextarea.val(bespin.value); }
 			bespin.value = newTextarea.val();
 			currentTextarea = newTextarea;
-			$("#annotated_solution_files").children("a").removeClass("activeFile");
+			$("#annotated_solution_files a").removeClass("activeFile");
 			$("#file"+index).addClass("activeFile");
 		}
 	</script>
@@ -87,7 +86,7 @@
 			</div>
 			<div id="file_form_set_replacement" class="hidden">
 				{% for file in solution.solutionfile_set.all %}
-					<a id="file{{forloop.counter}}" class="file" onclick="loadFileInEditor({{forloop.counter}})">{{file}}</a>
+					<a id="file{{forloop.counter}}" class="file" onclick="loadFileInEditor({{forloop.counter}})" herf="#">{{file}}</a>
 		        {% endfor %}
 				<div id="editor" class="bespin" data-bespinoptions='{ "syntax": "js", "stealFocus": true }'></div>
 			</div>

@@ -4,20 +4,28 @@
 {% block content %}<div id='task_list'>
 
 <div id="welcome">
-	<h1>{% trans "Welcome" %}, {% firstof user.get_full_name user.username %}!</h1>
-	
+
 	{% chunk "Welcome Message" %}
 	
 	{% if user|in_group:"Trainer"%}
 		<span class="icon ui-icon-triangle-1-e"></span><a href={% url rating_overview %}>{% trans "Rating overview"%}</a>
 	{% endif %}
 	
-	{% if tutors %}<div id="tutors">
-		<a> Got Problems? Contact your tutors: </a>
-		{% for tutor in tutors %}
-			<a href="mailto:{{tutor.email}}">{{tutor.get_full_name}}</a>	
-		{% endfor %} 
-	</div>{% endif %}
+	{% if not user|in_group:"Trainer" %}
+		<div id="contact"><a> Got Problems? </a>
+		{% if tutors %}
+			<a> Your tutor{{tutors.count|pluralize}}: </a>
+			{% for tutor in tutors %}
+				<a href="mailto:{{tutor.email}}">{{tutor.get_full_name}}</a>	
+			{% endfor %}
+		{% endif %}
+		{% if trainers %}
+			<a> Your trainer{{trainers.count|pluralize}}: </a>
+			{% for trainer in trainers %}
+				<a href="mailto:{{trainer.email}}">{{trainer.get_full_name}}</a>	
+			{% endfor %}
+		{% endif %}</div>
+	{% endif %}
 </div>
 
 {% regroup tasks by expired as grouped_tasks %}
@@ -25,9 +33,9 @@
 <div>
 {% for group in grouped_tasks %}
     <div id="{% if group.grouper %}expired_tasks{% else %}upcoming_tasks{% endif %}" class="{% if group.grouper %}right{% else %}left{% endif %}" >
-		<h1>{% if group.grouper %}{% trans "Expiered tasks" %}{% else %}{% trans "Upcoming tasks" %}{% endif %}</h1>
+		<h2>{% if group.grouper %}{% trans "Expiered tasks" %}{% else %}{% trans "Upcoming tasks" %}{% endif %}</h2>
 		{% for task in group.list%}
-			<h2><a href={% url taskDetail task_id=task.id%}>{{task.title}}</a></h2>
+			<h3><a href={% url taskDetail task_id=task.id%}>{{task.title}}</a></h3>
 			{{ task.submission_date|date }} {{ task.submission_date|time }}
 			{% if user|in_group:"User" %}
 				<a href={% url solution_list task_id=task.id%}>{% trans "Solutions"%}</a>

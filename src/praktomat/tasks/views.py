@@ -13,6 +13,7 @@ from django.core import urlresolvers
 from praktomat.tasks.models import Task
 from praktomat.solutions.forms import ModelSolutionFormSet
 from praktomat.solutions.models import Solution, SolutionFile
+from praktomat.accounts.models import User
 
 @login_required
 def taskList(Request):
@@ -22,7 +23,8 @@ def taskList(Request):
 		tutors = Request.user.tutorial.tutors.all()
 	except:
 		tutors = None
-	return render_to_response('tasks/task_list.html',{'tasks':tasks, 'tutors':tutors}, context_instance=RequestContext(Request))
+	trainers = User.objects.filter(groups__name="Trainer")
+	return render_to_response('tasks/task_list.html',{'tasks':tasks, 'tutors':tutors, 'trainers':trainers}, context_instance=RequestContext(Request))
 
 @login_required
 def taskDetail(Request,task_id):

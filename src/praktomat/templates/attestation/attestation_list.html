@@ -1,9 +1,27 @@
 {% extends "base.html" %}
 {% load i18n %}{% load in_group %}
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript" src="{{MEDIA_URL}}/frameworks/jquery/jquery.tools.min.js"></script>
+<script type="text/javascript">	
+ $(document).ready(function(){
+ 	$("#help_icon").tooltip({
+		position:  "center left"
+	});
+ })
+</script>
+{% endblock %}
 {% block breadcrumbs %} {{block.super}} > <a href={% url taskDetail task_id=task.id%}>{{task.title}}</a> > Attestations{% endblock %}
 {% block content %}<div id='attestation_list'>
 
 <h1>{{task.title}}</h1>
+
+<div id='help_icon'><span class="icon icon-orange ui-icon-info"></span></div>
+<div class="tooltip"> 
+	<span class="icon ui-icon-radio-on icon-orange" title="not finished"></span> <a>not finished</a><br/>
+	<span class="icon ui-icon-check icon-green" title="final unpublished"></span> <a>final but unpublished</a><br/>
+	<span class="icon ui-icon-circle-check icon-green" title="final published"></span> <a>final and published</a><br/>
+	<span class="icon ui-icon-search" title="view only"></span> <a>view only</a><br/>
+</div> 
 
 <h2>{% trans "Attested solutions" %}</h2>
 
@@ -19,18 +37,18 @@
 				{% if attestation.author = requestuser %} 
 					{% if attestation.final %}
 						{% if attestation.published %}
-							<span class="icon ui-icon-circle-check icon-green"></span>
+							<span class="icon ui-icon-circle-check icon-green" title="final published"></span>
 							<a href={% url view_attestation attestation_id=attestation.id%}>{% trans "View your Attestation" %}</a>
 						{% else %}
-							<span class="icon ui-icon-check icon-green"></span>
+							<span class="icon ui-icon-check icon-green" title="final unpublished"></span>
 							<a href={% url edit_attestation attestation_id=attestation.id%}>{% trans "Edit your Attestation" %}</a>
 						{% endif %}
 					{% else %}
-						<span class="icon ui-icon-radio-on icon-orange"></span>
+						<span class="icon ui-icon-radio-on icon-orange" title="not finished"></span>
 						<a href={% url edit_attestation attestation_id=attestation.id%}>{% trans "Edit your Attestation" %}</a>
 					{% endif %}
 				{% else %}
-					<span class="icon ui-icon-search"></span>
+					<span class="icon ui-icon-search" title="view only"></span>
 					<a href={% url view_attestation attestation_id=attestation.id%}>
 						{% blocktrans with attestation.author.get_full_name as author %}
 							View Attestation by {{author}}

@@ -26,6 +26,11 @@ class AnnotatedSolutionFile(models.Model):
 	solution_file = models.ForeignKey(SolutionFile)
 	content = models.TextField(help_text = _('The content of the solution file annotated by the tutor.'))
 	
+	def has_anotations(self):
+		original = self.solution_file.content()
+		anotated = self.content.replace("\r","")
+		return not original == anotated
+	
 	def content_diff(self):
 		d = difflib.Differ()
 		original = self.solution_file.content().splitlines(1)

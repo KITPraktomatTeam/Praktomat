@@ -1,0 +1,15 @@
+{% for field in form.visible_fields %}
+	<div class="form-row {{field.name}} {{field.errors|yesno:'errors,'}}">
+
+        {# Include the hidden fields in the form #}
+        {% if forloop.first %}
+            {% for hidden in form.hidden_fields %}
+            	{{ hidden }}
+            {% endfor %}
+        {% endif %}
+		    
+        <label for="{{ field.html_name }}" class="{{field.required|yesno:'required,'}}">{{ field.label }}:</label> 
+		{{ field }} {{ field.errors }} {% if field.help_text %}<p class="help">{{ field.help_text }}</p> {% endif %}
+
+    </div>
+{% endfor %}

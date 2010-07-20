@@ -1,24 +1,21 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n %} {% load chunks %}
 
-{% block title %}{% trans 'Login' %}{% endblock %}
-
-{% block content %}
-<form method="post" action=".">{% csrf_token %}
-	<table>
-		<tr>
-			<td></td>
-			<td>
-				<a href="{% url registration_register %}">register</a> / 
-				<a href="{% url auth_password_reset %}">forgot password</a>
-			</td>
-		</tr>
-		{{ form.as_table }}
-		<tr>
-			<td></td>
-			<td><input type="submit" value="login" /></td>
-		</tr>
-	</table>
-	<input type="hidden" name="next" value="{{ next }}" />
-</form>
+{% block breadcrumbs %}
+	{{ block.super }} > {% trans 'Login' %}
 {% endblock %}
+
+{% block content %}<div id="login">
+{% chunk "Login Message" %}	
+
+<div id="form">	
+	<span class="icon ui-icon-triangle-1-e"></span><a href="{% url registration_register %}">Registration</a>
+	/ <span class="icon ui-icon-triangle-1-e"></span><a href="{% url auth_password_reset %}">Retrieve password</a>
+	
+	<form method="post" action=".">{% csrf_token %}
+	    {% include "forms/form_as_div.html" %}
+		<input type="submit" value="login" />
+		<input type="hidden" name="next" value="{{ next }}" />
+	</form>
+</div>
+</div>{% endblock %}

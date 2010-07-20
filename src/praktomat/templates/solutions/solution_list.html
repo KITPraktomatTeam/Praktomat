@@ -29,6 +29,11 @@ $(function(){
 	});
 });
 
+ $(document).ready(function(){
+ 	$("#help_icon").tooltip({
+		position:  "center left"
+	});
+ })
 
 </script>
 {% endblock %}
@@ -55,7 +60,12 @@ $(function(){
 <div class='right'>
 	<div id='help_icon'><span class="icon icon-orange ui-icon-info"></span></div>
 	<div class="tooltip"> 
-    
+    	<span class="icon ui-icon-radio-on icon-red"></span> <a>Errors</a><br/>
+		<span class="icon ui-icon-radio-on icon-orange"></span> <a>Warnings</a><br/> 
+		<span class="icon ui-icon-radio-on icon-green"></span> <a>No Warnings</a><br/>  
+		<span class="icon ui-icon-bullet icon-orange"></span> <a>Warnings (Final Solution)</a><br/> 
+		<span class="icon ui-icon-bullet icon-green"></span> <a>No Warnings (Final Solution)</a><br/> 		
+		<span class="icon ui-icon-script"></span> <a>Attest</a><br/> 
 	</div> 
 	<h2>{% trans "Submitted solutions" %}</h2>
 	{% for solution in solutions %}
@@ -63,19 +73,19 @@ $(function(){
 			{% spaceless %} 
 				{% if solution.final%}
 					{% if solution.warnings%}
-						<span class="icon ui-icon-bullet icon-orange"></span>
+						<span class="icon ui-icon-bullet icon-orange" title='Warnings (Final Solution)'></span>
 					{% else %}
-						<span class="icon ui-icon-bullet icon-green"></span>
+						<span class="icon ui-icon-bullet icon-green" title='No Warnings (Final Solution)'></span>
 					{% endif %}
 				{% else %}
 					{% if solution.accepted%}
 						{% if solution.warnings%}
-							<span class="icon ui-icon-radio-on icon-orange"></span>
+							<span class="icon ui-icon-radio-on icon-orange" title='Warnings'></span>
 						{% else %}
-							<span class="icon ui-icon-radio-on icon-green"></span>
+							<span class="icon ui-icon-radio-on icon-green" title='No Warnings'></span>
 						{% endif %}
 					{% else %}
-						<span class="icon ui-icon-radio-on icon-red"></span>
+						<span class="icon ui-icon-radio-on icon-red" title='Errors'></span>
 					{% endif %}
 				{% endif %}
 				<a href="{% url solution_detail solution_id=solution.id %}">Solution {{forloop.counter}}</a> <span> ({{solution.creation_date|timesince}} ago)</span>
@@ -86,7 +96,7 @@ $(function(){
 		{% for attest in solution.attestation_set.all %}
 			<div class='attestation'>
 				{% if attest.published %}
-					<span class="icon ui-icon-script"></span><a href={% url view_attestation attestation_id=attest.id%}>Attestation</a> by {{attest.author.get_full_name}}<br/>
+					<span class="icon ui-icon-script" title='Attest'></span><a href={% url view_attestation attestation_id=attest.id%}>Attestation</a> by {{attest.author.get_full_name}}<br/>
 				{% endif %}
 			</div>
 		{%endfor%}		
@@ -94,6 +104,7 @@ $(function(){
 		{%trans "You have't uploaded any solutions jet." %}
 	{%endfor%}
 </div>
+
 <div class="simple_overlay" id="progress"> 
 	<!-- spinner from http://ajaxload.info/ -->
 	<img id="spinner" src="{{MEDIA_URL}}/images/loading.gif" alt="loading" />
