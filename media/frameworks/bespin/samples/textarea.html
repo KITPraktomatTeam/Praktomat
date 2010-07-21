@@ -37,53 +37,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Bouncy Bespin</title>
 <link id="bespin_base" href="..">
-<link rel="stylesheet" type="text/css" href="../BespinEmbedded.css">
-<script type="text/javascript"
-    src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js">
-</script>
+<title>Textarea Bespin Embedded test</title>
+<link href="../BespinEmbedded.css" type="text/css" rel="stylesheet">
 <script type="text/javascript" src="../BespinEmbedded.js"></script>
-<script type="text/javascript">
-    window.onBespinLoad = function() {
-        var body = $('body');
-        var bodyW = window.innerWidth, bodyH = window.innerHeight;
-        var editor = $('#editor');
-        var editorW = editor.width(), editorH = editor.height();
-        var maxLeft = bodyW - editorW - 1, maxTop = bodyH - editorH - 1;
-        var left = 0, top = 0;
-        var deltaX = 3, deltaY = 3;
-
-        window.setInterval(function() {
-            if ((deltaX < 0 && left <= 0) || (deltaX > 0 && left >= maxLeft)) {
-                deltaX = -deltaX;
-            }
-
-            if ((deltaY < 0 && top <= 0) || (deltaY > 0 && top >= maxTop)) {
-                deltaY = -deltaY;
-            }
-
-            left += deltaX;
-            top += deltaY;
-
-            var editor = $('#editor');
-            editor.get(0).bespin.dimensionsChanged();
-            editor.css({ left: "" + left + "px", top: "" + top + "px" });
-        }, 10);
-    };
-</script>
-<style type="text/css">
-    .bespin {
-        position: absolute;
-        left: 0px;
-        top: 0px;
-        width: 480px;
-        height: 320px;
-    }
-</style>
 </head>
 <body>
-<div id="editor" class="bespin" data-bespinoptions='{ "stealFocus": true }'>Whee!</div>
+<h1>Textarea Bespin Embedded test</h1>
+<form>
+    <table>
+        <tr>
+            <td><label for='name'>Name:</label></td>
+            <td><input name='name' style='width:100%'></td>
+        </tr>
+        <tr>
+            <td><label for='comment'>Comment:</label></td>
+            <td><textarea name='comment' rows="20" cols="50" class="bespin" data-bespinoptions='{ "syntax": "js" }'>Hello world!</textarea></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Submit"></td>
+        </tr>
+    </table>
+</form>
 </body>
 </html>
 

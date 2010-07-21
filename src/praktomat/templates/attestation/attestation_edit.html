@@ -3,10 +3,10 @@
 {% block extrahead %}{{ block.super }}
 	<script type="text/javascript" src="{{MEDIA_URL}}script/solution_inlines.js"></script>
 	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}styles/pygments_friendly.css" />
-	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}frameworks/bespin/BespinEmbedded.css" />
+	<link id="bespin_base" href="{{MEDIA_URL}}frameworks/bespin">
 	<script type="text/javascript" src="{{MEDIA_URL}}frameworks/bespin/BespinEmbedded.js"></script>
 	<script type="text/javascript">		
-		var bespin
+		var bespin_env
 		
 		$(document).ready(function(){
 			$("#file_form_set").addClass("hidden");
@@ -14,13 +14,27 @@
 			$(".heading").addClass("hidden");
 			$("#tabs").tabs({ // instanciate tabs
 				show: function(event, ui) { 	// call dimensionsChanged of bespin when the tab is opend
-	    			if (ui.panel.id == "annotated_solution_files") { bespin.dimensionsChanged();}
+	    			if (ui.panel.id == "annotated_solution_files") { bespin_env.dimensionsChanged();}
 				}
 			})
 		});
 		
+		/*
+window.onBespinLoad = function() {
+			bespin.useBespin("editor",{
+		    	syntax: "js",
+			}).then(function(env) {
+		    	env.settings.set("fontsize", 12);
+				bespin_env = env;
+				loadFileInEditor(1);		
+			});
+		}
+*/
+		
+		
+		
 		window.onBespinLoad = function() {
-            bespin = $('#editor').get(0).bespin;
+            bespin_env = $('#editor').get(0).bespin;
 			loadFileInEditor(1);
 		}
 		
@@ -28,8 +42,8 @@
 		function loadFileInEditor(index) {
 			var newTextarea = $("#id_attestfiles-"+(index-1)+"-content");
 			if (currentTextarea) {
-				currentTextarea.val(bespin.value); }
-			bespin.value = newTextarea.val();
+				currentTextarea.val(bespin_env.editor.value); }
+			bespin_env.editor.value = newTextarea.val();
 			currentTextarea = newTextarea;
 			$("#annotated_solution_files a").removeClass("activeFile");
 			$("#file"+index).addClass("activeFile");

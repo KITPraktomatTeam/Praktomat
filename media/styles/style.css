@@ -1,4 +1,7 @@
-/* @override http://localhost/media/styles/style.css */
+/* @override 
+	http://localhost/media/styles/style.css
+	http://localhost:8000/media/styles/style.css
+*/
 
 /* @group Global */
 
@@ -164,10 +167,6 @@ ul, ol, dl {
 
 /* reset overrides */
 
-input {
-	margin-bottom: 10px;
-}
-
 pre {
 	left: -14px;
 	padding-left: 20px;
@@ -282,6 +281,15 @@ body {
 
 /* @group Forms */
 
+input {
+	margin-bottom: 10px;
+}
+
+input[type="button"], input[type="submit"], input[type="reset"]{
+	margin: 10px;
+	margin-left: 150px;
+}
+
 label {
 	bottom: auto;
 	position: relative;
@@ -317,16 +325,6 @@ form .errorlist li {
 	list-style-type: none;
 	display: inline;
 }
-
-/* .errorlist {
-	padding: 0px;
-	margin-left: 0px;
-	margin-bottom: 2px;
-	margin-right: 0px;
-	margin-top: 2px;
-	list-style-type: none;
-	color: red;
-} */
 
 /* @end */
 
@@ -683,12 +681,32 @@ div.result div.log {
 
 /* @group Rating */
 
+#rating #id_script {
+	width: 100%;
+	height: 200px;
+}
+
+#rating input {
+	float: left;
+	margin-top: 15px;
+	margin-left: 40px;
+}
+
+#rating .calculated_grade_cell {
+	cursor: pointer;
+	color: #005094;
+}
+
+#rating #calculated_grade_heading{
+	color: #005094;
+}
+
 #rating .odd {
 	background-color: #e9edf1;
 }
 
-#rating form input {
-	margin: 0;
+#rating table input {
+	margin: 2px;
 }
 
 #rating .noLinkHighlight a:link, .noLinkHighlight a:visited {

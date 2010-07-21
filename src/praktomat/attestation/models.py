@@ -77,5 +77,8 @@ class RatingResult(models.Model):
 	aspect = models.ForeignKey(RatingAspect)
 	mark = models.ForeignKey(RatingScaleItem, null=True) # allow for db-null so that rating results can be created programaticly without mark (blank = False !)
 	
+class Script(models.Model):
+	""" save java script function of the rating overview page """
+	script = models.TextField(	help_text = _("This JavaScript will calculate a recommend end note for every user based on final grade of every task."), default="""var sum = 0;\nfor (x in grades) {\n\tsum += parseInt(grades[x]);\n}\nresult=Math.round(sum/grades.length);""")
 	
 	

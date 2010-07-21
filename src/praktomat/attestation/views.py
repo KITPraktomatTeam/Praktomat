@@ -13,8 +13,8 @@ import datetime
 from praktomat.tasks.models import Task
 from praktomat.solutions.models import Solution, SolutionFile
 from praktomat.solutions.forms import SolutionFormSet
-from praktomat.attestation.models import Attestation, AnnotatedSolutionFile, RatingResult
-from praktomat.attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm
+from praktomat.attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, Script
+from praktomat.attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm, ScriptForm
 from praktomat.accounts.templatetags.in_group import in_group
 from praktomat.accounts.models import User
 
@@ -175,22 +175,16 @@ def rating_overview(request):
 	# corresponding user to user_id_list in reverse order! important for easy displaying in template
 	user = User.objects.filter(groups__name='User').filter(is_active=True).order_by('-last_name','-first_name')
 	
+	script = Script.objects.get_or_create(id=1)[0]
+	
 	if request.method == "POST":
 		final_grade_formset = FinalGradeFormSet(request.POST, request.FILES, queryset = user)
-		if final_grade_formset.is_valid():
+		script_form = ScriptForm(request.POST, instance=script)
+		if final_grade_formset.is_valid() and script_form.is_valid():
 			final_grade_formset.save()
+			script_form.save()
 	else:
 		final_grade_formset = FinalGradeFormSet(queryset = user)
+		script_form = ScriptForm(instance=script)
 	
-	
-	return render_to_response("attestation/rating_overview.html", {'rating_list':rating_list, 'task_list':task_list, 'final_grade_formset':final_grade_formset},	context_instance=RequestContext(request))
-
-
-
-
-
-
-
-
-
-
+	return render_to_response("attestation/rating_overview.html", {'rating_list':rating_list, 'task_list':task_list, 'final_grade_formset':final_grade_formset, 'script_form':script_form},	context_instance=RequestContext(request))

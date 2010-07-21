@@ -1,11 +1,68 @@
 {% extends "base.html" %}
 {% load highlight %} {% load i18n  %}
-{% block extrahead %}{{ block.super }}{% endblock %} 
+{% block extrahead %}{{ block.super }}
+<link id="bespin_base" href="{{MEDIA_URL}}frameworks/bespin">
+<script type="text/javascript" src="{{MEDIA_URL}}frameworks/bespin/BespinEmbedded.js"></script>
+<script type="text/javascript">	
+ 
+var editor;
+window.onBespinLoad = function() {
+	bespin.useBespin("id_script",{
+    	syntax: "js",
+	}).then(function(env) {
+    	env.settings.set("fontsize", 12);
+		editor = env.editor;
+		calculate();
+		$(".calculated_grade_cell").hover(
+		  function () {
+		    $(this).append($("<span class='icon ui-icon-arrowreturnthick-1-e'></span>"));
+		  }, 
+		  function () {
+		    $(this).find("span:last").remove();
+		  }
+		);
+		$(".calculated_grade_cell").click(function () {
+			$(this).next().find("input[type=text]")[0].value = $(this).text();
+		});
+	});
+		
+}
+ 
+function calculate(){
+ 	var all_grades = new Array();
+	$('.user_row').each(function(index) {
+    	var grades=new Array();
+		var result;
+		$(this).find('.grade_cell').each(function(index) {
+			grades[index] = $(this).text()
+		});
+		all_grades[index] = grades
+  	});
+	for (index in all_grades){
+		var grades = all_grades[index];
+		var result;
+		
+		eval(editor.value);
+		
+		$("#calculated_grade_cell"+index).text(result);
+  	}
+ }
+ 
+</script>
+
+{% endblock %} 
 {% block breadcrumbs %} {{block.super}} > Rating Overview {% endblock %}
 {% block content %}<div id="rating">
 <h2>{% trans "Rating Overview" %}</h2>
 
+
+
 <div><form method="post" action="">{% csrf_token %}
+
+	{{script_form.script}}
+	<input type="button" id="calculate_button" value="calculate" onClick="calculate()" />
+	<p class="help">This JavaScript will be executed for every user listed below to calculate a proposed end note. <i><b>grades</b></i> is an Array containing all final grades for one user as Stings. <i><b>all_grades</b></i> is an array containing all <i><b>grades</b></i> arrays. Save the end note recomendation in <i><b>result</b></i> so it can be displayed in the row 'Calculated grade'.</p>
+
     {{ final_grade_formset.management_form }}
 	<table class="noLinkHighlight">
 		<tr>
@@ -13,21 +70,23 @@
 			{% for task in task_list %}
 				<th><div class="heading"><a href="{% url taskDetail task_id=task.id  %}">{{task.title}}</a></div></th>
 			{% endfor %}
+			<th><div class="heading" id="calculated_grade_heading">Calculated grade</div></th>
 			<th>Final grade</th>
 		</tr>
 		{% for user_row in rating_list %}
-			<tr class="{% cycle 'odd' 'even' %}">
+			<tr class="{% cycle 'odd' 'even' %} user_row">
 				{% for attestation in user_row %}
 					{% if forloop.first %}
 						<td>{{attestation.get_full_name}}</td>
 					{% else %}
 						{% if attestation %}
-							<td><a href="{% url view_attestation attestation_id=attestation.id%}">{{attestation.final_grade}}</a></td>
+							<td class="grade_cell"><a href="{% url view_attestation attestation_id=attestation.id%}">{{attestation.final_grade}}</a></td>
 						{% else %}
-							<td>-</td>
+							<td class="grade_cell">-</td>
 						{% endif %}
 					{% endif %}		
 				{% endfor %}
+				<td class="calculated_grade_cell" id="calculated_grade_cell{{forloop.counter0}}"></td>
 				<td>
 					{% with final_grade_formset.forms.pop as form %}
 						{% for field in form.hidden_fields %} {{field}} {% endfor %}

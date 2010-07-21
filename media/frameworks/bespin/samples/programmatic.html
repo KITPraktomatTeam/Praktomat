@@ -38,6 +38,7 @@
 <html>
 <head>
 <title>Programmatic Embedded API sample</title>
+<link id="bespin_base" href="..">
 <link href="../BespinEmbedded.css" type="text/css" rel="stylesheet">
 <style type="text/css">
     #bespin-to-be {
@@ -52,9 +53,7 @@
 <script type="text/javascript">
 
 function installBespin() {
-    var m_embedded = tiki.require('Embedded');
-    var node = document.getElementById("bespin-to-be");
-    m_embedded.useBespin(node);
+    bespin.useBespin("bespin-to-be");
 }
 
 </script>

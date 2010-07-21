@@ -5,7 +5,7 @@ from django.forms.models import ModelForm, inlineformset_factory, BaseInlineForm
 from django.forms.formsets import formset_factory
 from django import forms
 
-from praktomat.attestation.models import Attestation, AnnotatedSolutionFile, RatingResult
+from praktomat.attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, Script
 											
 
 class AttestationForm(ModelForm):
@@ -40,3 +40,7 @@ class RatingResultForm(ModelForm):
 		fields=('mark',)
 
 RatingResultFormSet = inlineformset_factory(Attestation, RatingResult, form=RatingResultForm, formset=BaseInlineFormSet, can_delete=False, extra=0)
+
+class ScriptForm(ModelForm):
+	class Meta:
+		model = Script
