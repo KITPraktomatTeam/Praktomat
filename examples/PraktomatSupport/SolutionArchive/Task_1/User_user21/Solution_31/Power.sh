@@ -1,0 +1,1 @@
+echo "Knowledge is Power, $USER"
