@@ -2,8 +2,8 @@
 {% load i18n  %}
 {% block content %}
 
-<h1>{% trans "Error" %}</h1>
+<h1>{% trans "Error 404" %}</h1>
 
-<p>Access denied</p>
+<p>"{{request_path}}" could not be found.</p>
 
 {% endblock %}

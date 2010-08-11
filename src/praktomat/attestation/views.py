@@ -17,13 +17,16 @@ from praktomat.attestation.models import Attestation, AnnotatedSolutionFile, Rat
 from praktomat.attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm, ScriptForm
 from praktomat.accounts.templatetags.in_group import in_group
 from praktomat.accounts.models import User
+from praktomat.accounts.views import access_denied
 
 
 @login_required
 def statistics(request,task_id):
 	task = get_object_or_404(Task, pk=task_id)
-	if not (request.user.groups.filter(name='Trainer').values('name') or request.user.is_superuser):
-		return render_to_response('error.html', context_instance=RequestContext(request))
+	
+	if not (in_group(request.user,'Trainer') or request.user.is_superuser):
+		return access_denied(request)
+	
 	solution_count = task.solution_set.filter(final=True).count()
 	user_count = Group.objects.get(name='User').user_set.filter(is_active=True).count()
 	
@@ -55,10 +58,13 @@ def daterange(start_date, end_date):
 @login_required
 @cache_control(must_revalidate=True, no_cache=True, no_store=True, max_age=0) #reload the page from the server even if the user used the back button
 def attestation_list(request, task_id):
+	if not (in_group(request.user,'Tutor,Trainer') or request.user.is_superuser):
+		return access_denied(request)
+	
 	task = Task.objects.get(pk=task_id)
 	requestuser = request.user
 	solutions = Solution.objects.filter(task__id=task_id).filter(final=True).all()
-	if not in_group(requestuser,'Trainer'):
+	if in_group(requestuser,'Tutor'):
 		solutions = solutions.filter(author__tutorial__tutors__pk=request.user.id)
 	# don't allow a new attestation if one already exists
 	solution_list = map(lambda solution:(solution,not in_group(requestuser,'Trainer') and not solution.attestations_by(requestuser)), solutions)
@@ -86,8 +92,9 @@ def attestation_list(request, task_id):
 	
 @login_required
 def new_attestation(request, solution_id):
-	#if not (request.user.groups.filter(name='Trainer').values('name') or request.user.is_superuser):
-	#	return render_to_response('error.html', context_instance=RequestContext(request))
+	if not (in_group(request.user,'Tutor,Trainer') or request.user.is_superuser):
+		return access_denied(request)
+	
 	solution = get_object_or_404(Solution, pk=solution_id)
 	# If there already is an attestation by this user redirect to edit page
 	attestations_of_request_user = solution.attestation_set.filter(author=request.user)
@@ -105,16 +112,18 @@ def new_attestation(request, solution_id):
 	return HttpResponseRedirect(reverse('edit_attestation', args=[attest.id]))
 	
 		
-		
+@login_required	
 def edit_attestation(request, attestation_id):
-	#if not (request.user.groups.filter(name='Trainer').values('name') or request.user.is_superuser):
-	#	return render_to_response('error.html', context_instance=RequestContext(request))
+	if not (in_group(request.user,'Tutor,Trainer') or request.user.is_superuser):
+		return access_denied(request)
+	
 	attest = get_object_or_404(Attestation, pk=attestation_id)
-	solution = attest.solution
-	model_solution = solution.task.model_solution
 	if attest.published or attest.author != request.user:
 		# If if this attestation is allready final or not by this user redirect to view_attestation
 		return HttpResponseRedirect(reverse('view_attestation', args=[attestation_id]))
+	
+	solution = attest.solution
+	model_solution = solution.task.model_solution
 
 	if request.method == "POST":
 		attestForm = AttestationForm(request.POST, instance=attest, prefix='attest')
@@ -132,10 +141,12 @@ def edit_attestation(request, attestation_id):
 		attestFileFormSet = AnnotatedFileFormSet(instance=attest, prefix='attestfiles')
 		ratingResultFormSet = RatingResultFormSet(instance=attest, prefix='ratingresult')
 	return render_to_response("attestation/attestation_edit.html", {"attestForm": attestForm, "attestFileFormSet": attestFileFormSet, "ratingResultFormSet":ratingResultFormSet, "solution": solution, "model_solution":model_solution},	context_instance=RequestContext(request))
-	
+
+@login_required	
 def view_attestation(request, attestation_id):
-	
 	attest = get_object_or_404(Attestation, pk=attestation_id)
+	if not (attest.solution.author == request.user or in_group(request.user,'Tutor,Trainer') or request.user.is_superuser):
+		return access_denied(request)
 
 	if request.method == "POST":
 		form = AttestationPreviewForm(request.POST, instance=attest)
@@ -147,7 +158,10 @@ def view_attestation(request, attestation_id):
 		submitable = attest.author == request.user and not attest.published
 		return render_to_response("attestation/attestation_view.html", {"attest": attest, 'submitable':submitable, 'form':form},	context_instance=RequestContext(request))
 
+@login_required	
 def rating_overview(request):
+	if not (in_group(request.user,'Trainer') or request.user.is_superuser):
+		return access_denied(request)
 	
 	attestations = Attestation.objects.filter(published=True)
 	

@@ -33,9 +33,11 @@
 {% endif %}
 
 
-<h2>{% trans "Results" %}</h2>
 {% with solution.publicCheckerResults as results %}
-	{% include "solutions/checker_results_inline.html" %}
+	{% if results %}
+		<h2>{% trans "Results" %}</h2>
+		{% include "solutions/checker_results_inline.html" %}
+	{% endif %}
 {% endwith %}
 
 <h2>{% trans "Files" %}</h2>

@@ -12,6 +12,7 @@ from django.views.decorators.cache import cache_control
 from praktomat.tasks.models import Task
 from praktomat.solutions.models import Solution, SolutionFile
 from praktomat.solutions.forms import SolutionFormSet
+from praktomat.accounts.views import access_denied
 
 @login_required
 @cache_control(must_revalidate=True, no_cache=True, no_store=True, max_age=0) #reload the page from the server even if the user used the back button
@@ -40,9 +41,9 @@ def solution_list(request, task_id):
 @login_required
 def solution_detail(request,solution_id):
 	solution = get_object_or_404(Solution, pk=solution_id)
-	submission_possible = not bool(solution.task.solution_set.filter(author=request.user).filter(final = True))
 	if solution.author != request.user:
-		return render_to_response('error.html', context_instance=RequestContext(request))
+		return access_denied(request)
+	submission_possible = not bool(solution.task.solution_set.filter(author=request.user).filter(final = True))
 	if (request.method == "POST" and solution.accepted):
 		solution.final = True
 		solution.save()
