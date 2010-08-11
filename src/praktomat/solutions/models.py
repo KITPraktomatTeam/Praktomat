@@ -6,6 +6,7 @@ import tempfile
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.core.files import File
 
 import os, re, tempfile, shutil
  
@@ -163,9 +164,9 @@ class SolutionFile(models.Model):
 	def save(self, force_insert=False, force_update=False, using=None):
 		""" override save method to automatically expand zip files"""
 		if self.file.name[-3:].upper() == 'ZIP':
-			zip = zipfile.ZipFile(solution_file.file, 'r')
+			zip = zipfile.ZipFile(self.file, 'r')
 			for zip_file_name in zip.namelist():
-				if not ignorred_file_names_re.match(zip_file_name):
+				if not self.ignorred_file_names_re.match(zip_file_name):
 					new_solution_file = SolutionFile(solution=self.solution)
 					temp_file = tempfile.NamedTemporaryFile()									# autodeleted
 					temp_file.write(zip.open(zip_file_name).read()) 

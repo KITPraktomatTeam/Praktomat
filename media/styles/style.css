@@ -285,7 +285,7 @@ input {
 	margin-bottom: 10px;
 }
 
-input[type="button"], input[type="submit"], input[type="reset"]{
+input[type="submit"]{
 	margin: 10px;
 	margin-left: 150px;
 }
@@ -301,7 +301,7 @@ label {
 	vertical-align: top;
 	float: left;
 	width: 150px;
-	display: block;
+	display: inline;
 }
 
 form .help {
@@ -434,6 +434,10 @@ form .errorlist li {
 	display: inline;
 }
 
+#solution_detail form input{
+	margin-left: 20px;
+}
+
 /* @end */
 
 /* @group Solution Upload */
@@ -456,6 +460,14 @@ a.add-row {
 
 #soluion_upload div.left a {
 	float: right;
+}
+
+#soluion_upload div.left .help {
+	margin-left: 10px;
+}
+
+#soluion_upload label {
+	float: none;
 }
 
 #soluion_upload .simple_overlay {
