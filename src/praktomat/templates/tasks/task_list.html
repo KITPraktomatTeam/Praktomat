@@ -11,7 +11,7 @@
 		<span class="icon ui-icon-triangle-1-e"></span><a href={% url rating_overview %}>{% trans "Rating overview"%}</a>
 	{% endif %}
 	
-	{% if not user|in_group:"Trainer" %}
+	{% if not user|in_group:"Trainer" and not user.is_superuser %}
 		<div id="contact"><a> Got Problems? </a>
 		{% if tutors %}
 			<a> Your tutor{{tutors.count|pluralize}}: </a>
@@ -30,8 +30,7 @@
 
 {% regroup tasks by expired as grouped_tasks %}
 
-<div>
-{% for group in grouped_tasks %}
+<div>{% for group in grouped_tasks %}
     <div id="{% if group.grouper %}expired_tasks{% else %}upcoming_tasks{% endif %}" class="{% if group.grouper %}right{% else %}left{% endif %}" >
 		<h2>{% if group.grouper %}{% trans "Expiered tasks" %}{% else %}{% trans "Upcoming tasks" %}{% endif %}</h2>
 		{% for task in group.list%}
@@ -46,12 +45,10 @@
 			{% if user|in_group:"Trainer"%}
 				<a href={% url statistics task_id=task.id%}>{% trans "Statistics"%}</a>
 			{% endif %} <br/><br/>
-		{% empty %}
-			<a>{% if not group.grouper %}{% trans "Nothing to do right now! Yay!" %}{% endif %}</a>
 		{% endfor %}
 	</div>
-{% endfor %}
-
-</div>
+{% empty %}
+<a>{% trans "Nothing to do right now! Yay!" %}</a>
+{% endfor %}</div>
 
 </div>{% endblock %}

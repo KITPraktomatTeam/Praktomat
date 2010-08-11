@@ -3,27 +3,27 @@ This is the source distribution of Praktomat, a programming course manager.
 Installation 
 ============
 
-1. download praktomat from github (http://github.com/danielkleinert/Praktomat)  
+1. Download praktomat setup from github. (http://github.com/danielkleinert/Praktomat)  
 
-2. run "python bootstrap.py" from praktomat root directory (Python < 2.7 is not supported!)
+2. Run "python bootstrap.py" from the praktomat root directory. (Python < 2.7 is not supported!)
 
-3. run "./bin/buildout" from praktomat root directory
+3. Run "./bin/buildout" from praktomat root directory. You need to have MySQL and PostgresSQL installed - otherwise the packages 'MySQL-python' or 'psycopg2' won't install. You can safely outcomment the corresponding package in setup.py if you'll only use the other database.  (Postgres in OSX: make shure pg_config is found: PATH=$PATH:/Library/PostgreSQL/8.4/bin/)
 
-4. create a database in utf-8 encoding. MySQL: "CREATE DATABASE Praktomat DEFAULT CHARACTER SET utf8" (http://docs.djangoproject.com/en/dev/topics/install/#database-installation)
+4. Create a database in utf-8 encoding. MySQL: "CREATE DATABASE Praktomat DEFAULT CHARACTER SET utf8" (http://docs.djangoproject.com/en/dev/topics/install/#database-installation)
 	
-5. reconfigure django settings in praktomat/src/praktomat/settings_local.py (http://docs.djangoproject.com/en/1.1/topics/settings/#topics-settings)
+5. Reconfigure django settings in praktomat/src/praktomat/settings_local.py (http://docs.djangoproject.com/en/1.1/topics/settings/#topics-settings)
 
-6. run "./bin/praktomat syncdb" to populate the database with the required tables of 3rd party applications
+6. Run "./bin/praktomat syncdb" to populate the database with the required tables of 3rd party applications. If prompted don't create a superuser as required tables will be created in the next step.
 	
-7. run "./bin/praktomat migrate" to install the praktomat database tables
+7. Run "./bin/praktomat migrate" to install the praktomat database tables.
 	
-	- (optional) install(also reset) a test database by running "./bin/praktomat install_demo_db", which copies the contents of "./examples/PraktomatSupport" to the folder 'UPLOAD_ROOT' configured in settings_local.py. 
+	- (optional) Install(also reset) a test database by running "./bin/praktomat install_demo_db", which copies the contents of "./examples/PraktomatSupport" to the folder 'UPLOAD_ROOT' configured in settings_local.py. 
 	You need to change your database to the contained SQLite-database 'Database'.  
 	Logins: userXY, tutorX, trainer, admin (password='demo') X in [1,3], Y in [1,5]
 
-8. it should now be possible to start the developmet server with "./bin/praktomat runserver" or "./bin/praktomat runserver_plus"
+8. It should now be possible to start the developmet server with "./bin/praktomat runserver" or "./bin/praktomat runserver_plus"
 
-9. setup an administration account with "./bin/praktomat createsuperuser" if you haven't installed the test data which includes an "admin" account.
+9. Setup an administration account with "./bin/praktomat createsuperuser" if you haven't installed the test data which includes an "admin" account.
 
 10. set up the domain name in the admin panel of the webapp
 
