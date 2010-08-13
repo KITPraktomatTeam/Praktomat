@@ -23,62 +23,68 @@
 	<span class="icon ui-icon-search" title="view only"></span> <a>view only</a><br/>
 </div> 
 
-<h2>{% trans "Attested solutions" %}</h2>
-
-<div id="Solutions">
-	{% for solution, allow_new_attest in solution_list%}
-		{% if requestuser|in_group:'Trainer'%}
-			<h3>Solution by {{solution.author.get_full_name}}</h3>
-		{% else %}
-			<h3>Solution {{forloop.counter}}</h3>
-		{% endif %}
-		{% for attestation in solution.attestation_set.all %}
-			<div class='attestation'>
-				{% if attestation.author = requestuser %} 
-					{% if attestation.final %}
-						{% if attestation.published %}
-							<span class="icon ui-icon-circle-check icon-green" title="final published"></span>
-							<a href={% url view_attestation attestation_id=attestation.id%}>{% trans "View your Attestation" %}</a>
-						{% else %}
-							<span class="icon ui-icon-check icon-green" title="final unpublished"></span>
-							<a href={% url edit_attestation attestation_id=attestation.id%}>{% trans "Edit your Attestation" %}</a>
-						{% endif %}
-					{% else %}
-						<span class="icon ui-icon-radio-on icon-orange" title="not finished"></span>
-						<a href={% url edit_attestation attestation_id=attestation.id%}>{% trans "Edit your Attestation" %}</a>
-					{% endif %}
+{% if not task.expired %}
+	<p>{% trans "The task is not yet expired." %}</p>
+{% else %}
+	{% if not task.all_checker_finished %}
+		<p>{% trans "Not all checker have yet been run." %}</p>
+	{% else %}
+		<h2>{% trans "Attested solutions" %}</h2>
+		<div id="Solutions">
+			{% for solution, allow_new_attest in solution_list%}
+				{% if requestuser|in_group:'Trainer'%}
+					<h3>Solution by {{solution.author.get_full_name}}</h3>
 				{% else %}
-					<span class="icon ui-icon-search" title="view only"></span>
-					<a href={% url view_attestation attestation_id=attestation.id%}>
-						{% blocktrans with attestation.author.get_full_name as author %}
-							View Attestation by {{author}}
-						{% endblocktrans %}
-					</a>
-				{% endif %} 
-				<span id='comment'>{{ attestation.private_comment|truncatewords:15}}</span>
-				<br/>
-			</div>
-		{% endfor %}
-		{% if allow_new_attest %}
-			<div class='attestation'>
-				<span class="icon ui-icon-plus icon-orange"></span>
-				<a href={% url new_attestation solution_id=solution.id%}>{% trans "Add Attestation" %}</a>
-			</div>
-		{% endif %}<br/>
-	{% empty %}
-		<p>There are no solutions yet.</p>
-	{%endfor%}
-	
-	{% if not requestuser|in_group:'Trainer'%}
-		<form enctype="multipart/form-data" method="post" action="">{% csrf_token %}	
-			<input type="submit" value="Publish all" {% if not publishable or published %} disabled {% endif %}/>
-			{% if published %}	
-				<span id='comment'>Allready published</span> 
-			{% else %}
-				{% if not publishable %} <span id='comment'>Not all attestations are read to be published or the submission deadline isn't reached.</span> {% endif %}
+					<h3>Solution {{forloop.counter}}</h3>
+				{% endif %}
+				{% for attestation in solution.attestation_set.all %}
+					<div class='attestation'>
+						{% if attestation.author = requestuser %} 
+							{% if attestation.final %}
+								{% if attestation.published %}
+									<span class="icon ui-icon-circle-check icon-green" title="final published"></span>
+									<a href={% url view_attestation attestation_id=attestation.id%}>{% trans "View your Attestation" %}</a>
+								{% else %}
+									<span class="icon ui-icon-check icon-green" title="final unpublished"></span>
+									<a href={% url edit_attestation attestation_id=attestation.id%}>{% trans "Edit your Attestation" %}</a>
+								{% endif %}
+							{% else %}
+								<span class="icon ui-icon-radio-on icon-orange" title="not finished"></span>
+								<a href={% url edit_attestation attestation_id=attestation.id%}>{% trans "Edit your Attestation" %}</a>
+							{% endif %}
+						{% else %}
+							<span class="icon ui-icon-search" title="view only"></span>
+							<a href={% url view_attestation attestation_id=attestation.id%}>
+								{% blocktrans with attestation.author.get_full_name as author %}
+									View Attestation by {{author}}
+								{% endblocktrans %}
+							</a>
+						{% endif %} 
+						<span id='comment'>{{ attestation.private_comment|truncatewords:15}}</span>
+						<br/>
+					</div>
+				{% endfor %}
+				{% if allow_new_attest %}
+					<div class='attestation'>
+						<span class="icon ui-icon-plus icon-orange"></span>
+						<a href={% url new_attestation solution_id=solution.id%}>{% trans "Add Attestation" %}</a>
+					</div>
+				{% endif %}<br/>
+			{% empty %}
+				<p>There are no solutions yet.</p>
+			{%endfor%}
+			
+			{% if not requestuser|in_group:'Trainer'%}
+				<form enctype="multipart/form-data" method="post" action="">{% csrf_token %}	
+					<input type="submit" value="Publish all" {% if not publishable or published %} disabled {% endif %}/>
+					{% if published %}	
+						<span id='comment'>Allready published</span> 
+					{% else %}
+						{% if not publishable %} <span id='comment'>Not all attestations are read to be published or the submission deadline isn't reached.</span> {% endif %}
+					{% endif %}
+				</form>
 			{% endif %}
-		</form>
+		</div>
 	{% endif %}
-</div>
-
+{% endif %}
 </div>{% endblock %}

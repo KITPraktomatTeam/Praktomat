@@ -83,6 +83,9 @@ class TaskAdmin(admin.ModelAdmin):
 			for solution in task.solution_set.all():
 				solution.check(True)
 				solution_count += 1
+			if task.expired():
+				task.all_checker_finished = True
+				task.save()
 		self.message_user(request, "%s solutions were successfully checked." % solution_count)
 
 	def get_urls(self):
