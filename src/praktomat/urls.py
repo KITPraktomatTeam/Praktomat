@@ -21,7 +21,7 @@ urlpatterns = patterns('',
 	(r'^accounts/', include('praktomat.accounts.urls')),
 	
 	# tinyMCE 
-	#(r'^tinymce/', include('tinymce.urls')),
+	(r'^tinymce/', include('tinymce.urls')),
 	
 	#Tasks
 	url(r'^tasks/$', 'praktomat.tasks.views.taskList', name = 'task_list'),
@@ -38,6 +38,12 @@ urlpatterns = patterns('',
 	url(r'^attestation/(?P<attestation_id>\d+)/new$', 'praktomat.attestation.views.edit_attestation', name='edit_attestation'),
 	url(r'^attestation/(?P<attestation_id>\d+)$', 'praktomat.attestation.views.view_attestation', name='view_attestation'),
 	url(r'^attestation/rating_overview$', 'praktomat.attestation.views.rating_overview', name='rating_overview'),
+	
+	# Uploaded media
+	url(r'^upload/(?P<path>TaskMediaFiles.*)$', 'praktomat.utilities.views.serve_unrestricted'),
+	url(r'^upload/(?P<path>AdminFiles.*)$', 'praktomat.utilities.views.serve_staff_only'),
+	url(r'^upload/(?P<path>.*)$', 'praktomat.utilities.views.serve_access_denied'),
+	
 )
 
 
@@ -47,7 +53,6 @@ if 'runserver' in sys.argv or 'runserver_plus' in sys.argv or 'runconcurrentserv
 	media_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'media')
 	urlpatterns += patterns('',
 		(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': media_path}),
-        (r'^upload/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.UPLOAD_ROOT}),
         (r'^favicon.ico$', 'django.views.static.serve', {'document_root': media_path, 'path':"favicon.ico"}),
     )
 
