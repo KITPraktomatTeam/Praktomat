@@ -9,27 +9,31 @@
 
 <h1>{{solution.task.title}}</h1>
 
-{% if solution.final %}
-	<p>You have commited this Solution.</p>
-{% endif %}
-
-{% if submission_possible %}
-	<form method="post">{% csrf_token %}
-		<input type="submit" value="Commit" {% if not solution.accepted %} disabled {% endif %} />
-	</form>
-{% endif %}
-
 {% if solution.accepted %}
 	{% if solution.warnings %}
-		<p class="warning" id='commit_text'>{% trans "You have passed all required tests." %} 
-		{% if submission_possible %}{% trans "Nevertheless you've got at least one warning and should consider correcting it before submitting." %}{% endif %}</p>
+		<p class="warning" id='commit_text'>{% trans "All required tests have been passed. Nevertheless there is at least one warning" %} 
+		{% if not solution.task.expired %}{% trans "You should consider correcting it." %}{% endif %}</p>
 	{% else %}
-		<p class="passed" id='commit_text'>{% trans "Congratulations you have passed all required tests." %}
-		{% if submission_possible %}{% trans "You can go ahead an make your submission final." %}{% endif %}</p>
+		<p class="passed" id='commit_text'>{% trans "All required tests have been passed." %}</p>
 	{% endif %}
 {% else %}
-	<p class="error" id='commit_text'>{% trans "Sorry, you haven't passed all required tests." %}
-	{% if submission_possible %}{% trans "Please corect the errors below and try again!" %}{% endif %}</p>
+	<p class="error" id='commit_text'>{% trans "Not all required tests have been passed." %}
+	{% if not solution.task.expired %}{% trans "Please corect the errors below and try again!" %}{% endif %}</p>
+{% endif %}
+
+<p> {% include "solutions/icon_inline.html" %}
+	{% if solution.final %}
+		This is your current final solution.
+	{% else %}
+		 blabla
+	{% endif %}
+</p>
+
+{% if not solution.task.expired and not solution.final %}
+	<form method="post">{% csrf_token %}
+		<input type="submit" value="Commit" {% if not solution.accepted %} disabled {% endif %} />
+		<p class="help">You cane use this solution for attestation.</p>
+	</form>
 {% endif %}
 
 

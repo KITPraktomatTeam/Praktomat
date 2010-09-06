@@ -1,6 +1,7 @@
 /* @override 
 	http://localhost/media/styles/style.css
 	http://localhost:8000/media/styles/style.css
+	http://daniel.local/media/styles/style.css
 */
 
 /* @group Global */
@@ -426,9 +427,7 @@ form .errorlist li {
 
 /* @group Solution Detail */
 
-#solution_detail #commit_text {
-	display: inline;
-}
+
 
 #solution_detail form {
 	display: inline;
@@ -436,6 +435,11 @@ form .errorlist li {
 
 #solution_detail form input{
 	margin-left: 20px;
+}
+
+#solution_detail form .help {
+	display: inline;
+	margin-left: 10px;
 }
 
 /* @end */

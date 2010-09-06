@@ -37,7 +37,7 @@ UPLOAD_ROOT = "/Users/halluzinativ/Documents/Arbeit/PraktomatSupport/"
 # You need to configure the rights to download these in your webserver!
 # Make sure to use a trailing slash if there is a path component (optional in other cases).
 # Examples: "http://upload.lawrence.com", "http://example.com/upload/"
-UPLOAD_URL = 'http://localhost/upload/'
+UPLOAD_URL = 'http://172.21.160.183/upload/'
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
