@@ -32,7 +32,7 @@
 
 <div>{% for group in grouped_tasks %}
     <div id="{% if group.grouper %}expired_tasks{% else %}upcoming_tasks{% endif %}" class="{% if group.grouper %}right{% else %}left{% endif %}" >
-		<h2>{% if group.grouper %}{% trans "Expiered tasks" %}{% else %}{% trans "Upcoming tasks" %}{% endif %}</h2>
+		<h2>{% if group.grouper %}{% trans "Expired tasks" %}{% else %}{% trans "Upcoming tasks" %}{% endif %}</h2>
 		{% for task in group.list%}
 			<h3><a href={% url taskDetail task_id=task.id%}>{{task.title}}</a></h3>
 			{{ task.submission_date|date }} {{ task.submission_date|time }}

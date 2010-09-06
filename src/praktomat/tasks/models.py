@@ -27,7 +27,7 @@ class Task(models.Model):
 		return self.AnonymityChecker_set.all() + self.LineCounter_set.all()
 		
 	def expired(self):
-		"""docstring for expiered"""
+		"""docstring for expired"""
 		return self.submission_date + timedelta(hours=1) < datetime.now()
 		
 	@classmethod
