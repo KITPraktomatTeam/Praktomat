@@ -1,0 +1,17 @@
+{% if solution.final%}
+	{% if solution.warnings%}
+		<span class="icon ui-icon-bullet icon-orange" title='Warnings (Final Solution)'></span>
+	{% else %}
+		<span class="icon ui-icon-bullet icon-green" title='No Warnings (Final Solution)'></span>
+	{% endif %}
+{% else %}
+	{% if solution.accepted%}
+		{% if solution.warnings%}
+			<span class="icon ui-icon-radio-on icon-orange" title='Warnings'></span>
+		{% else %}
+			<span class="icon ui-icon-radio-on icon-green" title='No Warnings'></span>
+		{% endif %}
+	{% else %}
+		<span class="icon ui-icon-radio-on icon-red" title='Errors'></span>
+	{% endif %}
+{% endif %}

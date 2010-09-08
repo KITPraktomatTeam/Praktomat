@@ -77,3 +77,4 @@ JAVA_GCC_BINARY = 'gcj'
 JVM = "java"
 FORTRAN_BINARY = 'g77'
 DEJAGNU_RUNTEST = '/opt/local/bin/runtest'
+CHECKSTYLEALLJAR = '/Users/halluzinativ/Documents/Arbeit/checkstyle/checkstyle-all-4.4.jar'

@@ -18,6 +18,7 @@ from praktomat.checker.tests.InterfaceChecker import InterfaceCheckerInline
 from praktomat.checker.tests.LineWidthChecker import LineWidthCheckerInline
 from praktomat.checker.tests.TextChecker import TextCheckerInline
 from praktomat.checker.tests.DejaGnu import DejaGnuSetupInline, DejaGnuTesterInline
+from praktomat.checker.tests.CheckStyleChecker import CheckStyleCheckerInline
 
 from praktomat.checker.compiler.CXXBuilder import CXXBuilderInline
 from praktomat.checker.compiler.CBuilder import CBuilderInline
@@ -42,7 +43,8 @@ CheckerInlines = [	AnonymityCheckerInline,
 					JavaGCCBuilderInline,
 					FortranBuilderInline,
 					DejaGnuSetupInline,
-					DejaGnuTesterInline,]
+					DejaGnuTesterInline,
+					CheckStyleCheckerInline,]
 
 admin.autodiscover()
 

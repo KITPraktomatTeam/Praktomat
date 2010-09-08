@@ -66,11 +66,11 @@ class Solution(models.Model):
 			# reset default temp dir location 
 			tempfile.tempdir = None
 			# Delete temporary directory
-			try:
-				# pass
-				shutil.rmtree(new_tmpdir)
-			except IOError:
-				pass
+			if not settings.DEBUG:
+				try:
+					shutil.rmtree(new_tmpdir)
+				except IOError:
+					pass
 		
 		
 	
@@ -102,7 +102,8 @@ class Solution(models.Model):
 						task.javagccbuilder_set.all(),
 						task.fortranbuilder_set.all(),
 						task.dejagnusetup_set.all(), 
-						task.dejagnutester_set.all() ]
+						task.dejagnutester_set.all(),
+						task.checkstylechecker_set.all(), ]
 		
 		for checkers in checkersets:
 			for checker in checkers:

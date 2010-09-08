@@ -1,5 +1,4 @@
 // HelloDate.java.  
-import java.util.*;
 
 /** The second example program, and the first example of a class comment.
  *  Key new ides: (a) Use of import and Java standard library, (b)
@@ -13,8 +12,7 @@ import java.util.*;
 public class HelloDate {
     /** Sole entry point to application, as always.  
      *  Example of a function comment as well.
-     *  @parem args array of strings, ignored here (command line input)
-     *  @return No value is returned
+     *  @param args array of strings, ignored here (command line input)
      */
     public static void main (String[] args) {
 	System.out.println ("Hello, it's: ");

@@ -61,26 +61,6 @@ It is *required* - it must be passed for submission
 		Overloaded by subclasses. """ 
 		return []		
 			   			
-
-#	def htmlize_output(self, log, env): # no not here! propablz as template tag--------------------------------------------------------
-#		""" Prepares the output for presentation.
-#		Includes cleanup and highlighting. """
-#		# Clean the output
-#		# MIGRATION 4.0.20
-#		try:
-#			if self._rxremove:
-#				log = re.sub(self._rxremove, "", log)
-#		except:
-#			pass
-#		# HTMLize it all
-#		log = htmlize(log)
-#		for (name, content) in env.sources():
-#			log = string.replace(log, name,"<A HREF=\\"#" + `env.key()` + name \\ + "\\">" + name + "</A>")
-#		
-#		# Every line that contains a failure message is to be enhanced.
-#		return (re.sub(RXFAIL, r"\\1<B><FONT COLOR=" + FAIL_COLOR + ">" +	r"\\2</FONT></B>\\3",	log))
-
-
 class CheckerEnvironment:
 	""" The environment for running a checker. """
 
