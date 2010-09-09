@@ -72,7 +72,7 @@ $(function(){
 		<div class='solution'>
 			{% spaceless %} 
 				{% include "solutions/icon_inline.html" %}
-				<a href="{% url solution_detail solution_id=solution.id %}">Solution {{forloop.counter}}</a> <span> ({{solution.creation_date|timesince}} ago)</span>
+				<a href="{% url solution_detail solution_id=solution.id %}">Solution {{solution.number}}</a> <span> ({{solution.creation_date|timesince}} ago)</span>
 				<br/>
 			{% endspaceless %}
 		</div>

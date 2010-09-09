@@ -24,14 +24,11 @@ def solution_list(request, task_id):
 		solution = Solution(task = task, author=request.user)
 		formset = SolutionFormSet(request.POST, request.FILES, instance=solution)
 		if formset.is_valid():
-			try:
-				solution.save()
-				formset.save()
-				solution.check()
-				return HttpResponseRedirect(reverse('solution_detail', args=[solution.id]))
-			except:
-				solution.delete()	# delete files 
-				raise				# dont commit db changes
+			solution.save()
+			formset.save()
+			solution.check()
+			return HttpResponseRedirect(reverse('solution_detail', args=[solution.id]))
+
 	else:
 		formset = SolutionFormSet()
 	return render_to_response("solutions/solution_list.html", {"formset": formset, "task":task, "solutions": my_solutions},

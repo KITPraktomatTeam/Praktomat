@@ -7,6 +7,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.core.files import File
+from django.db.models import Max
 
 import os, re, tempfile, shutil
  
@@ -14,6 +15,8 @@ from praktomat.accounts.models import User
 
 class Solution(models.Model):
 	"""docstring for Solution"""
+	
+	number = models.IntegerField(null=False, editable=False, help_text = _("Id unique in task and user.Eg. Solution 1 of user X in task Y in contrast to global solution Z"))
 	
 	task = models.ForeignKey('tasks.task')
 	author = models.ForeignKey(User)
@@ -34,6 +37,12 @@ class Solution(models.Model):
 	def copySolutionFiles(self, toTempDir):
 		for file in self.solutionfile_set.all():
 			file.copyTo(toTempDir)
+	
+	def save(self, *args, **kwargs):
+		"""Override save calculate the number on first save"""
+		if self.number == None:
+			self.number = (self.task.solution_set.filter(author=self.author).aggregate(Max('number'))['number__max'] or 0) + 1
+		super(Solution, self).save(*args, **kwargs) # Call the "real" save() method.	
 	
 	def check(self, run_secret = 0): 
 		"""Builds and tests this solution."""
