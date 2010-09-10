@@ -106,7 +106,6 @@ class Solution(models.Model):
 						task.textchecker_set.all(),
 						task.cxxbuilder_set.all(),
 						task.cbuilder_set.all(),
-						task.anonymitychecker_set.all(),
 						task.javabuilder_set.all(),
 						task.javagccbuilder_set.all(),
 						task.fortranbuilder_set.all(),

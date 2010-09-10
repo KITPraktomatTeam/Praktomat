@@ -11,7 +11,7 @@ class CreateFileChecker(Checker):
 	
 	upload_dir = "AdminFiles/CopyChecker/%Y%m%d%H%M%S/"
 	file = models.FileField(storage=settings.STORAGE, upload_to=upload_dir, help_text=_("The file that is copied into the temporary test directory"))
-	path = models.CharField(max_length=500, help_text=_("Subfolder in the sandbox which shall contain the file."))
+	path = models.CharField(max_length=500, blank=True, help_text=_("Subfolder in the sandbox which shall contain the file."))
 	
 	def title(self):
 		""" Returns the title for this checker category. """
@@ -25,7 +25,8 @@ class CreateFileChecker(Checker):
 		""" Runs tests in a special environment. Here's the actual work. 
 		This runs the check in the environment ENV, returning a CheckerResult. """
 		absolute_path = os.path.join(env.tmpdir(), self.path)
-		os.mkdir(absolute_path)
+		if self.path:
+			os.mkdir(absolute_path)
 		shutil.copy(self.file.path, absolute_path)
 		result = CheckerResult(checker=self)
 		result.set_log("")
