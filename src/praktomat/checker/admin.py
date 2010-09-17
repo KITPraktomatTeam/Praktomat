@@ -1,14 +1,13 @@
 from django.contrib import admin
-from django.forms.models import BaseInlineFormSet
+from django.forms.models import BaseInlineFormSet, ModelForm
 
-class RequiredInlineFormSet(BaseInlineFormSet):
-	"""
-	Generates an inline formset that is required
-	"""
-
-
+class AlwaysChangedModelForm(ModelForm):
+	def has_changed(self):
+		""" Should returns True if data differs from initial. 
+		By always returning true even unchanged inlines will get validated and saved."""
+		return True
 
 class CheckerInline(admin.StackedInline):
 	""" Base class for checker inlines """
 	extra = 0
-	formset = RequiredInlineFormSet
+	form = AlwaysChangedModelForm

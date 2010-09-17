@@ -17,13 +17,12 @@ class JavaGCCBuilder(Builder):
 
 
 
-from praktomat.checker.admin import CheckerInline
-from django.forms import ModelForm 
+from praktomat.checker.admin import CheckerInline, AlwaysChangedModelForm
 
-class CheckerForm(ModelForm):
+class CheckerForm(AlwaysChangedModelForm):
 	""" override default values for the model fields """
 	def __init__(self, **args):
-		super(ModelForm, self).__init__(**args)
+		super(CheckerForm, self).__init__(**args)
 		self.fields["_flags"].initial = "-Wall -static"
 		self.fields["_output_flags"].initial = "--main=%s"
 		#self.fields["_libs"].initial = ""

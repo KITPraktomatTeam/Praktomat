@@ -33,10 +33,9 @@ class CreateFileChecker(Checker):
 		result.set_passed(True)
 		return result
 	
-from praktomat.checker.admin import	CheckerInline
-from django import forms
+from praktomat.checker.admin import	CheckerInline, AlwaysChangedModelForm
 
-class CopyForm(forms.ModelForm):
+class CopyForm(AlwaysChangedModelForm):
 	def __init__(self, **args):
 		""" override public and required """
 		super(CopyForm, self).__init__(**args)

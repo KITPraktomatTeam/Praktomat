@@ -22,7 +22,7 @@ LANGUAGE_CODE = 'en-us'
 # URL that serves the static media files (CSS, JavaScript and images) of praktomat contained in 'media/'.
 # Make sure to use a trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = 'http://localhost:8000/media/'
+MEDIA_URL = 'http://localhost/media/'
 
 # URL prefix for the administration site media (CSS, JavaScript and images) contained in the django package. 
 # Make sure to use a trailing slash.

@@ -167,10 +167,9 @@ class DejaGnuSetup(Checker, DejaGnu):
 
 		return self.result()
 
-from praktomat.checker.admin import	CheckerInline
+from praktomat.checker.admin import	CheckerInline, AlwaysChangedModelForm
 
-from django import forms
-class SetupForm(forms.ModelForm):
+class SetupForm(AlwaysChangedModelForm):
 	def __init__(self, **args):
 		""" override public and required """
 		super(SetupForm, self).__init__(**args)
