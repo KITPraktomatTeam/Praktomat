@@ -16,6 +16,7 @@ from django.contrib.sites.models import Site
 from django.utils.translation import ugettext_lazy as _
 from praktomat.checker.models import Checker, CheckerResult, TMP_DIR_MODE
 from praktomat.checker.compiler.Builder import Builder
+from praktomat.utilities import encoding
 
 # Stuff to highlight in output
 RXFAIL	   = re.compile(r"^(.*)(FAIL|ERROR|Abort|Exception |your program crashed|cpu time limit exceeded|"
@@ -77,7 +78,7 @@ class DejaGnuTester(Checker, DejaGnu):
 
 	def htmlize_output(self, log):
 		# Always kill the author's name from the log
-		log = re.sub(RXRUN_BY, "Run By " + Site.objects.get_current().name + " on ", unicode(log,'latin-1'))
+		log = re.sub(RXRUN_BY, "Run By " + Site.objects.get_current().name + " on ", log)
 
 		# Clean the output
 		log = re.sub(RXREMOVE, "", log)
@@ -97,8 +98,8 @@ class DejaGnuTester(Checker, DejaGnu):
 		# Save public test cases in `tests.exp'
 		tests_exp = os.path.join(self.tests_dir(env), "tests.exp")
 		fd = open(tests_exp, 'w')
-		test_cases = string.replace(self.test_case.read(),"PROGRAM", env.program())
-		fd.write(test_cases)
+		test_cases = string.replace(encoding.get_unicode(self.test_case.read()), u"PROGRAM", env.program())
+		fd.write(encoding.get_utf8(test_cases))
 		fd.close()
 		
 		testsuite = self.testsuite_dir(env)
@@ -117,8 +118,8 @@ class DejaGnuTester(Checker, DejaGnu):
 		[output, error] = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=testsuite, env=environ, shell=True).communicate()
 
 		try:
-			summary = open(os.path.join(testsuite, program_name + ".sum")).read()
-			log		= open(os.path.join(testsuite, program_name + ".log")).read()
+			summary = encoding.get_unicode(open(os.path.join(testsuite, program_name + ".sum")).read())
+			log		= encoding.get_unicode(open(os.path.join(testsuite, program_name + ".log")).read())
 		except:
 			summary = ""
 			log		= ""
@@ -160,9 +161,9 @@ class DejaGnuSetup(Checker, DejaGnu):
 		open(os.path.join(self.lib_dir(env), env.program() + ".exp"), 'w').close()
 		default_exp = os.path.join(self.config_dir(env), "default.exp")
 		fd = open(default_exp, 'w')
-		defs = string.replace(self.test_defs.read(), "PROGRAM", env.program())
+		defs = string.replace(encoding.get_unicode(self.test_defs.read()), "PROGRAM", env.program())
 		defs = string.replace(defs, "JAVA", join(join(dirname(dirname(__file__)),"scripts"),"java"))
-		fd.write(defs)
+		fd.write(encoding.get_utf8(defs))
 		fd.close()
 
 		return self.result()

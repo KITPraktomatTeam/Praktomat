@@ -67,10 +67,10 @@ def model_solution(request, task_id):
 				# no deleting the old solution:
 				# delete will cascade on db level deleting checker results and checker 
 				# as this isn't easily prevented just keep the old solution around until the task is deleted
-				task.model_solution = solution;
-				task.save()
 				formset.save()		
 				solution.check(request.session)
+				task.model_solution = solution;
+				task.save()
 			except:
 				solution.delete()	# delete files 
 				raise				# dont commit db changes

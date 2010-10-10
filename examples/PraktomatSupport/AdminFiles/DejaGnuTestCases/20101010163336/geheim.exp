@@ -1,0 +1,44 @@
+# `tests.exp' template
+# Insert test cases in the format
+# PROGRAM_test "[input]" "[expected_output]"
+
+# Sender und Empfänger durcheinander
+PROGRAM_test "s alpha" "+-==-+-==+-=+-+==+-+-===+=-+-===-+-"
+PROGRAM_test "s bravo" "=+===-+=-==+-+-+==+-+=-+=-+-+-+-=+-"
+PROGRAM_test "r +-==-+-==+-=+-+==+-+-===+=-+-===-+-" "alph"
+PROGRAM_test "s charlie" "+-===+-===+=-+-===-+-=+==-+-==+-=+-+==-=+-+=-==+-"
+PROGRAM_test "r =+===-+=-==+-+-+==+-+=-+=-+-+-+-=+-" "abrav"
+PROGRAM_test "r +-===+-===+=-+-===-+-=+==-+-==+-=+-+==-=+-+=-==+-" "ocharli"
+PROGRAM_test "s delta" "==+==-+-=+==-+==-+=-+==-=+-+-+==+-+"
+PROGRAM_test "r ==+==-+-=+==-+==-+=-+==-=+-+-+==+-+" "edelt"
+PROGRAM_test "r" "a"
+
+# Empfänger Puffertest
+PROGRAM_test "r +-+-==+===-=+-==+=-=" "Oh"
+PROGRAM_test "r +-===" "T"
+PROGRAM_test "r -" ""
+PROGRAM_test "r +" ""
+PROGRAM_test "r -=+" "a"
+PROGRAM_test "r -+=-+=-+-=+-+=-==+-=+-+=-+=-===+-+===+-+-=+=-+-+=-+=-+-+-+==-===+=-+==-=+=-+-==-+-=+-+=-+=-+-=+-+=-=" "nnenbaumOhTann"
+PROGRAM_test "r =+-=+-+=-+" "e"
+PROGRAM_test "r =-===+-+===+-+-=+=-+-+=-+=-+-+-=+=-+==-=+-+=-==" "nbaumWi"
+PROGRAM_test "r +-+-+===-=+==-+" "eG"
+PROGRAM_test "r -+=" "r"
+PROGRAM_test "r -=+-+-=+==-+=-+-=+-+-==+=-+==-=+-=+-+=-+==-==+-==+===-+=-==+-+==-=+-=+-+=-+-=+==" "uenSindDein"
+PROGRAM_test "r -+=-===-+==-+=-+-+==+-+-=+==-+==-=+-+==-=+-+-=+==-+=-==+-+" "eBlaette"
+PROGRAM_test "r" "r"
+
+# Empfänger unvollständige flushs
+PROGRAM_test "r +-+-==+===-=+-==+=-=" "Oh"
+PROGRAM_test "r" " Rest: 001010"
+PROGRAM_test "r" ""
+
+# charform und Puffer 
+PROGRAM_test "c 1101011001101110000110110111100101110100110" "klavie Rest: 0"
+PROGRAM_test "c 100111" " Rest: 100111"
+         
+# Interferenz charform und Empfänger
+PROGRAM_test "r +-==-+-==+-=+-+==+-+" "al"
+PROGRAM_test "c 1001" " Rest: 1001"
+PROGRAM_test "r -===+=-+-===-+-" "ph"
+PROGRAM_test "c 1001" " Rest: 1001"

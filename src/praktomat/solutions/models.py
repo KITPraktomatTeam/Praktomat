@@ -12,6 +12,7 @@ from django.db.models import Max
 import os, re, tempfile, shutil
  
 from praktomat.accounts.models import User
+from praktomat.utilities import encoding
 
 class Solution(models.Model):
 	"""docstring for Solution"""
@@ -188,10 +189,7 @@ class SolutionFile(models.Model):
 		
 	def content(self):
 		"""docstring for content"""
-		try:
-			return unicode(self.file.read(), 'latin-1') 
-		except:
-			return _("File couldn't be encoded.")
+		return encoding.get_unicode(self.file.read()) 
 		
 	def copyTo(self,directory):
 		""" Copies this file to the given directory """

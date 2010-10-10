@@ -31,6 +31,7 @@ setup(
                         'django-extensions >= 0.4.1',
                         'South', # intelligent schema and data migrations
                         'django-tinymce', # widget to render a form field as a TinyMCE editor 
+                        'chardet', # autodetect file encodings
                         ],
 
     classifiers = [
