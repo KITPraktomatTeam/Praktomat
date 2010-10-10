@@ -29,7 +29,7 @@ class Solution(models.Model):
 	final = models.BooleanField( default = False, help_text = _('Indicates whether the solution the solution is accepted and marked final by the author'))
 	
 	def __unicode__(self):
-		return unicode(self.creation_date)
+		return unicode(self.task) + ":" + unicode(self.author) + ":" + unicode(self.number)
 	
 	def publicCheckerResults(self):
 		# return self.checkerresult_set.filter(public=True) won't work, because public() isn't a field of result!
