@@ -18,9 +18,10 @@ class SolutionFileForm(ModelForm):
 	def clean_file(self):
 		data = self.cleaned_data['file']
 		if data:
-			if not (SolutionFile.supported_types_re.match(data.content_type) or ziptype_re.match(data.content_type)):
-				raise forms.ValidationError(_('The file of type %s is not supported.' %data.content_type))
-			if ziptype_re.match(data.content_type):
+			contenttype = mimetypes.guess_type(data.name)[0] # don't rely on the browser: data.content_type could be wrong or empty
+			if not (SolutionFile.supported_types_re.match(contenttype) or ziptype_re.match(contenttype)):
+				raise forms.ValidationError(_('The file of type %s is not supported.' %contenttype))
+			if ziptype_re.match(contenttype):
 				try:
 					zip = zipfile.ZipFile(data)
 					if zip.testzip():
