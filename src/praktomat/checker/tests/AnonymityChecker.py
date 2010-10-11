@@ -24,12 +24,12 @@ def word(s):
 	if not s:
 		s =	 r"\bxyzzy9332\b" # Some word that never occurs
 		return s
-	s = re.sub("ä|ae|&auml;",  "(ä|ae|&auml;)",  s)
-	s = re.sub("ö|oe|&ouml;",  "(ö|oe|&ouml;)",  s)
-	s = re.sub("ü|ue|&uuml;",  "(ü|ue|&uuml;)",  s)
-	s = re.sub("ß|ss|&szlig;", "(ß|ss|&szlig;)", s)
-	s = re.sub(r"\bv[oa]n\b", "", s)
-	s = re.sub(" +", "", s)
+	s = re.sub("ä|ae|&auml;",  u"(ä|ae|&auml;)",  s)
+	s = re.sub("ö|oe|&ouml;",  u"(ö|oe|&ouml;)",  s)
+	s = re.sub("ü|ue|&uuml;",  u"(ü|ue|&uuml;)",  s)
+	s = re.sub("ß|ss|&szlig;", u"(ß|ss|&szlig;)", s)
+	s = re.sub(r"\bv[oa]n\b", u"", s)
+	s = re.sub(" +", u"", s)
 	s = re.sub(r"\belse\b",	 r"\bxyzzy9332\b", s)
 	return r'\b' + s + r'\b'
 

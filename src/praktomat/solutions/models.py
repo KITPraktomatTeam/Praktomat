@@ -113,43 +113,46 @@ class Solution(models.Model):
 						task.dejagnusetup_set.all(), 
 						task.dejagnutester_set.all(),
 						task.checkstylechecker_set.all(), ]
-		
-		for checkers in checkersets:
-			for checker in checkers:
-				
-				if (checker.always or run_all):
-				
-					# Check dependencies -> This requires the right order of the checkers
-					can_run_checker = True
-					for required_checker in checker.requires():
-						have_required_checker = False
-						for passed_checker in passed_checkers:
-							if isinstance(passed_checker, required_checker):
-								have_required_checker = True
-						if not have_required_checker:
-							can_run_checker = False
+		try:
+			for checkers in checkersets:
+				for checker in checkers:
 					
-					if can_run_checker: 
-						# Invoke Checker 
-						result = checker.run(env)
-					else:
-						# make non passed result
-						# this as well as the dependency check should propably go into checker class
-						result = checker.result()
-						result.set_log(u"Checker konnte nicht ausgeführt werden, da benötigte Checker nicht bestanden wurden.")
-						result.set_passed(False)
+					if (checker.always or run_all):
+					
+						# Check dependencies -> This requires the right order of the checkers
+						can_run_checker = True
+						for required_checker in checker.requires():
+							have_required_checker = False
+							for passed_checker in passed_checkers:
+								if isinstance(passed_checker, required_checker):
+									have_required_checker = True
+							if not have_required_checker:
+								can_run_checker = False
 						
-					result.solution = self
-					result.save()
-
-					if not result.passed and checker.public:
-						if checker.required:
-							self.accepted = False
+						if can_run_checker: 
+							# Invoke Checker 
+							result = checker.run(env)
 						else:
-							self.warnings= True
+							# make non passed result
+							# this as well as the dependency check should propably go into checker class
+							result = checker.result()
+							result.set_log(u"Checker konnte nicht ausgeführt werden, da benötigte Checker nicht bestanden wurden.")
+							result.set_passed(False)
 							
-					if result.passed:
-						passed_checkers.append(checker)
+						result.solution = self
+						result.save()
+	
+						if not result.passed and checker.public:
+							if checker.required:
+								self.accepted = False
+							else:
+								self.warnings= True
+								
+						if result.passed:
+							passed_checkers.append(checker)
+		except:
+			self.delete() # get rid of files
+			raise
 		self.save()
 		
 	def attestations_by(self, user):

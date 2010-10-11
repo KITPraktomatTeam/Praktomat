@@ -4,7 +4,7 @@
  * The program was written to test the printCapitalized
  * subroutine.  It depends on the non-standard TextIO class.
  */
-public class CapitolizeOneString {
+public class CapitolizeOneStringWithoutUser {
 	    
 	/** Sole entry point to application, as always.  
 	 *  @param args array of strings, ignored here (command line input)

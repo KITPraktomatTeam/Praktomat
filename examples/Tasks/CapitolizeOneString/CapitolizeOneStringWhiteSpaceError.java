@@ -4,15 +4,15 @@
  * The program was written to test the printCapitalized
  * subroutine.  It depends on the non-standard TextIO class.
  */
-public class CapitolizeOneString {
+public class CapitolizeOneStringWhiteSpaceError{
 	    
 	/** Sole entry point to application, as always.  
 	 *  @param args array of strings, ignored here (command line input)
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args){
 		String line;  // Line of text entered.
 		TextIO.putln("Enter a line of text.");
-		line = TextIO.getln();
+		line=TextIO.getln();
 		TextIO.putln();
 		TextIO.putln("Capitalized version:");
 		printCapitalized(line);
@@ -21,7 +21,7 @@ public class CapitolizeOneString {
 	/** Subroutine to calulate an Capitalised String. 
 	 *  @param str sring to be capitalized
 	 */
-	static void printCapitalized(String str) {
+	static void printCapitalized(String str){
 		// Print a copy of str to standard output, with the
 		// first letter of each word in upper case.
 		char ch;       // One of the characters in str.
@@ -30,10 +30,10 @@ public class CapitolizeOneString {
 		prevCh = '.';  // Prime the loop with any non-letter character.
 		for (i = 0;  i < str.length();  i++) {
 			ch = str.charAt(i);
-			if (Character.isLetter(ch)  &&  !Character.isLetter(prevCh)) {
+			if (Character.isLetter(ch)  &&  !Character.isLetter(prevCh)){
                 System.out.print(Character.toUpperCase(ch));
 			} else {
-                System.out.print(ch);
+                System.out.print( ch );
 			}
 			prevCh = ch;  // prevCh for next iteration is ch.
 		}

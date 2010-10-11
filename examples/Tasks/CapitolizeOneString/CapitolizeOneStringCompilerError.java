@@ -4,7 +4,7 @@
  * The program was written to test the printCapitalized
  * subroutine.  It depends on the non-standard TextIO class.
  */
-public class CapitolizeOneString {
+public class CapitolizeOneStringCompilerError {
 	    
 	/** Sole entry point to application, as always.  
 	 *  @param args array of strings, ignored here (command line input)
@@ -14,7 +14,7 @@ public class CapitolizeOneString {
 		TextIO.putln("Enter a line of text.");
 		line = TextIO.getln();
 		TextIO.putln();
-		TextIO.putln("Capitalized version:");
+		TextIO.putln("Capitalized version:")
 		printCapitalized(line);
 	}  // end main()
 	

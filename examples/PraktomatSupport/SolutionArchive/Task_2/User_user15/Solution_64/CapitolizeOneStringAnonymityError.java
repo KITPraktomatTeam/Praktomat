@@ -1,16 +1,16 @@
-/** This program will get a line of input 
+/** This program will get a line of input from the user
  * and will print a copy of the line in which the first
  * character of each word has been changed to upper case.
  * The program was written to test the printCapitalized
  * subroutine.  It depends on the non-standard TextIO class.
  */
-public class CapitolizeOneString {
+public class CapitolizeOneStringAnonymityError {
 	    
 	/** Sole entry point to application, as always.  
 	 *  @param args array of strings, ignored here (command line input)
 	 */
 	public static void main(String[] args) {
-		String line;  // Line of text entered.
+		String line;  // Line of text entered by user.
 		TextIO.putln("Enter a line of text.");
 		line = TextIO.getln();
 		TextIO.putln();
