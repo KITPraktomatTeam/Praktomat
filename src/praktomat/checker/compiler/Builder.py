@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from praktomat.checker.models import Checker, CheckerResult
 
 class Builder(Checker):
-	""" Build a program. This contains the general infrastructure to build a programm with a compiler.  Specialized subclass are provided for different languages and compilers. """
+	""" Build a program. This contains the general infrastructure to build a program with a compiler.  Specialized subclass are provided for different languages and compilers. """
 
 	class Meta(Checker.Meta):
 		abstract = True
@@ -36,18 +36,18 @@ class Builder(Checker):
 
 	def flags(self, env):
 		""" Compiler flags.	To be overloaded in subclasses. """
-		return self._flags
+		return self._flags.split(" ")
 
 	def output_flags(self, env):
 		""" Output flags """
 		try:
-			return self._output_flags % env.program()   # Is this needed?
+			return (self._output_flags % env.program()).split(" ")
 		except:
-			return self._output_flags
+			return self._output_flags.split(" ")
 
 	def libs(self):
 		""" Compiler libraries.	 To be overloaded in subclasses. """
-		return self._libs
+		return self._libs.split(" ")
 
 	def language(self):
 		""" Language.  To be overloaded in subclasses """
@@ -86,7 +86,7 @@ class Builder(Checker):
 		result = CheckerResult(checker=self)
 		#result.set_invocation(self.compile_command_invocation(env))
 
-		args = [self.compiler(), self.output_flags(env), self.flags(env)] + self.get_file_names(env) + [self.libs()]
+		args = [self.compiler()] + self.output_flags(env) + self.flags(env) + self.get_file_names(env) + self.libs()
 		args = [arg for arg in args if arg !=""] # trash ""s, cause they produce errors
 		output = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=env.tmpdir()).communicate()[0] #executable = self.compiler(),
 		output = self.enhance_output(env, output)
