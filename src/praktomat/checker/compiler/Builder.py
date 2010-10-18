@@ -78,13 +78,34 @@ class Builder(Checker):
 
 	def result(self):
 		return BuilderResult(self)
+	
+	class NotFoundError(Exception):
+			def __init__(self, description):
+				self.description = description
+			def __str__(self):
+				return self.description
+	
+	def main_module(self, env):
+		""" Creates the name of the main module from the (first) source file name. """
+		
+		for (module_name, module_content) in env.sources():
+			try:
+				return module_name[:string.index(module_name, '.')]
+			except:
+				pass
+		# Module name not found
+		raise self.NotFoundError("The main module could not be found.")
 
 	def run(self, env):
 		""" Build it. """
-		env.set_program(env.main_module())
-
 		result = CheckerResult(checker=self)
-		#result.set_invocation(self.compile_command_invocation(env))
+
+		try:
+			env.set_program(self.main_module(env))
+		except self.NotFoundError as e:
+			result.set_log(e)
+			result.set_passed(False)
+			return result
 
 		args = [self.compiler()] + self.output_flags(env) + self.flags(env) + self.get_file_names(env) + self.libs()
 		args = [arg for arg in args if arg !=""] # trash ""s, cause they produce errors
@@ -95,5 +116,4 @@ class Builder(Checker):
 		passed = not self.has_warnings(output)	
 		result.set_log("<pre>" + output + "</pre>" if output else "")
 		result.set_passed(passed)
-
 		return result

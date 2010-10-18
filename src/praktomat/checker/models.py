@@ -148,17 +148,6 @@ class CheckerEnvironment:
 		assert isinstance(task_id, str)
 		self._task_id = task_id
 
-	def main_module(self):
-		""" Creates the name of the main module from the (first) source file name. """
-		for (module_name, module_content) in self.sources():
-			try:
-				return module_name[:string.index(module_name, '.')]
-			except:
-				pass
-
-		# Module name not found
-		return None
-
 		
 class CheckerResult(models.Model):
 	""" A CheckerResult returns the result of a Checker.
