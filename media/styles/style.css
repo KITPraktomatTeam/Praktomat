@@ -466,6 +466,11 @@ a.add-row {
 	float: right;
 }
 
+#soluion_upload div.left .errorlist {
+	margin-left: 10px;
+	display: block;
+}
+
 #soluion_upload div.left .help {
 	margin-left: 10px;
 }

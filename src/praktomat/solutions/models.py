@@ -55,7 +55,7 @@ class Solution(models.Model):
 		env = CheckerEnvironment()
 		sources = []
 		for file in self.solutionfile_set.all(): 
-			sources.append((unicode(file),file.content()))
+			sources.append((file.path(),file.content()))
 		env.set_sources(sources)
 		env.set_user(self.author)
 		
@@ -170,16 +170,23 @@ class SolutionFile(models.Model):
 	file = models.FileField(storage=settings.STORAGE, upload_to = _get_upload_path,  help_text = _('Source code file as part of a solution or Zip file containing multiple solution files.')) 
 	# File mime content types allowed to upload
 	supported_types_re = re.compile(r'^(text/.*|application/octet-stream)$')
-	# Ignore hidden and OS-specific files in zipfiles
-	# .filename or __MACOSX/bla.txt or /rootdir or ..dirup
-	ignorred_file_names_re = re.compile('^(\..*|__MACOSX/.*|/.*|\.\..*)$')
+	# Ignore hidden or OS-specific files, etc. in zipfiles 
+	regex = r'(' + '|'.join([	
+						r'(^|/)\..*', 		# files starting with a dot (unix hidden files)
+						r'__MACOSX/.*',
+						r'^/.*',			# path starting at the root dir
+						r'\.\..*',			# parent folder with '..'
+						r'/$',				# don't unpack folders - the zipfile package will create them on demand
+					]) + r')'
+	
+	ignorred_file_names_re = re.compile(regex)
 	
 	def save(self, force_insert=False, force_update=False, using=None):
 		""" override save method to automatically expand zip files"""
 		if self.file.name[-3:].upper() == 'ZIP':
 			zip = zipfile.ZipFile(self.file, 'r')
 			for zip_file_name in zip.namelist():
-				if not self.ignorred_file_names_re.match(zip_file_name):
+				if not self.ignorred_file_names_re.search(zip_file_name):
 					new_solution_file = SolutionFile(solution=self.solution)
 					temp_file = tempfile.NamedTemporaryFile()									# autodeleted
 					temp_file.write(zip.open(zip_file_name).read()) 
@@ -189,6 +196,10 @@ class SolutionFile(models.Model):
 	
 	def __unicode__(self):
 		return self.file.name.rpartition('/')[2]
+	
+	def path(self):
+		""" path of file relative to the zip file, which once contained it """
+		return self.file.name[len(self._get_upload_path('')):]
 		
 	def content(self):
 		"""docstring for content"""
@@ -196,6 +207,13 @@ class SolutionFile(models.Model):
 		
 	def copyTo(self,directory):
 		""" Copies this file to the given directory """
-		shutil.copy(self.file.path, directory)
+		new_file_path = os.path.join(directory, self.path())
+		try:
+			fd = open(new_file_path, 'w')
+		except IOError:
+			os.makedirs(os.path.dirname(new_file_path))
+			fd = open(new_file_path, 'w')
+		fd.write(encoding.get_utf8(self.content()))
+		fd.close()
 		
 

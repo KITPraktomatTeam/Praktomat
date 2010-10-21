@@ -28,7 +28,7 @@ class SolutionFileForm(ModelForm):
 						raise forms.ValidationError(_('The zip file seams to be corrupt.'))
 					for fileinfo in zip.infolist():
 						(type, encoding) = mimetypes.guess_type(fileinfo.filename)
-						ignorred = SolutionFile.ignorred_file_names_re.match(fileinfo.filename)
+						ignorred = SolutionFile.ignorred_file_names_re.search(fileinfo.filename)
 						supported = type and SolutionFile.supported_types_re.match(type)
 						if not ignorred and not supported:
 							raise forms.ValidationError(_("The file '%(file)s' of guessed mime type '%(type)s' in this zip file is not supported." %{'file':fileinfo.filename, 'type':type}))

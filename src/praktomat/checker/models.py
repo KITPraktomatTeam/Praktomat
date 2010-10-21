@@ -32,7 +32,7 @@ It is *required* - it must be passed for submission
 	
 	public = models.BooleanField(default=True, help_text = _('Test results are displayed to the submitter.'))
 	required = models.BooleanField(default=False, help_text = _('The test must be passed to submit the solution.'))
-	always = models.BooleanField(default=True, help_text = _('The test will run on submission time.'))					# Misleading name?
+	always = models.BooleanField(default=True, help_text = _('The test will run on submission time.'))
 	
 	class Meta:
 		abstract = True
