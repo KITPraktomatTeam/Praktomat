@@ -12,9 +12,9 @@ from praktomat.accounts.models import User
 class Attestation(models.Model):
 	""""""
 
-	created = models.DateTimeField(auto_now_add=True, editable=False)
-	solution = models.ForeignKey(Solution, editable=False)
-	author = models.ForeignKey(User, editable=False)
+	created = models.DateTimeField(auto_now_add=True)
+	solution = models.ForeignKey(Solution)
+	author = models.ForeignKey(User)
 
 	public_comment = models.TextField(blank=True, help_text = _('Comment which is shown to the user.'))
 	private_comment = models.TextField(blank=True, help_text = _('Comment which is only visible to tutors'))
@@ -101,6 +101,9 @@ class RatingResult(models.Model):
 	attestation = models.ForeignKey(Attestation)
 	aspect = models.ForeignKey(RatingAspect)
 	mark = models.ForeignKey(RatingScaleItem, null=True) # allow for db-null so that rating results can be created programaticly without mark (blank = False !)
+
+	def __unicode__(self):
+		return unicode(self.aspect) 
 	
 class Script(models.Model):
 	""" save java script function of the rating overview page """
