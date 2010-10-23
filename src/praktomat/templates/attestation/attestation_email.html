@@ -1,0 +1,12 @@
+{% load i18n %}{% autoescape off %}{% trans "Hello " %}{{attest.solution.author}},
+{% with attest.solution.task as task %}{% with attest.author as attester %}
+{% blocktrans %}your solution to the task "{{task}}" has been attested by {{attester}}.{% endblocktrans %}{% endwith%}{% endwith%}
+
+You can view your attest here:
+http://{{ domain }}{% url view_attestation attestation_id=attest.id %}
+
+{% trans "Thanks for using our site!" %}
+
+{% blocktrans %}The {{ site_name }} team{% endblocktrans %}
+
+{% endautoescape %}

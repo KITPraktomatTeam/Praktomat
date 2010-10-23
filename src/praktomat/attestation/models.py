@@ -2,6 +2,9 @@ from django.db import models
 from praktomat.tasks.models import Task
 from praktomat.solutions.models import Solution, SolutionFile
 from django.utils.translation import ugettext_lazy as _
+from django.core.mail import EmailMessage
+from django.template import Context, loader
+from django.contrib.sites.models import Site
 import difflib
 
 from praktomat.accounts.models import User
@@ -19,6 +22,28 @@ class Attestation(models.Model):
 	
 	final = models.BooleanField(default = False, help_text = _('Indicates whether the attestation is ready to be published'))
 	published = models.BooleanField(default = False, help_text = _('Indicates whether the user can see the attestation.'))
+	
+	def publish(self):
+		""" Set attestation to published and send email to user """
+		self.published = True
+		self.save()
+		
+		# Send confirmation email
+		if (self.solution.author.email or self.author.email):
+			current_site = Site.objects.get_current()
+			t = loader.get_template('attestation/attestation_email.html')
+			c = {
+				'attest': self,
+				'domain': current_site.domain,
+				'site_name': current_site.name,
+				}
+			subject = _("New attestation for your solution of the task '%s'") % self.solution.task
+			body = t.render(Context(c))
+			recipients = [self.solution.author.email or self.author.email]
+			bcc_recipients = [self.author.email] if self.solution.author.email and self.author.email else None
+			headers = {'Reply-To': self.author.email} if bcc_recipients else None
+			email = EmailMessage(subject, body, None, recipients, bcc_recipients, headers = headers)
+			email.send()
 
 class AnnotatedSolutionFile(models.Model):
 	""""""
