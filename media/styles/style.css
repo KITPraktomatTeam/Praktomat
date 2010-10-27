@@ -373,6 +373,23 @@ form .errorlist li {
 
 /* @end */
 
+/* @group Notifications */
+
+.notification {
+	margin-bottom: 15px;
+	padding-left: 0.7em;
+	padding-right: 0.7em;
+}
+
+.notification .ui-icon {
+	float: left; 
+	margin-right: .3em;
+}
+
+
+
+/* @end */
+
 /* @end */
 
 .tooltip {
