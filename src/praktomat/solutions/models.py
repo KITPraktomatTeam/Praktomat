@@ -15,7 +15,7 @@ from praktomat.accounts.models import User
 from praktomat.utilities import encoding
 
 class Solution(models.Model):
-	"""docstring for Solution"""
+	""" """
 	
 	number = models.IntegerField(null=False, editable=False, help_text = _("Id unique in task and user.Eg. Solution 1 of user X in task Y in contrast to global solution Z"))
 	
@@ -26,10 +26,12 @@ class Solution(models.Model):
 	accepted = models.BooleanField( default = True, help_text = _('Indicates whether the solution has passed all public and required tests'))
 	warnings = models.BooleanField( default = False, help_text = _('Indicates whether the solution has at least failed one public and not required tests'))
 	
-	final = models.BooleanField( default = False, help_text = _('Indicates whether the solution the solution is accepted and marked final by the author'))
-	
 	def __unicode__(self):
 		return unicode(self.task) + ":" + unicode(self.author) + ":" + unicode(self.number)
+	
+	def final(self):
+		""" return whether this is the last submission of this user """
+		return self.id == Solution.objects.filter(task__id=self.task.id).filter(author=self.author.id).aggregate(Max('id'))['id__max']
 	
 	def publicCheckerResults(self):
 		# return self.checkerresult_set.filter(public=True) won't work, because public() isn't a field of result!
@@ -158,6 +160,22 @@ class Solution(models.Model):
 	def attestations_by(self, user):
 		return self.attestation_set.filter(author=user)
 	
+	def copy(self):
+		""" create a copy of this solution """
+		solutionfiles = self.solutionfile_set.all()
+		checkerresults = self.checkerresult_set.all()
+		self.id = None
+		self.number = None
+		self.save()
+		for file in solutionfiles:
+			file.id = None
+			file.solution = self
+			file.save()
+		for result in checkerresults:
+			result.id = None
+			result.solution = self
+			result.save()
+
 
 class SolutionFile(models.Model):
 	"""docstring for SolutionFile"""

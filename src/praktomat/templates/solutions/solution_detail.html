@@ -21,8 +21,7 @@
 	{% if not solution.task.expired %}{% trans "Please corect the errors below and try again!" %}{% endif %}</p>
 {% endif %}
 
-<p> {% include "solutions/icon_inline.html" %}
-	{% if solution.final %}
+<p> {% if solution.final %}
 		This is your current final solution.
 	{% else %}
 		 This is NOT your current final solution.
@@ -31,8 +30,8 @@
 
 {% if not solution.task.expired and not solution.final %}
 	<form method="post">{% csrf_token %}
-		<input type="submit" value="Commit" {% if not solution.accepted %} disabled {% endif %} />
-		<p class="help">You can use this solution for attestation.</p>
+		<input type="submit" value="Resubmit" />
+		<p class="help">You can resubmit this solution to make this your final solution.</p>
 	</form>
 {% endif %}
 

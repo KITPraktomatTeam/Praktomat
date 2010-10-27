@@ -60,18 +60,24 @@ $(function(){
 <div class='right'>
 	<div id='help_icon'><span class="icon icon-orange ui-icon-info"></span></div>
 	<div class="tooltip"> 
-    	<span class="icon ui-icon-radio-on icon-red"></span> <a>Errors</a><br/>
-		<span class="icon ui-icon-radio-on icon-orange"></span> <a>Warnings</a><br/> 
-		<span class="icon ui-icon-radio-on icon-green"></span> <a>No Warnings</a><br/>  
-		<span class="icon ui-icon-bullet icon-orange"></span> <a>Warnings (Final Solution)</a><br/> 
-		<span class="icon ui-icon-bullet icon-green"></span> <a>No Warnings (Final Solution)</a><br/> 		
+    	<span class="icon ui-icon-bullet icon-red"></span> <a>Errors</a><br/>
+		<span class="icon ui-icon-bullet icon-orange"></span> <a>Warnings</a><br/> 
+		<span class="icon ui-icon-bullet icon-green"></span> <a>No Warnings</a><br/>  		
 		<span class="icon ui-icon-script"></span> <a>Attest</a><br/> 
 	</div> 
-	<h2>{% trans "Submitted solutions" %}</h2>
+	<h2>{% trans "Final Solution" %}</h2>
 	{% for solution in solutions %}
 		<div class='solution'>
 			{% spaceless %} 
-				{% include "solutions/icon_inline.html" %}
+				{% if solution.accepted%}
+					{% if solution.warnings%}
+						<span class="icon ui-icon-bullet icon-orange" title='Warnings'></span>
+					{% else %}
+						<span class="icon ui-icon-bullet icon-green" title='No Warnings'></span>
+					{% endif %}
+				{% else %}
+					<span class="icon ui-icon-bullet icon-red" title='Errors'></span>
+				{% endif %}
 				<a href="{% url solution_detail solution_id=solution.id %}">Solution {{solution.number}}</a> <span> ({{solution.creation_date|timesince}} ago)</span>
 				<br/>
 			{% endspaceless %}
@@ -83,7 +89,10 @@ $(function(){
 					<span class="icon ui-icon-script" title='Attest'></span><a href={% url view_attestation attestation_id=attest.id%}>Attestation</a> by {{attest.author.get_full_name}}<br/>
 				{% endif %}
 			</div>
-		{%endfor%}		
+		{%endfor%}	
+		{% if forloop.first %}
+			<h2>{% trans "Solution History" %}</h2>
+		{% endif %}	
 	{% empty %}
 		{%trans "You have't uploaded any solutions jet." %}
 	{%endfor%}

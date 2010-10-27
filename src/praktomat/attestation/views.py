@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.views.generic.list_detail import object_list, object_detail
 from django.db.models import Count
 from django.forms.models import modelformset_factory
+from django.db.models import Max
 from django.contrib.auth.models import Group
 from django.views.decorators.cache import cache_control
 import datetime
@@ -63,9 +64,13 @@ def attestation_list(request, task_id):
 	
 	task = Task.objects.get(pk=task_id)
 	requestuser = request.user
-	solutions = Solution.objects.filter(task__id=task_id).filter(final=True).all()
-	if in_group(requestuser,'Tutor'):
+	
+	solutions = Solution.objects.filter(task__id=task_id).all()
+	if in_group(requestuser,'Tutor'): # only the trainer / admin can see it all
 		solutions = solutions.filter(author__tutorial__tutors__pk=request.user.id)
+	# simulate max id group by author to get the newest solution of each author
+	solution_ids = map(lambda x:x['id__max'], solutions.values('author').annotate(Max('id')))
+	solutions = Solution.objects.filter(id__in=solution_ids)
 	# don't allow a new attestation if one already exists
 	solution_list = map(lambda solution:(solution,not in_group(requestuser,'Trainer') and not solution.attestations_by(requestuser)), solutions)
 	
