@@ -26,11 +26,19 @@ class CreateFileChecker(Checker):
 		This runs the check in the environment ENV, returning a CheckerResult. """
 		absolute_path = os.path.join(env.tmpdir(), self.path)
 		if self.path:
-			os.mkdir(absolute_path)
+			try:
+				os.makedirs(absolute_path)
+			except:
+				pass
+		overridden = os.path.exists(os.path.join(absolute_path,os.path.basename(self.file.path)))
 		shutil.copy(self.file.path, absolute_path)
 		result = CheckerResult(checker=self)
-		result.set_log("")
-		result.set_passed(True)
+		if not overridden:
+			result.set_log("")
+			result.set_passed(True)
+		else:
+			result.set_log("The file '%s' was overridden" % os.path.join(self.path, os.path.basename(self.file.path)))
+			result.set_passed(False)
 		return result
 	
 from praktomat.checker.admin import	CheckerInline, AlwaysChangedModelForm
