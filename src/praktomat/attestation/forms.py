@@ -12,6 +12,14 @@ class AttestationForm(ModelForm):
 	class Meta:
 		model = Attestation
 		exclude = ('solution', 'author', 'final', 'published')
+		
+	def __init__(self, *args, **kwargs): 
+		super(AttestationForm, self).__init__(*args, **kwargs) 
+		final_grade_rating_scale = kwargs['instance'].solution.task.final_grade_rating_scale
+		if final_grade_rating_scale:
+			self.fields['final_grade'].choices = [ (item['id'], item['name']) for item in final_grade_rating_scale.ratingscaleitem_set.values() ]
+		else:
+			del self.fields['final_grade']
 	
 class AttestationPreviewForm(ModelForm):
 	class Meta:

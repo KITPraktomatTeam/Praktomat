@@ -79,7 +79,7 @@ function calculate(){
 					{% if forloop.first %}
 						<td>{{attestation.get_full_name}}</td>
 					{% else %}
-						{% if attestation %}
+						{% if attestation.final_grade %}
 							<td class="grade_cell"><a href="{% url view_attestation attestation_id=attestation.id%}">{{attestation.final_grade}}</a></td>
 						{% else %}
 							<td class="grade_cell">-</td>

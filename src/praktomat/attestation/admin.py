@@ -28,7 +28,7 @@ class RatingResultAdminInline(admin.StackedInline):
 	
 class AttestationAdmin(admin.ModelAdmin):
 	model = Attestation
-	readonly_fields = ('solution', 'author', 'created')
+	readonly_fields = ('created',)
 	fields = ( 'solution', 'author', 'created', 'public_comment', 'private_comment', 'final_grade', 'final', 'published')
 	list_display = ('solution', 'author', 'created', 'final', 'published')
 	list_filter = ('final', 'published', 'author')

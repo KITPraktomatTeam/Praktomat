@@ -45,8 +45,8 @@
 				<p>{{ratingresult.aspect.description}}</p>
 			</div>
 		{%endfor%}
-		{% if user|in_group:"Trainer" or user|in_group:"Tutor" %} 
-			<div class="result private">
+		{% if attest.final_grade %} 
+			<div class="result">
 				<h3 href="#">Final grade: <span class="mark">{{attest.final_grade}}</h3>
 			</div>
 		{% endif %}

@@ -1,11 +1,11 @@
+from datetime import date, datetime, timedelta
+import tempfile
+import zipfile
+
 from django.db import models
 from django.db import transaction
 from django.core import serializers
 from django.utils.translation import ugettext_lazy as _
-
-from datetime import date, datetime, timedelta
-import tempfile
-import zipfile
 
 
 class Task(models.Model):
@@ -15,6 +15,7 @@ class Task(models.Model):
 	submission_date = models.DateTimeField(help_text = _("The date up until the user has time to complete the task."))
 	model_solution = models.OneToOneField('solutions.Solution', blank=True, null=True, related_name='yetAnotherTaskLink')
 	all_checker_finished = models.BooleanField(default=False, editable=False, help_text = _("Indicates whether the checker which don't run immediately on submission have been executed."))
+	final_grade_rating_scale = models.ForeignKey('attestation.RatingScale', null=True, help_text = _("The scale used to mark the hole solution."))
 	
 	def __unicode__(self):
 		return self.title
