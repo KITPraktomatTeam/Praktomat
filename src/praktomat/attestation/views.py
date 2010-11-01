@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.views.generic.list_detail import object_list, object_detail
 from django.db.models import Count
 from django.forms.models import modelformset_factory
-from django.db.models import Max
+from django.db.models import Max, Sum
 from django.contrib.auth.models import Group
 from django.views.decorators.cache import cache_control
 import datetime
@@ -14,7 +14,7 @@ import datetime
 from praktomat.tasks.models import Task
 from praktomat.solutions.models import Solution, SolutionFile
 from praktomat.solutions.forms import SolutionFormSet
-from praktomat.attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, Script
+from praktomat.attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, Script, RatingScaleItem
 from praktomat.attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm, ScriptForm
 from praktomat.accounts.templatetags.in_group import in_group
 from praktomat.accounts.models import User
@@ -28,14 +28,17 @@ def statistics(request,task_id):
 	if not (in_group(request.user,'Trainer') or request.user.is_superuser):
 		return access_denied(request)
 	
-	solution_count = task.solution_set.filter(final=True).count()
+	final_solution_ids = map(lambda x:x['id__max'], task.solution_set.values('author').annotate(Max('id')))
+	final_solutions = task.solution_set.filter(id__in=final_solution_ids)
+	unfinal_solutions = task.solution_set.exclude(id__in=final_solution_ids)
+	final_solution_count = final_solutions.count()
 	user_count = Group.objects.get(name='User').user_set.filter(is_active=True).count()
 	
 	submissions = []
 	submissions_final = []
 	acc_submissions = [0]
-	creation_dates = map(lambda dict:dict['creation_date'].date(),task.solution_set.values('creation_date'))
-	creation_dates_final = map(lambda dict:dict['creation_date'].date(),task.solution_set.filter(final=True).values('creation_date'))
+	creation_dates = map(lambda dict:dict['creation_date'].date(), unfinal_solutions.values('creation_date'))
+	creation_dates_final = map(lambda dict:dict['creation_date'].date(), final_solutions.values('creation_date'))
 	for date in daterange(task.publication_date.date(), min(task.submission_date.date(), datetime.date.today())):
 		submissions.append(creation_dates.count(date))
 		submissions_final.append(creation_dates_final.count(date))
@@ -43,14 +46,23 @@ def statistics(request,task_id):
 	acc_submissions.pop(0)
 	acc_submissions = map(lambda submissions: float(submissions)/user_count, acc_submissions)
 	
-	creation_times = map(lambda dict:[(dict['creation_date'].time().hour*3600+dict['creation_date'].time().minute*60)*1000, dict['creation_date'].weekday()],task.solution_set.filter(final=False).values('creation_date'))
-	creation_times_final = map(lambda dict:[(dict['creation_date'].time().hour*3600+dict['creation_date'].time().minute*60)*1000, dict['creation_date'].weekday()],task.solution_set.filter(final=True).values('creation_date'))
+	creation_times = map(lambda dict:[(dict['creation_date'].time().hour*3600+dict['creation_date'].time().minute*60)*1000, dict['creation_date'].weekday()], unfinal_solutions.values('creation_date'))
+	creation_times_final = map(lambda dict:[(dict['creation_date'].time().hour*3600+dict['creation_date'].time().minute*60)*1000, dict['creation_date'].weekday()], final_solutions.values('creation_date'))
 	
 	attestations = Attestation.objects.filter(solution__task__id=task.id).filter(final=True).filter(published=False).aggregate(final=Count('id'))
 	attestations.update( Attestation.objects.filter(solution__task__id=task.id).filter(published=True).aggregate(published=Count('id')) )
-	attestations.update( Solution.objects.filter(task__id=task.id).filter(final=True).aggregate(all=Count('id')) )
+	attestations['all'] = final_solution_count
 	
-	return render_to_response("attestation/statistics.html", {'task':task, 'submissions':submissions, 'submissions_final':submissions_final, 'creation_times':creation_times, 'creation_times_final':creation_times_final, 'attestations':attestations, 'acc_submissions':acc_submissions, 'solution_count': solution_count,'user_count': user_count}, context_instance=RequestContext(request))
+	final_grade_rating_scale_items = "['" + "','".join(task.final_grade_rating_scale.ratingscaleitem_set.values_list('name', flat=True)) + "']"
+	ratings = RatingScaleItem.objects.filter(attestation__solution__task=task_id).annotate(Count('id')).values_list('position','id__count')
+	ratings = map(lambda x:[x[0]-1,x[1]], ratings) # [(1, 2), (2, 2), (3, 2), (4, 2)] => [[0, 2], [1, 2], [2, 2], [3, 2]]
+
+	return render_to_response("attestation/statistics.html", {'task':task, \
+															'user_count': user_count, 'solution_count': final_solution_count,\
+															'submissions':submissions, 'submissions_final':submissions_final, 'creation_times':creation_times, 'creation_times_final':creation_times_final, 'acc_submissions':acc_submissions, \
+															'attestations':attestations, \
+															'final_grade_rating_scale_items' :final_grade_rating_scale_items, 'ratings':ratings\
+															}, context_instance=RequestContext(request))
 
 def daterange(start_date, end_date):
     for n in range((end_date - start_date).days + 1):

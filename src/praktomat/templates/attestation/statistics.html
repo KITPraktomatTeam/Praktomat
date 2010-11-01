@@ -112,7 +112,7 @@
                 
     			
     			
-    			var time_chart = new Highcharts.Chart({
+    	var time_chart = new Highcharts.Chart({
        chart: {
           renderTo: 'punchcard', 
           defaultSeriesType: 'scatter',
@@ -207,7 +207,7 @@
       text: 'Attestations'
    },
    credits: {
-        				enabled: false
+        enabled: false
    },
    xAxis: {
       categories: ['All'],
@@ -251,6 +251,64 @@
       data: [{{attestations.published}}]
    }]
 });
+
+	var final_grade_chart = new Highcharts.Chart({
+      chart: {
+         renderTo: 'final_grade_chart',
+         defaultSeriesType: 'column',
+         margin: [80, 100, 100, 100]
+      },
+      title: {
+         text: 'Final Grades'
+      },
+	  credits: {
+        enabled: false
+   	},
+      xAxis: {
+         categories: {{ final_grade_rating_scale_items|safe }},
+         labels: {
+            rotation: -45,
+            align: 'right',
+            style: {
+                font: 'normal 13px Verdana, sans-serif'
+            }
+         }
+      },
+      yAxis: {
+	  	allowDecimals: false,
+         min: 0,
+         title: {
+            text: ''
+         }
+		 
+      },
+      legend: {
+         enabled: false
+      },
+      tooltip: {
+         formatter: function() {
+            return '<b>'+ this.x +'</b>:'+ Highcharts.numberFormat(this.y, 1);
+         }
+      },
+      series: [{
+         name: 'Ratings',
+         data: {{ratings}},
+         dataLabels: {
+            enabled: true,
+            rotation: -90,
+            color: '#FFFFFF',
+            align: 'right',
+            x: -3,
+            y: 10,
+            formatter: function() {
+               return this.y;
+            },
+            style: {
+               font: 'normal 13px Verdana, sans-serif'
+            }
+         }         
+      }]
+   });
 	
 	
             });
@@ -262,5 +320,8 @@
 <h2>{% trans "Statistics" %}</h2>
 <div id="submission_chart"></div>
 <div id="punchcard"></div>
-{% if task.expired %} <div id="attestation_chart"></div>{% endif %}
+{% if task.expired %} 
+	<div id="attestation_chart"></div>
+	<div id="final_grade_chart"></div>
+{% endif %}
 {% endblock %}
