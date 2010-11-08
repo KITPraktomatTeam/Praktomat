@@ -9,7 +9,10 @@ from django.forms.models import modelformset_factory
 from django.db.models import Max, Sum
 from django.contrib.auth.models import Group
 from django.views.decorators.cache import cache_control
+from django.http import HttpResponse
+from django.template import loader, Context
 import datetime
+import codecs
 
 from praktomat.tasks.models import Task
 from praktomat.solutions.models import Solution, SolutionFile
@@ -181,7 +184,7 @@ def rating_overview(request):
 	
 	attestations = Attestation.objects.filter(published=True)
 	
-	attestation_dict = {} 	#{(task_id:user_id):rating}
+	attestation_dict = {} 	#{(task_id,user_id):attestation}
 	for attestation in attestations:
 			attestation_dict[attestation.solution.task_id, attestation.solution.author_id] = attestation
 	
@@ -218,3 +221,40 @@ def rating_overview(request):
 		script_form = ScriptForm(instance=script)
 	
 	return render_to_response("attestation/rating_overview.html", {'rating_list':rating_list, 'task_list':task_list, 'final_grade_formset':final_grade_formset, 'script_form':script_form},	context_instance=RequestContext(request))
+
+@login_required	
+def rating_export(request):
+	if not (in_group(request.user,'Trainer') or request.user.is_superuser):
+		return access_denied(request)
+	
+	attestations = Attestation.objects.filter(published=True)
+	
+	attestation_dict = {} 	#{(task_id,user_id):rating}
+	for attestation in attestations:
+			attestation_dict[attestation.solution.task_id, attestation.solution.author_id] = attestation
+	
+	task_id_list = Task.objects.filter(submission_date__lt = datetime.datetime.now).order_by('publication_date','submission_date').values_list('id', flat=True)
+	user_id_list = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name').values_list('id', flat=True)
+	
+	task_list = map(lambda task_id:Task.objects.get(id=task_id), task_id_list)	
+	
+	rating_list = []
+	for user_id in user_id_list:
+		rating_for_user_list = [User.objects.get(id=user_id)]
+		for task_id in task_id_list:
+			try:
+				rating = attestation_dict[task_id,user_id]
+			except KeyError:
+				rating = None
+			rating_for_user_list.append(rating)
+		rating_list.append(rating_for_user_list)
+	
+	response = HttpResponse(mimetype='text/csv')
+	response['Content-Disposition'] = 'attachment; rating_export.csv'
+
+	t = loader.get_template('attestation/rating_export.csv')
+	c = Context({'rating_list':rating_list, 'task_list':task_list})
+	#response.write(u'\ufeff') setting utf-8 BOM for Exel doesn't work
+	response.write(t.render(c))
+	return response
+	

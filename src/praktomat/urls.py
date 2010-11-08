@@ -38,6 +38,7 @@ urlpatterns = patterns('',
 	url(r'^attestation/(?P<attestation_id>\d+)/new$', 'praktomat.attestation.views.edit_attestation', name='edit_attestation'),
 	url(r'^attestation/(?P<attestation_id>\d+)$', 'praktomat.attestation.views.view_attestation', name='view_attestation'),
 	url(r'^attestation/rating_overview$', 'praktomat.attestation.views.rating_overview', name='rating_overview'),
+	url(r'^attestation/rating_export.csv$', 'praktomat.attestation.views.rating_export', name='rating_export'),
 	
 	# Uploaded media
 	url(r'^upload/(?P<path>TaskMediaFiles.*)$', 'praktomat.utilities.views.serve_unrestricted'),

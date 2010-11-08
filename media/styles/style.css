@@ -730,6 +730,10 @@ div.result div.log {
 	margin-left: 40px;
 }
 
+#rating #export{
+	text-align: right;
+}
+
 #rating .calculated_grade_cell {
 	cursor: pointer;
 	color: #005094;
