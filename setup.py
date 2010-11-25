@@ -25,7 +25,7 @@ setup(
                         'ElementTree',
                         'Markdown >= 2.0.2',
                         'MySQL-python >= 1.2.3c1',
-                        'psycopg2', # PostgresSQL support
+                        'psycopg2 == 2.2.2', # PostgresSQL support
                         'Pygments >= 1.1.1',
                         'Werkzeug >= 0.5.1',
                         'django-extensions >= 0.4.1',

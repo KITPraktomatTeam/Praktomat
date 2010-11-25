@@ -9,10 +9,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.files import File
 from django.db.models import Max
 
-import os, re, tempfile, shutil
+import os, re, shutil
  
 from praktomat.accounts.models import User
-from praktomat.utilities import encoding
+from praktomat.utilities import encoding, file_operations
 
 class Solution(models.Model):
 	""" """
@@ -53,7 +53,7 @@ class Solution(models.Model):
 		# Delete previous results if the checker have allready been run
 		self.checkerresult_set.all().delete()
 		# set up environment
-		from praktomat.checker.models import CheckerEnvironment, TMP_DIR_MODE
+		from praktomat.checker.models import CheckerEnvironment
 		env = CheckerEnvironment()
 		sources = []
 		for file in self.solutionfile_set.all(): 
@@ -63,15 +63,13 @@ class Solution(models.Model):
 		
 		try:
 			# Setting default temp dir location and creating it
-			tempfile.tempdir = os.path.join(settings.UPLOAD_ROOT, "SolutionSandbox")
-			new_tmpdir = tempfile.mktemp()
-
+			sandbox = os.path.join(settings.UPLOAD_ROOT, "SolutionSandbox")
+			new_tmpdir = file_operations.create_tempfolder(sandbox)
+	
 			# to access working directory by scripts
 			os.system("export PRAKTOMAT_WORKING_DIR=" + `new_tmpdir`)
 			env.set_tmpdir(new_tmpdir)
 			
-			os.makedirs(env.tmpdir(), TMP_DIR_MODE)
-			os.chmod(env.tmpdir(), TMP_DIR_MODE)
 			self.copySolutionFiles(env.tmpdir())
 			self.run_checks(env, run_secret)
 		finally:
@@ -102,8 +100,6 @@ class Solution(models.Model):
 		checkersets =[	task.anonymitychecker_set.all(),
 						task.linecounter_set.all(),
 						task.createfilechecker_set.all(),
-						task.diffchecker_set.all(),
-						task.scriptchecker_set.all(),
 						task.interfacechecker_set.all(),
 						task.linewidthchecker_set.all(),
 						task.textchecker_set.all(),
@@ -112,7 +108,9 @@ class Solution(models.Model):
 						task.javabuilder_set.all(),
 						task.javagccbuilder_set.all(),
 						task.fortranbuilder_set.all(),
+						task.scriptchecker_set.all(),
 						task.dejagnusetup_set.all(), 
+						task.diffchecker_set.all(),
 						task.dejagnutester_set.all(),
 						task.checkstylechecker_set.all(), ]
 		try:
@@ -226,12 +224,4 @@ class SolutionFile(models.Model):
 	def copyTo(self,directory):
 		""" Copies this file to the given directory """
 		new_file_path = os.path.join(directory, self.path())
-		try:
-			fd = open(new_file_path, 'w')
-		except IOError:
-			os.makedirs(os.path.dirname(new_file_path))
-			fd = open(new_file_path, 'w')
-		fd.write(encoding.get_utf8(self.content()))
-		fd.close()
-		
-
+		file_operations.create_file(new_file_path, self.content())

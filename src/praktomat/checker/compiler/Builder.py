@@ -4,7 +4,7 @@ import re, subprocess
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from praktomat.checker.models import Checker, CheckerResult
+from praktomat.checker.models import Checker, CheckerResult, execute
 
 class Builder(Checker):
 	""" Build a program. This contains the general infrastructure to build a program with a compiler.  Specialized subclass are provided for different languages and compilers. """
@@ -108,8 +108,7 @@ class Builder(Checker):
 			return result
 
 		args = [self.compiler()] + self.output_flags(env) + self.flags(env) + self.get_file_names(env) + self.libs()
-		args = [arg for arg in args if arg !=""] # trash ""s, cause they produce errors
-		output = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=env.tmpdir()).communicate()[0] #executable = self.compiler(),
+		output = execute(args, env.tmpdir())[0]
 		output = self.enhance_output(env, output)
 
 		# The executable has to exist and we mustn't have any warnings.

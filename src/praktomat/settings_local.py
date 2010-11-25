@@ -51,7 +51,7 @@ ADMINS = (
 #DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 #DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
- 
+
 DATABASE_ENGINE = 'sqlite3'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 DATABASE_NAME = UPLOAD_ROOT+'/Database'   # Or path to database file if using sqlite3.
 DATABASE_USER = ''             # Not used with sqlite3.
@@ -74,7 +74,15 @@ C_BINARY = 'gcc'
 CXX_BINARY = 'c++'
 JAVA_BINARY = 'javac'
 JAVA_GCC_BINARY = 'gcj'
-JVM = "java"
+JVM = 'java'
 FORTRAN_BINARY = 'g77'
-DEJAGNU_RUNTEST = '/opt/local/bin/runtest'
+DEJAGNU_RUNTEST = '/usr/local/Cellar/deja-gnu/1.4.4/bin/runtest'
 CHECKSTYLEALLJAR = '/Users/halluzinativ/Documents/Arbeit/checkstyle/checkstyle-all-4.4.jar'
+
+# Enable to run all scripts (checker) as the unix user 'praktomattester'. Therefore put 'praktomattester' as well
+# as the Apache user '_www' (and your development user account) into a new group called praktomat. Also edit your
+# sudoers file with "sudo visudo". Add the following lines to the end of the file to allow the execution of 
+# commands with the user 'praktomattester' without requiring a password:
+# "_www    		ALL=(praktomattester)NOPASSWD:ALL"
+# "developer	ALL=(praktomattester)NOPASSWD:ALL"
+USEPRAKTOMATTESTER = True

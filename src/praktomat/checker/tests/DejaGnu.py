@@ -14,9 +14,10 @@ from django.db import models
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.utils.translation import ugettext_lazy as _
-from praktomat.checker.models import Checker, CheckerResult, TMP_DIR_MODE
+from praktomat.checker.models import Checker, CheckerResult, execute
 from praktomat.checker.compiler.Builder import Builder
 from praktomat.utilities import encoding
+from praktomat.utilities.file_operations import *
 
 # Stuff to highlight in output
 RXFAIL	   = re.compile(r"^(.*)(FAIL|ERROR|Abort|Exception |your program crashed|cpu time limit exceeded|"
@@ -44,10 +45,10 @@ class DejaGnu:
 		return os.path.join(self.testsuite_dir(env), env.program() + ".tests")
 
 	def setup_dirs(self, env):
-		os.mkdir(self.testsuite_dir(env), TMP_DIR_MODE)
-		os.mkdir(self.config_dir(env),	  TMP_DIR_MODE)
-		os.mkdir(self.lib_dir(env),		  TMP_DIR_MODE)
-		os.mkdir(self.tests_dir(env),	  TMP_DIR_MODE)
+		makedirs(self.testsuite_dir(env))
+		makedirs(self.config_dir(env))
+		makedirs(self.lib_dir(env))
+		makedirs(self.tests_dir(env))
 	
 
 
@@ -97,25 +98,20 @@ class DejaGnuTester(Checker, DejaGnu):
 
 		# Save public test cases in `tests.exp'
 		tests_exp = os.path.join(self.tests_dir(env), "tests.exp")
-		fd = open(tests_exp, 'w')
 		test_cases = string.replace(encoding.get_unicode(self.test_case.read()), u"PROGRAM", env.program())
-		fd.write(encoding.get_utf8(test_cases))
-		fd.close()
-		
+		create_file(tests_exp,test_cases)
+
 		testsuite = self.testsuite_dir(env)
 		program_name = env.program()
 		
-		#cmd = "ulimit -t 30; " # Timeout is set by java.sh
-		cmd = "chmod -R g+rx .; "
-		cmd += "touch site.exp; "
-		cmd += settings.DEJAGNU_RUNTEST + " --tool " + program_name + " tests.exp"
-		environ = os.environ
+		cmd = settings.DEJAGNU_RUNTEST + " --tool " + program_name + " tests.exp"
+		environ = {}
 		environ['JAVA'] = settings.JVM
 		environ['POLICY'] = join(join(dirname(dirname(__file__)),"scripts"),"praktomat.policy")
-		environ['USER'] = env.user().get_full_name() # sh_quote removed
+		environ['USER'] = env.user().get_full_name()
 		environ['HOME'] = testsuite
-		
-		[output, error] = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=testsuite, env=environ, shell=True).communicate()
+
+		[output, error] = execute(cmd, testsuite, environment_variables=environ)
 
 		try:
 			summary = encoding.get_unicode(open(os.path.join(testsuite, program_name + ".sum")).read())
@@ -158,13 +154,10 @@ class DejaGnuSetup(Checker, DejaGnu):
 	# Set up tests.
 	def run(self, env):
 		self.setup_dirs(env)
-		open(os.path.join(self.lib_dir(env), env.program() + ".exp"), 'w').close()
-		default_exp = os.path.join(self.config_dir(env), "default.exp")
-		fd = open(default_exp, 'w')
+		create_file(os.path.join(self.lib_dir(env), env.program() + ".exp"), u"")
 		defs = string.replace(encoding.get_unicode(self.test_defs.read()), "PROGRAM", env.program())
 		defs = string.replace(defs, "JAVA", join(join(dirname(dirname(__file__)),"scripts"),"java"))
-		fd.write(encoding.get_utf8(defs))
-		fd.close()
+		create_file(os.path.join(self.config_dir(env), "default.exp"), defs)
 
 		return self.result()
 

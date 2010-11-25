@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import shutil, os, re, subprocess
+import os, re
 from django.conf import settings 
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from praktomat.checker.models import Checker, CheckerResult
+from praktomat.checker.models import Checker, CheckerResult, execute
+from praktomat.utilities.file_operations import *
 
 class ScriptChecker(Checker):
 
@@ -31,18 +32,16 @@ class ScriptChecker(Checker):
 
 		# Setup
 		test_dir	 = env.tmpdir()
-		from praktomat.checker.tests.Preprocessor import copy_processed_file
-		copy_processed_file(self.shell_script.path, test_dir, env)
+		copy_file_to_directory(self.shell_script.path, test_dir, replace=[(u'PROGRAM',env.program())])
 		
 		# Run the tests -- execute dumped shell script 'script.sh'
 		args = ["sh",  os.path.basename(self.shell_script.name)]
-		environ = os.environ 
+		environ = {}
 		environ['USER'] = env.user().get_full_name()
 		environ['HOME'] = test_dir
-		# needs timeout!
 		
-		(output, error) = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=test_dir, env=environ).communicate()
-		
+		(output, error) = execute(args, working_directory=test_dir, environment_variables=environ)
+
 		result = CheckerResult(checker=self)
 		if self.remove:
 			output = re.sub(self.remove, "", output)

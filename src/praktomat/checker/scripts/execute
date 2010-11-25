@@ -1,0 +1,9 @@
+#!/bin/bash
+
+ulimit -t 60
+
+if [ "$USEPRAKTOMATTESTER" == "TRUE" ]; then
+	sudo -E -u praktomattester $@
+else
+	$@
+fi

@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-
+from os import *
+from os.path import *
+import subprocess
+from django.conf import settings
 from django.db import models
 from praktomat.tasks.models import Task
 from django.contrib.contenttypes.models import ContentType
@@ -8,11 +11,17 @@ from django.utils.translation import ugettext_lazy as _
 
 import string
 	
-# Mode for temporary directories.
-TMP_DIR_MODE = 0770
-
-# Maximal size of test output read
-MAX_OUTPUT = 1000000
+def execute(command, working_directory, environment_variables={}):
+	""" Wrapper to execute Commands with the praktomat testuser. """
+	if isinstance(command, list):
+		command = ' '.join(command)
+	script = join(join(dirname(__file__),'scripts'),'execute')
+	command = script + ' ' + command
+	environment = environ
+	environment.update(environment_variables)
+	if (settings.USEPRAKTOMATTESTER): environment['USEPRAKTOMATTESTER'] = 'TRUE'
+	[output, error] = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=working_directory, env=environment, shell=True).communicate()
+	return [output, error]
 
 
 class Checker(models.Model):

@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import shutil, os
+import os, string
 
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from praktomat.checker.models import Checker, CheckerResult
+from praktomat.utilities.file_operations import *
 
 class CreateFileChecker(Checker):
 	
@@ -24,14 +25,9 @@ class CreateFileChecker(Checker):
 	def run(self, env):
 		""" Runs tests in a special environment. Here's the actual work. 
 		This runs the check in the environment ENV, returning a CheckerResult. """
-		absolute_path = os.path.join(env.tmpdir(), self.path)
-		if self.path:
-			try:
-				os.makedirs(absolute_path)
-			except:
-				pass
-		overridden = os.path.exists(os.path.join(absolute_path,os.path.basename(self.file.path)))
-		shutil.copy(self.file.path, absolute_path)
+		path = os.path.join(os.path.join(env.tmpdir(),string.lstrip(self.path,"/ ")),os.path.basename(self.file.path))
+		overridden = os.path.exists(path)
+		copy_file(self.file.path, path)
 		result = CheckerResult(checker=self)
 		if not overridden:
 			result.set_log("")

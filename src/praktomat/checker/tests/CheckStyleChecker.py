@@ -5,7 +5,8 @@ from django.conf import settings
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from praktomat.checker.models import Checker, CheckerResult
+from praktomat.checker.models import Checker, CheckerResult, execute
+from praktomat.utilities.file_operations import *
 
 class CheckStyleChecker(Checker):
 
@@ -25,16 +26,11 @@ class CheckStyleChecker(Checker):
 
 		# Save save check configuration
 		config_path = os.path.join(env.tmpdir(), "checks.xml")
-		config_file = open(config_path, 'w')
-		config_file.write(self.configuration)
-		config_file.close()
+		create_file(config_path, self.configuration)
 		
-		# Run the tests -- execute dumped shell script 'script.sh'
+		# Run the tests
 		args = [settings.JVM, "-cp", settings.CHECKSTYLEALLJAR, "-Dbasedir=.", "com.puppycrawl.tools.checkstyle.Main", "-c", "checks.xml"] + [name for (name,content) in env.sources()]
-		environ = os.environ 
-		# needs timeout!
-		
-		(output, error) = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=env.tmpdir(), env=environ).communicate()
+		(output, error) = execute(args, env.tmpdir())
 		
 		result = CheckerResult(checker=self)
 		result.set_log('<pre>' + output + '</pre>')

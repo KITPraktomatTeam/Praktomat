@@ -67,9 +67,7 @@ log "STRT $$ ($PPID)"
  kill -9 $$ >> $KILL_LOG 2>&1)&
  
 
-#echo `pwd`
-#/usr/bin/sudo -u praktomat_tester \
- $JAVA \
+$JAVA \
  -Djava.security.manager \
  -Djava.security.policy=$POLICY \
  -cp .:..:$CLASSPATH "$@" 2>&1
