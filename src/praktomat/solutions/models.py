@@ -9,8 +9,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.files import File
 from django.db.models import Max
 
-import os, re, shutil
- 
+import os, re
+
 from praktomat.accounts.models import User
 from praktomat.utilities import encoding, file_operations
 
@@ -49,130 +49,10 @@ class Solution(models.Model):
 	
 	def check(self, run_secret = 0): 
 		"""Builds and tests this solution."""
-		
-		# Delete previous results if the checker have allready been run
-		self.checkerresult_set.all().delete()
-		# set up environment
-		from praktomat.checker.models import CheckerEnvironment
-		env = CheckerEnvironment()
-		sources = []
-		for file in self.solutionfile_set.all(): 
-			sources.append((file.path(),file.content()))
-		env.set_sources(sources)
-		env.set_user(self.author)
-		
-		try:
-			# Setting default temp dir location and creating it
-			sandbox = os.path.join(settings.UPLOAD_ROOT, "SolutionSandbox")
-			new_tmpdir = file_operations.create_tempfolder(sandbox)
-	
-			# to access working directory by scripts
-			os.system("export PRAKTOMAT_WORKING_DIR=" + `new_tmpdir`)
-			env.set_tmpdir(new_tmpdir)
-			
-			self.copySolutionFiles(env.tmpdir())
-			self.run_checks(env, run_secret)
-		finally:
-			# reset default temp dir location 
-			tempfile.tempdir = None
-			# Delete temporary directory
-			if not settings.DEBUG:
-				try:
-					shutil.rmtree(new_tmpdir)
-				except IOError:
-					pass
-		
-		
-	
-	def run_checks(self, env, run_all): # , task
-		""" Check program. The case `Nothing submitted' is handled by the Saver.  Also,
-		this does not work when submitting archives, since at this
-		point, archives are not unpacked yet, and hence,
-		env.main_module() returns the archive name => commented out. -AZ
-		program = env.main_module()
-		if not program: return """
+		from praktomat.checker.models import check
+		check(self, run_secret)
 
-		passed_checkers = []
-		
-		# Apply all checkers from TASK
-		task = self.task
-		# querysets can't be concatenated with +
-		checkersets =[	task.anonymitychecker_set.all(),
-						task.linecounter_set.all(),
-						task.createfilechecker_set.all(),
-						task.interfacechecker_set.all(),
-						task.linewidthchecker_set.all(),
-						task.textchecker_set.all(),
-						task.cxxbuilder_set.all(),
-						task.cbuilder_set.all(),
-						task.javabuilder_set.all(),
-						task.javagccbuilder_set.all(),
-						task.fortranbuilder_set.all(),
-						task.scriptchecker_set.all(),
-						task.dejagnusetup_set.all(), 
-						task.diffchecker_set.all(),
-						task.dejagnutester_set.all(),
-						task.checkstylechecker_set.all(), ]
-		try:
-			for checkers in checkersets:
-				for checker in checkers:
-					
-					if (checker.always or run_all):
-					
-						# Check dependencies -> This requires the right order of the checkers
-						can_run_checker = True
-						for required_checker in checker.requires():
-							have_required_checker = False
-							for passed_checker in passed_checkers:
-								if isinstance(passed_checker, required_checker):
-									have_required_checker = True
-							if not have_required_checker:
-								can_run_checker = False
-						
-						if can_run_checker: 
-							# Invoke Checker 
-							result = checker.run(env)
-						else:
-							# make non passed result
-							# this as well as the dependency check should propably go into checker class
-							result = checker.result()
-							result.set_log(u"Checker konnte nicht ausgeführt werden, da benötigte Checker nicht bestanden wurden.")
-							result.set_passed(False)
-							
-						result.solution = self
-						result.save()
-	
-						if not result.passed and checker.public:
-							if checker.required:
-								self.accepted = False
-							else:
-								self.warnings= True
-								
-						if result.passed:
-							passed_checkers.append(checker)
-		except:
-			self.delete() # get rid of files
-			raise
-		self.save()
-		
-	def attestations_by(self, user):
-		return self.attestation_set.filter(author=user)
-	
-	def copy(self):
-		""" create a copy of this solution """
-		solutionfiles = self.solutionfile_set.all()
-		checkerresults = self.checkerresult_set.all()
-		self.id = None
-		self.number = None
-		self.save()
-		for file in solutionfiles:
-			file.id = None
-			file.solution = self
-			file.save()
-		for result in checkerresults:
-			result.id = None
-			result.solution = self
-			result.save()
+
 
 
 class SolutionFile(models.Model):

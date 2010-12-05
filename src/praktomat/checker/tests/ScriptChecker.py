@@ -32,7 +32,8 @@ class ScriptChecker(Checker):
 
 		# Setup
 		test_dir	 = env.tmpdir()
-		copy_file_to_directory(self.shell_script.path, test_dir, replace=[(u'PROGRAM',env.program())])
+		replace = [(u'PROGRAM',env.program())] if env.program() else []
+		copy_file_to_directory(self.shell_script.path, test_dir, replace=replace)
 		
 		# Run the tests -- execute dumped shell script 'script.sh'
 		args = ["sh",  os.path.basename(self.shell_script.name)]

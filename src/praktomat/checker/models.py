@@ -8,6 +8,7 @@ from praktomat.tasks.models import Task
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
+from praktomat.utilities import encoding, file_operations
 
 import string
 	
@@ -36,6 +37,7 @@ It is *required* - it must be passed for submission
 	starts the complete rerun of all Checkers. """
 
 	created = models.DateTimeField(auto_now_add=True)
+	order = models.IntegerField(help_text = _('Determines the order in wich the checker will start. Not necessary continuously!'))
 	
 	task = models.ForeignKey(Task)
 	
@@ -68,96 +70,53 @@ It is *required* - it must be passed for submission
 	def requires(self):
 		""" Returns the list of passed Checkers required by this checker.
 		Overloaded by subclasses. """ 
-		return []		
-			   			
+		return []	
+
+
+
+
 class CheckerEnvironment:
 	""" The environment for running a checker. """
 
-	def __init__(self):
+	def __init__(self, solution):
 		""" Constructor: Creates a standard environment. """
-		self._tmpdir = None  # Temporary build directory
-		self._program = None # Executable program
-		self._sources = []   # Sources as [(name, content)...]
-		self._source = None
-		self._user = None	# Submitter of this program
-		self._key  = None	# Key of the submitter
-		self._course_id = "" # Course of the submitter
-		self._tab_width = 4  # Tab width
-		self._task_id = None # Identifier of the task/solution to be solved
+		# Temporary build directory
+		sandbox = join(settings.UPLOAD_ROOT, "SolutionSandbox")
+		self._tmpdir = file_operations.create_tempfolder(sandbox)
+		# Sources as [(name, content)...]
+		self._sources = []   
+		for file in solution.solutionfile_set.all(): 
+			self._sources.append((file.path(),file.content()))
+		# Submitter of this program
+		self._user = solution.author	
+		# Executable program
+		self._program = None 
 
 	def tmpdir(self):
 		""" Returns the path name of temporary build directory. """
 		return self._tmpdir
 
-	def program(self):
-		""" Returns the name of the executable program. """
-		return self._program
-
 	def sources(self):
-		""" Returns the list of source files. """
+		""" Returns the list of source files. [(name, content)...] """
 		return self._sources
 
 	def user(self):
 		""" Returns the submitter of this program (class User). """
 		return self._user
-
-	def key(self): # What is the Key ?????????
-		""" Returns the key of the submitter. """
-		return self._key
-
-	def course_id(self):
-		""" Returns the course identifier of the submitter. """
-		return self._course_id
-
-	def tab_width(self): # Whats that needed for ????
-		""" Returns the tab width the submitter chose. """
-		return self._tab_width
-
-	def task_id(self): # shoudn't the checker know?
-		""" Returns the task id of the submitter. """
-		return self._task_id
-
-	def set_tmpdir(self, tmpdir):
-		""" Sets the path name of the temporary build directory. """
-		assert isinstance(tmpdir, str)
-		self._tmpdir = tmpdir
 	
+	def program(self):
+		""" Returns the name of the executable program, if allready set. """
+		return self._program
+
 	def set_program(self, program):
 		""" Sets the name of the executable program. """
-		#assert isinstance(program, str)
 		self._program = program
 
-	def set_sources(self, sources):
-		"""  Sets the list of source file names. """
-		assert isinstance(sources, list)
-		self._sources = sources
-		
-	def set_user(self, user):
-		""" Sets the submitter (class User). """
-		#assert isinstance(user, User.User)
-		self._user = user
 
-	def set_key(self, key):
-		""" Sets the key of the submitter. """
-		#assert isinstance(key, long)
-		self._key = key
 
-	def set_course_id(self, course_id):
-		""" Sets the course identifier of the submitter. """
-		assert isinstance(course_id, str)
-		self._course_id = course_id
 
-	def set_tab_width(self, tab_width):
-		""" Sets the tab witdh of the sources. """
-		assert isinstance(tab_width, int)
-		self._tab_width = tab_width
 
-	def set_task_id(self, task_id):
-		""" Sets task identifier of the submitter. """
-		assert isinstance(task_id, str)
-		self._task_id = task_id
 
-		
 class CheckerResult(models.Model):
 	""" A CheckerResult returns the result of a Checker.
 	It contains:
@@ -198,4 +157,91 @@ class CheckerResult(models.Model):
 		""" Sets the passing state of the Checker. """
 		assert isinstance(passed, int)
 		self.passed = passed
+
+
+def check(solution, run_secret = 0): 
+	"""Builds and tests this solution."""
+	
+	# Delete previous results if the checker have allready been run
+	solution.checkerresult_set.all().delete()
+	# set up environment
+	env = CheckerEnvironment(solution)
+	
+	try:			
+		solution.copySolutionFiles(env.tmpdir())
+		run_checks(solution, env, run_secret)
+	finally:
+		# Delete temporary directory
+		if not settings.DEBUG:
+			try:
+				shutil.rmtree(env.tmpdir())
+			except IOError:
+				pass
+	
+	
+
+def run_checks(solution, env, run_all):		
+	"""  """
+
+	passed_checkers = set()
+	
+	# Run all checkers of task
+	checker_classes = filter(lambda x:issubclass(x,Checker), models.get_models())
+	unsorted_checker = sum(map(lambda x: list(x.objects.filter(task=solution.task)), checker_classes),[])
+	checkers = sorted(unsorted_checker, key=lambda checker: checker.order)
+	
+	try:
+		for checker in checkers:
+			if (checker.always or run_all):
+			
+				# Check dependencies -> This requires the right order of the checkers
+				required_checker = set(checker.requires())
+				# &: intersection
+				can_run_checker = len(required_checker & passed_checkers) == len(required_checker)
+				
+				if can_run_checker: 
+					# Invoke Checker 
+					result = checker.run(env)
+				else:
+					# make non passed result
+					# this as well as the dependency check should propably go into checker class
+					result = checker.result()
+					result.set_log(u"Checker konnte nicht ausgeführt werden, da benötigte Checker nicht bestanden wurden.")
+					result.set_passed(False)
+					
+				result.solution = solution
+				result.save()
+
+				if not result.passed and checker.public:
+					if checker.required:
+						solution.accepted = False
+					else:
+						solution.warnings= True
+						
+				if result.passed:
+					passed_checkers.add(checker.__class__)
+	except:
+		solution.delete() # get rid of files
+		raise
+	solution.save()
+	
+def attestations_by(self, user):
+	return self.attestation_set.filter(author=user)
+
+def copy(self):
+	""" create a copy of this solution """
+	solutionfiles = self.solutionfile_set.all()
+	checkerresults = self.checkerresult_set.all()
+	self.id = None
+	self.number = None
+	self.save()
+	for file in solutionfiles:
+		file.id = None
+		file.solution = self
+		file.save()
+	for result in checkerresults:
+		result.id = None
+		result.solution = self
+		result.save()
+
 

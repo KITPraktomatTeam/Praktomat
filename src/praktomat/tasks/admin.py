@@ -9,42 +9,7 @@ from praktomat.tasks.models import Task, MediaFile
 from praktomat.solutions.models import Solution, SolutionFile
 from praktomat.attestation.admin import RatingAdminInline
 
-from praktomat.checker.tests.AnonymityChecker import AnonymityCheckerInline
-from praktomat.checker.tests.LineCounter import LineCounterInline
-from praktomat.checker.tests.DiffChecker import DiffCheckerInline
-from praktomat.checker.tests.CreateFileChecker import CreateFileCheckerInline
-from praktomat.checker.tests.ScriptChecker import ScriptCheckerInline
-from praktomat.checker.tests.InterfaceChecker import InterfaceCheckerInline
-from praktomat.checker.tests.LineWidthChecker import LineWidthCheckerInline
-from praktomat.checker.tests.TextChecker import TextCheckerInline
-from praktomat.checker.tests.DejaGnu import DejaGnuSetupInline, DejaGnuTesterInline
-from praktomat.checker.tests.CheckStyleChecker import CheckStyleCheckerInline
-
-from praktomat.checker.compiler.CXXBuilder import CXXBuilderInline
-from praktomat.checker.compiler.CBuilder import CBuilderInline
-from praktomat.checker.compiler.JavaBuilder import JavaBuilderInline
-from praktomat.checker.compiler.JavaGCCBuilder import JavaGCCBuilderInline
-from praktomat.checker.compiler.FortranBuilder import FortranBuilderInline
-
-# Importing like that would be cleaner, but would result in bad ordering.
-#from praktomat.checker.admin import CheckerInline
-#CheckerInline.__subclasses__
-CheckerInlines = [	AnonymityCheckerInline,
-					LineCounterInline,
-					CreateFileCheckerInline,
-					DiffCheckerInline,
-					ScriptCheckerInline,
-					InterfaceCheckerInline, 
-					LineWidthCheckerInline,
-					TextCheckerInline,
-					CBuilderInline,
-					CXXBuilderInline,
-					JavaBuilderInline,
-					JavaGCCBuilderInline,
-					FortranBuilderInline,
-					DejaGnuSetupInline,
-					DejaGnuTesterInline,
-					CheckStyleCheckerInline,]
+from praktomat.checker.admin import CheckerInline
 
 admin.autodiscover()
 
@@ -64,12 +29,21 @@ class TaskAdmin(admin.ModelAdmin):
 	search_fields = ['title']
 	date_hierarchy = 'publication_date'
 	save_on_top = True
-	inlines = [MediaInline] + CheckerInlines + [ RatingAdminInline]
+	inlines = [MediaInline] + CheckerInline.__subclasses__() + [ RatingAdminInline]
 	actions = ['export_tasks', 'run_all_checkers']
 	
 	formfield_overrides = {
         models.TextField: {'widget': TinyMCE()},
     }
+
+	class Media:
+		js = (
+				'frameworks/jquery/jquery.js',
+				'frameworks/jquery/jquery-ui.js',
+				'frameworks/jquery/jquery.tinysort.js',
+				'script/checker-sort.js',
+		)
+	
 	
 	def export_tasks(self, request, queryset):
 		""" Export Task action """
