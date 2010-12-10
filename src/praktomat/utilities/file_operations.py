@@ -57,6 +57,7 @@ def copy_file_to_directory(from_file_path, to_path, replace=[], override=True):
 
 
 def create_tempfolder(path):
+	makedirs(path)
 	tempfile.tempdir = path
 	new_tmpdir = tempfile.mkdtemp()
 	if (gid):
