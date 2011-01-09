@@ -11,72 +11,72 @@
 <polygon fill="white" stroke="white" points="-4,5 -4,-354 503,-354 503,5 -4,5"/>
 <!-- praktomat_accounts_models_User -->
 <g id="node1" class="node"><title>praktomat_accounts_models_User</title>
-<polygon fill="palegoldenrod" stroke="palegoldenrod" points="235,-112.5 235,-345.5 387,-345.5 387,-112.5 235,-112.5"/>
-<polygon fill="#698b22" stroke="#698b22" points="235,-328 235,-345 387,-345 387,-328 235,-328"/>
-<text text-anchor="start" x="301.5" y="-334.633" font-family="Helvetica Bold" font-size="8.00" fill="white">User</text>
-<text text-anchor="start" x="237" y="-320.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">id</text>
-<text text-anchor="start" x="312" y="-320.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">AutoField</text>
-<text text-anchor="start" x="237" y="-308.133" font-family="Helvetica Bold" font-size="8.00">username</text>
-<text text-anchor="start" x="312" y="-308.133" font-family="Helvetica Bold" font-size="8.00">CharField</text>
-<text text-anchor="start" x="237" y="-296.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">first_name</text>
-<text text-anchor="start" x="312" y="-296.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">CharField</text>
-<text text-anchor="start" x="237" y="-284.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">last_name</text>
-<text text-anchor="start" x="312" y="-284.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">CharField</text>
-<text text-anchor="start" x="237" y="-272.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">email</text>
-<text text-anchor="start" x="312" y="-272.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">EmailField</text>
-<text text-anchor="start" x="237" y="-260.133" font-family="Helvetica Bold" font-size="8.00">password</text>
-<text text-anchor="start" x="312" y="-260.133" font-family="Helvetica Bold" font-size="8.00">CharField</text>
-<text text-anchor="start" x="237" y="-248.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">is_staff</text>
-<text text-anchor="start" x="312" y="-248.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">BooleanField</text>
-<text text-anchor="start" x="237" y="-236.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">is_active</text>
-<text text-anchor="start" x="312" y="-236.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">BooleanField</text>
-<text text-anchor="start" x="237" y="-224.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">is_superuser</text>
-<text text-anchor="start" x="312" y="-224.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">BooleanField</text>
-<text text-anchor="start" x="237" y="-212.133" font-family="Helvetica Bold" font-size="8.00">last_login</text>
-<text text-anchor="start" x="312" y="-212.133" font-family="Helvetica Bold" font-size="8.00">DateTimeField</text>
-<text text-anchor="start" x="237" y="-200.133" font-family="Helvetica Bold" font-size="8.00">date_joined</text>
-<text text-anchor="start" x="312" y="-200.133" font-family="Helvetica Bold" font-size="8.00">DateTimeField</text>
-<text text-anchor="start" x="237" y="-188.133" font-family="Helvetica Bold" font-size="8.00">user_ptr</text>
-<text text-anchor="start" x="312" y="-188.133" font-family="Helvetica Bold" font-size="8.00">OneToOneField</text>
-<text text-anchor="start" x="237" y="-176.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">tutorial</text>
-<text text-anchor="start" x="312" y="-176.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">ForeignKey</text>
-<text text-anchor="start" x="237" y="-164.133" font-family="Helvetica Bold" font-size="8.00">mat_number</text>
-<text text-anchor="start" x="312" y="-164.133" font-family="Helvetica Bold" font-size="8.00">IntegerField</text>
-<text text-anchor="start" x="237" y="-152.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">final_grade</text>
-<text text-anchor="start" x="312" y="-152.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">CharField</text>
-<text text-anchor="start" x="237" y="-140.133" font-family="Helvetica Bold" font-size="8.00">activation_key</text>
-<text text-anchor="start" x="312" y="-140.133" font-family="Helvetica Bold" font-size="8.00">CharField</text>
-<text text-anchor="start" x="237" y="-128.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">groups</text>
-<text text-anchor="start" x="312" y="-128.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">ManyToManyField</text>
-<text text-anchor="start" x="237" y="-116.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">user_permissions</text>
-<text text-anchor="start" x="312" y="-116.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">ManyToManyField</text>
-</g>
-<!-- django_contrib_auth_models_User -->
-<g id="node2" class="node"><title>django_contrib_auth_models_User</title>
-<text text-anchor="middle" x="83" y="-28.8" font-family="Helvetica,sans-Serif" font-size="8.00">django_contrib_auth_models_User</text>
-</g>
-<!-- praktomat_accounts_models_User&#45;&gt;django_contrib_auth_models_User -->
-<g id="edge2" class="edge"><title>praktomat_accounts_models_User&#45;&gt;django_contrib_auth_models_User</title>
-<path fill="none" stroke="black" d="M226.75,-155.83C182.35,-117.28 131.48,-73.1 103.73,-49.004"/>
-<text text-anchor="middle" x="169.5" y="-82.8" font-family="Helvetica,sans-Serif" font-size="8.00">user_ptr</text>
+<polygon fill="palegoldenrod" stroke="palegoldenrod" points="167,-112.5 167,-345.5 319,-345.5 319,-112.5 167,-112.5"/>
+<polygon fill="#698b22" stroke="#698b22" points="167,-328 167,-345 319,-345 319,-328 167,-328"/>
+<text text-anchor="start" x="233.5" y="-334.633" font-family="Helvetica Bold" font-size="8.00" fill="white">User</text>
+<text text-anchor="start" x="169" y="-320.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">id</text>
+<text text-anchor="start" x="244" y="-320.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">AutoField</text>
+<text text-anchor="start" x="169" y="-308.133" font-family="Helvetica Bold" font-size="8.00">username</text>
+<text text-anchor="start" x="244" y="-308.133" font-family="Helvetica Bold" font-size="8.00">CharField</text>
+<text text-anchor="start" x="169" y="-296.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">first_name</text>
+<text text-anchor="start" x="244" y="-296.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">CharField</text>
+<text text-anchor="start" x="169" y="-284.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">last_name</text>
+<text text-anchor="start" x="244" y="-284.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">CharField</text>
+<text text-anchor="start" x="169" y="-272.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">email</text>
+<text text-anchor="start" x="244" y="-272.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">EmailField</text>
+<text text-anchor="start" x="169" y="-260.133" font-family="Helvetica Bold" font-size="8.00">password</text>
+<text text-anchor="start" x="244" y="-260.133" font-family="Helvetica Bold" font-size="8.00">CharField</text>
+<text text-anchor="start" x="169" y="-248.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">is_staff</text>
+<text text-anchor="start" x="244" y="-248.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">BooleanField</text>
+<text text-anchor="start" x="169" y="-236.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">is_active</text>
+<text text-anchor="start" x="244" y="-236.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">BooleanField</text>
+<text text-anchor="start" x="169" y="-224.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">is_superuser</text>
+<text text-anchor="start" x="244" y="-224.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">BooleanField</text>
+<text text-anchor="start" x="169" y="-212.133" font-family="Helvetica Bold" font-size="8.00">last_login</text>
+<text text-anchor="start" x="244" y="-212.133" font-family="Helvetica Bold" font-size="8.00">DateTimeField</text>
+<text text-anchor="start" x="169" y="-200.133" font-family="Helvetica Bold" font-size="8.00">date_joined</text>
+<text text-anchor="start" x="244" y="-200.133" font-family="Helvetica Bold" font-size="8.00">DateTimeField</text>
+<text text-anchor="start" x="169" y="-188.133" font-family="Helvetica Bold" font-size="8.00">user_ptr</text>
+<text text-anchor="start" x="244" y="-188.133" font-family="Helvetica Bold" font-size="8.00">OneToOneField</text>
+<text text-anchor="start" x="169" y="-176.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">tutorial</text>
+<text text-anchor="start" x="244" y="-176.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">ForeignKey</text>
+<text text-anchor="start" x="169" y="-164.133" font-family="Helvetica Bold" font-size="8.00">mat_number</text>
+<text text-anchor="start" x="244" y="-164.133" font-family="Helvetica Bold" font-size="8.00">IntegerField</text>
+<text text-anchor="start" x="169" y="-152.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">final_grade</text>
+<text text-anchor="start" x="244" y="-152.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">CharField</text>
+<text text-anchor="start" x="169" y="-140.133" font-family="Helvetica Bold" font-size="8.00">activation_key</text>
+<text text-anchor="start" x="244" y="-140.133" font-family="Helvetica Bold" font-size="8.00">CharField</text>
+<text text-anchor="start" x="169" y="-128.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">groups</text>
+<text text-anchor="start" x="244" y="-128.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">ManyToManyField</text>
+<text text-anchor="start" x="169" y="-116.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">user_permissions</text>
+<text text-anchor="start" x="244" y="-116.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">ManyToManyField</text>
 </g>
 <!-- praktomat_accounts_models_Tutorial -->
-<g id="node4" class="node"><title>praktomat_accounts_models_Tutorial</title>
-<polygon fill="palegoldenrod" stroke="palegoldenrod" points="191.5,-4.5 191.5,-57.5 318.5,-57.5 318.5,-4.5 191.5,-4.5"/>
-<polygon fill="#698b22" stroke="#698b22" points="192,-40 192,-57 319,-57 319,-40 192,-40"/>
-<text text-anchor="start" x="235.5" y="-46.6333" font-family="Helvetica Bold" font-size="8.00" fill="white">Tutorial</text>
-<text text-anchor="start" x="194" y="-32.1333" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">id</text>
-<text text-anchor="start" x="231" y="-32.1333" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">AutoField</text>
-<text text-anchor="start" x="194" y="-20.1333" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">name</text>
-<text text-anchor="start" x="231" y="-20.1333" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">CharField</text>
-<text text-anchor="start" x="194" y="-8.13333" font-family="Helvetica Bold" font-size="8.00">tutors</text>
-<text text-anchor="start" x="231" y="-8.13333" font-family="Helvetica Bold" font-size="8.00">ManyToManyField</text>
+<g id="node2" class="node"><title>praktomat_accounts_models_Tutorial</title>
+<polygon fill="palegoldenrod" stroke="palegoldenrod" points="7.5,-4.5 7.5,-57.5 134.5,-57.5 134.5,-4.5 7.5,-4.5"/>
+<polygon fill="#698b22" stroke="#698b22" points="8,-40 8,-57 135,-57 135,-40 8,-40"/>
+<text text-anchor="start" x="51.5" y="-46.6333" font-family="Helvetica Bold" font-size="8.00" fill="white">Tutorial</text>
+<text text-anchor="start" x="10" y="-32.1333" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">id</text>
+<text text-anchor="start" x="47" y="-32.1333" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">AutoField</text>
+<text text-anchor="start" x="10" y="-20.1333" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">name</text>
+<text text-anchor="start" x="47" y="-20.1333" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">CharField</text>
+<text text-anchor="start" x="10" y="-8.13333" font-family="Helvetica Bold" font-size="8.00">tutors</text>
+<text text-anchor="start" x="47" y="-8.13333" font-family="Helvetica Bold" font-size="8.00">ManyToManyField</text>
 </g>
 <!-- praktomat_accounts_models_User&#45;&gt;praktomat_accounts_models_Tutorial -->
-<g id="edge4" class="edge"><title>praktomat_accounts_models_User&#45;&gt;praktomat_accounts_models_Tutorial</title>
-<path fill="none" stroke="black" d="M260.36,-108.49C258.69,-102.29 257.22,-96.108 256,-90 254.83,-84.143 254.14,-77.894 253.78,-71.735"/>
-<polygon fill="black" stroke="black" points="257.271,-71.4187 253.44,-61.541 250.275,-71.6521 257.271,-71.4187"/>
-<text text-anchor="middle" x="272.5" y="-82.8" font-family="Helvetica,sans-Serif" font-size="8.00">tutorial</text>
+<g id="edge2" class="edge"><title>praktomat_accounts_models_User&#45;&gt;praktomat_accounts_models_Tutorial</title>
+<path fill="none" stroke="black" d="M158.98,-151.42C140.2,-132.22 121.1,-111.08 105,-90 100.41,-83.993 95.995,-77.306 91.949,-70.654"/>
+<polygon fill="black" stroke="black" points="94.7593,-68.5272 86.682,-61.671 88.7207,-72.0678 94.7593,-68.5272"/>
+<text text-anchor="middle" x="121.5" y="-82.8" font-family="Helvetica,sans-Serif" font-size="8.00">tutorial</text>
+</g>
+<!-- django_contrib_auth_models_User -->
+<g id="node4" class="node"><title>django_contrib_auth_models_User</title>
+<text text-anchor="middle" x="243" y="-28.8" font-family="Helvetica,sans-Serif" font-size="8.00">django_contrib_auth_models_User</text>
+</g>
+<!-- praktomat_accounts_models_User&#45;&gt;django_contrib_auth_models_User -->
+<g id="edge4" class="edge"><title>praktomat_accounts_models_User&#45;&gt;django_contrib_auth_models_User</title>
+<path fill="none" stroke="black" d="M243,-108.4C243,-85.148 243,-63.564 243,-49.129"/>
+<text text-anchor="middle" x="261.5" y="-82.8" font-family="Helvetica,sans-Serif" font-size="8.00">user_ptr</text>
 </g>
 <!-- django_contrib_auth_models_Group -->
 <g id="node6" class="node"><title>django_contrib_auth_models_Group</title>
@@ -86,9 +86,9 @@
 </g>
 <!-- praktomat_accounts_models_User&#45;&gt;django_contrib_auth_models_Group -->
 <g id="edge6" class="edge"><title>praktomat_accounts_models_User&#45;&gt;django_contrib_auth_models_Group</title>
-<path fill="none" stroke="black" d="M348.15,-108.4C353.86,-89.871 359.25,-72.401 363.45,-58.764"/>
-<polygon fill="black" stroke="black" points="366.819,-59.7159 366.41,-49.129 360.128,-57.6602 366.819,-59.7159"/>
-<text text-anchor="middle" x="370.5" y="-82.8" font-family="Helvetica,sans-Serif" font-size="8.00">groups</text>
+<path fill="none" stroke="black" d="M321.57,-108.4C334,-89.326 345.7,-71.374 354.69,-57.571"/>
+<polygon fill="black" stroke="black" points="357.664,-59.4183 360.19,-49.129 351.799,-55.5971 357.664,-59.4183"/>
+<text text-anchor="middle" x="352.5" y="-82.8" font-family="Helvetica,sans-Serif" font-size="8.00">groups</text>
 </g>
 <!-- django_contrib_auth_models_Permission -->
 <g id="node8" class="node"><title>django_contrib_auth_models_Permission</title>
@@ -98,15 +98,15 @@
 </g>
 <!-- praktomat_accounts_models_User&#45;&gt;django_contrib_auth_models_Permission -->
 <g id="edge8" class="edge"><title>praktomat_accounts_models_User&#45;&gt;django_contrib_auth_models_Permission</title>
-<path fill="none" stroke="black" d="M395.02,-115.83C411.3,-93.904 426.87,-72.924 438.46,-57.313"/>
-<polygon fill="black" stroke="black" points="441.317,-59.3359 444.47,-49.221 435.698,-55.1621 441.317,-59.3359"/>
-<text text-anchor="middle" x="457" y="-82.8" font-family="Helvetica,sans-Serif" font-size="8.00">user_permissions</text>
+<path fill="none" stroke="black" d="M327.05,-151.6C363.76,-117.78 404.32,-80.437 430.42,-56.396"/>
+<polygon fill="black" stroke="black" points="433.054,-58.7283 438.04,-49.38 428.313,-53.5787 433.054,-58.7283"/>
+<text text-anchor="middle" x="439" y="-82.8" font-family="Helvetica,sans-Serif" font-size="8.00">user_permissions</text>
 </g>
 <!-- praktomat_accounts_models_Tutorial&#45;&gt;praktomat_accounts_models_User -->
 <g id="edge10" class="edge"><title>praktomat_accounts_models_Tutorial&#45;&gt;praktomat_accounts_models_User</title>
-<path fill="none" stroke="black" d="M279.4,-61.676C283.11,-67.502 286.52,-73.741 289,-80 291.33,-85.904 293.42,-92.029 295.3,-98.279"/>
-<polygon fill="black" stroke="black" points="292.006,-99.4955 298.06,-108.19 298.749,-97.6176 292.006,-99.4955"/>
-<text text-anchor="middle" x="305" y="-82.8" font-family="Helvetica,sans-Serif" font-size="8.00">tutors</text>
+<path fill="none" stroke="black" d="M116.97,-61.516C124.35,-67.268 131.64,-73.524 138,-80 144.35,-86.465 150.6,-93.348 156.68,-100.48"/>
+<polygon fill="black" stroke="black" points="154.114,-102.868 163.21,-108.3 159.487,-98.3808 154.114,-102.868"/>
+<text text-anchor="middle" x="159" y="-82.8" font-family="Helvetica,sans-Serif" font-size="8.00">tutors</text>
 </g>
 </g>
 </svg>

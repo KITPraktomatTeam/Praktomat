@@ -29,29 +29,29 @@
 <text text-anchor="start" x="10" y="-137.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">creation_date</text>
 <text text-anchor="start" x="70" y="-137.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">DateTimeField</text>
 </g>
-<!-- praktomat_solutions_models_Solution -->
-<g id="node2" class="node"><title>praktomat_solutions_models_Solution</title>
-<polygon fill="palegoldenrod" stroke="palegoldenrod" points="23.5,-9.5 23.5,-26.5 76.5,-26.5 76.5,-9.5 23.5,-9.5"/>
-<polygon fill="#698b22" stroke="#698b22" points="24,-9 24,-26 77,-26 77,-9 24,-9"/>
-<text text-anchor="start" x="29" y="-15.6333" font-family="Helvetica Bold" font-size="8.00" fill="white">Solution</text>
-</g>
-<!-- praktomat_checker_models_CheckerResult&#45;&gt;praktomat_solutions_models_Solution -->
-<g id="edge2" class="edge"><title>praktomat_checker_models_CheckerResult&#45;&gt;praktomat_solutions_models_Solution</title>
-<path fill="none" stroke="black" d="M69.424,-129.19C64.581,-101.47 58.908,-68.988 54.947,-46.317"/>
-<polygon fill="black" stroke="black" points="58.3731,-45.5903 53.204,-36.342 51.4776,-46.7952 58.3731,-45.5903"/>
-<text text-anchor="middle" x="76.5" y="-56.8" font-family="Helvetica,sans-Serif" font-size="8.00">solution</text>
-</g>
 <!-- django_contrib_contenttypes_models_ContentType -->
-<g id="node4" class="node"><title>django_contrib_contenttypes_models_ContentType</title>
+<g id="node2" class="node"><title>django_contrib_contenttypes_models_ContentType</title>
 <polygon fill="palegoldenrod" stroke="palegoldenrod" points="109.5,-9.5 109.5,-26.5 182.5,-26.5 182.5,-9.5 109.5,-9.5"/>
 <polygon fill="#698b22" stroke="#698b22" points="110,-9 110,-26 183,-26 183,-9 110,-9"/>
 <text text-anchor="start" x="114.5" y="-15.6333" font-family="Helvetica Bold" font-size="8.00" fill="white">ContentType</text>
 </g>
 <!-- praktomat_checker_models_CheckerResult&#45;&gt;django_contrib_contenttypes_models_ContentType -->
-<g id="edge4" class="edge"><title>praktomat_checker_models_CheckerResult&#45;&gt;django_contrib_contenttypes_models_ContentType</title>
+<g id="edge2" class="edge"><title>praktomat_checker_models_CheckerResult&#45;&gt;django_contrib_contenttypes_models_ContentType</title>
 <path fill="none" stroke="black" d="M101.12,-129.19C112.41,-101.22 125.66,-68.4 134.82,-45.704"/>
 <polygon fill="black" stroke="black" points="138.101,-46.9251 138.6,-36.342 131.611,-44.3043 138.101,-46.9251"/>
 <text text-anchor="middle" x="159" y="-56.8" font-family="Helvetica,sans-Serif" font-size="8.00">content_type</text>
+</g>
+<!-- praktomat_solutions_models_Solution -->
+<g id="node4" class="node"><title>praktomat_solutions_models_Solution</title>
+<polygon fill="palegoldenrod" stroke="palegoldenrod" points="23.5,-9.5 23.5,-26.5 76.5,-26.5 76.5,-9.5 23.5,-9.5"/>
+<polygon fill="#698b22" stroke="#698b22" points="24,-9 24,-26 77,-26 77,-9 24,-9"/>
+<text text-anchor="start" x="29" y="-15.6333" font-family="Helvetica Bold" font-size="8.00" fill="white">Solution</text>
+</g>
+<!-- praktomat_checker_models_CheckerResult&#45;&gt;praktomat_solutions_models_Solution -->
+<g id="edge4" class="edge"><title>praktomat_checker_models_CheckerResult&#45;&gt;praktomat_solutions_models_Solution</title>
+<path fill="none" stroke="black" d="M69.424,-129.19C64.581,-101.47 58.908,-68.988 54.947,-46.317"/>
+<polygon fill="black" stroke="black" points="58.3731,-45.5903 53.204,-36.342 51.4776,-46.7952 58.3731,-45.5903"/>
+<text text-anchor="middle" x="76.5" y="-56.8" font-family="Helvetica,sans-Serif" font-size="8.00">solution</text>
 </g>
 <!-- praktomat_checker_tests_AnonymityChecker_AnonymityChecker -->
 <g id="node6" class="node"><title>praktomat_checker_tests_AnonymityChecker_AnonymityChecker</title>
