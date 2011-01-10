@@ -52,14 +52,13 @@ def statistics(request,task_id):
 	creation_times = map(lambda dict:[(dict['creation_date'].time().hour*3600+dict['creation_date'].time().minute*60)*1000, dict['creation_date'].weekday()], unfinal_solutions.values('creation_date'))
 	creation_times_final = map(lambda dict:[(dict['creation_date'].time().hour*3600+dict['creation_date'].time().minute*60)*1000, dict['creation_date'].weekday()], final_solutions.values('creation_date'))
 	
-	attestations = Attestation.objects.filter(solution__task__id=task.id).filter(final=True).filter(published=False).aggregate(final=Count('id'))
-	attestations.update( Attestation.objects.filter(solution__task__id=task.id).filter(published=True).aggregate(published=Count('id')) )
+	attestations = Attestation.objects.filter(solution__task__id=task.id, final=True, published=False).aggregate(final=Count('id'))
+	attestations.update( Attestation.objects.filter(solution__task__id=task.id, final=True, published=True).aggregate(published=Count('id')) )
 	attestations['all'] = final_solution_count
-	
-	final_grade_rating_scale_items = "['" + "','".join(task.final_grade_rating_scale.ratingscaleitem_set.values_list('name', flat=True)) + "']"
-	ratings = RatingScaleItem.objects.filter(attestation__solution__task=task_id).annotate(Count('id')).values_list('position','id__count')
-	ratings = map(lambda x:[x[0]-1,x[1]], ratings) # [(1, 2), (2, 2), (3, 2), (4, 2)] => [[0, 2], [1, 2], [2, 2], [3, 2]]
 
+	final_grade_rating_scale_items = "['" + "','".join(task.final_grade_rating_scale.ratingscaleitem_set.values_list('name', flat=True)) + "']"
+	ratings = RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__final=True).annotate(Count('id')).values_list('position','id__count')
+	ratings = map(lambda x:[x[0]-1,x[1]], ratings) # [(1, 2), (2, 2), (3, 2), (4, 2)] => [[0, 2], [1, 2], [2, 2], [3, 2]]
 	return render_to_response("attestation/statistics.html", {'task':task, \
 															'user_count': user_count, 'solution_count': final_solution_count,\
 															'submissions':submissions, 'submissions_final':submissions_final, 'creation_times':creation_times, 'creation_times_final':creation_times_final, 'acc_submissions':acc_submissions, \
