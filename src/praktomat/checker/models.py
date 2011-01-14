@@ -175,7 +175,7 @@ def check(solution, run_secret = 0):
 		if not settings.DEBUG:
 			try:
 				shutil.rmtree(env.tmpdir())
-			except IOError:
+			except:
 				pass
 	
 	

@@ -37,7 +37,7 @@ $(function(){
 
 </script>
 {% endblock %}
-{% block breadcrumbs %} {{block.super}} > <a href={% url taskDetail task_id=task.id%}>{{task.title}}</a> > My solutions{% endblock %}
+{% block breadcrumbs %} {{block.super}} > <a href={% url task_detail task_id=task.id%}>{{task.title}}</a> > My solutions{% endblock %}
 
 {% block content %}<div id='soluion_upload'>
 

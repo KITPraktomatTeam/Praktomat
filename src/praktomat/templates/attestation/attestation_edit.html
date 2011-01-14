@@ -51,7 +51,7 @@ window.onBespinLoad = function() {
 		}
 	</script>
 {% endblock %}
-{% block breadcrumbs %} {{block.super}} > <a href={% url taskDetail task_id=solution.task.id%}>{{solution.task.title}}</a> > <a href={% url attestation_list solution.task_id %}>My attestations</a> > Attestation {% endblock %}
+{% block breadcrumbs %} {{block.super}} > <a href={% url task_detail task_id=solution.task.id%}>{{solution.task.title}}</a> > <a href={% url attestation_list solution.task_id %}>My attestations</a> > Attestation {% endblock %}
 {% block content %}<div id='attestation_edit'>
 
 <h1>{{solution.task.title}}</h1>

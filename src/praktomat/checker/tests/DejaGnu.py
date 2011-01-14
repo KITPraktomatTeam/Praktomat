@@ -56,7 +56,7 @@ class DejaGnuTester(Checker, DejaGnu):
 	""" Run a test case on the program.  Requires a previous `DejaGnuSetup'. """	
 
 	name = models.CharField(max_length=100, help_text=_("The name of the Test"))
-	test_case = models.FileField(storage=settings.STORAGE, upload_to="AdminFiles/DejaGnuTestCases/%Y%m%d%H%M%S/", help_text=_(u"In den folgenden DejaGnu-Testfällen werden typischerweise Funktionen aufgerufen, die beim vorherigen Schritt <EM>Tests einrichten</EM> definiert wurden.	 Siehe	auch den Abschnitt <EM>How to write a test case</EM> im <A TARGET=\"_blank\" HREF=\"http://www.gnu.org/manual/dejagnu/\">DejaGnu-Handbuch</A>."))
+	test_case = models.FileField(upload_to="AdminFiles/DejaGnuTestCases/%Y%m%d%H%M%S/", help_text=_(u"In den folgenden DejaGnu-Testfällen werden typischerweise Funktionen aufgerufen, die beim vorherigen Schritt <EM>Tests einrichten</EM> definiert wurden.	 Siehe	auch den Abschnitt <EM>How to write a test case</EM> im <A TARGET=\"_blank\" HREF=\"http://www.gnu.org/manual/dejagnu/\">DejaGnu-Handbuch</A>."))
 
 	def __unicode__(self):
 		return self.name
@@ -138,7 +138,7 @@ DEFAULT_TEST_CASES = """# `tests.exp' template
 
 class DejaGnuSetup(Checker, DejaGnu):
 
-	test_defs = models.FileField(storage=settings.STORAGE, upload_to="AdminFiles/DejaGnuTestCases/%Y%m%d%H%M%S/", help_text=_(u"Das Setup benutzt den <A HREF=\"http://www.gnu.org/software/dejagnu/dejagnu.html\">DejaGnu-Testrahmen</A>, um die Programme zu testen. Die in dieser Datei enthaltenen Definitionen gelten für alle Testfälle dieser Aufgabe. Sie werden beim Testen in die DejaGnu-Datei <TT>default.exp</TT> geschrieben. (Vergl. hierzuden Abschnitt <EM>Target dependent procedures</EM> im	<A HREF=\"http://www.gnu.org/manual/dejagnu/\" TARGET=\"_blank\">DejaGnu-Handbuch</A>.) Die Variablen PROGRAM und JAVA werden mit dem Programmnamen bzw. dem Pfad zur Java-Runtime ersetzt."))
+	test_defs = models.FileField(upload_to="AdminFiles/DejaGnuTestCases/%Y%m%d%H%M%S/", help_text=_(u"Das Setup benutzt den <A HREF=\"http://www.gnu.org/software/dejagnu/dejagnu.html\">DejaGnu-Testrahmen</A>, um die Programme zu testen. Die in dieser Datei enthaltenen Definitionen gelten für alle Testfälle dieser Aufgabe. Sie werden beim Testen in die DejaGnu-Datei <TT>default.exp</TT> geschrieben. (Vergl. hierzuden Abschnitt <EM>Target dependent procedures</EM> im	<A HREF=\"http://www.gnu.org/manual/dejagnu/\" TARGET=\"_blank\">DejaGnu-Handbuch</A>.) Die Variablen PROGRAM und JAVA werden mit dem Programmnamen bzw. dem Pfad zur Java-Runtime ersetzt."))
 
 	def title(self):
 		return "Tests einrichten"

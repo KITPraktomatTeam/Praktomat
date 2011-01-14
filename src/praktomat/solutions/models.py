@@ -4,7 +4,6 @@ import zipfile
 import tempfile
 
 from django.db import models
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.core.files import File
 from django.db.models import Max
@@ -63,7 +62,7 @@ class SolutionFile(models.Model):
 		return 'SolutionArchive/Task_' + unicode(solution.task.id) + '/User_' + solution.author.username + '/Solution_' + unicode(solution.id) + '/' + filename
 	
 	solution = models.ForeignKey(Solution)
-	file = models.FileField(storage=settings.STORAGE, upload_to = _get_upload_path,  help_text = _('Source code file as part of a solution or Zip file containing multiple solution files.')) 
+	file = models.FileField(upload_to = _get_upload_path,  help_text = _('Source code file as part of a solution or Zip file containing multiple solution files.')) 
 	# File mime content types allowed to upload
 	supported_types_re = re.compile(r'^(text/.*|application/octet-stream)$')
 	# Ignore hidden or OS-specific files, etc. in zipfiles 

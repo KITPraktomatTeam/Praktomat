@@ -8,6 +8,9 @@ import os
 # Note that Django only displays fancy error pages if DEBUG is True.
 TEMPLATE_DEBUG = True
 
+# Subclassed TestSuitRunner to prepopulate unit test database.
+TEST_RUNNER = 'praktomat.utilities.TestSuite.TestSuiteRunner'
+
 # The ID, as an integer, of the current site in the django_site database table. 
 # This is used so that application data can hook into specific site(s) and 
 # a single database can manage content for multiple sites.
@@ -74,7 +77,7 @@ INSTALLED_APPS = (
 	
 	'praktomat.pagechunks',
 	'praktomat.accounts',
-    'praktomat.tasks',
+  'praktomat.tasks',
 	'praktomat.solutions',
 	'praktomat.attestation',
 	'praktomat.checker',
@@ -84,13 +87,14 @@ INSTALLED_APPS = (
 
 LOGIN_REDIRECT_URL = '/tasks/'
 
-ACCOUNT_ACTIVATION_DAYS = 5 
+ACCOUNT_ACTIVATION_DAYS = 5
 
-try: 
+
+try:
     from settings_local import * 
 except ImportError: 
     pass 
-   
+
 # TinyMCE
 TINYMCE_JS_URL = MEDIA_URL+'frameworks/tiny_mce/tiny_mce_src.js'
 TINYMCE_DEFAULT_CONFIG = {
@@ -112,5 +116,5 @@ TINYMCE_DEFAULT_CONFIG = {
 TINYMCE_SPELLCHECKER = False
 TINYMCE_COMPRESSOR = False
 
-from django.core.files.storage import FileSystemStorage
-STORAGE = FileSystemStorage(location=UPLOAD_ROOT, base_url=UPLOAD_URL)
+# MEDIA_ROOT is a missguiding name django uses as default for it's upload location
+MEDIA_ROOT = UPLOAD_ROOT

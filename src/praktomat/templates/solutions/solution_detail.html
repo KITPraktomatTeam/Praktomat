@@ -4,7 +4,7 @@
 	<script type="text/javascript" src="{{MEDIA_URL}}/script/solution_inlines.js"></script>
 	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}/styles/pygments_friendly.css" />
 {% endblock %}
-{% block breadcrumbs %} {{block.super}} > <a href={% url taskDetail task_id=solution.task.id%}>{{solution.task.title}}</a> > <a href={% url solution_list task_id=solution.task.id%}>My solutions</a> > Solution {{solution.number}} {% endblock %}
+{% block breadcrumbs %} {{block.super}} > <a href={% url task_detail task_id=solution.task.id%}>{{solution.task.title}}</a> > <a href={% url solution_list task_id=solution.task.id%}>My solutions</a> > Solution {{solution.number}} {% endblock %}
 {% block content %}<div id='solution_detail'>
 
 <h1>{{solution.task.title}}</h1>

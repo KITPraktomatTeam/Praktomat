@@ -1,0 +1,58 @@
+from os.path import dirname, join
+
+from praktomat.utilities.TestSuite import TestCase
+from django.core.urlresolvers import reverse
+
+from praktomat.solutions.models import Solution
+from praktomat.tasks.models import Task
+
+class TestUserViews(TestCase):
+		def setUp(self):
+			self.client.login(username='user', password='demo')
+			self.task = Task.objects.all()[0]
+
+		def tearDown(self):
+			pass
+		
+		def test_get_task_list(self):
+			response = self.client.get(reverse('task_list'))
+			self.failUnlessEqual(response.status_code, 200)
+
+		def test_get_task_detail(self):
+			response = self.client.get(reverse('task_detail', args=[self.task.id]))
+			self.failUnlessEqual(response.status_code, 200)
+
+class TestStaffViews(TestCase):
+		def setUp(self):
+			self.client.login(username='trainer', password='demo')
+			self.task = Task.objects.all()[0]
+
+		def tearDown(self):
+			pass
+		
+		def test_get_task_import(self):
+			response = self.client.get(reverse('admin:task_import'))
+			self.failUnlessEqual(response.status_code, 200)
+
+		def test_post_task_import(self):
+			path = join(dirname(dirname(dirname(dirname(__file__)))), 'examples', 'Tasks', 'AMI', 'TaskExport.zip')
+			f = open(path, 'r')
+			response = self.client.post(reverse('admin:task_import'), data={
+								u'file': f
+							})
+			self.assertNotContains(response, 'error_list')
+
+		def test_get_model_solution(self):
+			response = self.client.get(reverse('model_solution', args=[self.task.id]))
+			self.failUnlessEqual(response.status_code, 200)
+
+		def test_post_model_solution(self):
+			f = open(join(dirname(dirname(dirname(dirname(__file__)))), 'examples', 'Tasks', 'AMI', 'ModelSolution(flat).zip'), 'r')
+			response = self.client.post(reverse('model_solution', args=[self.task.id]), data={
+								u'solutionfile_set-INITIAL_FORMS': u'0',
+								u'solutionfile_set-TOTAL_FORMS': u'3',
+								u'solutionfile_set-0-file': f
+							})
+			self.assertNotContains(response, 'error_list')
+		
+

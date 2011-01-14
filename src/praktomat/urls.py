@@ -25,7 +25,7 @@ urlpatterns = patterns('',
 	
 	#Tasks
 	url(r'^tasks/$', 'praktomat.tasks.views.taskList', name = 'task_list'),
-	url(r'^tasks/(?P<task_id>\d+)/$', 'praktomat.tasks.views.taskDetail', name='taskDetail'),
+	url(r'^tasks/(?P<task_id>\d+)/$', 'praktomat.tasks.views.taskDetail', name='task_detail'),
 
 	# Solutions
 	url(r'^solutions/(?P<solution_id>\d+)/$', 'praktomat.solutions.views.solution_detail', name='solution_detail'),

@@ -74,7 +74,7 @@ function calculate(){
 		<tr>
 			<th>User</th>
 			{% for task in task_list %}
-				<th><div class="heading"><a href="{% url taskDetail task_id=task.id  %}">{{task.title}}</a></div></th>
+				<th><div class="heading"><a href="{% url task_detail task_id=task.id  %}">{{task.title}}</a></div></th>
 			{% endfor %}
 			<th><div class="heading" id="calculated_grade_heading">Calculated grade</div></th>
 			<th>Final grade</th>

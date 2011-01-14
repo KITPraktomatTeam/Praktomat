@@ -10,7 +10,7 @@
  })
 </script>
 {% endblock %}
-{% block breadcrumbs %} {{block.super}} > <a href={% url taskDetail task_id=task.id%}>{{task.title}}</a> > Attestations{% endblock %}
+{% block breadcrumbs %} {{block.super}} > <a href={% url task_detail task_id=task.id%}>{{task.title}}</a> > Attestations{% endblock %}
 {% block content %}<div id='attestation_list'>
 
 <h1>{{task.title}}</h1>
