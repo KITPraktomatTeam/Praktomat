@@ -33,6 +33,12 @@ class MyRegistrationForm(UserBaseCreationForm):
 		if not re.match(settings.EMAIL_VALIDATION_REGEX, data):
 			raise forms.ValidationError("The email you have provided is not valid. It has to be in: " + settings.EMAIL_VALIDATION_REGEX)	
 		return data
+
+	def clean_mat_number(self):
+		data = self.cleaned_data['mat_number']
+		if User.objects.filter(mat_number=data):
+			raise forms.ValidationError("A user with this number is allready registered.")	
+		return data
 		
 	def save(self):
 		user = super(MyRegistrationForm, self).save()
