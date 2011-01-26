@@ -13,6 +13,7 @@ from praktomat.checker.models import Checker, CheckerResult
 class LineWidthChecker(Checker):
 
 	max_line_length = models.IntegerField(default = 80, help_text=_("The maximum lenght of a line of code."))
+	tab_width =  models.IntegerField(default = 4, help_text=_("The amount of characters a tab represents."))
 
 	def title(self):
 		""" Returns the title for this checker category. """
@@ -28,7 +29,7 @@ class LineWidthChecker(Checker):
 	def setup_line(self, line, env):
 		""" This is a helper procedure.	 Expand tabs and likewise. """
 		line = string.replace(line, "\r", "")
-		line = string.expandtabs(line, env.tab_width())
+		line = string.expandtabs(line, self.tab_width)
 		return line
 		
 	def run(self, env):
