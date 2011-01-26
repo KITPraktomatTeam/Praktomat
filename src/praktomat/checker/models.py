@@ -175,7 +175,7 @@ def check(solution, run_secret = 0):
 		if not settings.DEBUG:
 			try:
 				shutil.rmtree(env.tmpdir())
-			except:
+			except IOError:
 				pass
 	
 	
@@ -224,24 +224,4 @@ def run_checks(solution, env, run_all):
 		solution.delete() # get rid of files
 		raise
 	solution.save()
-	
-def attestations_by(self, user):
-	return self.attestation_set.filter(author=user)
-
-def copy(self):
-	""" create a copy of this solution """
-	solutionfiles = self.solutionfile_set.all()
-	checkerresults = self.checkerresult_set.all()
-	self.id = None
-	self.number = None
-	self.save()
-	for file in solutionfiles:
-		file.id = None
-		file.solution = self
-		file.save()
-	for result in checkerresults:
-		result.id = None
-		result.solution = self
-		result.save()
-
 

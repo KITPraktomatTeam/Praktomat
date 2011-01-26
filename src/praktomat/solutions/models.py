@@ -51,6 +51,25 @@ class Solution(models.Model):
 		from praktomat.checker.models import check
 		check(self, run_secret)
 
+	def attestations_by(self, user):
+		return self.attestation_set.filter(author=user)
+
+	def copy(self):
+		""" create a copy of this solution """
+		solutionfiles = self.solutionfile_set.all()
+		checkerresults = self.checkerresult_set.all()
+		self.id = None
+		self.number = None
+		self.save()
+		for file in solutionfiles:
+			file.id = None
+			file.solution = self
+			file.save()
+		for result in checkerresults:
+			result.id = None
+			result.solution = self
+			result.save()
+
 
 
 
