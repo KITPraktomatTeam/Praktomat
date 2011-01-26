@@ -86,3 +86,8 @@ CHECKSTYLEALLJAR = '/Users/halluzinativ/Documents/Arbeit/checkstyle/checkstyle-a
 # "_www    		ALL=(praktomattester)NOPASSWD:ALL"
 # "developer	ALL=(praktomattester)NOPASSWD:ALL"
 USEPRAKTOMATTESTER = True
+
+
+# Regular expression used to check the email domain of registering users.
+EMAIL_VALIDATION_REGEX = r".*@student.kit.edu"
+

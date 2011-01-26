@@ -1,6 +1,7 @@
 import datetime
 import random
 import hashlib
+import re
 
 from django.conf import settings
 from django.db import models
@@ -27,10 +28,11 @@ class MyRegistrationForm(UserBaseCreationForm):
 		model = User
 		fields = ("username","first_name","last_name","email", "mat_number")
 	
-#	def clean_email(self):
-#		data = super(MyRegistrationForm, self).clean_email()
-#		# TODO: validate email domain
-#		return data
+	def clean_email(self):
+		data = self.cleaned_data['email']
+		if not re.match(settings.EMAIL_VALIDATION_REGEX, data):
+			raise forms.ValidationError("The email you have provided is not valid. It has to be in: " + settings.EMAIL_VALIDATION_REGEX)	
+		return data
 		
 	def save(self):
 		user = super(MyRegistrationForm, self).save()
