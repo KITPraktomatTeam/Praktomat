@@ -53,13 +53,13 @@ class AnnotatedSolutionFile(models.Model):
 	
 	def has_anotations(self):
 		original = self.solution_file.content()
-		anotated = self.content.replace("\r","")
+		anotated = self.content.replace("\r\n","\n").replace("\r","\n")
 		return not original == anotated
 	
 	def content_diff(self):
 		d = difflib.Differ()
 		original = self.solution_file.content().splitlines(1)
-		anotated = self.content.replace("\r","").splitlines(1)
+		anotated = self.content.replace("\r\n","\n").replace("\r","\n").splitlines(1)
 		result = list(d.compare(original, anotated))
 		return "".join(result)
 	
