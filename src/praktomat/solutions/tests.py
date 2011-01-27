@@ -34,12 +34,6 @@ class TestViews(TestCase):
 			self.failUnlessEqual(response.status_code, 200)
 
 
-
-
-
-
-
-
 def test_concurrently(times):
     """ 
     Add this decorator to small pieces of code that you want to test

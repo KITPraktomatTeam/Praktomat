@@ -41,7 +41,7 @@ def import_tasks(request):
 		form = ImportForm(request.POST, request.FILES)
 		if form.is_valid(): 
 			try:
-				Task.import_Tasks(form.files['file'])
+				Task.import_Tasks(form.files['file'], request.user)
 				request.user.message_set.create(message="The import was successfull.")
 				return HttpResponseRedirect(urlresolvers.reverse('admin:tasks_task_changelist'))
 			except:

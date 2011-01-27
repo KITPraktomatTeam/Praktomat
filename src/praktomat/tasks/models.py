@@ -69,7 +69,7 @@ class Task(models.Model):
 		
 	@classmethod
 	@transaction.commit_on_success		# May not work with MySQL: see django docu
-	def import_Tasks(cls, zip_file):
+	def import_Tasks(cls, zip_file, solution_author):
 		from praktomat.solutions.models import Solution, SolutionFile
 		zip = zipfile.ZipFile(zip_file,'r')
 		data = zip.read('data.xml')
@@ -86,7 +86,7 @@ class Task(models.Model):
 				object.publication_date = date.max
 				deserialized_object.save()	
 				task_id_map[old_id] = object.id
-				old_solution_to_new_task_map[object.model_solution.id] = object.id
+				old_solution_to_new_task_map[object.model_solution_id] = object.id
 				object.model_solution = None
 				deserialized_object.save()
 			else:
@@ -111,6 +111,8 @@ class Task(models.Model):
 					task.save()
 					solution_id_map[old_id] = object.id
 					solution_list.append(object)
+					object.author = solution_author
+					object.save()
 
 		for solution in solution_list:
 			solution.check(run_secret=True)

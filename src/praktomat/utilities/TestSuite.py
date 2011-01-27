@@ -63,6 +63,8 @@ def create_test_data():
 	user = User.objects.create_user('user', 'user@praktomat.com', 'demo')
 	user.groups.add(Group.objects.get(name='User'))
 	trainer = User.objects.create_user('trainer', 'trainer@praktomat.com', 'demo')
+	trainer.is_staff = True
+	trainer.save()
 	trainer.groups.add(Group.objects.get(name='Trainer'))
 
 	# Tasks
@@ -83,5 +85,8 @@ def create_test_data():
 	solution_file.file.save('Text.txt', File(open(join(dirname(dirname(dirname(dirname(__file__)))), 'examples', 'Tasks', 'AMI', 'Tests.txt'))))
 			
 	
-
+def dump(obj):
+	""" Kinda like obj.__meta__ but shows more, very usefull for testcase debuging. """
+	for attr in dir(obj):
+		print "obj.%s = %s" % (attr, getattr(obj, attr))
 

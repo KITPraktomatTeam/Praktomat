@@ -2,6 +2,7 @@
 from os import *
 from os.path import *
 import subprocess
+import shutil
 from django.conf import settings
 from django.db import models
 from praktomat.tasks.models import Task
