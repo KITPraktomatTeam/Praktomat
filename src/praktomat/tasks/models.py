@@ -13,7 +13,8 @@ class Task(models.Model):
 	description = models.TextField(help_text = _("Description of the assignment."))
 	publication_date = models.DateTimeField(help_text = _("The date on which the user will see the task."))
 	submission_date = models.DateTimeField(help_text = _("The date up until the user has time to complete the task."))
-	model_solution = models.OneToOneField('solutions.Solution', blank=True, null=True, related_name='yetAnotherTaskLink')
+	model_solution = models.ForeignKey('solutions.Solution', blank=True,
+			null=True, related_name='model_solution_task')
 	all_checker_finished = models.BooleanField(default=False, editable=False, help_text = _("Indicates whether the checker which don't run immediately on submission have been executed."))
 	final_grade_rating_scale = models.ForeignKey('attestation.RatingScale', null=True, help_text = _("The scale used to mark the hole solution."))
 	
@@ -35,14 +36,16 @@ class Task(models.Model):
 	def export_Tasks(cls, qureyset):
 		""" Serializes a task queryset and related checkers to xml and bundels it with all files into a zipfile  """
 		from praktomat.checker.models import Checker
-		
+		from praktomat.solutions.models import Solution, SolutionFile
+
 		# fetch tasks, media objects, checker and serialize
-		task_ids = qureyset.values_list('id', flat=True)
 		task_objects = list(qureyset)
-		media_objects = list( MediaFile.objects.filter(task__in=task_ids) )
+		media_objects = list( MediaFile.objects.filter(task__in=task_objects) )
+		model_solution_objects = list( Solution.objects.filter(model_solution_task__in=task_objects) )
+		model_solution_file_objects = list( SolutionFile.objects.filter(solution__in=model_solution_objects) )
 		checker_classes = filter(lambda x:issubclass(x,Checker), models.get_models())
-		checker_objects = sum(map(lambda x: list(x.objects.filter(task__in=task_ids)), checker_classes),[])
-		data = serializers.serialize("xml", task_objects + media_objects + checker_objects)
+		checker_objects = sum(map(lambda x: list(x.objects.filter(task__in=task_objects)), checker_classes),[])
+		data = serializers.serialize("xml", task_objects + media_objects + checker_objects + model_solution_objects + model_solution_file_objects)
 		
 		# fetch files
 		files = []
@@ -51,6 +54,8 @@ class Task(models.Model):
 			files += map(lambda file_field: checker_object.__getattribute__(file_field.attname), file_fields)
 		for media_object in media_objects:
 			files.append(media_object.media_file)
+		for model_solution_file_object in model_solution_file_objects:
+			files.append(model_solution_file_object.file)
 		
 		# zip it up
 		zip_file = tempfile.SpooledTemporaryFile()
@@ -65,22 +70,31 @@ class Task(models.Model):
 	@classmethod
 	@transaction.commit_on_success		# May not work with MySQL: see django docu
 	def import_Tasks(cls, zip_file):
+		from praktomat.solutions.models import Solution, SolutionFile
 		zip = zipfile.ZipFile(zip_file,'r')
 		data = zip.read('data.xml')
-		id_map = {}
+		task_id_map = {}
+		solution_id_map = {}
+		old_solution_to_new_task_map = {}
+		solution_list = []
 		for deserialized_object in serializers.deserialize("xml", data):
 			object = deserialized_object.object
+			old_id = object.id
+			object.id = None
 			if isinstance(object, Task):
 				# save all tasks and their old id 
-				old_id = object.id
 				object.publication_date = date.max
-				object.id = None
 				deserialized_object.save()	
-				id_map[old_id] = object.id
+				task_id_map[old_id] = object.id
+				old_solution_to_new_task_map[object.model_solution.id] = object.id
+				object.model_solution = None
+				deserialized_object.save()
 			else:
-				# save media and checker, update task id
-				object.id = None
-				object.task_id = id_map[object.task_id]
+				# save modelsolution, media and checker, update task id
+				if isinstance(object, SolutionFile):
+					object.solution_id = solution_id_map[object.solution_id]
+				else:
+					object.task_id = task_id_map[object.task_id]
 				
 				from django.core.files import File
 				for file_field in filter(lambda x: isinstance(x, models.FileField) , object.__class__._meta.fields):
@@ -88,8 +102,20 @@ class Task(models.Model):
 					temp_file = tempfile.NamedTemporaryFile()						# autodeleted
 					temp_file.write(zip.open(file_field_instance.name).read())
 					file_field_instance.save(file_field_instance.name, File(temp_file))
-				deserialized_object.save()
 				
+				deserialized_object.save()
+
+				if isinstance(object, Solution):
+					task = Task.objects.get(id=old_solution_to_new_task_map[old_id])
+					task.model_solution = object
+					task.save()
+					solution_id_map[old_id] = object.id
+					solution_list.append(object)
+
+		for solution in solution_list:
+			solution.check(run_secret=True)
+
+								
 class MediaFile(models.Model):
 	task = models.ForeignKey(Task)
 	media_file = models.FileField(upload_to='TaskMediaFiles/')
