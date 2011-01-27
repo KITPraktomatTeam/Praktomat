@@ -190,38 +190,43 @@ def run_checks(solution, env, run_all):
 	unsorted_checker = sum(map(lambda x: list(x.objects.filter(task=solution.task)), checker_classes),[])
 	checkers = sorted(unsorted_checker, key=lambda checker: checker.order)
 	
-	try:
-		for checker in checkers:
-			if (checker.always or run_all):
-			
-				# Check dependencies -> This requires the right order of the checkers
-				required_checker = set(checker.requires())
-				# &: intersection
-				can_run_checker = len(required_checker & passed_checkers) == len(required_checker)
-				
-				if can_run_checker: 
-					# Invoke Checker 
+	for checker in checkers:
+		if (checker.always or run_all):
+		
+			# Check dependencies -> This requires the right order of the checkers			
+			can_run_checker = True
+			for requirement in checker.requires():
+				passed_requirement = False
+				for passed_checker in passed_checkers:
+					passed_requirement = passed_requirement or issubclass(passed_checker, requirement)
+				can_run_checker = can_run_checker and passed_requirement
+								
+			if can_run_checker: 
+				# Invoke Checker 
+				try:
 					result = checker.run(env)
-				else:
-					# make non passed result
-					# this as well as the dependency check should propably go into checker class
+				except:
 					result = checker.result()
-					result.set_log(u"Checker konnte nicht ausgeführt werden, da benötigte Checker nicht bestanden wurden.")
+					result.set_log(u"The Checker caused an unexpected internal error.")
 					result.set_passed(False)
-					
-				result.solution = solution
-				result.save()
+					#TODO: Email Admins
+			else:
+				# make non passed result
+				# this as well as the dependency check should propably go into checker class
+				result = checker.result()
+				result.set_log(u"Checker konnte nicht ausgeführt werden, da benötigte Checker nicht bestanden wurden.")
+				result.set_passed(False)
+				
+			result.solution = solution
+			result.save()
 
-				if not result.passed and checker.public:
-					if checker.required:
-						solution.accepted = False
-					else:
-						solution.warnings= True
-						
-				if result.passed:
-					passed_checkers.add(checker.__class__)
-	except:
-		solution.delete() # get rid of files
-		raise
+			if not result.passed and checker.public:
+				if checker.required:
+					solution.accepted = False
+				else:
+					solution.warnings= True
+					
+			if result.passed:
+				passed_checkers.add(checker.__class__)
 	solution.save()
 
