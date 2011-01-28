@@ -46,10 +46,11 @@ class TestCase(DjangoTestCase):
 		self.assertEquals(resolve(urlparse(url)[2])[0].__name__, view)
 
 
-from praktomat.accounts.models import User
+from praktomat.accounts.models import User, Tutorial
 from django.contrib.auth.models import Group
 from praktomat.tasks.models import Task
 from praktomat.solutions.models import Solution, SolutionFile
+from praktomat.attestation.models import Attestation
 
 from datetime import datetime
 from datetime import timedelta
@@ -59,13 +60,22 @@ from django.core.files import File
 def create_test_data():
 	""" Fills the test db with objects needed in the unit tests. """
 	
-	# Users
-	user = User.objects.create_user('user', 'user@praktomat.com', 'demo')
-	user.groups.add(Group.objects.get(name='User'))
+	# Users & Tutorials
 	trainer = User.objects.create_user('trainer', 'trainer@praktomat.com', 'demo')
+	trainer.groups.add(Group.objects.get(name='Trainer'))
 	trainer.is_staff = True
 	trainer.save()
-	trainer.groups.add(Group.objects.get(name='Trainer'))
+	
+	tutor = User.objects.create_user('tutor', 'trainer@praktomat.com', 'demo')
+	tutor.groups.add(Group.objects.get(name='Tutor'))
+	
+	tutorial = Tutorial.objects.create(name='Tutorial 1')
+	tutorial.tutors.add(tutor)
+	
+	user = User.objects.create_user('user', 'user@praktomat.com', 'demo')
+	user.groups.add(Group.objects.get(name='User'))
+	user.tutorial = tutorial
+	user.save()
 
 	# Tasks
 	task = Task.objects.create(
@@ -84,6 +94,8 @@ def create_test_data():
 	solution_file = SolutionFile.objects.create (solution = solution)
 	solution_file.file.save('Text.txt', File(open(join(dirname(dirname(dirname(dirname(__file__)))), 'examples', 'Tasks', 'AMI', 'Tests.txt'))))
 			
+	# Attestation
+	attestation = Attestation.objects.create(solution = solution, author=tutor) # final, published
 	
 def dump(obj):
 	""" Kinda like obj.__meta__ but shows more, very usefull for testcase debuging. """

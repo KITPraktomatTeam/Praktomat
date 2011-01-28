@@ -54,20 +54,14 @@ class TaskAdmin(admin.ModelAdmin):
 		
 	def run_all_checkers(self, request, queryset):
 		""" Rerun all checker including "not always" action """
-		solution_count = 0
 		for task in queryset:
-			for solution in task.solution_set.all():
-				solution.check(True)
-				solution_count += 1
-			if task.expired():
-				task.all_checker_finished = True
-				task.save()
-		self.message_user(request, "%s solutions were successfully checked." % solution_count)
+			task.check_all_solutions()
+		self.message_user(request, "All solutions were successfully checked.")
 
 	def get_urls(self):
 		""" Add URL to task import """
 		urls = super(TaskAdmin, self).get_urls()
-		from django.conf.urls.defaults import *
+		from django.conf.urls.defaults import url, patterns
 		my_urls = patterns('', url(r'^import/$', 'praktomat.tasks.views.import_tasks', name='task_import')) 
 		return my_urls + urls
 	

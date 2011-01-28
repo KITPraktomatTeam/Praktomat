@@ -24,14 +24,18 @@ class Task(models.Model):
 	def solutions(self,user):
 		"""get solutions of the specified user"""
 		return self.solution_set.filter(author=user)
-		
-	def checker(self):
-		return self.AnonymityChecker_set.all() + self.LineCounter_set.all()
-		
+				
 	def expired(self):
 		"""docstring for expired"""
 		return self.submission_date + timedelta(hours=1) < datetime.now()
-		
+	
+	def check_all_solutions(self):
+		for solution in self.solution_set.all():
+			solution.check(True)
+		if self.expired():
+				self.all_checker_finished = True
+				self.save()
+
 	@classmethod
 	def export_Tasks(cls, qureyset):
 		""" Serializes a task queryset and related checkers to xml and bundels it with all files into a zipfile  """
