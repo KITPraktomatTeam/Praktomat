@@ -4,7 +4,7 @@
 DejaGnu Tests.
 """
 
-import os
+import os, sys
 from os.path import dirname, join
 import string
 import re
@@ -108,7 +108,7 @@ class DejaGnuTester(Checker, DejaGnu):
 		environ = {}
 		environ['JAVA'] = settings.JVM
 		environ['POLICY'] = join(join(dirname(dirname(__file__)),"scripts"),"praktomat.policy")
-		environ['USER'] = env.user().get_full_name()
+		environ['USER'] = env.user().get_full_name().encode(sys.stdout.encoding, 'ignore')
 		environ['HOME'] = testsuite
 
 		[output, error] = execute(cmd, testsuite, environment_variables=environ)
