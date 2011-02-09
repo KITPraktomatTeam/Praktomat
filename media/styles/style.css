@@ -282,8 +282,12 @@ body {
 
 /* @group Forms */
 
-input {
+.form-row {
 	margin-bottom: 10px;
+}
+
+input{
+	vertical-align: top;
 }
 
 input[type="submit"]{
@@ -312,19 +316,19 @@ form .help {
 	color: #999999;
 }
 
-form .errors .errorlist {
+form .errors .errorlist{
 	color: red;
 	display: inline;
 }
 
 form > .errorlist {
-	color: red;
 	margin-left:0px;
 }
 
 form .errorlist li {
 	list-style-type: none;
-	display: inline;
+	display: inline-block;
+	width: 400px;
 }
 
 /* @end */

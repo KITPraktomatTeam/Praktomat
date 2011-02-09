@@ -13,6 +13,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm as UserBaseCreationForm, UserChangeForm as UserBaseChangeForm
 from django.core.mail import send_mail
 from django.utils.http import int_to_base36
+from django.utils.safestring import mark_safe
 
 from praktomat.accounts.models import User
 
@@ -37,7 +38,9 @@ class MyRegistrationForm(UserBaseCreationForm):
 	def clean_mat_number(self):
 		data = self.cleaned_data['mat_number']
 		if User.objects.filter(mat_number=data):
-			raise forms.ValidationError("A user with this number is allready registered.")	
+			admins = map(lambda user: "<a href='mailto:%s'>%s</a>" % (user.email, user.get_full_name()), User.objects.filter(is_superuser=True))
+			admins = reduce(lambda x,y: x + ' ' + y, admins)
+			raise forms.ValidationError(mark_safe("A user with this number is allready registered. Please Contact an Administrator: %s" % admins	))
 		return data
 		
 	def save(self):
