@@ -57,7 +57,7 @@ def statistics(request,task_id):
 	attestations['all'] = final_solution_count
 
 	final_grade_rating_scale_items = "['" + "','".join(task.final_grade_rating_scale.ratingscaleitem_set.values_list('name', flat=True)) + "']"
-	ratings = RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__final=True).annotate(Count('id')).values_list('position','id__count')
+	ratings = RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True).annotate(Count('id')).values_list('position','id__count')
 	ratings = map(lambda x:[x[0]-1,x[1]], ratings) # [(1, 2), (2, 2), (3, 2), (4, 2)] => [[0, 2], [1, 2], [2, 2], [3, 2]]
 	return render_to_response("attestation/statistics.html", {'task':task, \
 															'user_count': user_count, 'solution_count': final_solution_count,\
@@ -181,7 +181,7 @@ def rating_overview(request):
 	if not (in_group(request.user,'Trainer') or request.user.is_superuser):
 		return access_denied(request)
 	
-	attestations = Attestation.objects.filter(published=True)
+	attestations = Attestation.objects.filter(published=True, solution__plagiarism=False)
 	
 	attestation_dict = {} 	#{(task_id,user_id):attestation}
 	for attestation in attestations:
@@ -226,7 +226,7 @@ def rating_export(request):
 	if not (in_group(request.user,'Trainer') or request.user.is_superuser):
 		return access_denied(request)
 	
-	attestations = Attestation.objects.filter(published=True)
+	attestations = Attestation.objects.filter(published=True, solution__plagiarism=False)
 	
 	attestation_dict = {} 	#{(task_id,user_id):rating}
 	for attestation in attestations:

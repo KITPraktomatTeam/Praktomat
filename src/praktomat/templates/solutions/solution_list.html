@@ -82,14 +82,20 @@ $(function(){
 				<br/>
 			{% endspaceless %}
 		</div>
-		
-		{% for attest in solution.attestation_set.all %}
+
+		{% if solution.plagiarism %}
 			<div class='attestation'>
-				{% if attest.published %}
-					<span class="icon ui-icon-script" title='Attest'></span><a href={% url view_attestation attestation_id=attest.id%}>Attestation</a> by {{attest.author.get_full_name}}<br/>
-				{% endif %}
-			</div>
-		{%endfor%}	
+				<span class='plagiarism error'><span class="icon ui-icon-alert icon-red"></span>{% trans "Marked as Plagiarism" %}</span>
+			</div>		
+		{% else %}	
+			{% for attest in solution.attestation_set.all %}
+				<div class='attestation'>
+					{% if attest.published %}
+						<span class="icon ui-icon-script" title='Attest'></span><a href={% url view_attestation attestation_id=attest.id%}>Attestation</a> by {{attest.author.get_full_name}}<br/>
+					{% endif %}
+				</div>
+			{%endfor%}	
+		{% endif %}
 		{% if forloop.first %}
 			<h2>{% trans "Solution History" %}</h2>
 		{% endif %}	

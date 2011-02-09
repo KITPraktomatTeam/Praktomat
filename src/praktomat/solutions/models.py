@@ -24,14 +24,17 @@ class Solution(models.Model):
 	
 	accepted = models.BooleanField( default = True, help_text = _('Indicates whether the solution has passed all public and required tests'))
 	warnings = models.BooleanField( default = False, help_text = _('Indicates whether the solution has at least failed one public and not required tests'))
+	plagiarism = models.BooleanField( default = False, help_text = _('Indicates whether the solution is a rip-off of another one.'))
 	
+
 	def __unicode__(self):
 		return unicode(self.task) + ":" + unicode(self.author) + ":" + unicode(self.number)
 	
 	def final(self):
 		""" return whether this is the last submission of this user """
 		return self.id == Solution.objects.filter(task__id=self.task.id).filter(author=self.author.id).aggregate(Max('id'))['id__max']
-	
+	final.boolean = True
+
 	def publicCheckerResults(self):
 		# return self.checkerresult_set.filter(public=True) won't work, because public() isn't a field of result!
 		return filter(lambda x: x.public(), self.checkerresult_set.all())

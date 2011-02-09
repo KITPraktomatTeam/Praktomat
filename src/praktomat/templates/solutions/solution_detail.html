@@ -28,6 +28,10 @@
 	{% endif %}
 </p>
 
+{% if solution.plagiarism %}
+	<p class='error'><span class="icon ui-icon-alert icon-red"></span>{% trans "Marked as Plagiarism" %}</p>
+{% endif %}
+
 {% if not solution.task.expired and not solution.final %}
 	<form method="post">{% csrf_token %}
 		<input type="submit" value="Resubmit" />

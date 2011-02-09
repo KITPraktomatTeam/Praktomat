@@ -39,7 +39,7 @@ class MyRegistrationForm(UserBaseCreationForm):
 		data = self.cleaned_data['mat_number']
 		if User.objects.filter(mat_number=data):
 			admins = map(lambda user: "<a href='mailto:%s'>%s</a>" % (user.email, user.get_full_name()), User.objects.filter(is_superuser=True))
-			admins = reduce(lambda x,y: x + ' ' + y, admins)
+			admins = reduce(lambda x,y: x + ', ' + y, admins)
 			raise forms.ValidationError(mark_safe("A user with this number is allready registered. Please Contact an Administrator: %s" % admins	))
 		return data
 		
