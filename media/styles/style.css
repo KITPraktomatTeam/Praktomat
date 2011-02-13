@@ -322,6 +322,7 @@ form .errors .errorlist{
 }
 
 form > .errorlist {
+	color: red;
 	margin-left:0px;
 }
 
