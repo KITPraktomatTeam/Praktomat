@@ -9,9 +9,8 @@ from praktomat.utilities.file_operations import *
 
 class ScriptChecker(Checker):
 
-	upload_dir = "AdminFiles/ScriptChecker/%Y%m%d%H%M%S/"
 	name = models.CharField(max_length=100, default="Externen Tutor ausführen", help_text=_("Name to be displayed on the solution detail page."))
-	shell_script = models.FileField(upload_to=upload_dir, help_text=_("The shell script whose output for the given input file is compared to the given output file."))
+	shell_script = models.FileField(upload_to=Checker.get_storage_path, help_text=_("The shell script whose output for the given input file is compared to the given output file."))
 	remove = models.CharField(max_length=5000, blank=True, help_text=_("Regular expression describing passages to be removed from the output."))
 	returns_html = models.BooleanField(default= False, help_text=_("If the script doesn't return HTML it will be enclosed in &lt; pre &gt; tags."))
 

@@ -73,6 +73,9 @@ It is *required* - it must be passed for submission
 		Overloaded by subclasses. """ 
 		return []	
 
+	def get_storage_path(instance, filename):
+		""" Use this function as upload_to parameter for filefields in sublasses. """
+		return 'CheckerFiles/Task_%s/%s/%s' % (instance.task.pk, instance.__class__.__name__, filename)
 
 
 

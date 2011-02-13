@@ -9,8 +9,7 @@ from praktomat.utilities.file_operations import *
 
 class CreateFileChecker(Checker):
 	
-	upload_dir = "AdminFiles/CopyChecker/%Y%m%d%H%M%S/"
-	file = models.FileField(upload_to=upload_dir, help_text=_("The file that is copied into the temporary test directory"))
+	file = models.FileField(upload_to=Checker.get_storage_path, help_text=_("The file that is copied into the temporary test directory"))
 	path = models.CharField(max_length=500, blank=True, help_text=_("Subfolder in the sandbox which shall contain the file."))
 	
 	def title(self):

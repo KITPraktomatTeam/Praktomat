@@ -13,10 +13,9 @@ from praktomat.utilities.file_operations import *
 
 class DiffChecker(Checker):
 
-	upload_dir = "AdminFiles/DiffChecker/%Y%m%d%H%M%S/"
-	shell_script = models.FileField(upload_to=upload_dir, help_text=_("The shell script whose output for the given input file is compared to the given output file."))
-	input_file = models.FileField(upload_to=upload_dir, blank=True, help_text=_("The file containing the input for the program."))
-	output_file = models.FileField(upload_to=upload_dir, blank=True, help_text=_("The file containing the output for the program."))
+	shell_script = models.FileField(upload_to=Checker.get_storage_path, help_text=_("The shell script whose output for the given input file is compared to the given output file."))
+	input_file = models.FileField(upload_to=Checker.get_storage_path, blank=True, help_text=_("The file containing the input for the program."))
+	output_file = models.FileField(upload_to=Checker.get_storage_path, blank=True, help_text=_("The file containing the output for the program."))
 	
 	def title(self):
 		""" Returns the title for this checker category. """
