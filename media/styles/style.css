@@ -168,11 +168,6 @@ ul, ol, dl {
 
 /* reset overrides */
 
-pre {
-	left: -14px;
-	padding-left: 20px;
-}
-
 ul li {
 	list-style-type: disc;
 }
@@ -716,15 +711,12 @@ ul.tabs a.current {
 }
 
 div.result {
-	left: 0px;
-	position: relative;
-	overflow: hidden;
 }
 
 div.result div.log {
-	left: 40px;
-	position: relative;
-	overflow: hidden;
+	margin-left: 40px;
+	overflow-x: auto;
+	overflow-y: hidden;
 }
 
 /* @end */
