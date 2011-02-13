@@ -33,6 +33,10 @@ class JavaBuilder(Builder):
 					(head, result) = os.path.split(chopped)			
 				return result
 		raise self.NotFoundError("The class containing the main method('public static void main(String[] args)') could not be found.")
+
+	def flags(self, env):
+		""" Accept unicode characters. """
+		return self._flags.split(" ") + ["-encoding", "utf-8"]
 	
 from praktomat.checker.admin import CheckerInline, AlwaysChangedModelForm
 

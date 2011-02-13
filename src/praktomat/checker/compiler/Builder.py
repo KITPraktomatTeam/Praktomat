@@ -76,9 +76,6 @@ class Builder(Checker):
 		""" Return true if there are any warnings in OUTPUT """
 		return re.compile(self._rx_warnings, re.MULTILINE).search(output) != None
 
-	def result(self):
-		return BuilderResult(self)
-	
 	class NotFoundError(Exception):
 			def __init__(self, description):
 				self.description = description
