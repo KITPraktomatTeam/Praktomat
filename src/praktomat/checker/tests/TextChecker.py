@@ -17,10 +17,10 @@ class TextChecker(Checker):
 		"""Returns the title for this checker category."""
 		return "Text Checker"
 	
-	def description(self):
+	@staticmethod
+	def description():
 		""" Returns a description for this Checker. """
-		return u"""Diese Prüfung ist bestanden, wenn der eingegebene Text in einer
-			   Lösung gefunden wird."""
+		return u"Diese Prüfung ist bestanden, wenn der eingegebene Text in einer Lösung gefunden wird."
 		
 	
 	def run(self, env):

@@ -60,18 +60,15 @@ def line(content, match):
 
 
 class AnonymityChecker(Checker):
-	"""All files must exist and must be non-empty.	The name of the
-	main file and a list of required files can be dictated."""
 	
 	def title(self):
 		"""Returns the title for this checker category."""
 		return "Anonymitaet sicherstellen"
 	
-	def description(self):
+	@staticmethod
+	def description():
 		""" Returns a description for this Checker. """
-		return u"""Diese Prüfung ist bestanden, wenn alle
-		eingereichten Dateien weder Ihren Vor- noch Ihre
-		Nachnamen enthalten."""
+		return u"Diese Prüfung ist bestanden, wenn alle eingereichten Dateien weder Ihren Vor- noch Ihre Nachnamen enthalten."
 	
 	def run(self, env):
 		result = CheckerResult(checker=self)
@@ -124,3 +121,10 @@ class AnonymityChecker(Checker):
 from praktomat.checker.admin import CheckerInline
 class AnonymityCheckerInline(CheckerInline):
 	model = AnonymityChecker
+fieldsets = (
+        (None, {
+            'fields': ("public"),
+            'description': "This is a set of fields group into a fieldset."
+        }),
+    )
+	

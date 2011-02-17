@@ -17,7 +17,8 @@ class CheckStyleChecker(Checker):
 		""" Returns the title for this checker category. """
 		return self.name
 	
-	def description(self):
+	@staticmethod
+	def description():
 		""" Returns a description for this Checker. """
 		return u"Runs checkstyle (http://checkstyle.sourceforge.net/)."
 	

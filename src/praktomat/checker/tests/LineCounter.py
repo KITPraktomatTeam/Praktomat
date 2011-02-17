@@ -21,9 +21,10 @@ class LineCounter(Checker):
 		""" Returns the title for this checker category. """
 		return "Lexikalische Statistik"
 	
-	def description(self):
+	@staticmethod
+	def description():
 		""" Returns a description for this Checker. """
-		return u"""Diese Prüfung wird immer bestanden."""
+		return u"Diese Prüfung wird immer bestanden."
 		
 	def run(self, env):
 		""" Here's the actual work.	 This runs the check in the environment ENV,

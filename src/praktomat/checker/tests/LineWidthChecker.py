@@ -18,12 +18,11 @@ class LineWidthChecker(Checker):
 	def title(self):
 		""" Returns the title for this checker category. """
 		return "Maximale Zeilenbreite"
-	
-	def description(self):
+
+	@staticmethod
+	def description():
 		""" Returns a description for this Checker. """
-		s = u"""Diese Prüfung ist bestanden,
-			wenn keine Zeile des Programmtext breiter als
-			%d Zeichen ist.""" % self.max_line_length
+		s = u"Diese Prüfung ist bestanden, wenn keine Zeile des Programmtext breiter als die angegebene Anyahl Zeichen ist."
 		return s
 	
 	def setup_line(self, line, env):

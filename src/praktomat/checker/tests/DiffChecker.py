@@ -20,10 +20,11 @@ class DiffChecker(Checker):
 	def title(self):
 		""" Returns the title for this checker category. """
 		return u"Ausgaben mit 'diff' prüfen."
-	
-	def description(self):
+
+	@staticmethod
+	def description():
 		""" Returns a description for this Checker. """
-		return u"""Diese Prüfung wird bestanden, wenn erwartete und tatsächliche Ausgabe übereinstimmen."""
+		return u"Diese Prüfung wird bestanden, wenn erwartete und tatsächliche Ausgabe übereinstimmen."
 	
 	def run(self, env):
 		""" Runs tests in a special environment. Here's the actual work. 

@@ -64,7 +64,8 @@ class DejaGnuTester(Checker, DejaGnu):
 	def title(self):
 		return self.name
 		
-	def description(self):
+	@staticmethod
+	def description():
 		return u"Diese Prüfung ist bestanden, wenn alle Testfälle zum erwarteten Ergebnis führten."
 
 	def requires(self):
@@ -143,10 +144,9 @@ class DejaGnuSetup(Checker, DejaGnu):
 	def title(self):
 		return "Tests einrichten"
 
-	def description(self):
-		return u"""Dies ist keine wirkliche Prüfung.  Sie dient nur dazu,
-		den nachfolgenden Tests Definitionen zur Verfügung zu stellen.
-		Diese 'Prüfung' wird immer bestanden."""
+	@staticmethod
+	def description():
+		return u"Dies ist keine wirkliche Prüfung.  Sie dient nur dazu, den nachfolgenden Tests Definitionen zur Verfügung zu stellen. Diese 'Prüfung' wird immer bestanden."
 
 	def requires(self):
 		return [ Builder ]

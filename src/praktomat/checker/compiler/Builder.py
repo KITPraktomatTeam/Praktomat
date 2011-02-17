@@ -26,9 +26,10 @@ class Builder(Checker):
 	
 	def title(self):
 		return u"%s - Compiler" % self.language()
-	   
-	def description(self):
-		return u"Diese Prüfung ist bestanden, wenn <EM> %s </EM> das Programm ohne Fehler oder Warnungen übersetzt." % self.compiler()
+
+	@staticmethod
+	def description():
+		return u"Diese Prüfung ist bestanden, wenn der Compiler das Programm ohne Fehler oder Warnungen übersetzt."
 
 	def compiler(self):
 		""" Compiler name. To be overloaded in subclasses. """

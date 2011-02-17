@@ -17,11 +17,11 @@ class ExampleChecker(Checker):
 	def title(self):
 		""" Return the name of this instance of the checker. This will be shown to the user if the checker is public. """
 		return "Exampe Checker"
-	
-	def description(self):
-		""" Returns a description for this Checker which should be displayed in the admin interface. """
-		# return the docstring for this class
-		return self.__doc__
+
+	@classmethod
+	def description():
+		""" Returns a description for this Checker which will be displayed in the admin interface. """
+		return "This class is an minimalistic example on how to implement a new checker."
 
 	#def requires(self):
 		#""" Returns the list of passed Checkers required by this checker. If the returned checker have not been passed this checker will fail automaticly """

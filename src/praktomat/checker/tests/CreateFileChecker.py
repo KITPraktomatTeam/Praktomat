@@ -16,9 +16,10 @@ class CreateFileChecker(Checker):
 		""" Returns the title for this checker category. """
 		return "Copy File"
 	
-	def description(self):
+	@staticmethod
+	def description():
 		""" Returns a description for this Checker. """
-		return u"""Diese Prüfung wird immer bestanden."""
+		return u"Diese Prüfung wird immer bestanden."
 	
 	def run(self, env):
 		""" Runs tests in a special environment. Here's the actual work. 

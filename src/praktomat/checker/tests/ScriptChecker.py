@@ -19,9 +19,10 @@ class ScriptChecker(Checker):
 		""" Returns the title for this checker category. """
 		return self.name
 	
-	def description(self):
+	@staticmethod
+	def description():
 		""" Returns a description for this Checker. """
-		return u"""Diese Prüfung wird bestanden, wenn das externe Programm keinen Fehlercode liefert."""
+		return u"Diese Prüfung wird bestanden, wenn das externe Programm keinen Fehlercode liefert."
 	
 
 	def run(self, env):

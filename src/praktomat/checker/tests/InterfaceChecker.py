@@ -24,11 +24,11 @@ class InterfaceChecker(Checker):
 	def title(self):
 		""" Returns the title for this checker category. """
 		return "Interface Checker"
-	
-	def description(self):
+
+	@staticmethod
+	def description():
 		""" Returns a description for this Checker. """
-		s = u"""Diese Prüfung ist bestanden, wenn alle
-			   vorgegebenen Interfaces implementiert wurden."""
+		s = u"Diese Prüfung ist bestanden, wenn alle vorgegebenen Interfaces implementiert wurden."
 		return s
 	
 	def run(self, env):

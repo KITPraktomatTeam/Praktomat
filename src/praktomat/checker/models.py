@@ -68,6 +68,11 @@ It is *required* - it must be passed for submission
 		""" Returns the title for this checker category. To be overloaded in subclasses. """
 		return u"Prüfung"
 
+	@staticmethod
+	def description():
+		""" Returns a description for this Checker. """
+		return u" no description "
+
 	def requires(self):
 		""" Returns the list of passed Checkers required by this checker.
 		Overloaded by subclasses. """ 

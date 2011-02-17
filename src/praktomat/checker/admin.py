@@ -24,7 +24,7 @@ class CheckerInline(admin.StackedInline):
 		fields.remove('public')
 		fields.remove('required')
 		fields.remove('always')
-		return [(" ", {'fields':(('public', 'required', 'always'),)}),
+		return [(self.model.description(), {'fields':(('public', 'required', 'always'),)}),
 						(None, {'fields': fields })]
 	
 	
