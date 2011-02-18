@@ -1,0 +1,8 @@
+# $Id: public.exp 901 2005-02-23 16:45:23Z stoerzer $
+
+PROGRAM_test "4 5"    "ggT(4, 5) = 1"
+PROGRAM_test "91 21"  "ggT(91, 21) = 7"
+PROGRAM_test "960 18" "ggT(960, 18) = 6"
+PROGRAM_test "1023 1" "ggT(1023, 1) = 1"
+PROGRAM_error "0 9"
+PROGRAM_error "1 0"

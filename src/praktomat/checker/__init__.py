@@ -1,2 +1,2 @@
-from tests import *
+from checker import *
 from compiler import *

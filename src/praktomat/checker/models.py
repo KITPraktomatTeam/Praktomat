@@ -3,6 +3,7 @@ from os import *
 from os.path import *
 import subprocess
 import shutil
+import sys
 from django.conf import settings
 from django.db import models
 from praktomat.tasks.models import Task
@@ -212,13 +213,16 @@ def run_checks(solution, env, run_all):
 								
 			if can_run_checker: 
 				# Invoke Checker 
-				try:
+				if settings.DEBUG or 'test' in sys.argv:
 					result = checker.run(env)
-				except:
-					result = checker.result()
-					result.set_log(u"The Checker caused an unexpected internal error.")
-					result.set_passed(False)
-					#TODO: Email Admins
+				else:
+					try:
+						result = checker.run(env)
+					except:
+						result = checker.result()
+						result.set_log(u"The Checker caused an unexpected internal error.")
+						result.set_passed(False)
+						#TODO: Email Admins
 			else:
 				# make non passed result
 				# this as well as the dependency check should propably go into checker class
