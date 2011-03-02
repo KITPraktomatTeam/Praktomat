@@ -83,7 +83,7 @@ $(function(){
 			{% endspaceless %}
 		</div>
 
-		{% if solution.plagiarism %}
+		{% if solution.plagiarism and attestationsPublished %}
 			<div class='attestation'>
 				<span class='plagiarism error'><span class="icon ui-icon-alert icon-red"></span>{% trans "Marked as Plagiarism" %}</span>
 			</div>		
