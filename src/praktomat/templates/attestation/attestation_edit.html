@@ -62,7 +62,7 @@ window.onBespinLoad = function() {
 		<ul>
 			<li><a href="#task">Task</a></li>
 			<li><a href="#model_solution">Model solution</a></li>
-			<li><a href="#checker_results">Checker results</a></li>
+			<li><a href="#solution">Solution</a></li>
 			<li><a href="#annotated_solution_files">Annotate solution files</a></li>
 			<li><a href="#attestation">Attest solution</a></li>
 		</ul>
@@ -73,24 +73,27 @@ window.onBespinLoad = function() {
 		</div>
 		
 		<div id="model_solution">
-			<h1 class="heading">Model Solution</h1>
-			{% with model_solution.checkerresult_set.all as results %}
-				{% include "solutions/checker_results_inline.html" %}
-			{% endwith %}
-			<br/>
-			{% with model_solution.solutionfile_set.all as solutionfiles %}
-				{% include "solutions/solution_files_inline.html" %}
-			{% endwith %}
+				{% with model_solution.checkerresult_set.all as results %}
+					{% include "solutions/checker_results_inline.html" %}
+				{% endwith %}	
+				<br/>
+				{% with model_solution.solutionfile_set.all as solutionfiles %}
+					{% include "solutions/solution_files_inline.html" %}
+				{% endwith %}
 		</div>
 		
 		
-		<div id="checker_results">
+		<div id="solution">
 			<h1 class="heading">Checker results</h1>
 			{% with solution.checkerresult_set.all as results %}
 				{% include "solutions/checker_results_inline.html" %}
 			{% endwith %}
+			<br/>
+			{% with solution.solutionfile_set.all as solutionfiles %}
+				{% include "solutions/solution_files_inline.html" %}
+			{% endwith %}
 		</div>
-		
+
 		
 		<div id="annotated_solution_files">
 			<h1 class="heading">Annotated solution files</h1>

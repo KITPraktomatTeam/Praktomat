@@ -647,6 +647,10 @@ color: #fff;
 
 /* @group solution files */
 
+.download {
+	text-align: right;
+}
+
 div.file div.content {
 	overflow: hidden;
 }

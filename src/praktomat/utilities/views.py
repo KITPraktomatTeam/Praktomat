@@ -2,10 +2,12 @@
 
 import os, sys, mimetypes
 from django.http import HttpResponse, Http404
+from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.views.static import serve
 
 from praktomat.accounts.views import access_denied
+from praktomat.solutions.models import Solution
 
 def serve_unrestricted(request, path): 
 	 return sendfile(request, path)
@@ -17,8 +19,13 @@ def serve_staff_only(request, path):
 	 	
 def serve_access_denied(request, path): 
 	return forbidden(request, path)
-	 
-	
+
+def serve_solution_file(request, path, solution_id):
+	solution = get_object_or_404(Solution, pk=solution_id)
+	if solution.author == request.user or request.user.is_staff or request.user.tutored_tutorials.filter(id=solution.author.tutorial.id): 	
+		return sendfile(request, path)
+	return forbidden(request, path)
+
 def sendfile(request, path):
 	""" Serve files with mod_xsendfile (http://tn123.ath.cx/mod_xsendfile/)"""
 	filename = os.path.join(settings.UPLOAD_ROOT, path)

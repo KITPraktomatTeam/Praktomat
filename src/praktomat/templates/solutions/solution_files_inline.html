@@ -6,7 +6,7 @@
 
 
 {% load highlight %}
-<div id="filetabs">
+<div class="filetabs">
 	<ul>
 		{% for solutionfile in solutionfiles %}
 			<li><a href="#{{solutionfile|cut:"."}}">{{solutionfile}}</a></li> 
@@ -15,8 +15,17 @@
 
 	{% for solutionfile in solutionfiles%}
 		<div class="file" id="{{solutionfile|cut:"."}}">
-			<h3>{{solutionfile}}</h3>
-			<div class="content">{{solutionfile.content|highlight_table:solutionfile.file.name}}</div>
+      <h3>{{solutionfile}}</h3>
+      <div class="download">
+        <span class="ui-icon ui-icon-disk"></span><a href={{solutionfile.file.url}}>Download</a>
+      </div>
+      <div class="content">
+        {% if solutionfile.isImage %}
+          <img src="{{solutionfile.file.url}}"/>
+        {% else %}
+          {{solutionfile.content|highlight_table:solutionfile.file.name}}
+        {% endif %}
+      </div>
 		</div>
 	{%endfor%}
 </div>

@@ -41,6 +41,7 @@ urlpatterns = patterns('',
 	url(r'^attestation/rating_export.csv$', 'praktomat.attestation.views.rating_export', name='rating_export'),
 	
 	# Uploaded media
+	url(r'^upload/(?P<path>SolutionArchive/Task_\d+/User_.*/Solution_(?P<solution_id>\d+)/.*)$', 'praktomat.utilities.views.serve_solution_file'),
 	url(r'^upload/(?P<path>TaskMediaFiles.*)$', 'praktomat.utilities.views.serve_unrestricted'),
 	url(r'^upload/(?P<path>AdminFiles.*)$', 'praktomat.utilities.views.serve_staff_only'),
 	url(r'^upload/(?P<path>.*)$', 'praktomat.utilities.views.serve_access_denied'),

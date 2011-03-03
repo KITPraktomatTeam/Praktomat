@@ -121,7 +121,7 @@ def new_attestation(request, solution_id):
 		
 	attest = Attestation(solution = solution, author = request.user)
 	attest.save()
-	for solutionFile in  solution.solutionfile_set.all():
+	for solutionFile in  solution.solutionfile_set.filter(mime_type__startswith='text'):
 		annotatedFile = AnnotatedSolutionFile(attestation = attest, solution_file=solutionFile, content=solutionFile.content())
 		annotatedFile.save()
 	for rating in solution.task.rating_set.all():

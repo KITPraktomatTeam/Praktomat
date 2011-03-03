@@ -21,7 +21,7 @@ class TaskAdmin(admin.ModelAdmin):
 	model = Task
 	fieldsets = (
 		(None, {
-			'fields': ('title' , ('publication_date', 'submission_date'), 'description', 'final_grade_rating_scale')
+			'fields': ('title' , ('publication_date', 'submission_date'), 'description', ('supported_file_types', 'max_file_size'), 'final_grade_rating_scale')
 		}),
 	)
 	list_display = ('title','publication_date','submission_date')

@@ -2,6 +2,8 @@
 
 import zipfile
 import tempfile
+import mimetypes
+import shutil
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -85,9 +87,9 @@ class SolutionFile(models.Model):
 	
 	solution = models.ForeignKey(Solution)
 	file = models.FileField(upload_to = _get_upload_path,  help_text = _('Source code file as part of a solution or Zip file containing multiple solution files.')) 
-	# File mime content types allowed to upload
-	supported_types_re = re.compile(r'^(text/.*|application/octet-stream)$')
-	# Ignore hidden or OS-specific files, etc. in zipfiles 
+	mime_type = models.CharField(max_length=100, help_text = _("Guessed file type. Automatically  set on save()."))
+	
+	# ignore hidden or os-specific files, etc. in zipfiles 
 	regex = r'(' + '|'.join([	
 						r'(^|/)\..*', 		# files starting with a dot (unix hidden files)
 						r'__MACOSX/.*',
@@ -109,10 +111,17 @@ class SolutionFile(models.Model):
 					temp_file.write(zip.open(zip_file_name).read()) 
 					new_solution_file.file.save(zip_file_name, File(temp_file), save=True)		# need to check for filenames begining with / or ..?
 		else:
+			self.mime_type = mimetypes.guess_type(self.file.name)[0]
 			models.Model.save(self, force_insert, force_update, using)
 	
 	def __unicode__(self):
 		return self.file.name.rpartition('/')[2]
+	
+	def isBinary(self):
+		return self.mime_type[:4] != "text"
+
+	def isImage(self):
+		return self.mime_type[:5] == "image"
 	
 	def path(self):
 		""" path of file relative to the zip file, which once contained it """
@@ -120,9 +129,15 @@ class SolutionFile(models.Model):
 		
 	def content(self):
 		"""docstring for content"""
-		return encoding.get_unicode(self.file.read()) 
-		
+		if self.isBinary():
+			return "Binary Data"
+		else:
+			return encoding.get_unicode(self.file.read())
+					
 	def copyTo(self,directory):
 		""" Copies this file to the given directory """
 		new_file_path = os.path.join(directory, self.path())
-		file_operations.create_file(new_file_path, self.content())
+		if self.isBinary():
+			shutil.copy(self.file.file.name, new_file_path)
+		else:
+			file_operations.create_file(new_file_path, self.content())
