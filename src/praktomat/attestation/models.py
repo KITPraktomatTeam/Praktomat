@@ -1,10 +1,10 @@
 from django.db import models
+from django.conf import settings
 from praktomat.tasks.models import Task
 from praktomat.solutions.models import Solution, SolutionFile
 from django.utils.translation import ugettext_lazy as _
 from django.core.mail import EmailMessage
 from django.template import Context, loader
-from django.contrib.sites.models import Site
 import difflib
 
 from praktomat.accounts.models import User
@@ -30,12 +30,11 @@ class Attestation(models.Model):
 		
 		# Send confirmation email
 		if (self.solution.author.email or self.author.email):
-			current_site = Site.objects.get_current()
 			t = loader.get_template('attestation/attestation_email.html')
 			c = {
 				'attest': self,
-				'domain': current_site.domain,
-				'site_name': current_site.name,
+				'domain': settings.SITE_NAME,
+				'site_name': settings.BASE_URL,
 				}
 			subject = _("New attestation for your solution of the task '%s'") % self.solution.task
 			body = t.render(Context(c))

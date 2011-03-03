@@ -19,10 +19,16 @@ TIME_ZONE = 'Europe/Berlin'
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
 
+# The name that will be displayed on top of the page and in emails.
+SITE_NAME = 'Praktomat'
+
+# The URL where this site is reachable. 'http://localhost:8000/' in case of the developmentserver.
+BASE_URL = 'http://localhost:8000/'
+
 # URL that serves the static media files (CSS, JavaScript and images) of praktomat contained in 'media/'.
 # Make sure to use a trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = 'http://localhost:8000/media/'
+MEDIA_URL = BASE_URL + 'media/'
 
 # URL prefix for the administration site media (CSS, JavaScript and images) contained in the django package. 
 # Make sure to use a trailing slash.
@@ -33,11 +39,6 @@ ADMIN_MEDIA_PREFIX = '/media/admin/'
 # Example: "/home/media/media.lawrence.com/"
 UPLOAD_ROOT = "/Users/halluzinativ/Documents/Arbeit/PraktomatSupport/"
 
-# URL that serves the uploaded files. 
-# You need to configure the rights to download these in your webserver!
-# Make sure to use a trailing slash if there is a path component (optional in other cases).
-# Examples: "http://upload.lawrence.com", "http://example.com/upload/"
-UPLOAD_URL = 'http://172.21.160.183/upload/'
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),

@@ -8,7 +8,6 @@ from django.db import models
 from django.template import Context, loader
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import Group
-from django.contrib.sites.models import Site
 from django import forms
 from django.contrib.auth.forms import UserCreationForm as UserBaseCreationForm, UserChangeForm as UserBaseChangeForm
 from django.core.mail import send_mail
@@ -63,14 +62,12 @@ class MyRegistrationForm(UserBaseCreationForm):
 		user.save()
 		
 		# Send activation email
-		current_site = Site.objects.get_current()
-		site_name = current_site.name
 		use_https=False
 		t = loader.get_template('registration/registration_email.html')
 		c = {
 			'email': user.email,
-			'domain': current_site.domain,
-			'site_name': site_name,
+			'domain': settings.BASE_URL,
+			'site_name': settings.SITE_NAME,
 			'uid': int_to_base36(user.id),
 			'user': user,
 			'protocol': use_https and 'https' or 'http',

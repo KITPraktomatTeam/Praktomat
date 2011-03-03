@@ -31,8 +31,8 @@ TEMPLATE_LOADERS = (
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    "praktomat.context_processors.current_site.current_site",
-    "django.contrib.auth.context_processors.auth",
+  "praktomat.context_processors.settings.from_settings",
+  "django.contrib.auth.context_processors.auth",
 	"django.core.context_processors.debug",
 	"django.core.context_processors.i18n",
 	"django.core.context_processors.media",
@@ -57,23 +57,22 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',	
-    'django.contrib.admin',
-    'django.contrib.admindocs',
+  'django.contrib.auth',
+  'django.contrib.contenttypes',
+  'django.contrib.sessions',
+  'django.contrib.admin',
+  'django.contrib.admindocs',
 	'django.contrib.markup',
 
 	# ./manage.py runserver_plus allows for debugging on werkzeug traceback page. invoke error with assert false
 	# not needed for production
 	'django_extensions',
 	
-    # intelligent schema and data migrations
-    'south', 
-    
-    # contains a widget to render a form field as a TinyMCE editor
-    'tinymce',
+  # intelligent schema and data migrations
+  'south', 
+
+  # contains a widget to render a form field as a TinyMCE editor
+  'tinymce',
 	
 	'praktomat.pagechunks',
 	'praktomat.accounts',
@@ -90,6 +89,7 @@ LOGIN_REDIRECT_URL = '/tasks/'
 ACCOUNT_ACTIVATION_DAYS = 5
 EMAIL_VALIDATION_REGEX = r".*"
 
+DEFAULT_FILE_STORAGE = 'praktomat.utilities.storage.UploadStorage'
 
 try:
     from settings_local import * 
@@ -99,10 +99,10 @@ except ImportError:
 # TinyMCE
 TINYMCE_JS_URL = MEDIA_URL+'frameworks/tiny_mce/tiny_mce_src.js'
 TINYMCE_DEFAULT_CONFIG = {
-    'plugins': 'safari,pagebreak,table,advhr,advimage,advlink,emotions,iespell,inlinepopups,media,searchreplace,print,contextmenu,paste,fullscreen,noneditable,visualchars,nonbreaking,syntaxhl',
-    
-    'theme': "advanced",
-    'theme_advanced_buttons1' : "formatselect,|,bold,italic,underline,strikethrough,|,forecolor,|,bullist,numlist,|,sub,sup,|,outdent,indent,blockquote,syntaxhl,|,visualchars,nonbreaking,|,link,unlink,anchor,image,cleanup,help,code,|,print,|,fullscreen",
+  'plugins': 'safari,pagebreak,table,advhr,advimage,advlink,emotions,iespell,inlinepopups,media,searchreplace,print,contextmenu,paste,fullscreen,noneditable,visualchars,nonbreaking,syntaxhl',
+
+  'theme': "advanced",
+  'theme_advanced_buttons1' : "formatselect,|,bold,italic,underline,strikethrough,|,forecolor,|,bullist,numlist,|,sub,sup,|,outdent,indent,blockquote,syntaxhl,|,visualchars,nonbreaking,|,link,unlink,anchor,image,cleanup,help,code,|,print,|,fullscreen",
 	'theme_advanced_buttons2' : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,undo,redo,|,tablecontrols,|,hr,removeformat,visualaid,|,charmap,emotions,iespell,media,advhr",				   
 	'theme_advanced_buttons3' : "",
 	'theme_advanced_buttons4' : "",
@@ -117,5 +117,4 @@ TINYMCE_DEFAULT_CONFIG = {
 TINYMCE_SPELLCHECKER = False
 TINYMCE_COMPRESSOR = False
 
-# MEDIA_ROOT is a missguiding name django uses as default for it's upload location
-MEDIA_ROOT = UPLOAD_ROOT
+

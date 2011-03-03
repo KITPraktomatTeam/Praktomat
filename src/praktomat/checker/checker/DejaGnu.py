@@ -12,7 +12,6 @@ import subprocess
 
 from django.db import models
 from django.conf import settings
-from django.contrib.sites.models import Site
 from django.utils.translation import ugettext_lazy as _
 from praktomat.checker.models import Checker, CheckerResult, execute
 from praktomat.checker.compiler.Builder import Builder
@@ -80,7 +79,7 @@ class DejaGnuTester(Checker, DejaGnu):
 
 	def htmlize_output(self, log):
 		# Always kill the author's name from the log
-		log = re.sub(RXRUN_BY, "Run By " + Site.objects.get_current().name + " on ", log)
+		log = re.sub(RXRUN_BY, "Run By " + settings.SITE_NAME + " on ", log)
 
 		# Clean the output
 		log = re.sub(RXREMOVE, "", log)
