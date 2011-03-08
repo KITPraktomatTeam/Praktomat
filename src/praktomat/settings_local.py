@@ -79,6 +79,7 @@ JVM = 'java'
 FORTRAN_BINARY = 'g77'
 DEJAGNU_RUNTEST = '/usr/local/Cellar/deja-gnu/1.4.4/bin/runtest'
 CHECKSTYLEALLJAR = '/Users/halluzinativ/Documents/Arbeit/checkstyle/checkstyle-all-4.4.jar'
+JUNIT38='junit'
 
 # Enable to run all scripts (checker) as the unix user 'praktomattester'. Therefore put 'praktomattester' as well
 # as the Apache user '_www' (and your development user account) into a new group called praktomat. Also edit your
