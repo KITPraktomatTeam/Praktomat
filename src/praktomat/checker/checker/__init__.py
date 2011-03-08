@@ -7,5 +7,6 @@ __all__ = [	"AnonymityChecker",
 			"ScriptChecker",
 			"CreateFileChecker",
 			"LineCounter",
+			"JUnit3Checker",
 			"DejaGnu",
 			"CheckStyleChecker",]
