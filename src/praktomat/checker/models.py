@@ -23,8 +23,9 @@ def execute(command, working_directory, environment_variables={}):
 	environment = environ
 	environment.update(environment_variables)
 	if (settings.USEPRAKTOMATTESTER): environment['USEPRAKTOMATTESTER'] = 'TRUE'
-	[output, error] = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=working_directory, env=environment, shell=True).communicate()
-	return [output, error]
+	process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=working_directory, env=environment, shell=True)
+	[output, error] = process.communicate()
+	return [output, error, process.returncode]
 
 
 class Checker(models.Model):

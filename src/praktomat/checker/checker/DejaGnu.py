@@ -111,7 +111,7 @@ class DejaGnuTester(Checker, DejaGnu):
 		environ['USER'] = env.user().get_full_name().encode(sys.stdout.encoding, 'ignore')
 		environ['HOME'] = testsuite
 
-		[output, error] = execute(cmd, testsuite, environment_variables=environ)
+		[output, error, exitcode] = execute(cmd, testsuite, environment_variables=environ)
 
 		try:
 			summary = encoding.get_unicode(open(os.path.join(testsuite, program_name + ".sum")).read())

@@ -31,7 +31,7 @@ class CheckStyleChecker(Checker):
 		
 		# Run the tests
 		args = [settings.JVM, "-cp", settings.CHECKSTYLEALLJAR, "-Dbasedir=.", "com.puppycrawl.tools.checkstyle.Main", "-c", "checks.xml"] + [name for (name,content) in env.sources()]
-		(output, error) = execute(args, env.tmpdir())
+		(output, error, exitcode) = execute(args, env.tmpdir())
 		
 		result = CheckerResult(checker=self)
 		result.set_log('<pre>' + output + '</pre>')

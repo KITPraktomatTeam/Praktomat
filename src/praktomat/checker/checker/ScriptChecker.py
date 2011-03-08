@@ -40,7 +40,7 @@ class ScriptChecker(Checker):
 		environ['USER'] = env.user().get_full_name()
 		environ['HOME'] = test_dir
 		
-		(output, error) = execute(args, working_directory=test_dir, environment_variables=environ)
+		(output, error, exitcode) = execute(args, working_directory=test_dir, environment_variables=environ)
 
 		result = CheckerResult(checker=self)
 		if self.remove:
