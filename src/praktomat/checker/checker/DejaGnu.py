@@ -13,7 +13,7 @@ import subprocess
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from praktomat.checker.models import Checker, CheckerResult, execute
+from praktomat.checker.models import Checker, CheckerFileField, CheckerResult, execute
 from praktomat.checker.compiler.Builder import Builder
 from praktomat.utilities import encoding
 from praktomat.utilities.file_operations import *
@@ -55,7 +55,7 @@ class DejaGnuTester(Checker, DejaGnu):
 	""" Run a test case on the program.  Requires a previous `DejaGnuSetup'. """	
 	
 	name = models.CharField(max_length=100, help_text=_("The name of the Test"))
-	test_case = models.FileField(upload_to=Checker.get_storage_path, help_text=_(u"In den folgenden DejaGnu-Testfällen werden typischerweise Funktionen aufgerufen, die beim vorherigen Schritt <EM>Tests einrichten</EM> definiert wurden.	 Siehe	auch den Abschnitt <EM>How to write a test case</EM> im <A TARGET=\"_blank\" HREF=\"http://www.gnu.org/manual/dejagnu/\">DejaGnu-Handbuch</A>."))
+	test_case = CheckerFileField(help_text=_(u"In den folgenden DejaGnu-Testfällen werden typischerweise Funktionen aufgerufen, die beim vorherigen Schritt <EM>Tests einrichten</EM> definiert wurden.	 Siehe	auch den Abschnitt <EM>How to write a test case</EM> im <A TARGET=\"_blank\" HREF=\"http://www.gnu.org/manual/dejagnu/\">DejaGnu-Handbuch</A>."))
 
 	def __unicode__(self):
 		return self.name
@@ -138,7 +138,7 @@ DEFAULT_TEST_CASES = """# `tests.exp' template
 
 class DejaGnuSetup(Checker, DejaGnu):
 
-	test_defs = models.FileField(upload_to=Checker.get_storage_path, help_text=_(u"Das Setup benutzt den <A HREF=\"http://www.gnu.org/software/dejagnu/dejagnu.html\">DejaGnu-Testrahmen</A>, um die Programme zu testen. Die in dieser Datei enthaltenen Definitionen gelten für alle Testfälle dieser Aufgabe. Sie werden beim Testen in die DejaGnu-Datei <TT>default.exp</TT> geschrieben. (Vergl. hierzuden Abschnitt <EM>Target dependent procedures</EM> im	<A HREF=\"http://www.gnu.org/manual/dejagnu/\" TARGET=\"_blank\">DejaGnu-Handbuch</A>.) Die Variablen PROGRAM und JAVA werden mit dem Programmnamen bzw. dem Pfad zur Java-Runtime ersetzt."))
+	test_defs = CheckerFileField(help_text=_(u"Das Setup benutzt den <A HREF=\"http://www.gnu.org/software/dejagnu/dejagnu.html\">DejaGnu-Testrahmen</A>, um die Programme zu testen. Die in dieser Datei enthaltenen Definitionen gelten für alle Testfälle dieser Aufgabe. Sie werden beim Testen in die DejaGnu-Datei <TT>default.exp</TT> geschrieben. (Vergl. hierzuden Abschnitt <EM>Target dependent procedures</EM> im	<A HREF=\"http://www.gnu.org/manual/dejagnu/\" TARGET=\"_blank\">DejaGnu-Handbuch</A>.) Die Variablen PROGRAM und JAVA werden mit dem Programmnamen bzw. dem Pfad zur Java-Runtime ersetzt."))
 
 	def title(self):
 		return "Tests einrichten"

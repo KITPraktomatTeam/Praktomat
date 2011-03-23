@@ -28,6 +28,26 @@ def execute(command, working_directory, environment_variables={}):
 	return [output, error, process.returncode]
 
 
+
+
+class CheckerFileField(models.FileField):
+    """ Custom filefield with with greater path length and default upload location. Use this in all checker subclasses!"""
+    
+    def get_storage_path(instance, filename):
+        """ Use this function as upload_to parameter for filefields. """
+        return 'CheckerFiles/Task_%s/%s/%s' % (instance.task.pk, instance.__class__.__name__, filename)
+
+    def __init__(self, verbose_name=None, name=None, upload_to=get_storage_path, storage=None, **kwargs):
+        # increment filename legth from 100 to 500
+        kwargs['max_length'] = kwargs.get('max_length', 500)
+        super(CheckerFileField, self).__init__(verbose_name, name, upload_to, storage, **kwargs)
+
+# Tell South how to handle this field
+from south.modelsinspector import add_introspection_rules
+add_introspection_rules([], ["^praktomat\.checker\.models\.CheckerFileField"])    
+
+
+
 class Checker(models.Model):
 	""" A Checker implements some quality assurance.
 	 
@@ -79,11 +99,6 @@ It is *required* - it must be passed for submission
 		""" Returns the list of passed Checkers required by this checker.
 		Overloaded by subclasses. """ 
 		return []	
-
-	def get_storage_path(instance, filename):
-		""" Use this function as upload_to parameter for filefields in sublasses. """
-		return 'CheckerFiles/Task_%s/%s/%s' % (instance.task.pk, instance.__class__.__name__, filename)
-
 
 
 class CheckerEnvironment:

@@ -8,14 +8,14 @@ import os
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from praktomat.checker.models import Checker, CheckerResult, execute
+from praktomat.checker.models import Checker, CheckerFileField, CheckerResult, execute
 from praktomat.utilities.file_operations import *
 
 class DiffChecker(Checker):
 
-	shell_script = models.FileField(upload_to=Checker.get_storage_path, help_text=_("The shell script whose output for the given input file is compared to the given output file."))
-	input_file = models.FileField(upload_to=Checker.get_storage_path, blank=True, help_text=_("The file containing the input for the program."))
-	output_file = models.FileField(upload_to=Checker.get_storage_path, blank=True, help_text=_("The file containing the output for the program."))
+	shell_script = CheckerFileField(help_text=_("The shell script whose output for the given input file is compared to the given output file."))
+	input_file = CheckerFileField(blank=True, help_text=_("The file containing the input for the program."))
+	output_file = CheckerFileField(blank=True, help_text=_("The file containing the output for the program."))
 	
 	def title(self):
 		""" Returns the title for this checker category. """

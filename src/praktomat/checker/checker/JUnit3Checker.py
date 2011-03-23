@@ -2,7 +2,7 @@
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from praktomat.checker.models import Checker, CheckerResult, execute
+from praktomat.checker.models import Checker, CheckerFileField, CheckerResult, execute
 from praktomat.checker.admin import	CheckerInline, AlwaysChangedModelForm
 from praktomat.utilities.file_operations import *
 
@@ -15,7 +15,7 @@ class JUnit3Checker(Checker):
 	# Add fields to configure checker instances. You can use any of the Django fields. (See online documentation)
 	# The fields created, task, public, required and always will be inherited from the abstract base class Checker
 	name = models.CharField(max_length=100, help_text=_("The name of the Test"))
-	test_case = models.FileField(upload_to=Checker.get_storage_path, help_text=_(u"Die JUnit3-Testfälle als Java .class File"))
+	test_case = CheckerFileField(help_text=_(u"Die JUnit3-Testfälle als Java .class File"))
 	
 	def title(self):
 		return u"JUnit3 Checker"

@@ -4,12 +4,12 @@ import os, string
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from praktomat.checker.models import Checker, CheckerResult
+from praktomat.checker.models import Checker, CheckerResult, CheckerFileField
 from praktomat.utilities.file_operations import *
 
 class CreateFileChecker(Checker):
 	
-	file = models.FileField(upload_to=Checker.get_storage_path, help_text=_("The file that is copied into the temporary test directory"))
+	file = CheckerFileField(help_text=_("The file that is copied into the temporary test directory"))
 	path = models.CharField(max_length=500, blank=True, help_text=_("Subfolder in the sandbox which shall contain the file."))
 	
 	def title(self):

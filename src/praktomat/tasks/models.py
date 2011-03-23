@@ -130,4 +130,4 @@ class MediaFile(models.Model):
 		return 'TaskMediaFiles/Task_%s/%s' % (instance.task.pk, filename)
 
 	task = models.ForeignKey(Task)
-	media_file = models.FileField(upload_to=get_storage_path)
+	media_file = models.FileField(upload_to=get_storage_path, max_length=500)

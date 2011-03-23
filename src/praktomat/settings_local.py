@@ -37,7 +37,7 @@ ADMIN_MEDIA_PREFIX = '/media/admin/'
 
 # Absolute path to the directory that shall hold all uploaded files as well as files created at runtime.
 # Example: "/home/media/media.lawrence.com/"
-UPLOAD_ROOT = "/Users/halluzinativ/Documents/Arbeit/PraktomatSupport/"
+UPLOAD_ROOT = "/Users/danielkleinert/Documents/Arbeit/PraktomatSupport/"
 
 
 ADMINS = (
@@ -78,7 +78,7 @@ JAVA_GCC_BINARY = 'gcj'
 JVM = 'java'
 FORTRAN_BINARY = 'g77'
 DEJAGNU_RUNTEST = '/usr/local/Cellar/deja-gnu/1.4.4/bin/runtest'
-CHECKSTYLEALLJAR = '/Users/halluzinativ/Documents/Arbeit/checkstyle/checkstyle-all-4.4.jar'
+CHECKSTYLEALLJAR = '/Users/danielkleinert/Documents/Arbeit/checkstyle/checkstyle-all-4.4.jar'
 JUNIT38='junit'
 
 # Enable to run all scripts (checker) as the unix user 'praktomattester'. Therefore put 'praktomattester' as well
@@ -87,7 +87,7 @@ JUNIT38='junit'
 # commands with the user 'praktomattester' without requiring a password:
 # "_www    		ALL=(praktomattester)NOPASSWD:ALL"
 # "developer	ALL=(praktomattester)NOPASSWD:ALL"
-USEPRAKTOMATTESTER = True
+USEPRAKTOMATTESTER = False
 
 
 # Regular expression used to check the email domain of registering users.
