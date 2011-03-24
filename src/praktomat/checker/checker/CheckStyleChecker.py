@@ -5,13 +5,13 @@ from django.conf import settings
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from praktomat.checker.models import Checker, CheckerResult, execute
+from praktomat.checker.models import Checker, CheckerResult, CheckerFileField, execute
 from praktomat.utilities.file_operations import *
 
 class CheckStyleChecker(Checker):
 
 	name = models.CharField(max_length=100, default="CheckStyle", help_text=_("Name to be displayed on the solution detail page."))
-	configuration = models.TextField(help_text=_("XML configuration of CheckStyle. See http://checkstyle.sourceforge.net/"))
+	configuration = CheckerFileField(help_text=_("XML configuration of CheckStyle. See http://checkstyle.sourceforge.net/"))
 	
 	def title(self):
 		""" Returns the title for this checker category. """
@@ -27,7 +27,7 @@ class CheckStyleChecker(Checker):
 
 		# Save save check configuration
 		config_path = os.path.join(env.tmpdir(), "checks.xml")
-		create_file(config_path, self.configuration)
+		copy_file(self.configuration.path, config_path)
 		
 		# Run the tests
 		args = [settings.JVM, "-cp", settings.CHECKSTYLEALLJAR, "-Dbasedir=.", "com.puppycrawl.tools.checkstyle.Main", "-c", "checks.xml"] + [name for (name,content) in env.sources()]
