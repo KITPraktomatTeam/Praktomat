@@ -36,6 +36,8 @@ class MyRegistrationForm(UserBaseCreationForm):
 
 	def clean_mat_number(self):
 		data = self.cleaned_data['mat_number']
+		if not data:
+			raise forms.ValidationError("This field is required.")
 		if User.objects.filter(mat_number=data):
 			admins = map(lambda user: "<a href='mailto:%s'>%s</a>" % (user.email, user.get_full_name()), User.objects.filter(is_superuser=True))
 			admins = reduce(lambda x,y: x + ', ' + y, admins)
@@ -85,3 +87,11 @@ class UserCreationForm(UserBaseCreationForm):
 class UserChangeForm(UserBaseChangeForm):
 	class Meta:
 		model = User
+
+	def clean(self):
+		# if user is in group "User" require a mat number
+		cleaned_data = super(UserChangeForm, self).clean()
+		if ( cleaned_data.get("groups").filter(name="User") and not cleaned_data.get("mat_number")):
+			self._errors["mat_number"] = self.error_class(["This field is required for Users."])
+			del cleaned_data["mat_number"]
+		return cleaned_data
