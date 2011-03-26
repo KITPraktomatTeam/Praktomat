@@ -64,7 +64,7 @@
 {% endif %}
 
 <h2>{% trans "Annotated Files" %}</h2>
-<div id="filetabs">
+<div class="filetabs">
 	<ul>
 		{% for anotfile in attest.annotatedsolutionfile_set.all%}
 			<li><a href="#{{anotfile|cut:"."}}">{{anotfile}}{% if anotfile.has_anotations%}<span class="has_anotations">*</span>{% endif %}</a></li> 
