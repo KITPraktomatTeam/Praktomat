@@ -283,11 +283,11 @@ body {
 
 input{
 	vertical-align: top;
-	margin: 10px;
 }
 
 input[type="submit"]{
 	margin-left: 150px;
+	/* margin: 10px; */
 }
 
 label {

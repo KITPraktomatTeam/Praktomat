@@ -319,9 +319,13 @@
 {% block content %}<h1>{{task.title}}</h1>
 <h2>{% trans "Statistics" %}</h2>
 <div id="submission_chart"></div>
+<p>Showes the dates on which solution submissions were made. Final submissions indicate when users uploaded their newest solution. Total submissions shows the percantage of active users who have submitted at least one solution.</p><br/><br/>
 <div id="punchcard"></div>
+<p>This chart plots on which time of day the users were most active.</p><br/><br/>
 {% if task.expired %} 
 	<div id="attestation_chart"></div>
+	<p>This chart gives an overview of how many attestations are ready to be published and how many of these are allready published by the tutors.</p><br/><br/>
 	<div id="final_grade_chart"></div>
+	<p>This chart showes the distribution of final grades. Plagiarism is excluded.</p><br/><br/>
 {% endif %}
 {% endblock %}

@@ -59,6 +59,7 @@ def statistics(request,task_id):
 	final_grade_rating_scale_items = "['" + "','".join(task.final_grade_rating_scale.ratingscaleitem_set.values_list('name', flat=True)) + "']"
 	ratings = RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True).annotate(Count('id')).values_list('position','id__count')
 	ratings = map(lambda x:[x[0]-1,x[1]], ratings) # [(1, 2), (2, 2), (3, 2), (4, 2)] => [[0, 2], [1, 2], [2, 2], [3, 2]]
+
 	return render_to_response("attestation/statistics.html", {'task':task, \
 															'user_count': user_count, 'solution_count': final_solution_count,\
 															'submissions':submissions, 'submissions_final':submissions_final, 'creation_times':creation_times, 'creation_times_final':creation_times_final, 'acc_submissions':acc_submissions, \
