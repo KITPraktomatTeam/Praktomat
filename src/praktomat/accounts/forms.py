@@ -29,12 +29,14 @@ class MyRegistrationForm(UserBaseCreationForm):
 		fields = ("username","first_name","last_name","email", "mat_number")
 	
 	def clean_email(self):
+		# cleaning the email in the form doesn't validate it in the admin (good for tutors etc.)
 		data = self.cleaned_data['email']
 		if not re.match(settings.EMAIL_VALIDATION_REGEX, data):
 			raise forms.ValidationError("The email you have provided is not valid. It has to be in: " + settings.EMAIL_VALIDATION_REGEX)	
 		return data
 
 	def clean_mat_number(self):
+		# Special error message for un-unique / empty matnumbers on user registration.
 		data = self.cleaned_data['mat_number']
 		if not data:
 			raise forms.ValidationError("This field is required.")
@@ -89,7 +91,7 @@ class UserChangeForm(UserBaseChangeForm):
 		model = User
 
 	def clean(self):
-		# if user is in group "User" require a mat number
+		# Only if user is in group "User" require a mat number.
 		cleaned_data = super(UserChangeForm, self).clean()
 		if ( cleaned_data.get("groups").filter(name="User") and not cleaned_data.get("mat_number")):
 			self._errors["mat_number"] = self.error_class(["This field is required for Users."])

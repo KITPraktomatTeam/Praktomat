@@ -92,4 +92,5 @@ USEPRAKTOMATTESTER = False
 
 # Regular expression used to check the email domain of registering users.
 EMAIL_VALIDATION_REGEX = r".*@student.kit.edu"
-
+# Regular expression used to check the student number.
+MAT_NUMBER_VALIDATION_REGEX = r"\d{5,7}"
