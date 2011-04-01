@@ -81,12 +81,25 @@ class MyRegistrationForm(UserBaseCreationForm):
 		send_mail(_("Account activation on %s") % site_name, t.render(Context(c)), None, [user.email])
 		
 		return user
+
+class UserChangeForm(forms.ModelForm):
 	
-class UserCreationForm(UserBaseCreationForm):
+	# overriding modelfields to ensure required fields are provided
+	first_name = forms.CharField(max_length = 30,required=True)
+	last_name = forms.CharField(max_length = 30,required=True)
+	#email = forms.EmailField(required=True)
+	
+	class Meta:
+		model = User
+		fields = ("username","first_name","last_name")
+
+
+	
+class AdminUserCreationForm(UserBaseCreationForm):
 	class Meta:
 		model = User
 		
-class UserChangeForm(UserBaseChangeForm):
+class AdminUserChangeForm(UserBaseChangeForm):
 	class Meta:
 		model = User
 

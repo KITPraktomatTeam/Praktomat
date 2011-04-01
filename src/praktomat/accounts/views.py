@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.template import RequestContext
 from django.conf import settings
-from praktomat.accounts.forms import MyRegistrationForm
+from praktomat.accounts.forms import MyRegistrationForm, UserChangeForm
 from praktomat.accounts.models import User
 from django.contrib.auth.models import Group
 
@@ -31,6 +31,16 @@ def activate(request, activation_key):
 	account = User.activate_user(activation_key)
 	return render_to_response('registration/registration_activated.html', { 'account': account, 'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS }, context_instance=RequestContext(request))
 
+
+def change(request):
+	if request.method == 'POST':
+		form = UserChangeForm(request.POST, instance=request.user)
+		if form.is_valid():
+			form.save()
+			return HttpResponseRedirect(reverse('task_list'))
+	else:
+		form = UserChangeForm(instance=request.user)
+	return render_to_response('registration/registration_change.html', {'form':form}, context_instance=RequestContext(request))
 
 def access_denied(request):
 	request_path = request.META['HTTP_HOST'] + request.get_full_path()

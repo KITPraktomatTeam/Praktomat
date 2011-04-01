@@ -6,7 +6,7 @@ from django.contrib.auth.admin import UserAdmin as UserBaseAdmin
 from django.db.models import Count
 from praktomat.accounts.models import User, Tutorial
 from praktomat.accounts.templatetags.in_group import in_group
-from praktomat.accounts.forms import UserCreationForm, UserChangeForm
+from praktomat.accounts.forms import AdminUserCreationForm, AdminUserChangeForm
 
  
 class UserAdmin(UserBaseAdmin):
@@ -26,8 +26,8 @@ class UserAdmin(UserBaseAdmin):
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
 	
-	form = UserChangeForm
-	add_form = UserCreationForm
+	form = AdminUserChangeForm
+	add_form = AdminUserCreationForm
 	
 	def is_trainer(self, user):
 		return in_group(user,"Trainer")
