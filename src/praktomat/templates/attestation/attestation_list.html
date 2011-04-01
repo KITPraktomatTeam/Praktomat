@@ -32,7 +32,7 @@
 		<h2>{% trans "Attested solutions" %}</h2>
 		<div id="Solutions">
 			{% for solution, allow_new_attest in solution_list%}
-				{% if requestuser|in_group:'Trainer' or published %}
+				{% if show_author or requestuser|in_group:'Trainer' or published %}
 					<h3>Solution by {{solution.author.get_full_name}}</h3>
 				{% else %}
 					<h3>Solution {{forloop.counter}}</h3>

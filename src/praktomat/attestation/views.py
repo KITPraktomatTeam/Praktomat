@@ -11,6 +11,7 @@ from django.contrib.auth.models import Group
 from django.views.decorators.cache import cache_control
 from django.http import HttpResponse
 from django.template import loader, Context
+from django.conf import settings
 import datetime
 import codecs
 
@@ -106,7 +107,7 @@ def attestation_list(request, task_id):
 			for attestation in solution.attestations_by(requestuser):
 				attestation.publish()
 				published = True
-	data = {'task':task, 'requestuser':requestuser,'solution_list': solution_list, 'published': published, 'publishable': publishable}
+	data = {'task':task, 'requestuser':requestuser,'solution_list': solution_list, 'published': published, 'publishable': publishable, 'show_author': not settings.ANONYMOUS_ATTESTATION}
 	return render_to_response("attestation/attestation_list.html", data, context_instance=RequestContext(request))
 	
 @login_required
@@ -175,7 +176,7 @@ def view_attestation(request, attestation_id):
 	else:
 		form = AttestationPreviewForm(instance=attest)
 		submitable = attest.author == request.user and not attest.published
-		return render_to_response("attestation/attestation_view.html", {"attest": attest, 'submitable':submitable, 'form':form},	context_instance=RequestContext(request))
+		return render_to_response("attestation/attestation_view.html", {"attest": attest, 'submitable':submitable, 'form':form, 'show_author': not settings.ANONYMOUS_ATTESTATION},	context_instance=RequestContext(request))
 
 @login_required	
 def rating_overview(request):

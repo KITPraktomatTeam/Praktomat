@@ -97,3 +97,6 @@ MAT_NUMBER_VALIDATION_REGEX = r"\d{5,7}"
 # After this date no one can use the registration page anymore. Format: date(2005, 7, 14)
 from datetime import date
 DENY_REGISTRATION_FROM = date(2012, 01, 01)
+
+# If enabled, the tutor can't see the name of the user, who subbmitted the solution.
+ANONYMOUS_ATTESTATION = True
