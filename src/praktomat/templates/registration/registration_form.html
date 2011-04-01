@@ -8,10 +8,13 @@
 {% block content %}
 
 <h1>{% trans "Register a new Account" %}</h1>
-
-<form method="post" action="." autocomplete="off"> {% csrf_token %}
-{%comment%} autocomplete is a not standardized tag! {%endcomment%}
-    {% include "forms/form_as_div.html" %}
-	<input type="submit" value="register" />
-</form>
+{% if form %}
+	<form method="post" action="." autocomplete="off"> {% csrf_token %}
+	{%comment%} autocomplete is a not standardized tag! {%endcomment%}
+		{% include "forms/form_as_div.html" %}
+		<input type="submit" value="register" />
+	</form>
+{% else %}
+<div class='error'>Registration was open until {{deny_registration_from|date:"DATE_FORMAT"}} and is now closed. Please Contact a Trainer: {% for user in trainers %} <a href='mailto:{{ user.email }}'>{{user.get_full_name}}</a> {% endfor %} or Administrator:{% for user in admins %} <a href='mailto:{{ user.email }}'>{{user.get_full_name}}</a>{% endfor %}.</div>
+{% endif %}
 {% endblock %}

@@ -1,4 +1,5 @@
 #from praktomat.accounts.forms import MyRegistrationForm
+from datetime import date
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
@@ -6,16 +7,24 @@ from django.template import RequestContext
 from django.conf import settings
 from praktomat.accounts.forms import MyRegistrationForm
 from praktomat.accounts.models import User
+from django.contrib.auth.models import Group
 
 def register(request):
-	if request.method == 'POST':
-		form = MyRegistrationForm(request.POST)
-		if form.is_valid():
-			form.save()
-			return HttpResponseRedirect(reverse('registration_complete'))
+	extra_context = {}
+	if settings.DENY_REGISTRATION_FROM < date.today():
+		extra_context['deny_registration_from'] = settings.DENY_REGISTRATION_FROM
+		extra_context['admins'] = User.objects.filter(is_superuser=True)
+		extra_context['trainers'] = Group.objects.get(name="Trainer").user_set.all()
 	else:
-		form = MyRegistrationForm()
-	return render_to_response('registration/registration_form.html', {'form':form}, context_instance=RequestContext(request))
+		if request.method == 'POST':
+			form = MyRegistrationForm(request.POST)
+			if form.is_valid():
+				form.save()
+				return HttpResponseRedirect(reverse('registration_complete'))
+		else:
+			form = MyRegistrationForm()
+		extra_context['form'] = form
+	return render_to_response('registration/registration_form.html', extra_context, context_instance=RequestContext(request))
 
 
 def activate(request, activation_key):
