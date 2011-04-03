@@ -1,0 +1,19 @@
+{% extends "base.html"%}
+{% load i18n %}
+
+{% block breadcrumbs %}
+	{{ block.super }} > {% trans 'Change Account' %}
+{% endblock %}
+
+{% block content %}
+
+<h1>{% trans "Change Account" %}</h1>
+
+<a href="{% url auth_password_change %}">Change Password</a><br/><br/>
+
+<form method="post" action="." autocomplete="off"> {% csrf_token %}
+{%comment%} autocomplete is a not standardized tag! {%endcomment%}
+	{% include "forms/form_as_div.html" %}
+	<input type="submit" value="save" />
+</form>
+{% endblock %}
