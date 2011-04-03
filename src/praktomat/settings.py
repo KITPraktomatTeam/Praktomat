@@ -76,7 +76,7 @@ INSTALLED_APPS = (
 	
 	'praktomat.pagechunks',
 	'praktomat.accounts',
-  'praktomat.tasks',
+	'praktomat.tasks',
 	'praktomat.solutions',
 	'praktomat.attestation',
 	'praktomat.checker',

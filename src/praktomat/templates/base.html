@@ -26,7 +26,7 @@
 					Welcome, {% firstof user.get_full_name user.username %} /
 					<a href="{% url registration_change %}">Change Account</a> / 
 					<a href="{% url auth_logout %}">Log-out</a>
-					{% if user.is_staff %}/ <a href="{% url admin %}">Admin Panel</a>{%endif%}
+					{% if user.is_staff %}/ <a href="{% url admin:index %}">Admin Panel</a>{%endif%}
 				{% else %}
 					<a href="{% url auth_login %}">Login</a> /
 					<a href="{% url registration_register %}">Register</a> 

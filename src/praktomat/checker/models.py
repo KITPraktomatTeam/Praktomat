@@ -4,13 +4,17 @@ from os.path import *
 import subprocess
 import shutil
 import sys
+
 from django.conf import settings
 from django.db import models
 from praktomat.tasks.models import Task
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
+
 from praktomat.utilities import encoding, file_operations
+from praktomat.utilities.deleting_file_field import DeletingFileField
+
 
 import string
 	
@@ -30,7 +34,7 @@ def execute(command, working_directory, environment_variables={}):
 
 
 
-class CheckerFileField(models.FileField):
+class CheckerFileField(DeletingFileField):
     """ Custom filefield with with greater path length and default upload location. Use this in all checker subclasses!"""
     
     def get_storage_path(instance, filename):

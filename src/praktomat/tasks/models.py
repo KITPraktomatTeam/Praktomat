@@ -7,6 +7,8 @@ from django.db import transaction
 from django.core import serializers
 from django.utils.translation import ugettext_lazy as _
 
+from praktomat.utilities.deleting_file_field import DeletingFileField
+
 
 class Task(models.Model):
 	title = models.CharField(max_length=100, help_text = _("The name of the Task"))
@@ -130,4 +132,4 @@ class MediaFile(models.Model):
 		return 'TaskMediaFiles/Task_%s/%s' % (instance.task.pk, filename)
 
 	task = models.ForeignKey(Task)
-	media_file = models.FileField(upload_to=get_storage_path, max_length=500)
+	media_file = DeletingFileField(upload_to=get_storage_path, max_length=500)

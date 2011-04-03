@@ -15,7 +15,6 @@ urlpatterns = patterns('',
 	url(r'^admin/tasks/task/(?P<task_id>\d+)/model_solution', 'praktomat.tasks.views.model_solution', name="model_solution"),
 	(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
-	url(r'^admin/$', admin.site.root, name="admin"), # allows for url admin
     
 	# Login and Registration
 	(r'^accounts/', include('praktomat.accounts.urls')),
