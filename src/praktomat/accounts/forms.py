@@ -105,7 +105,7 @@ class AdminUserChangeForm(UserBaseChangeForm):
 
 	def clean(self):
 		# Only if user is in group "User" require a mat number.
-		cleaned_data = super(UserChangeForm, self).clean()
+		cleaned_data = super(AdminUserChangeForm, self).clean()
 		if ( cleaned_data.get("groups").filter(name="User") and not cleaned_data.get("mat_number")):
 			self._errors["mat_number"] = self.error_class(["This field is required for Users."])
 			del cleaned_data["mat_number"]
