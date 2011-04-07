@@ -18,10 +18,13 @@ from praktomat.accounts.models import User
 
 class MyRegistrationForm(UserBaseCreationForm):
 	
-	def __init__(self, post, domaine, use_https):
-		self.domain = domaine
-		self.use_https = use_https
-		super(MyRegistrationForm, self).__init__(post)
+	def __init__(self, *args, **kwargs):
+		# post, domaine=None, use_https=None):
+		if 'domain' in kwargs:
+			self.domain = kwargs.pop('domain')
+		if 'use_https' in kwargs:
+			self.use_https = kwargs.pop('use_https')
+		super(MyRegistrationForm, self).__init__(*args, **kwargs)
 	
 	# overriding modelfields to ensure required fields are provided
 	first_name = forms.CharField(max_length = 30,required=True)
