@@ -6,7 +6,7 @@
 # are inappropriate for public consumption. File paths, configuration options, 
 # and the like all give attackers extra information about your server.
 # Never deploy a site into production with DEBUG turned on.
-DEBUG = False
+DEBUG = True
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
