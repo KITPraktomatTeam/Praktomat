@@ -94,6 +94,7 @@ class Task(models.Model):
 				task_id_map[old_id] = object.id
 				old_solution_to_new_task_map[object.model_solution_id] = object.id
 				object.model_solution = None
+				object.final_grade_rating_scale = None
 				deserialized_object.save()
 			else:
 				# save modelsolution, media and checker, update task id
