@@ -8,6 +8,7 @@ from django.conf import settings
 from praktomat.accounts.forms import MyRegistrationForm, UserChangeForm
 from praktomat.accounts.models import User
 from django.contrib.auth.models import Group
+from django.contrib.sites.models import Site, RequestSite
 
 def register(request):
 	extra_context = {}
@@ -17,7 +18,7 @@ def register(request):
 		extra_context['trainers'] = Group.objects.get(name="Trainer").user_set.all()
 	else:
 		if request.method == 'POST':
-			form = MyRegistrationForm(request.POST)
+			form = MyRegistrationForm(request.POST, RequestSite(request).domain)
 			if form.is_valid():
 				form.save()
 				return HttpResponseRedirect(reverse('registration_complete'))

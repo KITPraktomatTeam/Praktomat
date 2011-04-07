@@ -18,6 +18,10 @@ from praktomat.accounts.models import User
 
 class MyRegistrationForm(UserBaseCreationForm):
 	
+	def __init__(self, post, domaine):
+		self.domain = domaine	
+		super(MyRegistrationForm, self).__init__(post)
+	
 	# overriding modelfields to ensure required fields are provided
 	first_name = forms.CharField(max_length = 30,required=True)
 	last_name = forms.CharField(max_length = 30,required=True)
@@ -70,7 +74,7 @@ class MyRegistrationForm(UserBaseCreationForm):
 		t = loader.get_template('registration/registration_email.html')
 		c = {
 			'email': user.email,
-			'domain': settings.BASE_URL,
+			'domain': self.domain,
 			'site_name': settings.SITE_NAME,
 			'uid': int_to_base36(user.id),
 			'user': user,
@@ -78,7 +82,7 @@ class MyRegistrationForm(UserBaseCreationForm):
 			'activation_key': activation_key,
 			'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,
 			}
-		send_mail(_("Account activation on %s") % site_name, t.render(Context(c)), None, [user.email])
+		send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(Context(c)), None, [user.email])
 		
 		return user
 
