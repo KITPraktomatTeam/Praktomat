@@ -12,19 +12,21 @@
 	{% endif %}
 	
 	{% if not user|in_group:"Trainer" and not user.is_superuser %}
-		<div id="contact"><a> Got Problems? </a>
-		{% if tutors %}
-			<a> Your tutor{{tutors.count|pluralize}}: </a>
-			{% for tutor in tutors %}
-				<a href="mailto:{{tutor.email}}">{{tutor.get_full_name}}</a>	
-			{% endfor %}
+		{% if tutors or trainers %}
+			<div id="contact"><a> Got Problems? </a>
+			{% if tutors %}
+				<a> Your tutor{{tutors.count|pluralize}}: </a>
+				{% for tutor in tutors %}
+					<a href="mailto:{{tutor.email}}">{{tutor.get_full_name}}</a>	
+				{% endfor %}
+			{% endif %}
+			{% if trainers %}
+				<a> Your trainer{{trainers.count|pluralize}}: </a>
+				{% for trainer in trainers %}
+					<a href="mailto:{{trainer.email}}">{{trainer.get_full_name}}</a>	
+				{% endfor %}
+			{% endif %}</div>
 		{% endif %}
-		{% if trainers %}
-			<a> Your trainer{{trainers.count|pluralize}}: </a>
-			{% for trainer in trainers %}
-				<a href="mailto:{{trainer.email}}">{{trainer.get_full_name}}</a>	
-			{% endfor %}
-		{% endif %}</div>
 	{% endif %}
 </div>
 
