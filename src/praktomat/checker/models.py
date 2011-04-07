@@ -14,7 +14,7 @@ from praktomat.utilities import encoding, file_operations
 
 import string
 	
-def execute(command, working_directory, environment_variables={}):
+def execute(command, working_directory, environment_variables={}, use_default_user_configuration=True):
 	""" Wrapper to execute Commands with the praktomat testuser. """
 	if isinstance(command, list):
 		command = ' '.join(command)
@@ -22,7 +22,7 @@ def execute(command, working_directory, environment_variables={}):
 	command = script + ' ' + command
 	environment = environ
 	environment.update(environment_variables)
-	if (settings.USEPRAKTOMATTESTER): environment['USEPRAKTOMATTESTER'] = 'TRUE'
+	if (settings.USEPRAKTOMATTESTER and use_default_user_configuration): environment['USEPRAKTOMATTESTER'] = 'TRUE'
 	process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=working_directory, env=environment, shell=True)
 	[output, error] = process.communicate()
 	return [output, error, process.returncode]
