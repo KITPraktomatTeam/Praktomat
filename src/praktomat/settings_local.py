@@ -6,7 +6,7 @@
 # are inappropriate for public consumption. File paths, configuration options, 
 # and the like all give attackers extra information about your server.
 # Never deploy a site into production with DEBUG turned on.
-DEBUG = True
+DEBUG = False
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -22,7 +22,7 @@ LANGUAGE_CODE = 'en-us'
 # The name that will be displayed on top of the page and in emails.
 SITE_NAME = 'Praktomat'
 
-PRAKTOMAT_ID = 'testng'
+PRAKTOMAT_ID = 'praktomat_2011_SS'
 
 # The URL where this site is reachable. 'http://localhost:8000/' in case of the developmentserver.
 BASE_URL = 'https://praktomat.info.uni-karlsruhe.de/' + PRAKTOMAT_ID + '/'
@@ -49,7 +49,7 @@ ADMINS = (
 
 
 DATABASE_ENGINE = 'postgresql_psycopg2'   # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = 'prog_test_praktomatng'  # Or path to database file if using sqlite3.
+DATABASE_NAME = 'prog_ss11_aufgaben'  # Or path to database file if using sqlite3.
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
