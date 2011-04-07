@@ -25,9 +25,7 @@ Installation
 
 9. Setup an administration account with "./bin/praktomat createsuperuser" if you haven't installed the test data which includes an "admin" account.
 
-10. set up the domain name in the admin panel of the webapp
-
-11. If you want to deploy the project using mod_wsgi in apache you could use documentation/apache_praktomat_wsgi.conf as a starting point. Don't forget to install mod_xsendfile to serve uploaded files. 
+10. If you want to deploy the project using mod_wsgi in apache you could use documentation/apache_praktomat_wsgi.conf as a starting point. Don't forget to install mod_xsendfile to serve uploaded files. 
 
 
 Update 
