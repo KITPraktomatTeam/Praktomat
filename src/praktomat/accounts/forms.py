@@ -18,8 +18,9 @@ from praktomat.accounts.models import User
 
 class MyRegistrationForm(UserBaseCreationForm):
 	
-	def __init__(self, post, domaine):
-		self.domain = domaine	
+	def __init__(self, post, domaine, use_https):
+		self.domain = domaine
+		self.use_https = use_https
 		super(MyRegistrationForm, self).__init__(post)
 	
 	# overriding modelfields to ensure required fields are provided
@@ -70,7 +71,7 @@ class MyRegistrationForm(UserBaseCreationForm):
 		user.save()
 		
 		# Send activation email
-		use_https=False
+
 		t = loader.get_template('registration/registration_email.html')
 		c = {
 			'email': user.email,
@@ -78,7 +79,7 @@ class MyRegistrationForm(UserBaseCreationForm):
 			'site_name': settings.SITE_NAME,
 			'uid': int_to_base36(user.id),
 			'user': user,
-			'protocol': use_https and 'https' or 'http',
+			'protocol': self.use_https and 'https' or 'http',
 			'activation_key': activation_key,
 			'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,
 			}

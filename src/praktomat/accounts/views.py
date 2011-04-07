@@ -18,7 +18,7 @@ def register(request):
 		extra_context['trainers'] = Group.objects.get(name="Trainer").user_set.all()
 	else:
 		if request.method == 'POST':
-			form = MyRegistrationForm(request.POST, RequestSite(request).domain)
+			form = MyRegistrationForm(request.POST, RequestSite(request).domain, request.is_secure())
 			if form.is_valid():
 				form.save()
 				return HttpResponseRedirect(reverse('registration_complete'))
