@@ -71,9 +71,9 @@ MANAGERS = ADMINS
 # The Compiler binarys used to compile a submitted solution
 C_BINARY = 'gcc'
 CXX_BINARY = 'c++'
-JAVA_BINARY = 'javac'
+JAVA_BINARY = '/praktomat/bin/javac'
 JAVA_GCC_BINARY = 'gcj'
-JVM = 'java'
+JVM = '/praktomat/bin/java'
 FORTRAN_BINARY = 'g77'
 DEJAGNU_RUNTEST = '/usr/bin/runtest'
 CHECKSTYLEALLJAR = '/praktomatng/checkstyle-all-4.4.jar'
