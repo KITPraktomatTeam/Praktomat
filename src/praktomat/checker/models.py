@@ -14,19 +14,14 @@ from praktomat.utilities import encoding, file_operations
 
 import string
 	
-def execute(command, working_directory, environment_variables={}, use_default_user_configuration=True):
+def execute(command, working_directory, environment_variables={}, script="execute"):
 	""" Wrapper to execute Commands with the praktomat testuser. """
 	if isinstance(command, list):
 		command = ' '.join(command)
-	script = join(join(dirname(__file__),'scripts'),'execute')
-	command = script + ' ' + command
+	command = script and (join(join(dirname(__file__),'scripts'), script) + ' ' + command) or command
 	environment = environ
 	environment.update(environment_variables)
-	if (settings.USEPRAKTOMATTESTER and use_default_user_configuration):
-		environment['USEPRAKTOMATTESTER'] = 'TRUE'
-	else:
-		environment['USEPRAKTOMATTESTER'] = 'False'
-
+	if settings.USEPRAKTOMATTESTER: environment['USEPRAKTOMATTESTER'] = 'TRUE'			
 	process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=working_directory, env=environment, shell=True)
 	[output, error] = process.communicate()
 	return [output, error, process.returncode]

@@ -14,7 +14,7 @@ class JavaBuilder(Builder):
 	"""	 A Java bytecode compiler for construction. """
 
 	# Initialization sets own attributes to default values.
-	_compiler	= settings.JAVA_BINARY_SECURE
+	_compiler	= settings.JAVA_BINARY
 	_language	= "Java"
 
 	def main_module(self, env):

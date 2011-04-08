@@ -22,37 +22,42 @@ LANGUAGE_CODE = 'en-us'
 # The name that will be displayed on top of the page and in emails.
 SITE_NAME = 'Praktomat'
 
-PRAKTOMAT_ID = 'testng'
-
 # The URL where this site is reachable. 'http://localhost:8000/' in case of the developmentserver.
-BASE_URL = 'https://praktomat.info.uni-karlsruhe.de/' + PRAKTOMAT_ID + '/'
+BASE_URL = 'http://localhost:8000/'
 
 # URL that serves the static media files (CSS, JavaScript and images) of praktomat contained in 'media/'.
 # Make sure to use a trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = BASE_URL + '/media/'
+MEDIA_URL = BASE_URL + 'media/'
 
 # URL prefix for the administration site media (CSS, JavaScript and images) contained in the django package. 
 # Make sure to use a trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = BASE_URL + '/media/admin/'
+ADMIN_MEDIA_PREFIX = '/media/admin/'
 
 LOGIN_URL = BASE_URL + 'accounts/login/'
 LOGIN_REDIRECT_URL = BASE_URL + '/tasks/'
 
 # Absolute path to the directory that shall hold all uploaded files as well as files created at runtime.
 # Example: "/home/media/media.lawrence.com/"
-UPLOAD_ROOT = "/praktomatng/installations/" + PRAKTOMAT_ID + "/PraktomatSupport/"
+UPLOAD_ROOT = "/Users/danielkleinert/Documents/Arbeit/PraktomatSupport/"
 
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
-    ('Praktomat', 'praktomat@ipd.info.uni-karlsruhe.de')
+    ('Daniel Kleinert', 'herr.kleinert@googlemail.com')
 )
 
+#DATABASE_ENGINE = 'postgresql_psycopg2'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+#DATABASE_NAME ='praktomat'   # Or path to database file if using sqlite3.
+#DATABASE_USER = 'postgres'             # Not used with sqlite3.
+#DATABASE_PASSWORD = 'demo'         # Not used with sqlite3.
+#DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
+#DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
-DATABASE_ENGINE = 'postgresql_psycopg2'   # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = 'prog_test_praktomatng'  # Or path to database file if using sqlite3.
+
+DATABASE_ENGINE = 'sqlite3'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+DATABASE_NAME = UPLOAD_ROOT+'/Database'   # Or path to database file if using sqlite3.
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
@@ -60,11 +65,11 @@ DATABASE_PORT = ''             # Set to empty string for default. Not used with 
 
 
 # DEFAULT_FROM_EMAIL = ""
-EMAIL_HOST = "localhost"
-EMAIL_PORT = 25
-EMAIL_HOST_USER = "praktomat"
-EMAIL_HOST_PASSWORD = ""
-EMAIL_USE_TLS = False
+EMAIL_HOST = "smtp.googlemail.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "praktomat@googlemail.com"
+EMAIL_HOST_PASSWORD = "baertram"
+EMAIL_USE_TLS = True
 
 MANAGERS = ADMINS
 
@@ -72,27 +77,27 @@ MANAGERS = ADMINS
 C_BINARY = 'gcc'
 CXX_BINARY = 'c++'
 JAVA_BINARY = 'javac'
-JAVA_BINARY_SECURE = '/praktomat/bin/javac'
 JAVA_GCC_BINARY = 'gcj'
 JVM = 'java'
-JVM_SECURE = '/praktomat/bin/java'
 FORTRAN_BINARY = 'g77'
-DEJAGNU_RUNTEST = '/usr/bin/runtest'
-CHECKSTYLEALLJAR = '/praktomatng/checkstyle-all-4.4.jar'
+DEJAGNU_RUNTEST = '/usr/local/Cellar/deja-gnu/1.4.4/bin/runtest'
+CHECKSTYLEALLJAR = '/Users/danielkleinert/Documents/Arbeit/checkstyle/checkstyle-all-4.4.jar'
 JUNIT38='junit'
 
-# Enable to run all scripts (checker) as the unix user 'praktomattester'. Therefore put 'praktomattester' as well
+# Exception log used by java and javac scripts
+KILL_LOG = UPLOAD_ROOT + "praktomat.log"
+
+# Enable to run all scripts (checker) as the unix user 'tester'. Therefore put 'tester' as well
 # as the Apache user '_www' (and your development user account) into a new group called praktomat. Also edit your
 # sudoers file with "sudo visudo". Add the following lines to the end of the file to allow the execution of 
-# commands with the user 'praktomattester' without requiring a password:
-# "_www    		ALL=(praktomattester)NOPASSWD:ALL"
-# "developer	ALL=(praktomattester)NOPASSWD:ALL"
-USEPRAKTOMATTESTER = True
+# commands with the user 'tester' without requiring a password:
+# "_www    		ALL=(tester)NOPASSWD:ALL"
+# "developer	ALL=(tester)NOPASSWD:ALL"
+USEPRAKTOMATTESTER = False
 
 
 # Regular expression used to check the email domain of registering users.
-EMAIL_VALIDATION_REGEX =  r".*@(student\.)?kit\.edu"
-
+EMAIL_VALIDATION_REGEX = r".*@(student.)?kit.edu"
 # Regular expression used to check the student number.
 MAT_NUMBER_VALIDATION_REGEX = r"\d{5,7}"
 
