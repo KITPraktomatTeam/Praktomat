@@ -1,0 +1,18 @@
+{% load i18n %}{% autoescape off %}{% trans "Hello " %}{{solution.author}},
+
+your solution to the task "{{solution.task}}" has been successfully uploaded.
+
+You can view your solution here: {{protocol}}://{{ domain }}{% url solution_detail solution_id=solution.id %}
+
+Your upload included these files:
+{% for file in solution.solutionfile_set.all %}
+	{{file}} [MD5:{{file.get_hash}}]
+{% endfor %}
+
+Please keep this email and the files you have uploded to verify that you've completed the task in case of data loss on the server.
+
+{% trans "Thanks for using our site!" %}
+
+{% blocktrans %}The {{ site_name }} team{% endblocktrans %}
+
+{% endautoescape %}

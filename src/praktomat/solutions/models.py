@@ -4,6 +4,7 @@ import zipfile
 import tempfile
 import mimetypes
 import shutil
+import hashlib
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -116,6 +117,9 @@ class SolutionFile(models.Model):
 	
 	def __unicode__(self):
 		return self.file.name.rpartition('/')[2]
+	
+	def get_hash(self):
+		return hashlib.md5(self.file.read()).hexdigest()
 	
 	def isBinary(self):
 		return self.mime_type[:4] != "text"
