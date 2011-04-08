@@ -106,12 +106,12 @@ class DejaGnuTester(Checker, DejaGnu):
 		
 		cmd = settings.DEJAGNU_RUNTEST + " --tool " + program_name + " tests.exp"
 		environ = {}
-		environ['JAVA'] = settings.JVM
+		environ['JAVA'] = settings.JVM_SECURE
 		environ['POLICY'] = join(join(dirname(dirname(__file__)),"scripts"),"praktomat.policy")
 		environ['USER'] = env.user().get_full_name().encode(sys.getdefaultencoding(), 'ignore')
 		environ['HOME'] = testsuite
 
-		[output, error, exitcode] = execute(cmd, testsuite, environment_variables=environ)
+		[output, error, exitcode] = execute(cmd, testsuite, environment_variables=environ, use_default_user_configuration=False)
 
 		try:
 			summary = encoding.get_unicode(open(os.path.join(testsuite, program_name + ".sum")).read())
@@ -155,7 +155,8 @@ class DejaGnuSetup(Checker, DejaGnu):
 		self.setup_dirs(env)
 		create_file(os.path.join(self.lib_dir(env), env.program() + ".exp"), u"")
 		defs = string.replace(encoding.get_unicode(self.test_defs.read()), "PROGRAM", env.program())
-		defs = string.replace(defs, "JAVA", join(join(dirname(dirname(__file__)),"scripts"),"java"))
+#		defs = string.replace(defs, "JAVA", join(join(dirname(dirname(__file__)),"scripts"),"java"))
+		defs = string.replace(defs, "JAVA", settings.JVM_SECURE)
 		create_file(os.path.join(self.config_dir(env), "default.exp"), defs)
 
 		return self.result()

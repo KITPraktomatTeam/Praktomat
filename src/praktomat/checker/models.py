@@ -22,7 +22,11 @@ def execute(command, working_directory, environment_variables={}, use_default_us
 	command = script + ' ' + command
 	environment = environ
 	environment.update(environment_variables)
-	if (settings.USEPRAKTOMATTESTER and use_default_user_configuration): environment['USEPRAKTOMATTESTER'] = 'TRUE'
+	if (settings.USEPRAKTOMATTESTER and use_default_user_configuration):
+		environment['USEPRAKTOMATTESTER'] = 'TRUE'
+	else:
+		environment['USEPRAKTOMATTESTER'] = 'False'
+
 	process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=working_directory, env=environment, shell=True)
 	[output, error] = process.communicate()
 	return [output, error, process.returncode]

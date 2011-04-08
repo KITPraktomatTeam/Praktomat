@@ -14,7 +14,7 @@ class JavaBuilder(Builder):
 	"""	 A Java bytecode compiler for construction. """
 
 	# Initialization sets own attributes to default values.
-	_compiler	= settings.JAVA_BINARY
+	_compiler	= settings.JAVA_BINARY_SECURE
 	_language	= "Java"
 
 	def main_module(self, env):
@@ -22,7 +22,7 @@ class JavaBuilder(Builder):
 		file_name_filter = re.compile(self.rxarg())
 		# public static void main(String[] args) or public static void main(String... args)
 		# allow variable spacing, ignore case and allow for other parameter names than args
-		main_method_regex = re.compile(r"public\s+static\s+void\s+main\s*\(\s*String\s*(\[\]|\.\.\.)\s*\S*\s*\)", re.IGNORECASE)
+		main_method_regex = re.compile(r"public\s+static\s+void\s+main\s*\(\s*(final\s*)?String\s*(\[\]|\.\.\.)\s*\S*\s*\)", re.IGNORECASE)
 		for (name,content) in  env.sources():
 			if file_name_filter.match(name) and main_method_regex.search(content):
 				# convert file to class name
