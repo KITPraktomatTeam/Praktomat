@@ -37,9 +37,6 @@ MEDIA_URL = BASE_URL + '/media/'
 # Examples: "http://foo.com/media/", "/media/".
 ADMIN_MEDIA_PREFIX = BASE_URL + '/media/admin/'
 
-LOGIN_URL = BASE_URL + 'accounts/login/'
-LOGIN_REDIRECT_URL = BASE_URL + '/tasks/'
-
 # Absolute path to the directory that shall hold all uploaded files as well as files created at runtime.
 # Example: "/home/media/media.lawrence.com/"
 UPLOAD_ROOT = "/praktomatng/installations/" + PRAKTOMAT_ID + "/PraktomatSupport/"
