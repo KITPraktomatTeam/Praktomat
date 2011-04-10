@@ -43,9 +43,9 @@ UPLOAD_ROOT = "/praktomatng/installations/" + PRAKTOMAT_ID + "/PraktomatSupport/
 
 
 ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
-    ('Praktomat', 'praktomat@ipd.info.uni-karlsruhe.de')
-)
+		  # ('Your Name', 'your_email@domain.com'),
+		  ('Praktomat', 'praktomat@ipd.info.uni-karlsruhe.de')
+		  )
 
 
 DATABASE_ENGINE = 'postgresql_psycopg2'   # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -62,6 +62,10 @@ EMAIL_PORT = 25
 EMAIL_HOST_USER = "praktomat"
 EMAIL_HOST_PASSWORD = ""
 EMAIL_USE_TLS = False
+
+# Private key used to sign uploded solution files in submission confirmation email
+PRIVATE_KEY = '/Users/danielkleinert/Documents/Arbeit/Praktomat/examples/certificates/privkey.pem'
+
 
 MANAGERS = ADMINS
 

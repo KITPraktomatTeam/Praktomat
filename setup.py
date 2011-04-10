@@ -32,6 +32,7 @@ setup(
                         'South', # intelligent schema and data migrations
                         'django-tinymce', # widget to render a form field as a TinyMCE editor 
                         'chardet', # autodetect file encodings
+						'M2Crypto', # Signing uploaded files
                         ],
 
     classifiers = [

@@ -4,14 +4,15 @@ import zipfile
 import tempfile
 import mimetypes
 import shutil
-import hashlib
+import os, re
+
+from M2Crypto import RSA, EVP
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.files import File
 from django.db.models import Max
-
-import os, re
+from django.conf import settings
 
 from praktomat.accounts.models import User
 from praktomat.utilities import encoding, file_operations
@@ -78,6 +79,21 @@ class Solution(models.Model):
 
 
 
+def sign(file):
+	if not settings.PRIVATE_KEY:
+		return None
+	evp = EVP.load_key(settings.PRIVATE_KEY)
+	evp.sign_init()
+	file.seek(0) 
+	evp.sign_update(file.read())
+	# signature to log for email, so shorten it
+	s = EVP.MessageDigest('md5')
+	s.update(evp.sign_final())
+	return s.digest().encode('hex')
+
+def verify(file, signature):
+	return sign(file) == signature
+
 
 class SolutionFile(models.Model):
 	"""docstring for SolutionFile"""
@@ -119,7 +135,12 @@ class SolutionFile(models.Model):
 		return self.file.name.rpartition('/')[2]
 	
 	def get_hash(self):
-		return hashlib.md5(self.file.read()).hexdigest()
+		s = EVP.MessageDigest('md5')
+		s.update(self.file.read())
+		return s.digest().encode('hex')
+	
+	def get_signature(self):
+		return sign(self.file)			
 	
 	def isBinary(self):
 		return self.mime_type[:4] != "text"
@@ -145,3 +166,5 @@ class SolutionFile(models.Model):
 			shutil.copy(self.file.file.name, new_file_path)
 		else:
 			file_operations.create_file(new_file_path, self.content())
+
+

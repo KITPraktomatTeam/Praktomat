@@ -6,7 +6,7 @@ You can view your solution here: {{protocol}}://{{ domain }}{% url solution_deta
 
 Your upload included these files:
 {% for file in solution.solutionfile_set.all %}
-	{{file}} [MD5:{{file.get_hash}}]
+	{% with file.get_signature as signature %}{{file}} [MD5:{{file.get_hash}}] {% if signature %}[SIGNATURE:{{signature}}]{% endif %} {% endwith%}
 {% endfor %}
 
 Please keep this email and the files you have uploded to verify that you've completed the task in case of data loss on the server.
