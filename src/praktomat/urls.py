@@ -13,6 +13,7 @@ urlpatterns = patterns('',
 	
 	# Admin
 	url(r'^admin/tasks/task/(?P<task_id>\d+)/model_solution', 'praktomat.tasks.views.model_solution', name="model_solution"),
+	url(r'^admin/tasks/task/(?P<task_id>\d+)/final_solutions', 'praktomat.tasks.views.download_final_solutions', name="download_final_solutions"),
 	(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
 	url(r'^admin/$', admin.site.root, name="admin"), # allows for url admin

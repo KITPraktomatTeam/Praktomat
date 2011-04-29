@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import tempfile
+import zipfile
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render_to_response, get_object_or_404
-from django.http import HttpResponseRedirect 
+from django.http import HttpResponseRedirect, HttpResponse
 from django.views.generic.list_detail import object_detail
 from django.template.context import RequestContext
 from datetime import datetime
@@ -52,6 +55,21 @@ def import_tasks(request):
 	else:
 		form = ImportForm()
 	return render_to_response('admin/tasks/task/import.html', {'form': form, 'title':"Import Task"  }, RequestContext(request))
+
+@staff_member_required
+def download_final_solutions(request, task_id):
+	""" download all final solutions of a task from the admin interface """
+	zip_file = tempfile.SpooledTemporaryFile()
+	zip = zipfile.ZipFile(zip_file,'w')
+	for solution_file in SolutionFile.objects.filter(solution__task=task_id):
+		if solution_file.solution.final():
+			zip.write(solution_file.file.path, solution_file.file.name)
+	zip.close()
+	zip_file.seek(0)
+	response = HttpResponse(zip_file.read(), mimetype="application/zip")
+	response['Content-Disposition'] = 'attachment; filename=FinalSolutions.zip'
+	return response
+	
 
 @staff_member_required
 def model_solution(request, task_id):
