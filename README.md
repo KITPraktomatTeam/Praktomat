@@ -3,7 +3,7 @@ This is the source distribution of Praktomat, a programming course manager.
 Installation 
 ============
 
-1. Download praktomat setup from github. (http://github.com/danielkleinert/Praktomat)  
+1. Clone praktomat from github including submodules: "git clone --recursive git://github.com/danielkleinert/Praktomat.git"
 
 2. Run "python bootstrap.py" from the praktomat root directory. (Python < 2.7 is not supported!)
 
