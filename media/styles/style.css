@@ -652,7 +652,7 @@ color: #fff;
 }
 
 div.file div.content {
-	overflow: hidden;
+	overflow-x: auto;
 }
 
 /* root element for tabs  */
