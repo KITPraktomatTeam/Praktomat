@@ -37,7 +37,7 @@ class SolutionFileForm(ModelForm):
 						supported = type and supported_types_re.match(type)
 						if not ignorred and not supported:
 							raise forms.ValidationError(_("The file '%(file)s' of guessed mime type '%(type)s' in this zip file is not supported." %{'file':fileinfo.filename, 'type':type}))
-						# check hole zip instead of contained files
+						# check whole zip instead of contained files
 						#if fileinfo.file_size > max_file_size:
 						#	raise forms.ValidationError(_("The file '%(file)s' is bigger than %(size)iKB which is not suported." %{'file':fileinfo.filename, 'size':max_file_size_kb}))
 				except forms.ValidationError:

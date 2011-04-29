@@ -16,7 +16,7 @@ class User(BasicUser):
 	# all fields need to be null-able in order to create user 
 	tutorial = models.ForeignKey('Tutorial', null=True, blank=True, help_text = _("The tutorial the student belongs to."))
 	mat_number = models.IntegerField( null=True, blank=True, unique=True, validators=[RegexValidator("^"+settings.MAT_NUMBER_VALIDATION_REGEX+"$", message="This is not a valid student number.", code="")]) # special blank and unique validation in forms
-	final_grade = models.CharField( null=True, blank=True, max_length=100,  help_text = _('The final grade for the hole class.'))
+	final_grade = models.CharField( null=True, blank=True, max_length=100,  help_text = _('The final grade for the whole class.'))
 	
 	activation_key=models.CharField(_('activation key'), max_length=40, editable=False)
 	
