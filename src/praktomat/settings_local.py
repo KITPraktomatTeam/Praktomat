@@ -22,7 +22,7 @@ LANGUAGE_CODE = 'en-us'
 # The name that will be displayed on top of the page and in emails.
 SITE_NAME = 'Praktomat'
 
-PRAKTOMAT_ID = 'testng'
+PRAKTOMAT_ID = 'praktomat_2011_SS'
 
 # The URL where this site is reachable. 'http://localhost:8000/' in case of the developmentserver.
 BASE_URL = 'https://praktomat.info.uni-karlsruhe.de/' + PRAKTOMAT_ID + '/'
@@ -30,12 +30,15 @@ BASE_URL = 'https://praktomat.info.uni-karlsruhe.de/' + PRAKTOMAT_ID + '/'
 # URL that serves the static media files (CSS, JavaScript and images) of praktomat contained in 'media/'.
 # Make sure to use a trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = BASE_URL + '/media/'
+MEDIA_URL = BASE_URL + 'media/'
 
 # URL prefix for the administration site media (CSS, JavaScript and images) contained in the django package. 
 # Make sure to use a trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = BASE_URL + '/media/admin/'
+ADMIN_MEDIA_PREFIX = BASE_URL + 'media/admin/'
+
+LOGIN_URL = BASE_URL + 'accounts/login/'
+LOGIN_REDIRECT_URL = BASE_URL + 'tasks/'
 
 # Absolute path to the directory that shall hold all uploaded files as well as files created at runtime.
 # Example: "/home/media/media.lawrence.com/"
@@ -49,7 +52,7 @@ ADMINS = (
 
 
 DATABASE_ENGINE = 'postgresql_psycopg2'   # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = 'prog_test_praktomatng'  # Or path to database file if using sqlite3.
+DATABASE_NAME = 'prog_ss11_aufgaben'  # Or path to database file if using sqlite3.
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
