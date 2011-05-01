@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 {% load i18n %}{% load markup  %}
 {% block extrahead %}{{ block.super }}
+	<script type="text/javascript" src="{{MEDIA_URL}}frameworks/jquery/jquery.Storage.js"></script>
 	<script type="text/javascript" src="{{MEDIA_URL}}script/solution_inlines.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}frameworks/ace/demo/require.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}script/boot_ace.js"></script>
 	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}styles/pygments_friendly.css" />
-	<link id="bespin_base" href="{{MEDIA_URL}}frameworks/bespin">
-	<script type="text/javascript" src="{{MEDIA_URL}}frameworks/bespin/BespinEmbedded.js"></script>
 	
 	<script type="text/javascript">		
 		var bespin_env
@@ -15,47 +16,29 @@
 			$(".heading").addClass("hidden");
 			$("#tabs").tabs({ // instanciate tabs
 				show: function(event, ui) { 	// call dimensionsChanged of bespin when the tab is opend
-	    			if (ui.panel.id == "annotated_solution_files") { bespin_env.dimensionsChanged();}
+	    			if (ui.panel.id == "annotated_solution_files") { window.env.editor.resize(); }
 				}
 			})
+			$( "#ace_settings" ).dialog({ autoOpen: false, resizable: false, title: "ACE Editor Settings" });
+			$( "#ace_settings_button" ).click( function(){
+											  $( "#ace_settings" ).dialog("open");
+			});
 		});
 		
-		/*
-window.onBespinLoad = function() {
-			bespin.useBespin("editor",{
-		    	syntax: "js",
-			}).then(function(env) {
-		    	env.settings.set("fontsize", 12);
-				bespin_env = env;
-				loadFileInEditor(1);		
-			});
-		}
-*/
-		
-		
-		
-		window.onBespinLoad = function() {
-            bespin_env = $('#editor').get(0).bespin;
-			loadFileInEditor(1);
+		function fullscreen() {
+			$("#file_form_set_replacement").toggleClass("fullscreen");
+			$("body").toggleClass("fullscreen");
+			env.editor.resize();
 		}
 		
-		var currentTextarea;
-		function loadFileInEditor(index) {
-			var newTextarea = $("#id_attestfiles-"+(index-1)+"-content");
-			if (currentTextarea) {
-				currentTextarea.val(bespin_env.editor.value); }
-			bespin_env.editor.value = newTextarea.val();
-			currentTextarea = newTextarea;
-			$("#annotated_solution_files a").removeClass("activeFile");
-			$("#file"+index).addClass("activeFile");
-		}
+		
 	</script>
 {% endblock %}
 {% block breadcrumbs %} {{block.super}} > <a href={% url task_detail task_id=solution.task.id%}>{{solution.task.title}}</a> > <a href={% url attestation_list solution.task_id %}>My attestations</a> > Attestation {% endblock %}
 {% block content %}<div id='attestation_edit'>
 
 <h1>{{solution.task.title}}</h1>
-
+	
 <form enctype="multipart/form-data" method="post" action="">{% csrf_token %}	
 	
 	<div id="tabs">
@@ -103,10 +86,17 @@ window.onBespinLoad = function() {
 				{% endwith %}
 			</div>
 			<div id="file_form_set_replacement" class="hidden">
-				{% for file in solution.solutionfile_set.all %}
-					<a id="file{{forloop.counter}}" class="file" onclick="loadFileInEditor({{forloop.counter}})" herf="#">{{file}}</a>
-		        {% endfor %}
-				<div id="editor" class="bespin" data-bespinoptions='{ "syntax": "js", "settings" : { "fontsize": 10, "fontface":"Monaco, Lucida Console, monospace" }}'></div>
+				<div id="editor_controls">
+					<select id="doc" size="1">
+						{% for file in solution.solutionfile_set.all %}
+							<option value="{{forloop.counter0}}">{{file}}</option>
+						{% endfor %}
+					</select>
+				
+					<a id="ace_settings_button"><span class="icon ui-icon-wrench"></span></a>
+					<a id="ace_fullscreen" onclick="fullscreen()"><span class="icon ui-icon-arrow-4-diag"></span></a>
+				</div>
+				<div id="editor"></div>
 			</div>
 		</div>
 	
@@ -120,11 +110,132 @@ window.onBespinLoad = function() {
 				{% with ratingResultFormSet as formset %}	
 					{% include "forms/formset_as_div.html" %}
 				{% endwith %}
-				<input type="submit" value="Save/Preview"  onclick="loadFileInEditor(1);"/>
+				<input type="submit" value="Save/Preview"/>
 				<input type="button" value="Discard/Back" onClick="parent.location='{% url attestation_list solution.task_id %}'">
 
 		</div>
 	</div>
 	
 </form>	
-</div>{% endblock %}
+</div>
+
+<div id="ace_settings">
+	<div class="form-row">
+		<label for="theme">Theme:</label>
+		<select id="theme" size="1">
+			<option value="ace/theme/textmate">TextMate</option>
+			<option value="ace/theme/eclipse">Eclipse</option>
+			<option value="ace/theme/dawn">Dawn</option>
+			<option value="ace/theme/idle_fingers">idleFingers</option>
+			<option value="ace/theme/pastel_on_dark">Pastel on dark</option>
+			<option value="ace/theme/twilight">Twilight</option>
+			<option value="ace/theme/clouds">Clouds</option>
+			<option value="ace/theme/clouds_midnight">Clouds Midnight</option>
+			<option value="ace/theme/kr_theme">krTheme</option>
+			<option value="ace/theme/mono_industrial">Mono Industrial</option>
+			<option value="ace/theme/monokai">Monokai</option>
+			<option value="ace/theme/merbivore">Merbivore</option>
+			<option value="ace/theme/merbivore_soft">Merbivore Soft</option>
+			<option value="ace/theme/vibrant_ink">Vibrant Ink</option>
+			<option value="ace/theme/solarized_dark" selected="selected">Solarized Dark</option>
+			<option value="ace/theme/solarized_light">Solarized Light</option>
+		</select>
+	</div>
+	
+	<div class="form-row">
+		<label for="fontsize">Font Size:</label>
+		<select id="fontsize" size="1">
+			<option value="10px">10px</option>
+			<option value="11px">11px</option>
+			<option value="12px" selected="selected">12px</option>
+			<option value="14px">14px</option>
+			<option value="16px">16px</option>
+			<option value="20px">20px</option>
+			<option value="24px">24px</option>
+		</select>
+	</div>
+	
+	<div class="form-row">
+		<label for="select_style">Full Line Selection</label>
+		<input type="checkbox" name="select_style" id="select_style" checked>
+			</div>
+	
+	<div class="form-row">
+		<label for="highlight_active">Highlight Active Line</label>
+		<input type="checkbox" name="highlight_active" id="highlight_active" checked>
+			</div>
+	
+	<div class="form-row">
+		<label for="show_hidden">Show Invisibles</label>
+		<input type="checkbox" name="show_hidden" id="show_hidden">
+			</div>
+	
+	<div class="form-row">
+		<label for="show_hscroll">Persistent HScroll</label>
+		<input type="checkbox" name="show_hscroll" id="show_hscroll">
+			</div>
+	
+	<div class="form-row">
+		<label for="mode">Mode:</label>
+		<select id="mode" size="1">
+			<option value="text">Plain Text</option>
+			<option value="javascript">JavaScript</option>
+			<option value="xml">XML</option>
+			<option value="html">HTML</option>
+			<option value="css">CSS</option>
+			<option value="python">Python</option>
+			<option value="php">PHP</option>
+			<option value="java">Java</option>
+			<option value="ruby">Ruby</option>
+			<option value="c_cpp">C/C++</option>
+			<option value="coffee">CoffeeScript</option>
+			<option value="perl">Perl</option>
+			<option value="ocaml">OCaml</option>
+			<option value="csharp">C-Sharp</option>
+			<option value="svg">SVG</option>
+			<option value="textile">Textile</option>
+		</select>
+	</div>
+	
+	<div class="form-row">
+		<label for="keybinding">Key Binding:</label>
+		<select id="keybinding" size="1">
+			<option value="ace">Ace</option>
+			<option value="vim">Vim</option>
+			<option value="emacs">Emacs</option>
+		</select>
+	</div>
+	
+	<div class="form-row">
+		<label for="soft_wrap">Soft Wrap:</label>
+		<select id="soft_wrap" size="1">
+			<option value="off">Off</option>
+			<option value="40">40 Chars</option>
+			<option value="80">80 Chars</option>
+			<option value="free">Free</option>
+		</select>
+	</div>
+	
+	<div class="form-row">
+		<label for="show_gutter">Show Gutter</label>
+		<input type="checkbox" id="show_gutter" checked>
+			</div>
+	
+	<div class="form-row">
+		<label for="show_print_margin">Show Print Margin</label>
+		<input type="checkbox" id="show_print_margin" checked>
+	</div>
+	
+	<div class="form-row">
+		<label for="soft_tab">Use Soft Tab:</label>
+		<input type="checkbox" id="soft_tab" checked>
+	</div>
+	
+	<div class="form-row">		
+		<label for="highlight_selected_word">Highlight selected word</label>
+		<input type="checkbox" id="highlight_selected_word" checked>
+	</div>
+</div>
+
+
+{% endblock %}

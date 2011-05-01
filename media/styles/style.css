@@ -535,10 +535,6 @@ color: #fff;
 	cursor: pointer;
 }
 
-#attestation_edit #annotated_solution_files a {
-	margin: 10px;
-}
-
 #attestation_edit .ui-tabs .ui-tabs-hide, .hidden {
 
 
@@ -559,15 +555,63 @@ color: #fff;
 	height: 16px;
 }
 
-#attestation_edit .bespin {
+#attestation_edit #editor {
 	margin: 0;
 	margin-top: 10px;
 	padding: 0;
 	border: 0;
 	height: 500px;
-	border: 10px solid #ddd;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
+	width: 100%;
+	position: relative;
+}
+
+#cockpitInput {
+    kposition: absolute;
+    width: 100%;
+    kbottom: 0;
+
+    border: none; outline: none;
+    font-family: consolas, courier, monospace;
+    font-size: 120%;
+}
+
+#cockpitOutput {
+    padding: 10px;
+    margin: 0 15px;
+    border: 1px solid #AAA;
+    -moz-border-radius-topleft: 10px;
+    -moz-border-radius-topright: 10px;
+    border-top-left-radius: 4px; border-top-right-radius: 4px;
+    background: #DDD; color: #000;
+}
+
+body.fullscreen{
+	overflow: hidden;
+}
+
+
+#attestation_edit .fullscreen{
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	top: 0;
+	right: 0;
+}
+
+#attestation_edit .fullscreen #editor_controls{
+	position: fixed;
+	z-index: 99;
+	background-color: rgba(232,232,232,0.5);
+	right: 20px;
+	top: 5px;
+	border-radius: 5px;
+	
+}
+
+#attestation_edit .fullscreen #editor{
+	margin: 0;
+	height: 100%;
+	background-color: #ffffff;
 }
 
 /* @end */
