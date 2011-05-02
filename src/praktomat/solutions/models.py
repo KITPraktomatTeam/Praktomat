@@ -135,6 +135,7 @@ class SolutionFile(models.Model):
 		return self.file.name.rpartition('/')[2]
 	
 	def get_hash(self):
+		self.file.seek(0)
 		s = EVP.MessageDigest('md5')
 		s.update(self.file.read())
 		return s.digest().encode('hex')
