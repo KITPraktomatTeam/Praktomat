@@ -37,15 +37,16 @@ def solution_list(request, task_id):
 			formset.save()
 			solution.check()
 			
-			# Send submission confirmation email
-			t = loader.get_template('solutions/submission_confirmation_email.html')
-			c = {
-				'protocol': request.is_secure() and "https" or "http",
-				'domain': RequestSite(request).domain, 
-				'site_name': settings.SITE_NAME,
-				'solution': solution,
-			}
-			send_mail(_("%s submission conformation") % settings.SITE_NAME, t.render(Context(c)), None, [solution.author.email])
+			if solution.accepted:  
+				# Send submission confirmation email
+				t = loader.get_template('solutions/submission_confirmation_email.html')
+				c = {
+					'protocol': request.is_secure() and "https" or "http",
+					'domain': RequestSite(request).domain, 
+					'site_name': settings.SITE_NAME,
+					'solution': solution,
+				}
+				send_mail(_("%s submission conformation") % settings.SITE_NAME, t.render(Context(c)), None, [solution.author.email])
 			
 			return HttpResponseRedirect(reverse('solution_detail', args=[solution.id]))
 	else:
