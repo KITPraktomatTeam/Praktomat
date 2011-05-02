@@ -6,6 +6,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from praktomat.checker.models import Checker, CheckerResult, CheckerFileField
 from praktomat.utilities.file_operations import *
+from praktomat.utilities.encoding import *
 
 class CreateFileChecker(Checker):
 	
@@ -34,6 +35,8 @@ class CreateFileChecker(Checker):
 		else:
 			result.set_log("The file '%s' was overridden" % os.path.join(self.path, os.path.basename(self.file.path)))
 			result.set_passed(False)
+		source_path = os.path.join(string.lstrip(self.path,"/ "), os.path.basename(self.file.path))
+		env.add_source(source_path, get_unicode(self.file.read()))
 		return result
 	
 from praktomat.checker.admin import	CheckerInline, AlwaysChangedModelForm

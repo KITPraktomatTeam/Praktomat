@@ -130,6 +130,11 @@ class CheckerEnvironment:
 		""" Returns the list of source files. [(name, content)...] """
 		return self._sources
 
+	def add_source(self, path, content):
+		""" Add source to the list of source files. [(name, content)...] """
+		self._sources.append((path,content))
+
+	
 	def user(self):
 		""" Returns the submitter of this program (class User). """
 		return self._user
