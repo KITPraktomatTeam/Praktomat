@@ -31,7 +31,7 @@ def colorize_table(value,arg=None):
         return value
 
 
-rx_diff = re.compile('^<span class=".*?">(\+|-|\?).*$')   
+rx_diff = re.compile('^(<span class=".*?">)?(\+|-|\?).*$')   
 @register.filter
 def highlight_diff(value):
 	"enclose highlighted lines beginning with an +-? in a span"
