@@ -67,7 +67,7 @@ EMAIL_HOST_PASSWORD = ""
 EMAIL_USE_TLS = False
 
 # Private key used to sign uploded solution files in submission confirmation email
-PRIVATE_KEY = '/Users/danielkleinert/Documents/Arbeit/Praktomat/examples/certificates/privkey.pem'
+PRIVATE_KEY = '/praktomatng/certificates/mailsign/signer_key.pem'
 
 
 MANAGERS = ADMINS
