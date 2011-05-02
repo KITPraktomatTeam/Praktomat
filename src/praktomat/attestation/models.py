@@ -57,10 +57,10 @@ class AnnotatedSolutionFile(models.Model):
 	
 	def content_diff(self):
 		d = difflib.Differ()
-		original = self.solution_file.content().replace("\r\n","\n").replace("\r","\n").splitlines(1)
-		anotated = self.content.replace("\r\n","\n").replace("\r","\n").splitlines(1)
+		original = self.solution_file.content().replace("\r\n","\n").replace("\r","\n").splitlines(0)
+		anotated = self.content.replace("\r\n","\n").replace("\r","\n").splitlines(0)
 		result = list(d.compare(original, anotated))
-		return "".join(result)
+		return "\n".join(result)
 	
 	def __unicode__(self):
 		return self.solution_file.__unicode__()
