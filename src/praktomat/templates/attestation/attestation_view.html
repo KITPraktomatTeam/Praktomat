@@ -36,7 +36,7 @@
 	</div>
 {% endif %}
 
-{% if attest.ratingresult_set.all %}
+{% if attest.final_grade or attest.ratingresult_set.all %}
 	<div class="section">
 		<h2>Ratings</h2>
 		{% for ratingresult in attest.ratingresult_set.all%}
