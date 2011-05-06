@@ -105,7 +105,7 @@ def attestation_list(request, task_id):
 	if request.method == "POST" and publishable:
 		for solution in solutions:
 			for attestation in solution.attestations_by(requestuser):
-				attestation.publish()
+				attestation.publish(request)
 				published = True
 	data = {'task':task, 'requestuser':requestuser,'solution_list': solution_list, 'published': published, 'publishable': publishable, 'show_author': not settings.ANONYMOUS_ATTESTATION}
 	return render_to_response("attestation/attestation_list.html", data, context_instance=RequestContext(request))

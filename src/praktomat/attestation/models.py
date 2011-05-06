@@ -5,6 +5,7 @@ from praktomat.solutions.models import Solution, SolutionFile
 from django.utils.translation import ugettext_lazy as _
 from django.core.mail import EmailMessage
 from django.template import Context, loader
+from django.contrib.sites.models import RequestSite
 import difflib
 
 from praktomat.accounts.models import User
@@ -23,7 +24,7 @@ class Attestation(models.Model):
 	final = models.BooleanField(default = False, help_text = _('Indicates whether the attestation is ready to be published'))
 	published = models.BooleanField(default = False, help_text = _('Indicates whether the user can see the attestation.'))
 	
-	def publish(self):
+	def publish(self, request):
 		""" Set attestation to published and send email to user """
 		self.published = True
 		self.save()
@@ -33,8 +34,9 @@ class Attestation(models.Model):
 			t = loader.get_template('attestation/attestation_email.html')
 			c = {
 				'attest': self,
-				'domain': settings.SITE_NAME,
-				'site_name': settings.BASE_URL,
+				'protocol': request.is_secure() and "https" or "http",
+				'domain': RequestSite(request).domain,
+				'site_name': settings.SITE_NAME,
 				}
 			subject = _("New attestation for your solution of the task '%s'") % self.solution.task
 			body = t.render(Context(c))
