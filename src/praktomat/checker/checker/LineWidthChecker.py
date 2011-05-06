@@ -5,6 +5,7 @@ Line width checker
 """
 
 import string
+import re
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -14,10 +15,12 @@ class LineWidthChecker(Checker):
 
 	max_line_length = models.IntegerField(default = 80, help_text=_("The maximum lenght of a line of code."))
 	tab_width =  models.IntegerField(default = 4, help_text=_("The amount of characters a tab represents."))
-
+	include = models.CharField(max_length=100, blank = True, default=".*", help_text=_("Regular expression describing the filenames to be checked. Case Insensetive. Blank: use all files."))
+	exclude = models.CharField(max_length=100, blank = True, default=".*\.txt$", help_text=_("Regular expression describing included filenames, which shall be excluded. Case Insensetive. Blank: use all files."))
+	
 	def title(self):
 		""" Returns the title for this checker category. """
-		return "Maximale Zeilenbreite"
+		return "Maximale Zeilenbreite (%d Zeichen)" % self.max_line_length
 
 	@staticmethod
 	def description():
@@ -39,8 +42,14 @@ class LineWidthChecker(Checker):
 		log = ""
 		passed = 1
 
-		# Here's how to access the sources.
-		for (name, content) in env.sources():
+		include_re = re.compile(self.include, re.IGNORECASE)
+		exclude_re = re.compile(self.exclude, re.IGNORECASE)
+		
+		sources = env.sources()
+		if self.include: sources = filter(lambda (name, content): include_re.search(name), sources)
+		if self.exclude: sources = filter(lambda (name, content): not exclude_re.search(name), sources)
+		
+		for (name, content) in sources:
 			if not name or not content:
 				continue
 
