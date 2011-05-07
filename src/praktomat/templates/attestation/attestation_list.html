@@ -7,7 +7,11 @@
  	$("#help_icon").tooltip({
 		position:  "center left"
 	});
+	$("#edit_soluton_button").click(function(){
+		location.href = $("#user_selector")[0].value;
+	});
  })
+
 </script>
 {% endblock %}
 {% block breadcrumbs %} {{block.super}} > <a href={% url task_detail task_id=task.id%}>{{task.title}}</a> > Attestations{% endblock %}
@@ -29,20 +33,27 @@
 	{% if not task.all_checker_finished %}
 		<p>{% trans "Not all checker have yet been run." %}</p>
 	{% else %}
-		<h2>{% trans "Attested solutions" %}</h2>
+		<h2>{% trans "Edit solutions" %}</h2>
+		<select id="user_selector">
+				{% for user in tutored_users %}
+					<option value="{% url solution_list task_id=task.id user_id=user.id %}">{{user}}</option>
+				{% endfor %}
+			</select>
+			<input id="edit_soluton_button" type="button" value="Go"/>
+		<h2>{% trans "Attest solutions" %}</h2>
 		<div id="Solutions">
 			{% for solution, allow_new_attest in solution_list%}
-				{% if show_author or requestuser|in_group:'Trainer' or published %}
+				{% if show_author or user|in_group:'Trainer' or published %}
 					<h3>Solution by {{solution.author.get_full_name}}</h3>
 				{% else %}
 					<h3>Solution {{forloop.counter}}</h3>
-				{% endif %}
+				{% endif %} 
 				{% if solution.plagiarism %}
 					<span class='plagiarism error'><span class="icon ui-icon-alert icon-red"></span>{% trans "Marked as Plagiarism" %}</span>
 				{% else %}
 					{% for attestation in solution.attestation_set.all %}
 						<div class='attestation'>
-							{% if attestation.author = requestuser %} 
+							{% if attestation.author = user %} 
 								{% if attestation.final %}
 									{% if attestation.published %}
 										<span class="icon ui-icon-circle-check icon-green" title="final published"></span>
@@ -78,7 +89,7 @@
 				<p>There are no solutions yet.</p>
 			{%endfor%}
 			
-			{% if not requestuser|in_group:'Trainer'%}
+			{% if not user|in_group:'Trainer'%}
 				<form enctype="multipart/form-data" method="post" action="">{% csrf_token %}	
 					<input type="submit" value="Publish all" {% if not publishable or published %} disabled {% endif %}/>
 					{% if published %}	

@@ -1,5 +1,5 @@
 {% extends "base.html"%}
-{% load i18n %}
+{% load i18n %}{% load in_group %}
 {% block extrahead %}{{ block.super }}
 <script type="text/javascript" src="{{MEDIA_URL}}/frameworks/jquery/jquery.tools.min.js"></script>
 <script type="text/javascript" src="{{MEDIA_URL}}frameworks/jquery.formset/jquery.formset.min.js"></script>
@@ -37,14 +37,14 @@ $(function(){
 
 </script>
 {% endblock %}
-{% block breadcrumbs %} {{block.super}} > <a href={% url task_detail task_id=task.id%}>{{task.title}}</a> > My solutions{% endblock %}
+{% block breadcrumbs %} {{block.super}} > <a href={% url task_detail task_id=task.id%}>{{task.title}}</a> > {% if user|in_group:"Tutor,Trainer"%} <a href={% url attestation_list task.id %}>My attestations</a> > {{author}}'s solutions{% else %}My solutions{% endif %}{% endblock %}
 
 {% block content %}<div id='soluion_upload'>
 
-<h1>{{task.title}}</h1>
+<h1>{{task.title}} {% if user|in_group:"Tutor,Trainer"%}(as seen by {{author}}){% endif %}</h1>
 
 <div class='left'>
-	{% if not task.expired %}
+	{% if not task.expired or user|in_group:"Tutor,Trainer"%}
 		<a>{%trans "Time left:" %} {{ task.submission_date|timeuntil }}</a>
 		<h2>{%trans "Upload solution" %}</h2>
 		<form enctype="multipart/form-data" method="post" action="" > {% csrf_token %}
