@@ -24,7 +24,7 @@ class SolutionFileForm(ModelForm):
 		supported_types_re = re.compile(task.supported_file_types)
 		if data:
 			contenttype = mimetypes.guess_type(data.name)[0] # don't rely on the browser: data.content_type could be wrong or empty
-			if not (supported_types_re.match(contenttype) or ziptype_re.match(contenttype)):
+			if (contenttype is None) or (not (supported_types_re.match(contenttype) or ziptype_re.match(contenttype))):
 				raise forms.ValidationError(_('The file of type %s is not supported.' %contenttype))
 			if ziptype_re.match(contenttype):
 				try:
