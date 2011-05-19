@@ -79,35 +79,36 @@ def attestation_list(request, task_id):
 		return access_denied(request)
 	
 	task = Task.objects.get(pk=task_id)
-	requestuser = request.user
 	
+	tutored_users = User.objects.filter(groups__name="User") if in_group(request.user,'Trainer') else User.objects.filter(tutorial__tutors=request.user)
+			
 	solutions = Solution.objects.filter(task__id=task_id).all()
-	if in_group(requestuser,'Tutor'): # only the trainer / admin can see it all
+	if in_group(request.user,'Tutor'): # only the trainer / admin can see it all
 		solutions = solutions.filter(author__tutorial__tutors__pk=request.user.id)
 	# simulate max id group by author to get the newest solution of each author
 	solution_ids = map(lambda x:x['id__max'], solutions.values('author').annotate(Max('id')))
 	solutions = Solution.objects.filter(id__in=solution_ids)
 	# don't allow a new attestation if one already exists
-	solution_list = map(lambda solution:(solution,not in_group(requestuser,'Trainer') and not solution.attestations_by(requestuser)), solutions)
+	solution_list = map(lambda solution:(solution,not in_group(request.user,'Trainer') and not solution.attestations_by(request.user)), solutions)
 	
 	# first published => all published
 	try:
-		published = solutions[0].attestations_by(requestuser)[0].published
+		published = solutions[0].attestations_by(request.user)[0].published
 	except IndexError:
 		published = False
 	
 	all_solutions_attested = not reduce(lambda x,y: x or y, [new_attest_possible for (solution, new_attest_possible) in solution_list], False)
 	all_attestations_final = reduce(lambda x,y: x and y, 
 								map(lambda attestation: attestation.final , 
-									sum([list(solution.attestations_by(requestuser)) for solution in solutions],[])), True)
+									sum([list(solution.attestations_by(request.user)) for solution in solutions],[])), True)
 	publishable = all_solutions_attested and all_attestations_final and task.expired()
 	
 	if request.method == "POST" and publishable:
 		for solution in solutions:
-			for attestation in solution.attestations_by(requestuser):
-				attestation.publish()
+			for attestation in solution.attestations_by(request.user):
+				attestation.publish(request)
 				published = True
-	data = {'task':task, 'requestuser':requestuser,'solution_list': solution_list, 'published': published, 'publishable': publishable, 'show_author': not settings.ANONYMOUS_ATTESTATION}
+	data = {'task':task, 'tutored_users':tutored_users, 'solution_list': solution_list, 'published': published, 'publishable': publishable, 'show_author': not settings.ANONYMOUS_ATTESTATION}
 	return render_to_response("attestation/attestation_list.html", data, context_instance=RequestContext(request))
 	
 @login_required
