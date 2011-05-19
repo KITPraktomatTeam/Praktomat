@@ -13,8 +13,9 @@ class UserAdmin(UserBaseAdmin):
 	model = User
 	
 	# add active status
-	list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'is_staff', 'is_superuser', 'is_trainer', 'is_tutor', 'email' )
+	list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'is_trainer', 'is_tutor', 'email', 'date_joined' )
 	list_filter = ('groups', 'tutorial', 'is_staff', 'is_superuser', 'is_active')
+	date_hierarchy = 'date_joined'
 	actions = ['distribute_to_tutorials']
 	readonly_fields = ('last_login','date_joined')
 	# exclude user_permissions
