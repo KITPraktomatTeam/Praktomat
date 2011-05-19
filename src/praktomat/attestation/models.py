@@ -88,6 +88,9 @@ class RatingScaleItem(models.Model):
 	name = models.CharField(max_length=100, help_text = _('The Name of the item(mark) in the rating scale. E.g.: "A" or "very good" '))
 	position = models.PositiveSmallIntegerField(help_text = _('Defines the order in which the items are sorted. Lowest is best.'))
 	
+	class Meta:
+		ordering = ['position']
+	
 	def __unicode__(self):
 		return self.name
 

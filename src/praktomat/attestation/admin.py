@@ -3,11 +3,20 @@ from praktomat.attestation.models import *
 	
 class RatingScaleItemInline(admin.TabularInline):
 	model = RatingScaleItem
-	extra = 5
+	extra = 0
+
 
 class RatingScaleAdmin(admin.ModelAdmin):
 	model = RatingScale
 	inlines = [RatingScaleItemInline]
+
+	class Media:
+		js = (
+			  'frameworks/jquery/jquery.js',
+			  'frameworks/jquery/jquery-ui.js',
+			  'frameworks/jquery/jquery.tinysort.js',
+			  'script/rating_scale_sort.js',
+		)
 	
 admin.site.register(RatingScale, RatingScaleAdmin)
 

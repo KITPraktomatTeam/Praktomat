@@ -21,7 +21,7 @@ $(document).ready(function(){
 	$(".checker-group").sortable({
         items: 'div.inline-related',
         handle: 'h3:first',
-				revert: true,
+		revert: true,
         update: function() { updateOrder(); }
     });
 });
