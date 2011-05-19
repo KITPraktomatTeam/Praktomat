@@ -96,6 +96,9 @@ class Rating(models.Model):
 	task = models.ForeignKey(Task)
 	aspect = models.ForeignKey(RatingAspect)
 	scale = models.ForeignKey(RatingScale)
+	
+	def __unicode__(self):
+		return "%s - %s - %s" % (self.task.title, self.aspect.name, self.scale.name)
 		
 class RatingResult(models.Model):
 	""" the rating of particular aspect of a specific solution """
