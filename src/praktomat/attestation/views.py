@@ -57,9 +57,10 @@ def statistics(request,task_id):
 	attestations.update( Attestation.objects.filter(solution__task__id=task.id, final=True, published=True).aggregate(published=Count('id')) )
 	attestations['all'] = final_solution_count
 
-	final_grade_rating_scale_items = "['" + "','".join([name for (name,position) in sorted(task.final_grade_rating_scale.ratingscaleitem_set.values_list('name','position'), key = lambda (name,position) : position)]) + "']"
+	all_items = sorted(task.final_grade_rating_scale.ratingscaleitem_set.values_list('name','position'), key = lambda (name,position) : position)
+	final_grade_rating_scale_items = "['" + "','".join([name for (name,position) in all_items]) + "']"
 	ratings = RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True).annotate(Count('id')).values_list('position','id__count')
-	ratings = map(lambda x:[x[0],x[1]], ratings) # [(1, 2), (2, 2), (3, 2), (4, 2)] => [[0, 2], [1, 2], [2, 2], [3, 2]]
+	ratings = map(lambda (position,number): [ [pos for (name,pos) in all_items].index(position),number] ,ratings)
 
 	return render_to_response("attestation/statistics.html", {'task':task, \
 															'user_count': user_count, 'solution_count': final_solution_count,\
