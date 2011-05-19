@@ -16,7 +16,7 @@ class UserAdmin(UserBaseAdmin):
 	list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'is_trainer', 'is_tutor', 'email', 'date_joined' )
 	list_filter = ('groups', 'tutorial', 'is_staff', 'is_superuser', 'is_active')
 	date_hierarchy = 'date_joined'
-	actions = ['distribute_to_tutorials']
+	actions = ['set_active', 'set_inactive', 'distribute_to_tutorials']
 	readonly_fields = ('last_login','date_joined')
 	# exclude user_permissions
 	fieldsets = (
@@ -37,6 +37,16 @@ class UserAdmin(UserBaseAdmin):
 	def is_tutor(self, user):
 		return in_group(user,"Tutor")
 	is_tutor.boolean = True
+	
+	def set_active(self, request, queryset):
+		""" Export Task action """
+		queryset.update(is_active=True)
+		self.message_user(request, "Users were successfully activated.")
+	
+	def set_inactive(self, request, queryset):
+		""" Export Task action """
+		queryset.update(is_active=False)
+		self.message_user(request, "Users were successfully inactivated.")
 
 	def distribute_to_tutorials(self, request, queryset):
 		""" Distribute selectet users evenly to all tutorials """
