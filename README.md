@@ -5,6 +5,11 @@ Installation
 
 1. Clone praktomat from github including submodules: "git clone --recursive git://github.com/danielkleinert/Praktomat.git"
 
+   If your git version does not support the "--recursive" option:
+     1.a) Clone praktomat "without" submodules: "git clone --recursive git://github.com/danielkleinert/Praktomat.git"
+     1.b) From the praktomat root directory,            run "git submodule init" and then "git submodule update"
+     1.c) From the subdirectory "media/frameworks/ace", run "git submodule init" and then "git submodule update"
+
 2. Run "python bootstrap.py" from the praktomat root directory. (Python < 2.7 is not supported!)
 
 3. Run "./bin/buildout" from praktomat root directory. You need to have MySQL and PostgresSQL installed - otherwise the packages 'MySQL-python' or 'psycopg2' won't install. You can safely outcomment the corresponding package in setup.py if you'll only use the other database.  (Postgres in OSX: make shure pg_config is found: PATH=$PATH:/Library/PostgreSQL/8.4/bin/)
