@@ -50,7 +50,7 @@ class MyRegistrationForm(UserBaseCreationForm):
 			raise forms.ValidationError("This field is required.")
 		if User.objects.filter(mat_number=data):
 			trainers = map(lambda user: "<a href='mailto:%s'>%s</a>" % (user.email, user.get_full_name()), Group.objects.get(name='Trainer').user_set.all())
-			trainers = reduce(lambda x,y: x + ', ' + y, trainers)
+			trainers = reduce(lambda x,y: x + ', ' + y, trainers,'')
 			raise forms.ValidationError(mark_safe("A user with this number is allready registered. Please Contact an Trainer: %s" % trainers ))
 		return data
 		
