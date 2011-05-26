@@ -106,7 +106,7 @@ class DejaGnuTester(Checker, DejaGnu):
 		
 		cmd = settings.DEJAGNU_RUNTEST + " --tool " + program_name + " tests.exp"
 		environ = {}
-		environ['JAVA'] = settings.JVM_SECURE
+		environ['JAVA'] = settings.JVM
 		environ['POLICY'] = join(join(dirname(dirname(__file__)),"scripts"),"praktomat.policy")
 		environ['USER'] = env.user().get_full_name().encode(sys.getdefaultencoding(), 'ignore')
 		environ['HOME'] = testsuite
