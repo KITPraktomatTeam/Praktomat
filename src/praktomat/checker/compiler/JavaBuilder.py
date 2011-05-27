@@ -16,6 +16,9 @@ class JavaBuilder(Builder):
 	# Initialization sets own attributes to default values.
 	_compiler	= settings.JAVA_BINARY_SECURE
 	_language	= "Java"
+	_env            = {}
+	_env['JAVAC'] = settings.JAVA_BINARY
+	_env['JCFDUMP'] = settings.JCFDUMP
 
 	def main_module(self, env):
 		""" find the first source code file containing a main method """

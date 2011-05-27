@@ -1,0 +1,64 @@
+#!/bin/bash
+# $Id: javac,v 1.1 2002/07/19 12:22:10 krinke Exp $
+
+# Sicherheitsaspekte:
+# 1. Die Uebersetzung findet mit einer deutlich reduzierten
+#    Klassen-Bibliothek statt (javac-sandbox.jar).
+# 2. Die Ausfuehrung findet mit einer deutlich reduzierten
+#    Klassen-Bibliothek statt (java-sandbox.jar).
+# 3. Die Ausfuehrung findet mit einer leeren policy statt.
+#
+# Da der Praktomat als suid praktomat läuft,...
+
+if [ ! -n "$JAVAC" ]
+then
+   JAVAC=javac
+fi
+
+if [ ! -n "$JCFDUMP" ]
+then
+   JCFDUMP=jcf-dump
+fi
+
+
+
+
+# Falls Packages erlaubt sind:
+# -d . 
+
+# Falls JCOV-Analyse benutzt wird:
+# -Xjcov
+
+# Kompilierung als User Praktomat
+# JfcDump als HTTP?
+#if /usr/bin/sudo -u praktomat \
+
+# -encoding UTF-8
+if $JAVAC \
+ -classpath . \
+ -source 1.6 \
+ -nowarn \
+ -d . \
+ "$@" 
+then
+  RETCODE=$?
+  if [ -n "$JCFDUMP" ]
+  then
+    if find -name '*.class' | xargs $JCFDUMP | grep -q 'native Signature'
+    then
+	echo 'Bitte benutzen Sie keine "native" Methoden zur Loesung.'
+	exit 1
+    fi
+    if find -name '*.class' | xargs $JCFDUMP | egrep -q 'This class: [0-9]+=(java\.|javax\.|sun\.|sunw\.)'
+    then
+	echo 'Bitte benutzen Sie keine "System-packages" Methoden zur Loesung.'
+	exit 1
+    fi
+  else
+    echo 'Warning: jcf-dump not found, Submission was not checked for Usage of native Code'
+    exit $RETCODE
+  fi
+else		
+    echo $?
+    exit $?
+fi

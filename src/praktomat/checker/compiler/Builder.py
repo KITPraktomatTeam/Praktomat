@@ -16,13 +16,13 @@ class Builder(Checker):
 	_compiler				= "gcc"						# command to invoce the compiler in the shell
 	_language				= "konfigurierbar"			# the language of the compiler eg. C++ or Java
 	_rx_warnings			= r"^([^ :]*:[^:].*)$"		# Regular expression describing warings and errors in the output of the compiler
+	_env                            = {}
 	
 			
 	_flags			= models.CharField(max_length = 1000, blank = True, default="-Wall", help_text = _('Compiler flags'))
 	_output_flags	= models.CharField(max_length = 1000, blank = True, default ="-o %s", help_text = _('Output flags. \'%s\' will be replaced by the program name.'))
 	_libs			= models.CharField(max_length = 1000, blank = True, default = "", help_text = _('Compiler libraries'))
 	_file_pattern	= models.CharField(max_length = 1000, default = r"^[a-zA-Z0-9_]*$", help_text = _('Regular expression describing all source files to be passed to the compiler.'))
-	
 	
 	def title(self):
 		return u"%s - Compiler" % self.language()
@@ -49,6 +49,10 @@ class Builder(Checker):
 	def libs(self):
 		""" Compiler libraries.	 To be overloaded in subclasses. """
 		return self._libs.split(" ")
+
+	def environment(self):
+		""" Environment to be set on onvocation of Compiler. """
+		return self._env
 
 	def language(self):
 		""" Language.  To be overloaded in subclasses """
@@ -106,7 +110,7 @@ class Builder(Checker):
 			return result
 
 		args = [self.compiler()] + self.output_flags(env) + self.flags(env) + self.get_file_names(env) + self.libs()
-		output = execute(args, env.tmpdir(),use_default_user_configuration=False)[0]
+		output = execute(args, env.tmpdir(),self.environment(),use_default_user_configuration=False)[0]
 		output = self.enhance_output(env, output)
 
 		# The executable has to exist and we mustn't have any warnings.
