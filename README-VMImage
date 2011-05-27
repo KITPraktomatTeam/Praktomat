@@ -1,3 +1,5 @@
+The Praktomat VM "Appliance" was created using http://www.virtualbox.org/
+
 After importing the Praktomat Appliance,  do the following:
  1.) Start the  virtual machine and make sure an ip
      is assigned to it by your networks' dhcp server.
