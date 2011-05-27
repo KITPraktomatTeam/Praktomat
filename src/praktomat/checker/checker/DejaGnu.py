@@ -110,6 +110,7 @@ class DejaGnuTester(Checker, DejaGnu):
 		environ['POLICY'] = join(join(dirname(dirname(__file__)),"scripts"),"praktomat.policy")
 		environ['USER'] = env.user().get_full_name().encode(sys.getdefaultencoding(), 'ignore')
 		environ['HOME'] = testsuite
+		environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
 
 		[output, error, exitcode] = execute(cmd, testsuite, environment_variables=environ, use_default_user_configuration=False)
 
