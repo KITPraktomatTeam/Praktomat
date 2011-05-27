@@ -110,7 +110,7 @@ class Builder(Checker):
 			return result
 
 		args = [self.compiler()] + self.output_flags(env) + self.flags(env) + self.get_file_names(env) + self.libs()
-		output = execute(args, env.tmpdir(),self.environment(),use_default_user_configuration=False)[0]
+		output = execute(args, env.tmpdir(),self.environment())[0]
 		output = self.enhance_output(env, output)
 
 		# The executable has to exist and we mustn't have any warnings.
