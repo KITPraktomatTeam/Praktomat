@@ -85,6 +85,7 @@ FORTRAN_BINARY = 'g77'
 DEJAGNU_RUNTEST = '/usr/local/Cellar/deja-gnu/1.4.4/bin/runtest'
 CHECKSTYLEALLJAR = '/Users/danielkleinert/Documents/Arbeit/checkstyle/checkstyle-all-4.4.jar'
 JUNIT38='junit'
+JCFDUMP='jcf-dump'
 
 # Exception log used by java and javac scripts
 KILL_LOG = UPLOAD_ROOT + "praktomat.log"
