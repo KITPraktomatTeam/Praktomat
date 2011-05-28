@@ -6,7 +6,7 @@ Installation
 1. Clone praktomat from github including submodules: "git clone --recursive git://github.com/danielkleinert/Praktomat.git"
 
    If your git version does not support the "--recursive" option:
-     1.a) Clone praktomat "without" submodules: "git clone --recursive git://github.com/danielkleinert/Praktomat.git"
+     1.a) Clone praktomat "without" submodules: "git clone git://github.com/danielkleinert/Praktomat.git"
      1.b) From the praktomat root directory,            run "git submodule init" and then "git submodule update"
      1.c) From the subdirectory "media/frameworks/ace", run "git submodule init" and then "git submodule update"
 
