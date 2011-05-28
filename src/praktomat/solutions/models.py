@@ -14,6 +14,7 @@ from django.core.files import File
 from django.db.models import Max
 from django.conf import settings
 
+
 from praktomat.accounts.models import User
 from praktomat.utilities import encoding, file_operations
 
@@ -29,16 +30,11 @@ class Solution(models.Model):
 	accepted = models.BooleanField( default = True, help_text = _('Indicates whether the solution has passed all public and required tests'))
 	warnings = models.BooleanField( default = False, help_text = _('Indicates whether the solution has at least failed one public and not required tests'))
 	plagiarism = models.BooleanField( default = False, help_text = _('Indicates whether the solution is a rip-off of another one.'))
+	final = models.BooleanField( default = False, help_text = _('Indicates whether this solution is the last (accepted) of the author.'))
 	
-
 	def __unicode__(self):
 		return unicode(self.task) + ":" + unicode(self.author) + ":" + unicode(self.number)
 	
-	def final(self):
-		""" return whether this is the last submission of this user """
-		return self == self.task.final_solution(self.author)
-	final.boolean = True
-
 	def publicCheckerResults(self):
 		# return self.checkerresult_set.filter(public=True) won't work, because public() isn't a field of result!
 		return filter(lambda x: x.public(), self.checkerresult_set.all())
@@ -51,6 +47,9 @@ class Solution(models.Model):
 		"""Override save calculate the number on first save"""
 		if self.number == None:
 			self.number = (self.task.solution_set.filter(author=self.author).aggregate(Max('number'))['number__max'] or 0) + 1
+		if self.final:
+			# delete old final flag if this is the new final solution
+			self.task.solutions(self.author).update(final=False)
 		super(Solution, self).save(*args, **kwargs) # Call the "real" save() method.	
 	
 	def check(self, run_secret = 0): 

@@ -32,8 +32,8 @@ def statistics(request,task_id):
 	if not (in_group(request.user,'Trainer') or request.user.is_superuser):
 		return access_denied(request)
 	
-	final_solutions = task.final_solutions()
-	unfinal_solutions = task.solution_set.exclude(id__in=final_solutions.values_list('id', flat=True))
+	final_solutions = task.solution_set.filter(final=True)
+	unfinal_solutions = task.solution_set.filter(final=False)
 	final_solution_count = final_solutions.count()
 	user_count = Group.objects.get(name='User').user_set.filter(is_active=True).count()
 	
@@ -82,7 +82,7 @@ def attestation_list(request, task_id):
 	
 	tutored_users = User.objects.filter(groups__name="User") if in_group(request.user,'Trainer') else User.objects.filter(tutorial__tutors=request.user)
 			
-	solutions = task.final_solutions()
+	solutions = task.solution_set.filter(final=True)
 	if in_group(request.user,'Tutor'): # only the trainer / admin can see it all
 		solutions = solutions.filter(author__tutorial__tutors__pk=request.user.id)
 	# don't allow a new attestation if one already exists

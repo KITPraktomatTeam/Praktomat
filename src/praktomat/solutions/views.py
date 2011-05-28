@@ -55,6 +55,10 @@ def solution_list(request, task_id, user_id=None):
 					'solution': solution,
 				}
 				send_mail(_("%s submission conformation") % settings.SITE_NAME, t.render(Context(c)), None, [solution.author.email])
+		
+			if solution.accepted or settings.ACCEPT_ALL_SOLUTIONS:
+				solution.final = True
+				solution.save()
 			
 			return HttpResponseRedirect(reverse('solution_detail', args=[solution.id]))
 	else:

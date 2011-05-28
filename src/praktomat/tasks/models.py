@@ -31,20 +31,9 @@ class Task(models.Model):
 	
 	def final_solution(self,user):
 		""" get FINAL solution of specified user """
-		solutions = self.solution_set.filter(author=user).order_by('-id')
-		if (not settings.ACCEPT_ALL_SOLUTIONS):
-			solutions = solutions.filter(accepted=True)
+		solutions = self.solution_set.filter(author=user, final=True)
 		return solutions[0] if solutions else None
-	
-	def final_solutions(self):
-		""" get final solutions of ALL users """
-		from praktomat.solutions.models import Solution
-		solutions = self.solution_set.all()
-		if (not settings.ACCEPT_ALL_SOLUTIONS):
-			solutions = solutions.filter(accepted=True)
-		solution_ids = map(lambda x:x['id__max'], solutions.values('author').annotate(Max('id')))
-		return Solution.objects.filter(id__in=solution_ids)	
-	
+		
 	def expired(self):
 		"""docstring for expired"""
 		return self.submission_date + timedelta(hours=1) < datetime.now()
