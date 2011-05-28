@@ -39,7 +39,7 @@ class Task(models.Model):
 		return self.submission_date + timedelta(hours=1) < datetime.now()
 	
 	def check_all_final_solutions(self):
-		for solution in self.final_solutions():
+		for solution in self.solution_set.filter(final=True):
 			solution.check(True)
 		if self.expired():
 				self.all_checker_finished = True
