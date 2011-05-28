@@ -33,7 +33,8 @@ def solution_list(request, task_id, user_id=None):
 
 	task = get_object_or_404(Task,pk=task_id)
 	author = get_object_or_404(User,pk=user_id) if user_id else request.user
-	my_solutions = task.solution_set.filter(author = author).order_by('-id')
+	solutions = task.solution_set.filter(author = author).order_by('-id')
+	final_solution = task.final_solution(author)
 	
 	if request.method == "POST":	
 		solution = Solution(task = task, author=author)
@@ -62,7 +63,7 @@ def solution_list(request, task_id, user_id=None):
 	attestations = Attestation.objects.filter(solution__task=task, author__tutored_tutorials=request.user.tutorial)
 	attestationsPublished = attestations[0].published if attestations else False
 
-	return render_to_response("solutions/solution_list.html", {"formset": formset, "task":task, "solutions": my_solutions, "attestationsPublished":attestationsPublished, "author":author},
+	return render_to_response("solutions/solution_list.html", {"formset": formset, "task":task, "solutions": solutions, "final_solution":final_solution, "attestationsPublished":attestationsPublished, "author":author},
 		context_instance=RequestContext(request))
 
 @login_required
@@ -77,4 +78,4 @@ def solution_detail(request,solution_id):
 	else:	
 		attestations = Attestation.objects.filter(solution__task=solution.task, author__tutored_tutorials=request.user.tutorial)
 		attestationsPublished = attestations[0].published if attestations else False
-		return object_detail(request, Solution.objects.all(), solution_id, extra_context={"attestationsPublished":attestationsPublished}, template_object_name='solution' )
+		return object_detail(request, Solution.objects.all(), solution_id, extra_context={"attestationsPublished":attestationsPublished, "accept_all_solutions":settings.ACCEPT_ALL_SOLUTIONS}, template_object_name='solution' )

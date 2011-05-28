@@ -32,9 +32,8 @@ def statistics(request,task_id):
 	if not (in_group(request.user,'Trainer') or request.user.is_superuser):
 		return access_denied(request)
 	
-	final_solution_ids = map(lambda x:x['id__max'], task.solution_set.values('author').annotate(Max('id')))
-	final_solutions = task.solution_set.filter(id__in=final_solution_ids)
-	unfinal_solutions = task.solution_set.exclude(id__in=final_solution_ids)
+	final_solutions = task.final_solutions()
+	unfinal_solutions = task.solution_set.exclude(id__in=final_solutions.values_list('id', flat=True))
 	final_solution_count = final_solutions.count()
 	user_count = Group.objects.get(name='User').user_set.filter(is_active=True).count()
 	
@@ -83,12 +82,9 @@ def attestation_list(request, task_id):
 	
 	tutored_users = User.objects.filter(groups__name="User") if in_group(request.user,'Trainer') else User.objects.filter(tutorial__tutors=request.user)
 			
-	solutions = Solution.objects.filter(task__id=task_id).all()
+	solutions = task.final_solutions()
 	if in_group(request.user,'Tutor'): # only the trainer / admin can see it all
 		solutions = solutions.filter(author__tutorial__tutors__pk=request.user.id)
-	# simulate max id group by author to get the newest solution of each author
-	solution_ids = map(lambda x:x['id__max'], solutions.values('author').annotate(Max('id')))
-	solutions = Solution.objects.filter(id__in=solution_ids)
 	# don't allow a new attestation if one already exists
 	solution_list = map(lambda solution:(solution,not in_group(request.user,'Trainer') and not solution.attestations_by(request.user)), solutions)
 	

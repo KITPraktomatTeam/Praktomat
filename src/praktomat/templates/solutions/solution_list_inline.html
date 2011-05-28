@@ -1,0 +1,29 @@
+<div class='solution'>
+	{% spaceless %} 
+		{% if solution.accepted%}
+			{% if solution.warnings%}
+				<span class="icon ui-icon-bullet icon-orange" title='Warnings'></span>
+			{% else %}
+				<span class="icon ui-icon-bullet icon-green" title='No Warnings'></span>
+			{% endif %}
+		{% else %}
+			<span class="icon ui-icon-bullet icon-red" title='Errors'></span>
+		{% endif %}
+		<a href="{% url solution_detail solution_id=solution.id %}">Solution {{solution.number}}</a> <span> ({{solution.creation_date|timesince}} ago)</span>
+		<br/>
+	{% endspaceless %}
+</div>
+
+{% if solution.plagiarism and attestationsPublished %}
+	<div class='attestation'>
+		<span class='plagiarism error'><span class="icon ui-icon-alert icon-red"></span>Marked as Plagiarism</span>
+	</div>		
+{% else %}	
+	{% for attest in solution.attestation_set.all %}
+		<div class='attestation'>
+			{% if attest.published %}
+				<span class="icon ui-icon-script" title='Attest'></span><a href={% url view_attestation attestation_id=attest.id%}>Attestation</a> by {{attest.author.get_full_name}}<br/>
+			{% endif %}
+		</div>
+	{%endfor%}	
+{% endif %}

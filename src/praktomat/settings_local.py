@@ -109,3 +109,7 @@ DENY_REGISTRATION_FROM = date(2012, 01, 01)
 
 # If enabled, the tutor can't see the name of the user, who subbmitted the solution.
 ANONYMOUS_ATTESTATION = False
+
+# If enabled, solutions with required checkers, which are not passed, can become the final soution.
+# When dissabeld, only solutions, which pass all required checkers can bekome the final solution.
+ACCEPT_ALL_SOLUTIONS = False

@@ -6,6 +6,8 @@ from django.db import models
 from django.db import transaction
 from django.core import serializers
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
+from django.db.models import Max
 
 
 class Task(models.Model):
@@ -24,15 +26,31 @@ class Task(models.Model):
 		return self.title
 		
 	def solutions(self,user):
-		"""get solutions of the specified user"""
+		""" get ALL solutions of the specified user """
 		return self.solution_set.filter(author=user)
-				
+	
+	def final_solution(self,user):
+		""" get FINAL solution of specified user """
+		solutions = self.solution_set.filter(author=user).order_by('-id')
+		if (not settings.ACCEPT_ALL_SOLUTIONS):
+			solutions = solutions.filter(accepted=True)
+		return solutions[0] if solutions else None
+	
+	def final_solutions(self):
+		""" get final solutions of ALL users """
+		from praktomat.solutions.models import Solution
+		solutions = self.solution_set.all()
+		if (not settings.ACCEPT_ALL_SOLUTIONS):
+			solutions = solutions.filter(accepted=True)
+		solution_ids = map(lambda x:x['id__max'], solutions.values('author').annotate(Max('id')))
+		return Solution.objects.filter(id__in=solution_ids)	
+	
 	def expired(self):
 		"""docstring for expired"""
 		return self.submission_date + timedelta(hours=1) < datetime.now()
 	
-	def check_all_solutions(self):
-		for solution in self.solution_set.all():
+	def check_all_final_solutions(self):
+		for solution in self.final_solutions():
 			solution.check(True)
 		if self.expired():
 				self.all_checker_finished = True

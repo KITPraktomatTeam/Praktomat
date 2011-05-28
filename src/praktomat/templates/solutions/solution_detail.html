@@ -35,10 +35,12 @@
 
 {% if not solution.final %}	
 	{% if not solution.task.expired %}
-		<form method="post">{% csrf_token %}
-			<input type="submit" value="Resubmit" />
-			<p class="help">You can resubmit this solution to make this your final solution.</p>
-		</form>
+		{% if accept_all_solutions or solution.accepted %}
+			<form method="post">{% csrf_token %}
+				<input type="submit" value="Resubmit" />
+				<p class="help">You can resubmit this solution to make this your final solution.</p>
+			</form>
+		{% endif %}
 	{% endif %}
 {% endif %}
 

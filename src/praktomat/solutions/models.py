@@ -36,7 +36,7 @@ class Solution(models.Model):
 	
 	def final(self):
 		""" return whether this is the last submission of this user """
-		return self.id == Solution.objects.filter(task__id=self.task.id).filter(author=self.author.id).aggregate(Max('id'))['id__max']
+		return self == self.task.final_solution(self.author)
 	final.boolean = True
 
 	def publicCheckerResults(self):
