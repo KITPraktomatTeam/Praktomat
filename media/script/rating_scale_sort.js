@@ -19,12 +19,18 @@ $(document).ready(function(){
 		revert: true,
 		update: function() { 
 			$(".dynamic-ratingscaleitem_set").each(function(i) {
-				$(this).find('input[id$=position]').val(i);
 				$(this).toggleClass("row1", i%2==0 );
 				$(this).toggleClass("row2", i%2==1 );
 			})
 		}
     });
+	
+  	// On save: fill positions into textbox
+	$("input[type=submit]").click(function() { 
+			$(".dynamic-ratingscaleitem_set").each(function(i) {
+				$(this).find('input[id$=position]').val(i);
+			})
+	})
 });
 
 
