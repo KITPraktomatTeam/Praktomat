@@ -33,13 +33,15 @@
 	{% if not task.all_checker_finished %}
 		<p>{% trans "Not all checker have yet been run." %}</p>
 	{% else %}
-		<h2>{% trans "Edit solutions" %}</h2>
-		<select id="user_selector">
+		{% if tutored_users %}
+			<h2>{% trans "Edit solutions" %}</h2>
+			<select id="user_selector">
 				{% for user in tutored_users %}
 					<option value="{% url solution_list task_id=task.id user_id=user.id %}">{{user}}</option>
 				{% endfor %}
 			</select>
 			<input id="edit_soluton_button" type="button" value="Go"/>
+		{% endif %}
 		<h2>{% trans "Attest solutions" %}</h2>
 		<div id="Solutions">
 			{% for solution, allow_new_attest in solution_list%}

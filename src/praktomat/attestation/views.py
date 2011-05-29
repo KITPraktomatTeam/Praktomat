@@ -81,8 +81,8 @@ def attestation_list(request, task_id):
 	
 	task = Task.objects.get(pk=task_id)
 	
-	tutored_users = User.objects.filter(groups__name="User") if in_group(request.user,'Trainer') else User.objects.filter(tutorial__tutors=request.user)
-			
+	tutored_users = User.objects.filter(groups__name="User", is_active=True) if in_group(request.user,'Trainer') or request.user.is_superuser else None
+ 			
 	solutions = Solution.objects.filter(task__id=task_id).all()
 	if in_group(request.user,'Tutor'): # only the trainer / admin can see it all
 		solutions = solutions.filter(author__tutorial__tutors__pk=request.user.id)
