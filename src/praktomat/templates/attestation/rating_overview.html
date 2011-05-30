@@ -1,59 +1,65 @@
 {% extends "base.html" %}
 {% load highlight %} {% load i18n  %}
 {% block extrahead %}{{ block.super }}
-<link id="bespin_base" href="{{MEDIA_URL}}frameworks/bespin">
-<script type="text/javascript" src="{{MEDIA_URL}}frameworks/bespin/BespinEmbedded.js"></script>
+<script src="{{MEDIA_URL}}frameworks/ace/build/src/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="{{MEDIA_URL}}frameworks/ace/build/src/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
+<script src="{{MEDIA_URL}}frameworks/ace/build/src/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">	
- 
-var editor;
-window.onBespinLoad = function() {
-	bespin.useBespin("id_script",{
-    	syntax: "js",
-	}).then(function(env) {
-    	env.settings.set("fontsize", 12);
-		editor = env.editor;
+	
+	
+	var editor;
+	window.onload = function() {
+		$("#editor").html($("#id_script").text())
+		$("#id_script").hide()
+		editor = ace.edit("editor");
+		editor.setTheme("ace/theme/twilight");
+		editor.renderer.setShowPrintMargin(false);
+		var JavaScriptMode = require("ace/mode/javascript").Mode;
+		editor.getSession().setMode(new JavaScriptMode());
 		calculate();
 		$(".calculated_grade_cell").hover(
-		  function () {
-		    $(this).append($("<span class='icon ui-icon-arrowreturnthick-1-e'></span>"));
-		  }, 
-		  function () {
-		    $(this).find("span:last").remove();
-		  }
-		);
+										  function () {
+										  $(this).append($("<span class='icon ui-icon-arrowreturnthick-1-e'></span>"));
+										  }, 
+										  function () {
+										  $(this).find("span:last").remove();
+										  }
+										  );
 		$(".calculated_grade_cell").click(function () {
-			$(this).next().find("input[type=text]")[0].value = $(this).text();
-		});
-	});
+										  $(this).next().find("input[type=text]")[0].value = $(this).text();
+										  });
+		$("input[type=submit]").click(function () {
+									  $("#id_script").text(editor.getSession().getValue());
+									  })
 		
-}
- 
-function calculate(){
- 	var all_grades = new Array();
-	$('.user_row').each(function(index) {
-    	var grades=new Array();
-		var result;
-		$(this).find('.grade_cell').each(function(index) {
-			grades[index] = $(this).text()
-		});
-		all_grades[index] = grades
-  	});
-	for (index in all_grades){
-		var grades = all_grades[index];
-		var result;
-		
-		eval(editor.value);
-		
-		$("#calculated_grade_cell"+index).text(result);
-  	}
- }
- 
- function takeAll(){
- 	$(".calculated_grade_cell").click();
- }
- 
+	};	
+	
+	
+	function calculate(){
+		var all_grades = new Array();
+		$('.user_row').each(function(index) {
+							var grades=new Array();
+							var result;
+							$(this).find('.grade_cell').each(function(index) {
+															 grades[index] = $(this).text()
+															 });
+							all_grades[index] = grades
+							});
+		for (index in all_grades){
+			var grades = all_grades[index];
+			var result;
+			
+			eval(editor.getSession().getValue());
+			
+			$("#calculated_grade_cell"+index).text(result);
+		}
+	}
+	
+	function takeAll(){
+		$(".calculated_grade_cell").click();
+	}
+	
 </script>
-
 {% endblock %} 
 {% block breadcrumbs %} {{block.super}} > Rating Overview {% endblock %}
 {% block content %}<div id="rating">
@@ -63,6 +69,8 @@ function calculate(){
 
 <div><form method="post" action="">{% csrf_token %}
 
+	<pre id="editor"></pre>
+	
 	{{script_form.script}}
 	<input type="button" id="calculate_button" value="calculate" onClick="calculate()" />
 	<p class="help">This JavaScript will be executed for every user listed below to calculate a proposed end note. <i><b>grades</b></i> is an Array containing all final grades for one user as Stings. <i><b>all_grades</b></i> is an array containing all <i><b>grades</b></i> arrays. Save the end note recomendation in <i><b>result</b></i> so it can be displayed in the row 'Calculated grade'.</p>
@@ -107,4 +115,5 @@ function calculate(){
 	</table>
 	<input type="submit" name="submit" value="Save" />
 </form></div>
-</div>{% endblock %}
+</div>
+{% endblock %}

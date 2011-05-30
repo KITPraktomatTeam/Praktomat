@@ -773,9 +773,10 @@ div.result div.log {
 
 /* @group Rating */
 
-#rating #id_script {
-	width: 100%;
+#rating #editor {
+	width: 800px;
 	height: 200px;
+	position: relative;
 }
 
 #rating input {
