@@ -14,6 +14,7 @@ Prerequisites
    libpq-dev
    libmysqlclient-dev
    libsasl2-dev
+   libssl-dev
    swig
    libapache2-mod-xsendfile
 
