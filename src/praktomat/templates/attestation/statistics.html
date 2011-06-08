@@ -68,7 +68,8 @@
                     tooltip: {
                         formatter: function(){
                             date = new Date(this.x);
-        					date_str = date.getDate() + '.' + date.getMonth() +'.'+ date.getFullYear();
+							// getMonth() is zero-based
+        					date_str = date.getDate() + '.' + (date.getMonth()+1) +'.'+ date.getFullYear();
         					if (this.series.name == 'Submissions Total') {
         						return '<b>' + this.series.name + '</b><br/>' + date_str + ': ' + Math.round(this.y*100) + '%' ;
         					} else {
