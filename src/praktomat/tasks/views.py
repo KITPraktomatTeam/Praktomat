@@ -17,6 +17,7 @@ from praktomat.tasks.models import Task
 from praktomat.solutions.forms import ModelSolutionFormSet
 from praktomat.solutions.models import Solution, SolutionFile
 from praktomat.accounts.models import User
+from praktomat.attestation.models import Attestation
 
 @login_required
 def taskList(Request):
@@ -27,7 +28,14 @@ def taskList(Request):
 	except:
 		tutors = None
 	trainers = User.objects.filter(groups__name="Trainer")
-	return render_to_response('tasks/task_list.html',{'tasks':tasks, 'tutors':tutors, 'trainers':trainers}, context_instance=RequestContext(Request))
+
+	attestations = []
+	expired_Tasks = Task.objects.filter(submission_date__lt = datetime.now).order_by('publication_date','submission_date')
+	for task in expired_Tasks:
+		attestation_qs =  Attestation.objects.filter(solution__task = task, published=True, solution__author=Request.user)
+		attestations.append((task, attestation_qs[0] if attestation_qs.exists() else None))
+
+	return render_to_response('tasks/task_list.html',{'tasks':tasks, 'attestations':attestations, 'tutors':tutors, 'trainers':trainers}, context_instance=RequestContext(Request))
 
 @login_required
 def taskDetail(Request,task_id):

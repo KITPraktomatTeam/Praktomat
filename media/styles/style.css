@@ -416,10 +416,6 @@ form .errorlist li {
 
 /* @group Task List */
 
-#task_list #welcome {
-	margin-bottom: 40px;
-}
-
 #task_list #tutors {
 	margin-top: 30px;
 }
@@ -434,6 +430,18 @@ form .errorlist li {
 	float: right;
 	width: 48%;
 	padding-left: 2%;
+}
+
+#task_list #attestation_overview {
+	clear: both;
+}
+
+#task_list tr#final_grade {
+	border-top: 1px solid gray;
+}
+
+#task_list #welcome {
+	margin-bottom: 40px;
 }
 
 /* @end */
