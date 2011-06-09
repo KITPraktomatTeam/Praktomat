@@ -15,6 +15,6 @@
 		<input type="submit" value="register" />
 	</form>
 {% else %}
-<div class='error'>Registration was open until {{deny_registration_from|date:"DATE_FORMAT"}} and is now closed. Please Contact a Trainer: {% for user in trainers %} <a href='mailto:{{ user.email }}'>{{user.get_full_name}}</a> {% endfor %} or Administrator:{% for user in admins %} <a href='mailto:{{ user.email }}'>{{user.get_full_name}}</a>{% endfor %}.</div>
+<div class='error'>Registration is closed. Please Contact a Trainer: {% for user in trainers %} <a href='mailto:{{ user.email }}'>{{user.get_full_name}}</a> {% endfor %} or Administrator:{% for user in admins %} <a href='mailto:{{ user.email }}'>{{user.get_full_name}}</a>{% endfor %}.</div>
 {% endif %}
 {% endblock %}

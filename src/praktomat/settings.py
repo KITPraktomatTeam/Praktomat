@@ -57,26 +57,26 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-  'django.contrib.auth',
-  'django.contrib.contenttypes',
-  'django.contrib.sessions',
-  'django.contrib.admin',
-  'django.contrib.admindocs',
+	'django.contrib.auth',
+	'django.contrib.contenttypes',
+	'django.contrib.sessions',
+	'django.contrib.admin',
+	'django.contrib.admindocs',
 	'django.contrib.markup',
 
 	# ./manage.py runserver_plus allows for debugging on werkzeug traceback page. invoke error with assert false
 	# not needed for production
 	'django_extensions',
-	
-  # intelligent schema and data migrations
-  'south', 
 
-  # contains a widget to render a form field as a TinyMCE editor
-  'tinymce',
-	
-	'praktomat.pagechunks',
+	# intelligent schema and data migrations
+	'south', 
+
+	# contains a widget to render a form field as a TinyMCE editor
+	'tinymce',
+
+	'praktomat.configuration',
 	'praktomat.accounts',
-  'praktomat.tasks',
+	'praktomat.tasks',
 	'praktomat.solutions',
 	'praktomat.attestation',
 	'praktomat.checker',
@@ -87,7 +87,6 @@ INSTALLED_APPS = (
 LOGIN_REDIRECT_URL = '/tasks/'
 
 ACCOUNT_ACTIVATION_DAYS = 5
-EMAIL_VALIDATION_REGEX = r".*"
 
 DEFAULT_FILE_STORAGE = 'praktomat.utilities.storage.UploadStorage'
 

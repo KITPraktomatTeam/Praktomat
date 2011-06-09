@@ -9,13 +9,18 @@ from django.db.models import signals
 from django.core.validators import RegexValidator
 
 from praktomat.accounts.templatetags.in_group import in_group
+from praktomat.configuration import get_settings
 
 
 class User(BasicUser):
 	
 	# all fields need to be null-able in order to create user 
 	tutorial = models.ForeignKey('Tutorial', null=True, blank=True, help_text = _("The tutorial the student belongs to."))
-	mat_number = models.IntegerField( null=True, blank=True, unique=True, validators=[RegexValidator("^"+settings.MAT_NUMBER_VALIDATION_REGEX+"$", message="This is not a valid student number.", code="")]) # special blank and unique validation in forms
+	def validate_mat_number(value):
+		regex = get_settings().mat_number_validation_regex
+		if regex:
+			RegexValidator("^"+regex+"$", message="This is not a valid student number.", code="")(value)
+	mat_number = models.IntegerField( null=True, blank=True, unique=True, validators=[validate_mat_number]) # special blank and unique validation in forms
 	final_grade = models.CharField( null=True, blank=True, max_length=100,  help_text = _('The final grade for the whole class.'))
 	
 	activation_key=models.CharField(_('activation key'), max_length=40, editable=False)
@@ -24,7 +29,9 @@ class User(BasicUser):
 	objects = UserManager()
 	
 	def __unicode__(self):
+		
 		return self.get_full_name() or self.username
+
 	
 	def activation_key_expired(self):
 		"""

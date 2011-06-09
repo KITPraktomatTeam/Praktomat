@@ -13,6 +13,7 @@ from django.contrib.auth.forms import UserCreationForm as UserBaseCreationForm, 
 from django.core.mail import send_mail
 from django.utils.http import int_to_base36
 from django.utils.safestring import mark_safe
+from praktomat.configuration import get_settings
 
 from praktomat.accounts.models import User
 
@@ -39,8 +40,9 @@ class MyRegistrationForm(UserBaseCreationForm):
 	def clean_email(self):
 		# cleaning the email in the form doesn't validate it in the admin (good for tutors etc.)
 		data = self.cleaned_data['email']
-		if not re.match(settings.EMAIL_VALIDATION_REGEX, data):
-			raise forms.ValidationError("The email you have provided is not valid. It has to be in: " + settings.EMAIL_VALIDATION_REGEX)	
+		email_validation_regex = get_settings().email_validation_regex
+		if email_validation_regex and not re.match(email_validation_regex, data):
+			raise forms.ValidationError("The email you have provided is not valid. It has to be in: " + email_validation_regex)	
 		return data
 
 	def clean_mat_number(self):
