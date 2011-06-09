@@ -55,8 +55,8 @@ class TaskAdmin(admin.ModelAdmin):
 	def run_all_checkers(self, request, queryset):
 		""" Rerun all checker including "not always" action """
 		for task in queryset:
-			task.check_all_solutions()
-		self.message_user(request, "All solutions were successfully checked.")
+			task.check_all_final_solutions()
+		self.message_user(request, "All final solutions were successfully checked.")
 
 	def get_urls(self):
 		""" Add URL to task import """

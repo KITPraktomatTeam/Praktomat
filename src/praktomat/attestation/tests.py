@@ -14,7 +14,7 @@ class TestViews(TestCase):
 			self.task = Task.objects.all()[0]
 			self.task.submission_date = datetime.now() - timedelta(hours=1)
 			self.task.save()
-			self.task.check_all_solutions()
+			self.task.check_all_final_solutions()
 			self.solution = Solution.objects.all()[0]
 			self.attestation = Attestation.objects.all()[0]
 
