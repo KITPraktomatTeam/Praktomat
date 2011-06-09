@@ -4,7 +4,7 @@ from django.core.cache import cache
 
 register = template.Library()
 
-Chunk = models.get_model('pagechunks', 'chunk')
+Chunk = models.get_model('configuration', 'chunk')
 CACHE_PREFIX = "chunk_"
 
 def do_get_chunk(parser, token):

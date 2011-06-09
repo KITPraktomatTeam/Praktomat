@@ -87,8 +87,6 @@ CHECKSTYLEALLJAR = '/Users/danielkleinert/Documents/Arbeit/checkstyle/checkstyle
 JUNIT38='junit'
 JCFDUMP='jcf-dump'
 
-# Exception log used by java and javac scripts
-KILL_LOG = UPLOAD_ROOT + "praktomat.log"
 
 # Enable to run all scripts (checker) as the unix user 'tester'. Therefore put 'tester' as well
 # as the Apache user '_www' (and your development user account) into a new group called praktomat. Also edit your
@@ -98,19 +96,7 @@ KILL_LOG = UPLOAD_ROOT + "praktomat.log"
 # "developer	ALL=(tester)NOPASSWD:ALL"
 USEPRAKTOMATTESTER = False
 
-
-# Regular expression used to check the email domain of registering users.
-EMAIL_VALIDATION_REGEX = r".*@(student.)?kit.edu"
-# Regular expression used to check the student number.
-MAT_NUMBER_VALIDATION_REGEX = r"\d{5,7}"
-
-# After this date no one can use the registration page anymore. Format: date(2005, 7, 14)
-from datetime import date
-DENY_REGISTRATION_FROM = date(2012, 01, 01)
-
-# If enabled, the tutor can't see the name of the user, who subbmitted the solution.
-ANONYMOUS_ATTESTATION = False
-
 # If enabled, solutions with required checkers, which are not passed, can become the final soution.
 # When dissabeld, only solutions, which pass all required checkers can bekome the final solution.
 ACCEPT_ALL_SOLUTIONS = False
+

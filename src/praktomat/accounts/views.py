@@ -1,5 +1,5 @@
 #from praktomat.accounts.forms import MyRegistrationForm
-from datetime import date
+from datetime import datetime
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
@@ -9,11 +9,12 @@ from praktomat.accounts.forms import MyRegistrationForm, UserChangeForm
 from praktomat.accounts.models import User
 from django.contrib.auth.models import Group
 from django.contrib.sites.models import Site, RequestSite
+from praktomat.configuration import get_settings
 
 def register(request):
 	extra_context = {}
-	if settings.DENY_REGISTRATION_FROM < date.today():
-		extra_context['deny_registration_from'] = settings.DENY_REGISTRATION_FROM
+	if get_settings().deny_registration_from < datetime.now():
+		extra_context['deny_registration_from'] = get_settings().deny_registration_from
 		extra_context['admins'] = User.objects.filter(is_superuser=True)
 		extra_context['trainers'] = Group.objects.get(name="Trainer").user_set.all()
 	else:

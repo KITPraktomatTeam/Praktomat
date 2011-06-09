@@ -23,6 +23,7 @@ from praktomat.attestation.forms import AnnotatedFileFormSet, RatingResultFormSe
 from praktomat.accounts.templatetags.in_group import in_group
 from praktomat.accounts.models import User
 from praktomat.accounts.views import access_denied
+from praktomat.configuration import get_settings
 
 
 @login_required
@@ -106,7 +107,7 @@ def attestation_list(request, task_id):
 			for attestation in solution.attestations_by(request.user):
 				attestation.publish(request)
 				published = True
-	data = {'task':task, 'tutored_users':tutored_users, 'solution_list': solution_list, 'published': published, 'publishable': publishable, 'show_author': not settings.ANONYMOUS_ATTESTATION}
+	data = {'task':task, 'tutored_users':tutored_users, 'solution_list': solution_list, 'published': published, 'publishable': publishable, 'show_author': not get_settings().anonymous_attestation}
 	return render_to_response("attestation/attestation_list.html", data, context_instance=RequestContext(request))
 	
 @login_required
@@ -175,7 +176,7 @@ def view_attestation(request, attestation_id):
 	else:
 		form = AttestationPreviewForm(instance=attest)
 		submitable = attest.author == request.user and not attest.published
-		return render_to_response("attestation/attestation_view.html", {"attest": attest, 'submitable':submitable, 'form':form, 'show_author': not settings.ANONYMOUS_ATTESTATION},	context_instance=RequestContext(request))
+		return render_to_response("attestation/attestation_view.html", {"attest": attest, 'submitable':submitable, 'form':form, 'show_author': not get_settings().anonymous_attestation},	context_instance=RequestContext(request))
 
 @login_required	
 def rating_overview(request):
