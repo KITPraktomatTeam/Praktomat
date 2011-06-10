@@ -8,6 +8,8 @@ class Settings(models.Model):
 	mat_number_validation_regex = models.CharField(max_length=200, blank=True, default="\d{5,7}", help_text="Regular expression used to check the student number.")
 	deny_registration_from = models.DateTimeField(default=date(2222, 01, 01), help_text="After this date, registration wont be possible.")
 
+	accept_all_solutions = models.BooleanField(default=False, help_text="If enabled, solutions with required checkers, which are not passed, can become the final soution.")
+	
 	anonymous_attestation = models.BooleanField(default=False, help_text="If enabled, the tutor can't see the name of the user, who subbmitted the solution.")
 
 	final_grades_published = models.BooleanField(default=False, help_text="If enabeld on the rating overview page, all users can see their final grades.")

@@ -21,6 +21,7 @@ from praktomat.solutions.forms import SolutionFormSet
 from praktomat.accounts.views import access_denied
 from praktomat.accounts.templatetags.in_group import in_group
 from praktomat.accounts.models import User
+from praktomat.configuration import get_settings
 
 from django.db import transaction
 
@@ -56,7 +57,7 @@ def solution_list(request, task_id, user_id=None):
 				}
 				send_mail(_("%s submission conformation") % settings.SITE_NAME, t.render(Context(c)), None, [solution.author.email])
 		
-			if solution.accepted or settings.ACCEPT_ALL_SOLUTIONS:
+			if solution.accepted or get_settings().accept_all_solutions:
 				solution.final = True
 				solution.save()
 			
@@ -82,4 +83,4 @@ def solution_detail(request,solution_id):
 	else:	
 		attestations = Attestation.objects.filter(solution__task=solution.task, author__tutored_tutorials=request.user.tutorial)
 		attestationsPublished = attestations[0].published if attestations else False
-		return object_detail(request, Solution.objects.all(), solution_id, extra_context={"attestationsPublished":attestationsPublished, "accept_all_solutions":settings.ACCEPT_ALL_SOLUTIONS}, template_object_name='solution' )
+		return object_detail(request, Solution.objects.all(), solution_id, extra_context={"attestationsPublished":attestationsPublished, "accept_all_solutions":get_settings().accept_all_solutions}, template_object_name='solution' )

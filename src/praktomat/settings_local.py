@@ -96,7 +96,4 @@ JCFDUMP='jcf-dump'
 # "developer	ALL=(tester)NOPASSWD:ALL"
 USEPRAKTOMATTESTER = False
 
-# If enabled, solutions with required checkers, which are not passed, can become the final soution.
-# When dissabeld, only solutions, which pass all required checkers can bekome the final solution.
-ACCEPT_ALL_SOLUTIONS = False
 
