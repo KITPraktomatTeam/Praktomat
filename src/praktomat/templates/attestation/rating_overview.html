@@ -113,7 +113,8 @@
 			<td></td>{% for task in task_list %}<td></td>{% endfor %}<td><a onClick="takeAll()">take all<span class='icon ui-icon-arrowreturnthick-1-e'></span></a></td><td></td>
 		</tr>
 	</table>
-	<input type="submit" name="submit" value="Save" />
+	{{publish_final_grade_form}}
+	<input type="submit" name="submit" value="Save Grades and Script" />
 </form></div>
 </div>
 {% endblock %}

@@ -19,7 +19,7 @@ from praktomat.tasks.models import Task
 from praktomat.solutions.models import Solution, SolutionFile
 from praktomat.solutions.forms import SolutionFormSet
 from praktomat.attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, Script, RatingScaleItem
-from praktomat.attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm, ScriptForm
+from praktomat.attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm, ScriptForm, PublishFinalGradeForm
 from praktomat.accounts.templatetags.in_group import in_group
 from praktomat.accounts.models import User
 from praktomat.accounts.views import access_denied
@@ -214,14 +214,17 @@ def rating_overview(request):
 	if request.method == "POST":
 		final_grade_formset = FinalGradeFormSet(request.POST, request.FILES, queryset = user)
 		script_form = ScriptForm(request.POST, instance=script)
-		if final_grade_formset.is_valid() and script_form.is_valid():
+		publish_final_grade_form = PublishFinalGradeForm(request.POST, instance=get_settings())
+		if final_grade_formset.is_valid() and script_form.is_valid() and publish_final_grade_form.is_valid():
 			final_grade_formset.save()
 			script_form.save()
+			publish_final_grade_form.save()
 	else:
 		final_grade_formset = FinalGradeFormSet(queryset = user)
 		script_form = ScriptForm(instance=script)
+		publish_final_grade_form = PublishFinalGradeForm(instance=get_settings())
 	
-	return render_to_response("attestation/rating_overview.html", {'rating_list':rating_list, 'task_list':task_list, 'final_grade_formset':final_grade_formset, 'script_form':script_form},	context_instance=RequestContext(request))
+	return render_to_response("attestation/rating_overview.html", {'rating_list':rating_list, 'task_list':task_list, 'final_grade_formset':final_grade_formset, 'script_form':script_form, 'publish_final_grade_form':publish_final_grade_form},	context_instance=RequestContext(request))
 
 @login_required	
 def rating_export(request):

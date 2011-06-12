@@ -12,7 +12,7 @@ class Settings(models.Model):
 	
 	anonymous_attestation = models.BooleanField(default=False, help_text="If enabled, the tutor can't see the name of the user, who subbmitted the solution.")
 
-	final_grades_published = models.BooleanField(default=False, help_text="If enabeld on the rating overview page, all users can see their final grades.")
+	final_grades_published = models.BooleanField(default=False, help_text="If enabeld, all users can see their final grades.")
 
 class Chunk(models.Model):
 	""" A Chunk is a piece of content associated with a unique key that can be inserted into any template with the use of a special template tag """

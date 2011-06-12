@@ -787,7 +787,7 @@ div.result div.log {
 	position: relative;
 }
 
-#rating input {
+#rating #calculate_button {
 	float: left;
 	margin-top: 15px;
 	margin-left: 40px;
@@ -853,6 +853,12 @@ IE8 */
 
 #rating table {
 	margin-top: 40px;
+}
+
+#rating input[type="submit"]{
+	margin-left: 0px;
+	margin-top: 20px;
+	display: block;
 }
 
 /* @end */

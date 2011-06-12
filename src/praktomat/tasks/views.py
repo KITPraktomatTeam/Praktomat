@@ -18,6 +18,7 @@ from praktomat.solutions.forms import ModelSolutionFormSet
 from praktomat.solutions.models import Solution, SolutionFile
 from praktomat.accounts.models import User
 from praktomat.attestation.models import Attestation
+from praktomat.configuration import get_settings
 
 @login_required
 def taskList(Request):
@@ -35,7 +36,7 @@ def taskList(Request):
 		attestation_qs =  Attestation.objects.filter(solution__task = task, published=True, solution__author=Request.user)
 		attestations.append((task, attestation_qs[0] if attestation_qs.exists() else None))
 
-	return render_to_response('tasks/task_list.html',{'tasks':tasks, 'attestations':attestations, 'tutors':tutors, 'trainers':trainers}, context_instance=RequestContext(Request))
+	return render_to_response('tasks/task_list.html',{'tasks':tasks, 'attestations':attestations, 'show_final_grade': get_settings().final_grades_published, 'tutors':tutors, 'trainers':trainers}, context_instance=RequestContext(Request))
 
 @login_required
 def taskDetail(Request,task_id):

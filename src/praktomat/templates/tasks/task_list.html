@@ -65,7 +65,7 @@
 						<a href={% url view_attestation attestation_id=attestation.id%}>{{attestation.final_grade}}</a>
 						{%else%}-{%endif%}</td></tr>
 			{% endfor %}
-				{% comment %}<tr id="final_grade"><th>Final Grade</th><td>{{user.final_grade}}</td></tr>{% endcomment %}
+				{% if show_final_grade %}<tr id="final_grade"><th>Final Grade</th><td>{{user.final_grade}}</td></tr>{% endif %}
 			</Table>
 		</div>
 	{% endif %}

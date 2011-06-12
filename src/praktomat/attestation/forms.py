@@ -6,6 +6,7 @@ from django.forms.formsets import formset_factory
 from django import forms
 
 from praktomat.attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, Script
+from praktomat.configuration.models import Settings
 											
 
 class AttestationForm(ModelForm):
@@ -52,3 +53,8 @@ RatingResultFormSet = inlineformset_factory(Attestation, RatingResult, form=Rati
 class ScriptForm(ModelForm):
 	class Meta:
 		model = Script
+
+class PublishFinalGradeForm(ModelForm):
+	class Meta:
+		model = Settings
+		fields = ('final_grades_published',)
