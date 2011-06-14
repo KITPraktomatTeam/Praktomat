@@ -1,12 +1,16 @@
 import datetime
 import re
+import hashlib
+import random
 
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-from django.db import models
+from django.db import models, utils
 from django.contrib.auth.models import User as BasicUser, UserManager
 from django.db.models import signals
 from django.core.validators import RegexValidator
+from django.core import serializers
+from django.db import transaction
 
 from praktomat.accounts.templatetags.in_group import in_group
 from praktomat.configuration import get_settings
@@ -31,7 +35,13 @@ class User(BasicUser):
 	def __unicode__(self):
 		
 		return self.get_full_name() or self.username
-
+	
+	def set_new_activation_key(self):
+		# The activation key will be a SHA1 hash, generated from a combination of the username and a random salt.
+		sha = hashlib.sha1()
+		sha.update( str(random.random()) + self.username)
+		self.activation_key = sha.hexdigest()
+		self.save()
 	
 	def activation_key_expired(self):
 		"""
@@ -93,6 +103,43 @@ class User(BasicUser):
 				return user
 			return False
 	activate_user = staticmethod(activate_user)
+
+	@classmethod
+	def export_user(cls, queryset):
+		""" Serializes a user queryset and related objects to xml """
+		users = list(queryset)
+		django_users = list(BasicUser.objects.filter(user__in = queryset))
+		return serializers.serialize("xml", django_users + users) # order does matter!
+	
+	@classmethod
+	@transaction.commit_on_success		# May not work with MySQL: see django docu
+	def import_user(cls, xml_data):
+		basicUser_id_map = {}
+		imported_user_ids = []
+		for deserialized_object in serializers.deserialize("xml", xml_data):
+			object = deserialized_object.object
+			if isinstance(object, User):
+				try:
+					object.tutorial = None
+					object.final_grade = None
+					object.user_ptr = basicUser_id_map[int(object.pk)]	# object.id is null! so parse id.
+					deserialized_object.save()
+					imported_user_ids.append(object.pk)
+				except KeyError:
+					pass # basicUser_id_map key not found because user allredy existed
+			else: # brach BasicUser
+				try:
+					old_id = object.id
+					object.id = None
+					deserialized_object.save()
+					basicUser_id_map[old_id] = object
+				except utils.IntegrityError:
+					pass # unique username validation - user allredy existed
+		return User.objects.filter(id__in = imported_user_ids) 	# get them fresh from the db, otherwise the user object won't have basicUser attributes set
+				
+				
+
+
 	
 #	def save(self, force_insert=False, force_update=False, *args, **kwargs):
 #		""" prevent redundancy: staff iff. superuser or trainer """

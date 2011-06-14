@@ -16,7 +16,7 @@ class UserAdmin(UserBaseAdmin):
 	list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'is_trainer', 'is_tutor', 'email', 'date_joined' )
 	list_filter = ('groups', 'tutorial', 'is_staff', 'is_superuser', 'is_active')
 	date_hierarchy = 'date_joined'
-	actions = ['set_active', 'set_inactive', 'distribute_to_tutorials']
+	actions = ['set_active', 'set_inactive', 'distribute_to_tutorials', 'export_users']
 	readonly_fields = ('last_login','date_joined')
 	# exclude user_permissions
 	fieldsets = (
@@ -62,6 +62,20 @@ class UserAdmin(UserBaseAdmin):
 			user.tutorial = tutorial
 			user.save()
 		self.message_user(request, "All users were successfully distributed.")
+
+	def export_users(self, request, queryset):
+		from django.http import HttpResponse
+		data = User.export_user(queryset)		
+		response = HttpResponse(data, mimetype="application/xml")
+		response['Content-Disposition'] = 'attachment; filename=user_export.xml'
+		return response
+
+	def get_urls(self):
+		""" Add URL to user import """
+		urls = super(UserAdmin, self).get_urls()
+		from django.conf.urls.defaults import url, patterns
+		my_urls = patterns('', url(r'^import/$', 'praktomat.accounts.views.import_user', name='user_import')) 
+		return my_urls + urls
 
 admin.site.unregister(UserBase) 
 admin.site.register(User, UserAdmin)

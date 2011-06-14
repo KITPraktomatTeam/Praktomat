@@ -65,12 +65,8 @@ class MyRegistrationForm(UserBaseCreationForm):
 		# disable user until activated via email
 		user.is_active=False
 		
-		# The activation key will be a SHA1 hash, generated from a combination of the username and a random salt.
-		sha = hashlib.sha1()
-		sha.update( str(random.random()) + user.username)
-		activation_key = sha.hexdigest()
-		user.activation_key=activation_key
-		
+		user.set_new_activation_key()
+
 		user.mat_number=self.cleaned_data.get("mat_number")
 		
 		user.save()
@@ -85,7 +81,7 @@ class MyRegistrationForm(UserBaseCreationForm):
 			'uid': int_to_base36(user.id),
 			'user': user,
 			'protocol': self.use_https and 'https' or 'http',
-			'activation_key': activation_key,
+			'activation_key': user.activation_key,
 			'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,
 			}
 		send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(Context(c)), None, [user.email])
@@ -123,3 +119,25 @@ class AdminUserChangeForm(UserBaseChangeForm):
 			self._errors["mat_number"] = self.error_class(["This field is required for Users."])
 			del cleaned_data["mat_number"]
 		return cleaned_data
+
+
+reactivation_message_text = """ {% autoescape off %}
+You're receiving this e-mail because you have been registerd at {{ site_name }}.
+
+Please go to the following page to activate your account within {{ expiration_days }} days.
+
+{{ protocol }}://{{ domain }}{% url registration_activate activation_key=activation_key %}
+
+Your username, in case you've forgotten: {{ user.username }}
+
+Thanks for using our site!
+
+The {{ site_name }} team
+
+{% endautoescape %} """
+
+class ImportForm(forms.Form):
+	file = forms.FileField(required=True, help_text = "The file exported from the list view. Allready existing users will be ignorred.")
+	require_reactivation = forms.BooleanField(initial=True, required=False, help_text = "Deactivate all imported users and send activation mail.")
+	meassagetext = forms.CharField(required=False, widget=forms.Textarea, initial = reactivation_message_text, help_text = "Message to be embedded into activation mail if reactivation is required.")
+
