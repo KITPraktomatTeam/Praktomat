@@ -131,6 +131,7 @@ class User(BasicUser):
 				try:
 					old_id = object.id
 					object.id = None
+					object.date_joined = datetime.datetime.now()
 					deserialized_object.save()
 					basicUser_id_map[old_id] = object
 				except utils.IntegrityError:
