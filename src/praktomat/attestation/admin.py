@@ -42,6 +42,20 @@ class AttestationAdmin(admin.ModelAdmin):
 	list_display = ('solution', 'author', 'created', 'final', 'published')
 	list_filter = ('final', 'published', 'author')
 	inlines = (RatingResultAdminInline, AnnotatedSolutionFileAdminInline)
+
+	def get_form(self, request, obj=None, **kwargs):
+		request.obj = obj
+		return super(AttestationAdmin, self).get_form(request, obj,**kwargs)
+
+
+	def formfield_for_foreignkey(self, db_field, request, **kwargs):
+		if db_field.name == "final_grade":
+			kwargs["queryset"] = RatingScaleItem.objects.filter(scale__id=request.obj.solution.task.final_grade_rating_scale.id)
+		return super(AttestationAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
+
+
+
 	
 admin.site.register(Attestation, AttestationAdmin)
 
