@@ -70,7 +70,7 @@ def download_final_solutions(request, task_id):
 	zip_file = tempfile.SpooledTemporaryFile()
 	zip = zipfile.ZipFile(zip_file,'w')
 	for solution_file in SolutionFile.objects.filter(solution__task=task_id):
-		if solution_file.solution.final():
+		if solution_file.solution.final:
 			zip.write(solution_file.file.path, solution_file.file.name)
 	zip.close()
 	zip_file.seek(0)
