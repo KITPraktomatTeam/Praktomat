@@ -81,12 +81,12 @@ def attestation_list(request, task_id):
 	
 	task = Task.objects.get(pk=task_id)
 	
-	tutored_users = User.objects.filter(groups__name="User", is_active=True) if in_group(request.user,'Trainer') or request.user.is_superuser else None
-			
-	solutions = task.solution_set.filter(final=True)
-
+	tutored_users = User.objects.filter(groups__name="User", is_active=True).order_by('last_name') if in_group(request.user,'Trainer') or request.user.is_superuser else None
+	
+	solutions = task.solution_set.filter(final=True).order_by('author__last_name')
+		
 	if in_group(request.user,'Tutor'): # only the trainer / admin can see it all
-		solutions = solutions.filter(author__tutorial__tutors__pk=request.user.id)
+		solutions = solutions.filter(author__tutorial__tutors__pk=request.user.id).order_by('author__last_name')
 	# don't allow a new attestation if one already exists
 	solution_list = map(lambda solution:(solution,not in_group(request.user,'Trainer') and not solution.attestations_by(request.user)), solutions)
 	

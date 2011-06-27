@@ -37,7 +37,7 @@
 			<h2>{% trans "Edit solutions" %}</h2>
 			<select id="user_selector">
 				{% for user in tutored_users %}
-					<option value="{% url solution_list task_id=task.id user_id=user.id %}">{{user}}</option>
+					<option value="{% url solution_list task_id=task.id user_id=user.id %}">{{user.last_name}}, {{user.first_name}}</option>
 				{% endfor %}
 			</select>
 			<input id="edit_soluton_button" type="button" value="Go"/>
@@ -46,7 +46,7 @@
 		<div id="Solutions">
 			{% for solution, allow_new_attest in solution_list%}
 				{% if show_author or user|in_group:'Trainer' or published %}
-					<h3>Solution by {{solution.author.get_full_name}}</h3>
+					<h3>Solution by {{solution.author.last_name}}, {{solution.author.first_name}}</h3>
 				{% else %}
 					<h3>Solution {{forloop.counter}}</h3>
 				{% endif %} 
