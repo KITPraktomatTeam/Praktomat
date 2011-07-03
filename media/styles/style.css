@@ -281,10 +281,6 @@ body {
 	margin-bottom: 10px;
 }
 
-input{
-	vertical-align: top;
-}
-
 input[type="submit"]{
 	margin-left: 150px;
 	/* margin: 10px; */
@@ -652,6 +648,10 @@ body.fullscreen{
 
 #soluion_upload div.attestation {
 	margin-left: 15px;
+}
+
+input[type="submit"]{
+	margin-left: 0px;
 }
 
 /* @end */

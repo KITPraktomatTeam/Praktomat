@@ -83,43 +83,55 @@ def attestation_list(request, task_id):
 	
 	tutored_users = User.objects.filter(groups__name="User", is_active=True).order_by('last_name') if in_group(request.user,'Trainer') or request.user.is_superuser else None
 	
-	solutions = task.solution_set.filter(final=True).order_by('author__last_name')
+	number_of_unatested_solutions = Solution.objects.filter(task = task, final=True, plagiarism = False, author__tutorial__in = request.user.tutored_tutorials.all(), attestation = None).count()		
 		
-	if in_group(request.user,'Tutor'): # only the trainer / admin can see it all
-		solutions = solutions.filter(author__tutorial__tutors__pk=request.user.id).order_by('author__last_name')
-	# don't allow a new attestation if one already exists
-	solution_list = map(lambda solution:(solution,not in_group(request.user,'Trainer') and not solution.attestations_by(request.user)), solutions)
-	
+	my_attestations = Attestation.objects.filter(solution__task = task, author = request.user)
+	all_attestations_for_my_tutorials = Attestation.objects.filter(solution__task = task, solution__author__tutorial__in = request.user.tutored_tutorials.all())
+	if (in_group(request.user,'Trainer')):
+		# show all to trainer
+		attestations_by_others  = Attestation.objects.filter(solution__task = task)
+		solutions_with_plagiarism = Solution.objects.filter(task = task, plagiarism = True)
+	else:
+		# show from my toturials
+		attestations_by_others = all_attestations_for_my_tutorials.exclude(author = request.user)
+		solutions_with_plagiarism = Solution.objects.filter(task = task, plagiarism = True, author__tutorial__in = request.user.tutored_tutorials.all())
+				
 	# first published => all published
 	try:
-		published = solutions[0].attestations_by(request.user)[0].published
+		published = all_attestations_for_my_tutorials[0].published
 	except IndexError:
 		published = False
 	
-	all_solutions_attested = not reduce(lambda x,y: x or y, [new_attest_possible for (solution, new_attest_possible) in solution_list], False)
-	all_attestations_final = reduce(lambda x,y: x and y, 
-								map(lambda attestation: attestation.final , 
-									sum([list(solution.attestations_by(request.user)) for solution in solutions],[])), True)
+	all_solutions_attested = number_of_unatested_solutions == 0
+	all_attestations_final = reduce(lambda x,y: x and y, map(lambda attestation: attestation.final , all_attestations_for_my_tutorials), True)
 	publishable = all_solutions_attested and all_attestations_final and task.expired()
 	
+	show_author = not get_settings().anonymous_attestation or in_group(request.user,'Trainer') or published
+
 	if request.method == "POST" and publishable:
 		for solution in solutions:
 			for attestation in solution.attestations_by(request.user):
 				attestation.publish(request)
 				published = True
-	data = {'task':task, 'tutored_users':tutored_users, 'solution_list': solution_list, 'published': published, 'publishable': publishable, 'show_author': not get_settings().anonymous_attestation}
+	data = {'task':task, 'tutored_users':tutored_users, 'solutions_with_plagiarism':solutions_with_plagiarism, 'my_attestations':my_attestations, 'attestations_by_others':attestations_by_others, 'number_of_unatested_solutions':number_of_unatested_solutions, 'published': published, 'publishable': publishable, 'show_author': show_author}
 	return render_to_response("attestation/attestation_list.html", data, context_instance=RequestContext(request))
 	
 @login_required
-def new_attestation(request, solution_id):
+def new_attestation(request, task_id):
 	if not (in_group(request.user,'Tutor,Trainer') or request.user.is_superuser):
 		return access_denied(request)
 	
-	solution = get_object_or_404(Solution, pk=solution_id)
-	# If there already is an attestation by this user redirect to edit page
-	attestations_of_request_user = solution.attestation_set.filter(author=request.user)
-	if attestations_of_request_user.count() > 0:
-		return HttpResponseRedirect(reverse('edit_attestation', args=[attestations_of_request_user[0].id]))
+	# fetch a solution of a user i have allredy attested in the past.		
+	users_i_have_attestated = User.objects.filter(solution__attestation__author = request.user)
+	all_available_solutions = Solution.objects.filter(task__id = task_id, final=True, plagiarism = False, author__tutorial__in = request.user.tutored_tutorials.all(), attestation = None)
+	if (not all_available_solutions):
+		# if an other tutor just grabed the last solution just go back to the list
+		return HttpResponseRedirect(reverse('attestation_list', args=[task_id]))
+	solutions = all_available_solutions.filter(author__in = users_i_have_attestated)
+	if (solutions):
+		solution = solutions[0]
+	else:
+		solution = all_available_solutions[0]
 		
 	attest = Attestation(solution = solution, author = request.user)
 	attest.save()
