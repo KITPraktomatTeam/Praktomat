@@ -13,7 +13,7 @@ from praktomat.checker.models import Checker, CheckerResult
 
 class LineWidthChecker(Checker):
 
-	max_line_length = models.IntegerField(default = 80, help_text=_("The maximum lenght of a line of code."))
+	max_line_length = models.IntegerField(default = 80, help_text=_("The maximum length of a line of code."))
 	tab_width =  models.IntegerField(default = 4, help_text=_("The amount of characters a tab represents."))
 	include = models.CharField(max_length=100, blank = True, default=".*", help_text=_("Regular expression describing the filenames to be checked. Case Insensetive. Blank: use all files."))
 	exclude = models.CharField(max_length=100, blank = True, default=".*\.txt$", help_text=_("Regular expression describing included filenames, which shall be excluded. Case Insensetive. Blank: use all files."))

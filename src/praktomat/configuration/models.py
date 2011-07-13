@@ -4,6 +4,10 @@ from datetime import date
 class Settings(models.Model):
 	""" Singleton object containing site wide settings confiurale by the trainer. """
 	
+	class Meta:
+		# Django admin adds an 's' to the class name; prevent SettingSS
+		verbose_name = 'Setting'
+	
 	email_validation_regex = models.CharField(max_length=200, blank=True, default=".*@(student.)?kit.edu", help_text="Regular expression used to check the email domain of registering users.")
 	mat_number_validation_regex = models.CharField(max_length=200, blank=True, default="\d{5,7}", help_text="Regular expression used to check the student number.")
 	deny_registration_from = models.DateTimeField(default=date(2222, 01, 01), help_text="After this date, registration wont be possible.")
