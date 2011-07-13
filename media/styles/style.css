@@ -784,7 +784,7 @@ div.result div.log {
 /* @group Rating */
 
 #rating #editor {
-	width: 800px;
+	width: 100%;
 	height: 200px;
 	position: relative;
 }

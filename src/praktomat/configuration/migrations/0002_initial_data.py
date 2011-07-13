@@ -8,6 +8,9 @@ class Migration(DataMigration):
 	
 	def forwards(self, orm):
 		
+		#send signal post_syncdb so that permissions will be created even if the corresponding model was created in this migration
+		db.send_pending_create_signals()
+		
 		depends_on = (
 		  ("accounts", "0002_load_initial_data"),
 		)
