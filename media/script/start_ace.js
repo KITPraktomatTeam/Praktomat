@@ -209,22 +209,22 @@ exports.launch = function(env) {
         switch (value) {
             case "off":
                 session.setUseWrapMode(false);
-                renderer.setPrintMarginColumn(80);
-                break;
-            case "40":
-                session.setUseWrapMode(true);
-                session.setWrapLimitRange(40, 40);
-                renderer.setPrintMarginColumn(40);
+                renderer.setPrintMarginColumn(120);
                 break;
             case "80":
                 session.setUseWrapMode(true);
                 session.setWrapLimitRange(80, 80);
                 renderer.setPrintMarginColumn(80);
                 break;
+			case "120":
+				 session.setUseWrapMode(true);
+				 session.setWrapLimitRange(120, 120);
+				 renderer.setPrintMarginColumn(120);
+				 break;
             case "free":
                 session.setUseWrapMode(true);
                 session.setWrapLimitRange(null, null);
-                renderer.setPrintMarginColumn(80);
+                renderer.setPrintMarginColumn(120);
                 break;
         }
     });

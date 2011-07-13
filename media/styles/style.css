@@ -200,7 +200,8 @@ body {
 }
 
 #content {
-	width: 800px;
+	min-width: 800px;
+	max-width: 1000px;
 	margin-right: auto;
 	margin-left: auto;
 	margin-bottom: 10px;
@@ -234,7 +235,8 @@ body {
 }
 
 .inner {
-	width: 800px;
+	min-width: 800px;
+	max-width: 1000px;
 	margin-right: auto;
 	margin-left: auto;
 	padding-left: 20px;
