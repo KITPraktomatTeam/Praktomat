@@ -2,9 +2,9 @@
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from praktomat.checker.models import Checker, CheckerResult, execute
-from praktomat.checker.admin import	CheckerInline, AlwaysChangedModelForm
-from praktomat.utilities.file_operations import *
+from checker.models import Checker, CheckerResult, execute
+from checker.admin import	CheckerInline, AlwaysChangedModelForm
+from utilities.file_operations import *
 
 
 class ExampleChecker(Checker):
@@ -25,7 +25,7 @@ class ExampleChecker(Checker):
 
 	#def requires(self):
 		#""" Returns the list of passed Checkers required by this checker. If the returned checker have not been passed this checker will fail automaticly """
-		#from praktomat.checker.compiler.Builder import Builder
+		#from checker.compiler.Builder import Builder
 		#return [ Builder ]	
 
 	
@@ -38,7 +38,7 @@ class ExampleChecker(Checker):
 
 		# to pass information to a checker which runs at a later time save it in env, but make sure the checkers will be executet in the right order.
 
-		# if you need to to create or copy files use the methods from praktomat.utilities.file_operations - these will alter the owner and rights of the files apropriately
+		# if you need to to create or copy files use the methods from utilities.file_operations - these will alter the owner and rights of the files apropriately
 		# if you need to run external programs/scripts use execute(...) - this will enshure that it will be executed with a user with restricted rights - if so configured
 
 		# Create a result
