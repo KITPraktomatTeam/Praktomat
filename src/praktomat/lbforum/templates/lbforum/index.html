@@ -1,0 +1,44 @@
+{% extends "lbforum/base.html" %}
+
+{% load i18n %}
+{% load onlineuser_tags %}
+{% load lbforum_widget_tags %}
+
+{% block content %}
+    <!-- brd-wrap begins -->
+<div id="brd-wrap" class="brd">
+
+    <!-- brd-index begins -->
+<div id="brd-index" class="brd-page basic-page">
+    {% include 'lbforum/inc_header.html' %}
+    {% include 'lbforum/inc_announce.html' %}
+    <p></p>
+    <div class="hr"><hr /></div>
+    <!-- brd-main begins -->
+<div id="brd-main">
+    <div class="main-head">
+        <h1 class="hn"><span>{{ LBFORUM_TITLE }}</span></h1>
+    </div>
+    {% lbf_categories_and_forums %}
+</div>
+<!-- brd-main ends -->
+
+<!-- forum_qpost -->
+
+<!-- brd-stats begins -->
+{% lbf_status %}
+<!-- brd-stats ends -->
+{% onlineinfos 1 "lbforum/widgets/onlineinfos.html" %}
+
+<div class="gen-content" id="brd-friend-links">
+		<span>{% trans "Friend Links" %}</span> {% include 'lbforum/plugins/inc_friend_links.html' %}
+</div>
+
+<div class="hr"><hr /></div>
+
+{% include 'lbforum/inc_copyright.html' %}
+
+</div><!-- brd-index ends -->
+</div><!-- brd-wrap ends -->
+
+{% endblock %}
