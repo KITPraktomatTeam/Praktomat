@@ -7,18 +7,17 @@ from django.db import models
 class Migration(DataMigration):
 
     def forwards(self, orm):
+		"Write your forwards methods here."
 		
 		#send signal post_syncdb so that permissions will be created even if the corresponding model was created in this migration
 		db.send_pending_create_signals()
 
-		"Write your forwards methods here."
 		group = orm['auth.group'].objects.get_or_create(name="Trainer")[0]
-		permissions =orm['auth.Permission'].objects.filter(codename=u'change_solution')
+		permissions =orm['auth.Permission'].objects.filter(content_type__app_label='lbforum')
 		group.permissions.add(*permissions)
 		group.save()
-
+	
     def backwards(self, orm):
-		
 		"Write your backwards methods here."
 		pass
 
@@ -34,7 +33,7 @@ class Migration(DataMigration):
             'Meta': {'object_name': 'User', '_ormbases': ['auth.User']},
             'activation_key': ('django.db.models.fields.CharField', [], {'max_length': '40'}),
             'final_grade': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'mat_number': ('django.db.models.fields.IntegerField', [], {'null': 'True'}),
+            'mat_number': ('django.db.models.fields.IntegerField', [], {'unique': 'True', 'null': 'True', 'blank': 'True'}),
             'tutorial': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['accounts.Tutorial']", 'null': 'True', 'blank': 'True'}),
             'user_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True', 'primary_key': 'True'})
         },

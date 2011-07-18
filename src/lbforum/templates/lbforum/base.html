@@ -1,19 +1,27 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-{% block html_declare %}
-<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ LANGUAGE_CODE }}" xml:lang="{{ LANGUAGE_CODE }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+{% extends "base.html" %}
+{% load i18n %}
+{% block extrahead %}{{ block.super }}
+	{% include 'lbforum/inc_styles.html' %}
+	{% block extra_header %}{% endblock %}
 {% endblock %}
 
-	<head>
-		<title>
-			{% block title %} {{ LBFORUM_TITLE }} - {{ LBFORUM_SUB_TITLE }} {% endblock %}
-		</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		{% include 'lbforum/inc_styles.html' %}
-		{% block extra_header %}{% endblock %}
-	</head>
 
-	<body>
-		{% block content %} {% endblock %}        
-	</body>    
-</html>
+{% block breadcrumbs %}
+{{ block.super }} <span>&raquo;</span>
+<a href="{% url lbforum_index %}">{{ LBFORUM_TITLE }}</a>  
+{% if forum %}{% if not topic %}
+	<span>&raquo;</span> {{forum}}
+{% endif %}{% endif %}
+{% if topic %}
+	<span>&raquo;</span> <a href="{{ topic.forum.get_absolute_url }}">{{ topic.forum.name }}</a>
+{% if not form.subject %}
+	<span>&raquo;</span> {{ topic.subject }}
+{% else %}
+	{% if topic %} 
+		<span> &raquo; </span> <a href="{{ topic.get_absolute_url }}">{{ topic.subject }}</a>
+	{% endif %}
+	<span> &raquo; </span> {% if is_new_post %}{% trans "Post new" %}{% else %}{% trans "Edit" %}{% endif %} {{ post_type }}
+</span> 
+{% endif %}
+{% endif %}
+{% endblock %}

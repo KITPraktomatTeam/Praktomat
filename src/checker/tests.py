@@ -5,8 +5,9 @@ from utilities.file_operations import copy_file
 
 from solutions.models import Solution
 from tasks.models import Task
-from checker.checker import *
-from checker.compiler import *
+from compiler import *
+from checker import *
+
 
 class TestChecker(TestCase):
 	def setUp(self):

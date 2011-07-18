@@ -5,7 +5,10 @@ from django.utils.translation import ugettext_lazy as _
 
 from models import Category, Forum, TopicType, Topic, Post, LBForumUserProfile
 
-admin.site.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    exclude             = (	'updated_on',)
+admin.site.register(Category, CategoryAdmin)
+
 
 def update_forum_nums_topic_post(modeladmin, request, queryset):
     for forum in queryset:
@@ -22,6 +25,7 @@ class ForumAdmin(admin.ModelAdmin):
     list_display        = ('name', 'slug', 'category', 'num_topics', \
             'num_posts', )
     list_filter         = ('category',)
+    exclude             = (	'updated_on', 'num_topics', 'num_posts', 'last_post')
     actions = [update_forum_nums_topic_post]
 
 admin.site.register(Forum, ForumAdmin)
@@ -69,6 +73,7 @@ class TopicAdmin(admin.ModelAdmin):
     list_filter         = ('forum', 'sticky', 'closed', 'hidden', 'level')
     search_fields       = ('subject', 'posted_by__username', )
     #inlines             = (PostInline, )
+    exclude             = ('num_views', 'num_replies', 'updated_on', 'last_post', 'has_imgs', 'has_attachments', 'need_replay', 'need_reply_attachments')
     actions = [update_topic_num_replies, sticky_unsticky_topic, close_unclose_topic, 
             hide_unhide_topic]
 
@@ -78,6 +83,7 @@ class PostAdmin(admin.ModelAdmin):
     list_display        = ('__unicode__', 'topic', 'posted_by', 'poster_ip', \
             'created_on', 'updated_on', )
     search_fields       = ('topic__subject', 'posted_by__username', 'message', )
+    exclude             = ('has_imgs', 'has_attachments', 'updated_on', 'attachments',)
 
 admin.site.register(Post, PostAdmin)
 

@@ -1,3 +1,4 @@
+{% load i18n %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -25,8 +26,10 @@
 				{% if user.is_authenticated %}
 					Welcome, {% firstof user.get_full_name user.username %} /
 					<a href="{% url registration_change %}">Change Account</a> / 
-					<a href="{% url auth_logout %}">Log-out</a>
-					{% if user.is_staff %}/ <a href="{% url admin %}">Admin Panel</a>{%endif%}
+					<a href="{% url auth_logout %}">Log-out</a><br/>
+					<a href="{% url lbforum_index %}">Forum</a>  
+					{% if user.is_staff %}/ <a href={% url rating_overview %}>{% trans "Rating overview"%}</a> /
+					<a href="{% url admin:index %}">Admin Panel</a>	{%endif%}
 				{% else %}
 					<a href="{% url auth_login %}">Login</a> /
 					<a href="{% url registration_register %}">Register</a> 
@@ -50,5 +53,6 @@
 			{% block content %}{% endblock %}
 		</div>
 	</div>
+	{% block footer_js %} {% endblock %}
 </body>
 </html>

@@ -27,16 +27,18 @@ SECRET_KEY = 'db(@293vg@52-2mgn2zjypq=pc@28t@==$@@vt^yf78l$429yn'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.load_template_source',
     'django.template.loaders.app_directories.load_template_source',
-#     'django.template.loaders.eggs.load_template_source',
+	'django.template.loaders.eggs.load_template_source',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-  "context_processors.settings.from_settings",
-  "django.contrib.auth.context_processors.auth",
-	"django.core.context_processors.debug",
-	"django.core.context_processors.i18n",
-	"django.core.context_processors.media",
-	"django.contrib.messages.context_processors.messages"
+	'context_processors.settings.from_settings',
+	'django.contrib.auth.context_processors.auth',
+	'django.core.context_processors.debug',
+	'django.core.context_processors.i18n',
+	'django.core.context_processors.media',
+	'django.core.context_processors.request',
+	'django.contrib.messages.context_processors.messages',
+	'djangohelper.context_processors.ctx_config',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -45,6 +47,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'accounts.middleware.AuthenticationMiddleware',
 	'django.middleware.transaction.TransactionMiddleware',
+	'pagination.middleware.PaginationMiddleware',
+	'onlineuser.middleware.OnlineUserMiddleware',
 )
 
 ROOT_URLCONF = 'urls'
@@ -53,7 +57,9 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(os.path.dirname(__file__),"templates")
+    os.path.dirname(__file__)+"/templates",
+	os.path.dirname(__file__)+"/lbforum/templates"
+				 
 )
 
 INSTALLED_APPS = (
@@ -73,6 +79,14 @@ INSTALLED_APPS = (
 
 	# contains a widget to render a form field as a TinyMCE editor
 	'tinymce',
+				  
+  	# Forum
+	'pagination',
+	'lbforum',
+	'simpleavatar',
+	'djangohelper',
+	'onlineuser',
+  	'attachments',
 
 	'configuration',
 	'accounts',
@@ -120,4 +134,58 @@ TINYMCE_DEFAULT_CONFIG = {
 TINYMCE_SPELLCHECKER = False
 TINYMCE_COMPRESSOR = False
 
+# Forum
+# URL prefix for lbforum media -- CSS, JavaScript and images. Make sure to use a
+# trailing slash.
+# Examples: "http://foo.com/media/", "/media/".
+LBFORUM_MEDIA_PREFIX = '/media/lbforum/'
 
+
+#The URL where requests are redirected for login
+LOGIN_URL = "/accounts/login/"
+#LOGIN_URL counterpart
+LOGOUT_URL = "/accounts/logout/"
+#register url
+REGISTER_URL = "/accounts/register/"
+
+CTX_CONFIG = {
+	'LBFORUM_TITLE': 'Forum',
+	'LBFORUM_SUB_TITLE': 'Praktomat Support Forum',
+	'FORUM_PAGE_SIZE': 50,
+	'TOPIC_PAGE_SIZE': 20,
+	
+	'LBFORUM_MEDIA_PREFIX': LBFORUM_MEDIA_PREFIX,
+	'LOGIN_URL': LOGIN_URL,
+	'LOGOUT_URL': LOGOUT_URL,
+	'REGISTER_URL': REGISTER_URL,
+}
+
+BBCODE_AUTO_URLS = True
+#add allow tags
+HTML_SAFE_TAGS = ['embed']
+HTML_SAFE_ATTRS = ['allowscriptaccess', 'allowfullscreen', 'wmode']
+#add forbid tags
+HTML_UNSAFE_TAGS = []
+HTML_UNSAFE_ATTRS = []
+
+"""
+	#default html safe settings
+	acceptable_elements = ['a', 'abbr', 'acronym', 'address', 'area', 'b', 'big',
+    'blockquote', 'br', 'button', 'caption', 'center', 'cite', 'code', 'col',
+    'colgroup', 'dd', 'del', 'dfn', 'dir', 'div', 'dl', 'dt', 'em',
+    'font', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'i', 'img',
+    'ins', 'kbd', 'label', 'legend', 'li', 'map', 'menu', 'ol',
+    'p', 'pre', 'q', 's', 'samp', 'small', 'span', 'strike',
+    'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'tfoot', 'th',
+    'thead', 'tr', 'tt', 'u', 'ul', 'var']
+	acceptable_attributes = ['abbr', 'accept', 'accept-charset', 'accesskey',
+    'action', 'align', 'alt', 'axis', 'border', 'cellpadding', 'cellspacing',
+    'char', 'charoff', 'charset', 'checked', 'cite', 'clear', 'cols',
+    'colspan', 'color', 'compact', 'coords', 'datetime', 'dir',
+    'enctype', 'for', 'headers', 'height', 'href', 'hreflang', 'hspace',
+    'id', 'ismap', 'label', 'lang', 'longdesc', 'maxlength', 'method',
+    'multiple', 'name', 'nohref', 'noshade', 'nowrap', 'prompt',
+    'rel', 'rev', 'rows', 'rowspan', 'rules', 'scope', 'shape', 'size',
+    'span', 'src', 'start', 'summary', 'tabindex', 'target', 'title', 'type',
+    'usemap', 'valign', 'value', 'vspace', 'width', 'style']
+	"""

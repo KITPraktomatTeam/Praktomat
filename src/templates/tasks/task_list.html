@@ -7,10 +7,6 @@
 
 	{% chunk "Welcome Message" %}
 	
-	{% if user|in_group:"Trainer"%}
-		<span class="icon ui-icon-triangle-1-e"></span><a href={% url rating_overview %}>{% trans "Rating overview"%}</a>
-	{% endif %}
-	
 	{% if not user|in_group:"Trainer" and not user.is_superuser %}
 		{% if tutors or trainers %}
 			<div id="contact"><a> Got Problems? </a>

@@ -170,7 +170,7 @@ ul, ol, dl {
 
 ul li {
 	list-style-type: disc;
-}
+} 
 
 ol li {
 	list-style-type: decimal;
@@ -195,17 +195,16 @@ body {
 
 #container {
 	position: relative;
-	width: 100%;
-	min-width: 760px;
-}
-
-#content {
 	min-width: 800px;
 	max-width: 1000px;
 	margin-right: auto;
 	margin-left: auto;
+	padding: 10px;
+}
+
+#content {
 	margin-bottom: 10px;
-	padding: 20px;
+	padding-top: 20px;
 }
 
 #footer {
@@ -218,43 +217,40 @@ body {
 /* @group Header */
 
 #header {
-	background: #123069;
+	background: #517ca1;
 	color: white;
 	overflow: hidden;
 	width: 100%;
+	font-size: 12px;
 }
 
 #sub_header {
-	background: #005094;
+	background: #313d47;
 	overflow: hidden;
 	width: 100%;
 	color: #eaeaea;
 	font-size: 11px;
+	margin-left: 0;
 	padding-top: 3px;
 	padding-bottom: 4px;
 }
 
 .inner {
-	min-width: 800px;
-	max-width: 1000px;
-	margin-right: auto;
-	margin-left: auto;
 	padding-left: 20px;
-	padding-right: 20px;
 }
 
 #title h1 {
-	font-size: 18px;
 	font-weight: normal;
 	color: white;
 	float: left;
-	margin-top: 8px;
-	margin-bottom: 8px;
+	font-size: 32px;
 }
 
 #user-tools {
 	float: right;
-	margin-top: 12px;
+	padding: 20px;
+	text-align: right;
+	line-height: 20px;
 }
 
 #header a:link, #header a:visited {
@@ -867,15 +863,26 @@ IE8 */
 
 /* @group Accounts */
 
-/* @group Login */
-
 #login #form {
-	margin-top: 50px;
+	margin: 100px auto auto;
+	width: 300px;
 }
 
-
-
 /* @end */
+
+/* @group Forum */
+
+.brd {
+	width: 100% !important;
+}
+
+.brd li {
+	list-style-type: none;
+}
+
+.brd .txt-set label span {
+	padding-left: 2em !important; 
+}
 
 
 

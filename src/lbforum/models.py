@@ -5,6 +5,7 @@ import pickle
 
 from django.db import models
 from django.contrib.auth.models import User
+from accounts.models import User as PraktomatUser
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Sum
@@ -225,7 +226,9 @@ class LBForumUserProfile(models.Model):
     signature = models.CharField(max_length = 1000, blank = True)
     
     def __unicode__(self):
-        return self.user.username
+        return self.user.get_full_name() or self.user.username
+        assert False
+
     
     def get_total_posts(self):
         return self.user.post_set.count()
@@ -233,16 +236,21 @@ class LBForumUserProfile(models.Model):
     def get_absolute_url(self):
         return self.user.get_absolute_url()
        
+def __unicode__(self):
+	return self.get_full_name() or self.username
+	assert False
+User.__unicode__ = __unicode__
+
 #### smoe function ###
 
 #### do smoe connect ###
 def gen_last_post_info(post):
-    last_post = {'posted_by': post.posted_by.username, 'update': post.created_on}
+    last_post = {'posted_by': post.posted_by, 'update': post.created_on}
     return b64encode(pickle.dumps(last_post, pickle.HIGHEST_PROTOCOL))
 
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        LBForumUserProfile.objects.create(user=instance)
+        LBForumUserProfile.objects.get_or_create(user=instance)
 
 def update_topic_on_post(sender, instance, created, **kwargs):
     if created:
@@ -272,6 +280,7 @@ def update_user_last_activity(sender, instance, created, **kwargs):
         p.last_activity = instance.updated_on
         p.save()
 
+post_save.connect(create_user_profile, sender = PraktomatUser)
 post_save.connect(create_user_profile, sender = User)
 post_save.connect(update_topic_on_post, sender = Post)
 post_save.connect(update_forum_on_post, sender = Post)
