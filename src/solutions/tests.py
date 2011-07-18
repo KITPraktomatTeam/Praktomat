@@ -20,7 +20,7 @@ class TestViews(TestCase):
 			self.failUnlessEqual(response.status_code, 200)
 
 		def test_post_solution(self):
-			path = join(dirname(dirname(dirname(dirname(__file__)))), 'examples', 'Tasks', 'AMI', 'ModelSolution(flat).zip')
+			path = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'AMI', 'ModelSolution(flat).zip')
 			f = open(path, 'r')
 			response = self.client.post(reverse('solution_list', args=[self.task.id]), data={
 								u'solutionfile_set-INITIAL_FORMS': u'0',

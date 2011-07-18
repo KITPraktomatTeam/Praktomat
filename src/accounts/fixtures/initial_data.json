@@ -1,0 +1,1481 @@
+[
+    {
+        "pk": 121, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_tutorial", 
+            "name": "Can add tutorial", 
+            "content_type": 41
+        }
+    }, 
+    {
+        "pk": 122, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_tutorial", 
+            "name": "Can change tutorial", 
+            "content_type": 41
+        }
+    }, 
+    {
+        "pk": 123, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_tutorial", 
+            "name": "Can delete tutorial", 
+            "content_type": 41
+        }
+    }, 
+    {
+        "pk": 118, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_user", 
+            "name": "Can add user", 
+            "content_type": 40
+        }
+    }, 
+    {
+        "pk": 119, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_user", 
+            "name": "Can change user", 
+            "content_type": 40
+        }
+    }, 
+    {
+        "pk": 120, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_user", 
+            "name": "Can delete user", 
+            "content_type": 40
+        }
+    }, 
+    {
+        "pk": 19, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_logentry", 
+            "name": "Can add log entry", 
+            "content_type": 7
+        }
+    }, 
+    {
+        "pk": 20, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_logentry", 
+            "name": "Can change log entry", 
+            "content_type": 7
+        }
+    }, 
+    {
+        "pk": 21, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_logentry", 
+            "name": "Can delete log entry", 
+            "content_type": 7
+        }
+    }, 
+    {
+        "pk": 154, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_attachment", 
+            "name": "Can add attachment", 
+            "content_type": 52
+        }
+    }, 
+    {
+        "pk": 155, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_attachment", 
+            "name": "Can change attachment", 
+            "content_type": 52
+        }
+    }, 
+    {
+        "pk": 156, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_attachment", 
+            "name": "Can delete attachment", 
+            "content_type": 52
+        }
+    }, 
+    {
+        "pk": 97, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_annotatedsolutionfile", 
+            "name": "Can add annotated solution file", 
+            "content_type": 33
+        }
+    }, 
+    {
+        "pk": 98, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_annotatedsolutionfile", 
+            "name": "Can change annotated solution file", 
+            "content_type": 33
+        }
+    }, 
+    {
+        "pk": 99, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_annotatedsolutionfile", 
+            "name": "Can delete annotated solution file", 
+            "content_type": 33
+        }
+    }, 
+    {
+        "pk": 94, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_attestation", 
+            "name": "Can add attestation", 
+            "content_type": 32
+        }
+    }, 
+    {
+        "pk": 95, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_attestation", 
+            "name": "Can change attestation", 
+            "content_type": 32
+        }
+    }, 
+    {
+        "pk": 96, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_attestation", 
+            "name": "Can delete attestation", 
+            "content_type": 32
+        }
+    }, 
+    {
+        "pk": 109, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_rating", 
+            "name": "Can add rating", 
+            "content_type": 37
+        }
+    }, 
+    {
+        "pk": 110, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_rating", 
+            "name": "Can change rating", 
+            "content_type": 37
+        }
+    }, 
+    {
+        "pk": 111, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_rating", 
+            "name": "Can delete rating", 
+            "content_type": 37
+        }
+    }, 
+    {
+        "pk": 100, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_ratingaspect", 
+            "name": "Can add rating aspect", 
+            "content_type": 34
+        }
+    }, 
+    {
+        "pk": 101, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_ratingaspect", 
+            "name": "Can change rating aspect", 
+            "content_type": 34
+        }
+    }, 
+    {
+        "pk": 102, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_ratingaspect", 
+            "name": "Can delete rating aspect", 
+            "content_type": 34
+        }
+    }, 
+    {
+        "pk": 112, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_ratingresult", 
+            "name": "Can add rating result", 
+            "content_type": 38
+        }
+    }, 
+    {
+        "pk": 113, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_ratingresult", 
+            "name": "Can change rating result", 
+            "content_type": 38
+        }
+    }, 
+    {
+        "pk": 114, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_ratingresult", 
+            "name": "Can delete rating result", 
+            "content_type": 38
+        }
+    }, 
+    {
+        "pk": 103, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_ratingscale", 
+            "name": "Can add rating scale", 
+            "content_type": 35
+        }
+    }, 
+    {
+        "pk": 104, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_ratingscale", 
+            "name": "Can change rating scale", 
+            "content_type": 35
+        }
+    }, 
+    {
+        "pk": 105, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_ratingscale", 
+            "name": "Can delete rating scale", 
+            "content_type": 35
+        }
+    }, 
+    {
+        "pk": 106, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_ratingscaleitem", 
+            "name": "Can add rating scale item", 
+            "content_type": 36
+        }
+    }, 
+    {
+        "pk": 107, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_ratingscaleitem", 
+            "name": "Can change rating scale item", 
+            "content_type": 36
+        }
+    }, 
+    {
+        "pk": 108, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_ratingscaleitem", 
+            "name": "Can delete rating scale item", 
+            "content_type": 36
+        }
+    }, 
+    {
+        "pk": 115, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_script", 
+            "name": "Can add script", 
+            "content_type": 39
+        }
+    }, 
+    {
+        "pk": 116, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_script", 
+            "name": "Can change script", 
+            "content_type": 39
+        }
+    }, 
+    {
+        "pk": 117, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_script", 
+            "name": "Can delete script", 
+            "content_type": 39
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_group", 
+            "name": "Can add group", 
+            "content_type": 2
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_group", 
+            "name": "Can change group", 
+            "content_type": 2
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_group", 
+            "name": "Can delete group", 
+            "content_type": 2
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_message", 
+            "name": "Can add message", 
+            "content_type": 4
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_message", 
+            "name": "Can change message", 
+            "content_type": 4
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_message", 
+            "name": "Can delete message", 
+            "content_type": 4
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_permission", 
+            "name": "Can add permission", 
+            "content_type": 1
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_permission", 
+            "name": "Can change permission", 
+            "content_type": 1
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_permission", 
+            "name": "Can delete permission", 
+            "content_type": 1
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_user", 
+            "name": "Can add user", 
+            "content_type": 3
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_user", 
+            "name": "Can change user", 
+            "content_type": 3
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_user", 
+            "name": "Can delete user", 
+            "content_type": 3
+        }
+    }, 
+    {
+        "pk": 43, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_anonymitychecker", 
+            "name": "Can add anonymity checker", 
+            "content_type": 15
+        }
+    }, 
+    {
+        "pk": 44, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_anonymitychecker", 
+            "name": "Can change anonymity checker", 
+            "content_type": 15
+        }
+    }, 
+    {
+        "pk": 45, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_anonymitychecker", 
+            "name": "Can delete anonymity checker", 
+            "content_type": 15
+        }
+    }, 
+    {
+        "pk": 79, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_cbuilder", 
+            "name": "Can add c builder", 
+            "content_type": 27
+        }
+    }, 
+    {
+        "pk": 80, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_cbuilder", 
+            "name": "Can change c builder", 
+            "content_type": 27
+        }
+    }, 
+    {
+        "pk": 81, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_cbuilder", 
+            "name": "Can delete c builder", 
+            "content_type": 27
+        }
+    }, 
+    {
+        "pk": 40, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_checkerresult", 
+            "name": "Can add checker result", 
+            "content_type": 14
+        }
+    }, 
+    {
+        "pk": 41, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_checkerresult", 
+            "name": "Can change checker result", 
+            "content_type": 14
+        }
+    }, 
+    {
+        "pk": 42, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_checkerresult", 
+            "name": "Can delete checker result", 
+            "content_type": 14
+        }
+    }, 
+    {
+        "pk": 76, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_checkstylechecker", 
+            "name": "Can add check style checker", 
+            "content_type": 26
+        }
+    }, 
+    {
+        "pk": 77, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_checkstylechecker", 
+            "name": "Can change check style checker", 
+            "content_type": 26
+        }
+    }, 
+    {
+        "pk": 78, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_checkstylechecker", 
+            "name": "Can delete check style checker", 
+            "content_type": 26
+        }
+    }, 
+    {
+        "pk": 61, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_createfilechecker", 
+            "name": "Can add create file checker", 
+            "content_type": 21
+        }
+    }, 
+    {
+        "pk": 62, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_createfilechecker", 
+            "name": "Can change create file checker", 
+            "content_type": 21
+        }
+    }, 
+    {
+        "pk": 63, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_createfilechecker", 
+            "name": "Can delete create file checker", 
+            "content_type": 21
+        }
+    }, 
+    {
+        "pk": 82, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_cxxbuilder", 
+            "name": "Can add cxx builder", 
+            "content_type": 28
+        }
+    }, 
+    {
+        "pk": 83, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_cxxbuilder", 
+            "name": "Can change cxx builder", 
+            "content_type": 28
+        }
+    }, 
+    {
+        "pk": 84, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_cxxbuilder", 
+            "name": "Can delete cxx builder", 
+            "content_type": 28
+        }
+    }, 
+    {
+        "pk": 73, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_dejagnusetup", 
+            "name": "Can add deja gnu setup", 
+            "content_type": 25
+        }
+    }, 
+    {
+        "pk": 74, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_dejagnusetup", 
+            "name": "Can change deja gnu setup", 
+            "content_type": 25
+        }
+    }, 
+    {
+        "pk": 75, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_dejagnusetup", 
+            "name": "Can delete deja gnu setup", 
+            "content_type": 25
+        }
+    }, 
+    {
+        "pk": 70, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_dejagnutester", 
+            "name": "Can add deja gnu tester", 
+            "content_type": 24
+        }
+    }, 
+    {
+        "pk": 71, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_dejagnutester", 
+            "name": "Can change deja gnu tester", 
+            "content_type": 24
+        }
+    }, 
+    {
+        "pk": 72, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_dejagnutester", 
+            "name": "Can delete deja gnu tester", 
+            "content_type": 24
+        }
+    }, 
+    {
+        "pk": 55, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_diffchecker", 
+            "name": "Can add diff checker", 
+            "content_type": 19
+        }
+    }, 
+    {
+        "pk": 56, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_diffchecker", 
+            "name": "Can change diff checker", 
+            "content_type": 19
+        }
+    }, 
+    {
+        "pk": 57, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_diffchecker", 
+            "name": "Can delete diff checker", 
+            "content_type": 19
+        }
+    }, 
+    {
+        "pk": 91, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_fortranbuilder", 
+            "name": "Can add fortran builder", 
+            "content_type": 31
+        }
+    }, 
+    {
+        "pk": 92, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_fortranbuilder", 
+            "name": "Can change fortran builder", 
+            "content_type": 31
+        }
+    }, 
+    {
+        "pk": 93, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_fortranbuilder", 
+            "name": "Can delete fortran builder", 
+            "content_type": 31
+        }
+    }, 
+    {
+        "pk": 46, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_interfacechecker", 
+            "name": "Can add interface checker", 
+            "content_type": 16
+        }
+    }, 
+    {
+        "pk": 47, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_interfacechecker", 
+            "name": "Can change interface checker", 
+            "content_type": 16
+        }
+    }, 
+    {
+        "pk": 48, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_interfacechecker", 
+            "name": "Can delete interface checker", 
+            "content_type": 16
+        }
+    }, 
+    {
+        "pk": 85, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_javabuilder", 
+            "name": "Can add java builder", 
+            "content_type": 29
+        }
+    }, 
+    {
+        "pk": 86, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_javabuilder", 
+            "name": "Can change java builder", 
+            "content_type": 29
+        }
+    }, 
+    {
+        "pk": 87, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_javabuilder", 
+            "name": "Can delete java builder", 
+            "content_type": 29
+        }
+    }, 
+    {
+        "pk": 88, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_javagccbuilder", 
+            "name": "Can add java gcc builder", 
+            "content_type": 30
+        }
+    }, 
+    {
+        "pk": 89, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_javagccbuilder", 
+            "name": "Can change java gcc builder", 
+            "content_type": 30
+        }
+    }, 
+    {
+        "pk": 90, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_javagccbuilder", 
+            "name": "Can delete java gcc builder", 
+            "content_type": 30
+        }
+    }, 
+    {
+        "pk": 67, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_junit3checker", 
+            "name": "Can add j unit3 checker", 
+            "content_type": 23
+        }
+    }, 
+    {
+        "pk": 68, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_junit3checker", 
+            "name": "Can change j unit3 checker", 
+            "content_type": 23
+        }
+    }, 
+    {
+        "pk": 69, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_junit3checker", 
+            "name": "Can delete j unit3 checker", 
+            "content_type": 23
+        }
+    }, 
+    {
+        "pk": 64, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_linecounter", 
+            "name": "Can add line counter", 
+            "content_type": 22
+        }
+    }, 
+    {
+        "pk": 65, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_linecounter", 
+            "name": "Can change line counter", 
+            "content_type": 22
+        }
+    }, 
+    {
+        "pk": 66, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_linecounter", 
+            "name": "Can delete line counter", 
+            "content_type": 22
+        }
+    }, 
+    {
+        "pk": 49, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_linewidthchecker", 
+            "name": "Can add line width checker", 
+            "content_type": 17
+        }
+    }, 
+    {
+        "pk": 50, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_linewidthchecker", 
+            "name": "Can change line width checker", 
+            "content_type": 17
+        }
+    }, 
+    {
+        "pk": 51, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_linewidthchecker", 
+            "name": "Can delete line width checker", 
+            "content_type": 17
+        }
+    }, 
+    {
+        "pk": 58, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_scriptchecker", 
+            "name": "Can add script checker", 
+            "content_type": 20
+        }
+    }, 
+    {
+        "pk": 59, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_scriptchecker", 
+            "name": "Can change script checker", 
+            "content_type": 20
+        }
+    }, 
+    {
+        "pk": 60, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_scriptchecker", 
+            "name": "Can delete script checker", 
+            "content_type": 20
+        }
+    }, 
+    {
+        "pk": 52, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_textchecker", 
+            "name": "Can add text checker", 
+            "content_type": 18
+        }
+    }, 
+    {
+        "pk": 53, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_textchecker", 
+            "name": "Can change text checker", 
+            "content_type": 18
+        }
+    }, 
+    {
+        "pk": 54, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_textchecker", 
+            "name": "Can delete text checker", 
+            "content_type": 18
+        }
+    }, 
+    {
+        "pk": 127, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_chunk", 
+            "name": "Can add chunk", 
+            "content_type": 43
+        }
+    }, 
+    {
+        "pk": 128, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_chunk", 
+            "name": "Can change chunk", 
+            "content_type": 43
+        }
+    }, 
+    {
+        "pk": 129, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_chunk", 
+            "name": "Can delete chunk", 
+            "content_type": 43
+        }
+    }, 
+    {
+        "pk": 124, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_settings", 
+            "name": "Can add settings", 
+            "content_type": 42
+        }
+    }, 
+    {
+        "pk": 125, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_settings", 
+            "name": "Can change settings", 
+            "content_type": 42
+        }
+    }, 
+    {
+        "pk": 126, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_settings", 
+            "name": "Can delete settings", 
+            "content_type": 42
+        }
+    }, 
+    {
+        "pk": 13, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_contenttype", 
+            "name": "Can add content type", 
+            "content_type": 5
+        }
+    }, 
+    {
+        "pk": 14, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_contenttype", 
+            "name": "Can change content type", 
+            "content_type": 5
+        }
+    }, 
+    {
+        "pk": 15, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_contenttype", 
+            "name": "Can delete content type", 
+            "content_type": 5
+        }
+    }, 
+    {
+        "pk": 133, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_category", 
+            "name": "Can add Category", 
+            "content_type": 45
+        }
+    }, 
+    {
+        "pk": 134, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_category", 
+            "name": "Can change Category", 
+            "content_type": 45
+        }
+    }, 
+    {
+        "pk": 135, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_category", 
+            "name": "Can delete Category", 
+            "content_type": 45
+        }
+    }, 
+    {
+        "pk": 130, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_config", 
+            "name": "Can add config", 
+            "content_type": 44
+        }
+    }, 
+    {
+        "pk": 131, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_config", 
+            "name": "Can change config", 
+            "content_type": 44
+        }
+    }, 
+    {
+        "pk": 132, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_config", 
+            "name": "Can delete config", 
+            "content_type": 44
+        }
+    }, 
+    {
+        "pk": 136, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_forum", 
+            "name": "Can add Forum", 
+            "content_type": 46
+        }
+    }, 
+    {
+        "pk": 137, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_forum", 
+            "name": "Can change Forum", 
+            "content_type": 46
+        }
+    }, 
+    {
+        "pk": 138, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_forum", 
+            "name": "Can delete Forum", 
+            "content_type": 46
+        }
+    }, 
+    {
+        "pk": 148, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_lbforumuserprofile", 
+            "name": "Can add lb forum user profile", 
+            "content_type": 50
+        }
+    }, 
+    {
+        "pk": 149, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_lbforumuserprofile", 
+            "name": "Can change lb forum user profile", 
+            "content_type": 50
+        }
+    }, 
+    {
+        "pk": 150, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_lbforumuserprofile", 
+            "name": "Can delete lb forum user profile", 
+            "content_type": 50
+        }
+    }, 
+    {
+        "pk": 145, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_post", 
+            "name": "Can add Post", 
+            "content_type": 49
+        }
+    }, 
+    {
+        "pk": 146, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_post", 
+            "name": "Can change Post", 
+            "content_type": 49
+        }
+    }, 
+    {
+        "pk": 147, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_post", 
+            "name": "Can delete Post", 
+            "content_type": 49
+        }
+    }, 
+    {
+        "pk": 142, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_topic", 
+            "name": "Can add Topic", 
+            "content_type": 48
+        }
+    }, 
+    {
+        "pk": 143, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_topic", 
+            "name": "Can change Topic", 
+            "content_type": 48
+        }
+    }, 
+    {
+        "pk": 144, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_topic", 
+            "name": "Can delete Topic", 
+            "content_type": 48
+        }
+    }, 
+    {
+        "pk": 139, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_topictype", 
+            "name": "Can add topic type", 
+            "content_type": 47
+        }
+    }, 
+    {
+        "pk": 140, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_topictype", 
+            "name": "Can change topic type", 
+            "content_type": 47
+        }
+    }, 
+    {
+        "pk": 141, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_topictype", 
+            "name": "Can delete topic type", 
+            "content_type": 47
+        }
+    }, 
+    {
+        "pk": 151, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_online", 
+            "name": "Can add online", 
+            "content_type": 51
+        }
+    }, 
+    {
+        "pk": 152, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_online", 
+            "name": "Can change online", 
+            "content_type": 51
+        }
+    }, 
+    {
+        "pk": 153, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_online", 
+            "name": "Can delete online", 
+            "content_type": 51
+        }
+    }, 
+    {
+        "pk": 25, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_chunk", 
+            "name": "Can add chunk", 
+            "content_type": 9
+        }
+    }, 
+    {
+        "pk": 26, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_chunk", 
+            "name": "Can change chunk", 
+            "content_type": 9
+        }
+    }, 
+    {
+        "pk": 27, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_chunk", 
+            "name": "Can delete chunk", 
+            "content_type": 9
+        }
+    }, 
+    {
+        "pk": 16, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_session", 
+            "name": "Can add session", 
+            "content_type": 6
+        }
+    }, 
+    {
+        "pk": 17, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_session", 
+            "name": "Can change session", 
+            "content_type": 6
+        }
+    }, 
+    {
+        "pk": 18, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_session", 
+            "name": "Can delete session", 
+            "content_type": 6
+        }
+    }, 
+    {
+        "pk": 34, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_solution", 
+            "name": "Can add solution", 
+            "content_type": 12
+        }
+    }, 
+    {
+        "pk": 35, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_solution", 
+            "name": "Can change solution", 
+            "content_type": 12
+        }
+    }, 
+    {
+        "pk": 36, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_solution", 
+            "name": "Can delete solution", 
+            "content_type": 12
+        }
+    }, 
+    {
+        "pk": 37, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_solutionfile", 
+            "name": "Can add solution file", 
+            "content_type": 13
+        }
+    }, 
+    {
+        "pk": 38, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_solutionfile", 
+            "name": "Can change solution file", 
+            "content_type": 13
+        }
+    }, 
+    {
+        "pk": 39, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_solutionfile", 
+            "name": "Can delete solution file", 
+            "content_type": 13
+        }
+    }, 
+    {
+        "pk": 22, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_migrationhistory", 
+            "name": "Can add migration history", 
+            "content_type": 8
+        }
+    }, 
+    {
+        "pk": 23, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_migrationhistory", 
+            "name": "Can change migration history", 
+            "content_type": 8
+        }
+    }, 
+    {
+        "pk": 24, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_migrationhistory", 
+            "name": "Can delete migration history", 
+            "content_type": 8
+        }
+    }, 
+    {
+        "pk": 31, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_mediafile", 
+            "name": "Can add media file", 
+            "content_type": 11
+        }
+    }, 
+    {
+        "pk": 32, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_mediafile", 
+            "name": "Can change media file", 
+            "content_type": 11
+        }
+    }, 
+    {
+        "pk": 33, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_mediafile", 
+            "name": "Can delete media file", 
+            "content_type": 11
+        }
+    }, 
+    {
+        "pk": 28, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "add_task", 
+            "name": "Can add task", 
+            "content_type": 10
+        }
+    }, 
+    {
+        "pk": 29, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "change_task", 
+            "name": "Can change task", 
+            "content_type": 10
+        }
+    }, 
+    {
+        "pk": 30, 
+        "model": "auth.permission", 
+        "fields": {
+            "codename": "delete_task", 
+            "name": "Can delete task", 
+            "content_type": 10
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "Trainer", 
+            "permissions": [
+                121, 
+                122, 
+                123, 
+                118, 
+                119, 
+                120, 
+                109, 
+                110, 
+                111, 
+                100, 
+                101, 
+                102, 
+                103, 
+                104, 
+                105, 
+                106, 
+                107, 
+                108, 
+                7, 
+                8, 
+                9, 
+                133, 
+                134, 
+                135, 
+                130, 
+                131, 
+                132, 
+                136, 
+                137, 
+                138, 
+                148, 
+                149, 
+                150, 
+                145, 
+                146, 
+                147, 
+                142, 
+                143, 
+                144, 
+                139, 
+                140, 
+                141, 
+                26, 
+                35, 
+                31, 
+                32, 
+                33, 
+                28, 
+                29, 
+                30
+            ]
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "Tutor", 
+            "permissions": []
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "auth.group", 
+        "fields": {
+            "name": "User", 
+            "permissions": []
+        }
+    }
+]

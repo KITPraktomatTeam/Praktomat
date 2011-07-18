@@ -25,7 +25,7 @@ class TestChecker(TestCase):
 		self.solution.check()
 
 	def test_checkstyle_checker(self):
-		src = join(dirname(dirname(dirname(dirname(__file__)))), 'examples', 'check style', 'check_ws.xml')	
+		src = join(dirname(dirname(dirname(__file__))), 'examples', 'check style', 'check_ws.xml')	
 		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'check style', 'check_ws.xml')
 		# circumvent SuspiciousOperation exception
 		copy_file(src,dest)
@@ -38,7 +38,7 @@ class TestChecker(TestCase):
 		self.solution.check()
 
 	def test_createfile_checker(self):
-		src = join(dirname(dirname(dirname(dirname(__file__)))), 'examples', 'check style', 'check_ws.xml')	
+		src = join(dirname(dirname(dirname(__file__))), 'examples', 'check style', 'check_ws.xml')	
 		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'check style', 'createfile.xml')
 		# circumvent SuspiciousOperation exception
 		copy_file(src,dest)
@@ -50,7 +50,7 @@ class TestChecker(TestCase):
 		self.solution.check()
 
 	def test_diff_checker(self):
-		src = join(dirname(dirname(dirname(dirname(__file__)))), 'examples', 'ls.sh')	
+		src = join(dirname(dirname(dirname(__file__))), 'examples', 'ls.sh')	
 		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'ls.sh')
 		# circumvent SuspiciousOperation exception
 		copy_file(src,dest)
@@ -84,7 +84,7 @@ class TestChecker(TestCase):
 		self.solution.check()
 
 	def test_script_checker(self):
-		src = join(dirname(dirname(dirname(dirname(__file__)))), 'examples', 'Power.sh')	
+		src = join(dirname(dirname(dirname(__file__))), 'examples', 'Power.sh')	
 		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'Power.sh')
 		# circumvent SuspiciousOperation exception
 		copy_file(src,dest)
@@ -104,7 +104,7 @@ class TestChecker(TestCase):
 		self.solution.check()
 
 	def test_dejagnu_checker(self):
-		src = join(dirname(dirname(dirname(dirname(__file__)))), 'examples', 'Tasks', 'GGT', 'solutions', 'javagently', 'Stream.java')	
+		src = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'GGT', 'solutions', 'javagently', 'Stream.java')	
 		dest = join(settings.UPLOAD_ROOT, 'directdeposit',  'javagently', 'Stream.java')
 		# circumvent SuspiciousOperation exception
 		copy_file(src,dest)
@@ -121,7 +121,7 @@ class TestChecker(TestCase):
 					_output_flags = "",
 					_file_pattern = r"^[a-zA-Z0-9_/\\]*\.[jJ][aA][vV][aA]$"
 					)
-		src = join(dirname(dirname(dirname(dirname(__file__)))), 'examples', 'Tasks', 'GGT', 'DejaGnuTestCases', 'default.exp')	
+		src = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'GGT', 'DejaGnuTestCases', 'default.exp')	
 		test_defs = join(settings.UPLOAD_ROOT, 'directdeposit', 'DejaGnuTestCases', 'default.exp')
 		# circumvent SuspiciousOperation exception
 		copy_file(src,test_defs)
@@ -130,7 +130,7 @@ class TestChecker(TestCase):
 					order = 1,
 					test_defs = test_defs
 					)
-		src = join(dirname(dirname(dirname(dirname(__file__)))), 'examples', 'Tasks', 'GGT', 'DejaGnuTestCases', 'public.exp')
+		src = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'GGT', 'DejaGnuTestCases', 'public.exp')
 		test_case = join(settings.UPLOAD_ROOT, 'directdeposit', 'DejaGnuTestCases', 'public.exp')
 		# circumvent SuspiciousOperation exception
 		copy_file(src,test_case)

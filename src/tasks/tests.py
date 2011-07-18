@@ -35,7 +35,7 @@ class TestStaffViews(TestCase):
 			self.failUnlessEqual(response.status_code, 200)
 
 		def test_post_task_import(self):
-			path = join(dirname(dirname(dirname(dirname(__file__)))), 'examples', 'Tasks', 'AMI', 'TaskExport.zip')
+			path = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'AMI', 'TaskExport.zip')
 			f = open(path, 'r')
 			response = self.client.post(reverse('admin:task_import'), data={
 								u'file': f
@@ -47,7 +47,7 @@ class TestStaffViews(TestCase):
 			self.failUnlessEqual(response.status_code, 200)
 
 		def test_post_model_solution(self):
-			f = open(join(dirname(dirname(dirname(dirname(__file__)))), 'examples', 'Tasks', 'AMI', 'ModelSolution(flat).zip'), 'r')
+			f = open(join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'AMI', 'ModelSolution(flat).zip'), 'r')
 			response = self.client.post(reverse('model_solution', args=[self.task.id]), data={
 								u'solutionfile_set-INITIAL_FORMS': u'0',
 								u'solutionfile_set-TOTAL_FORMS': u'3',

@@ -1,0 +1,32 @@
+[
+    {
+        "pk": 1, 
+        "model": "configuration.settings", 
+        "fields": {
+            "anonymous_attestation": false, 
+            "email_validation_regex": ".*@(student.)?kit.edu", 
+            "mat_number_validation_regex": "\\d{5,7}", 
+            "final_grades_published": false, 
+            "accept_all_solutions": false, 
+            "deny_registration_from": "2222-01-01 00:00:00"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "configuration.chunk", 
+        "fields": {
+            "content": "", 
+            "key": "Welcome Message", 
+            "settings": 1
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "configuration.chunk", 
+        "fields": {
+            "content": "", 
+            "key": "Login Message", 
+            "settings": 1
+        }
+    }
+]
