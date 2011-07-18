@@ -4,14 +4,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<script type="text/javascript" src="{{MEDIA_URL}}frameworks/jquery/jquery.js"></script>
+	<script type="text/javascript">	
 	<script type="text/javascript" src="{{MEDIA_URL}}frameworks/jquery/jquery-ui.js"></script>
 	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}frameworks/jquery/smoothness/jquery-ui.css" />
 	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}styles/style.css" />
-	<script type="text/javascript">	
-		 $(document).ready(function(){
-		 	$("#javascripterror").hide();
-		 })
-	</script>
 	{% block extrahead %}{% endblock %}	
 	<title>{{ site_name }} {% block title %}{% endblock %}</title>
 </head>
@@ -40,10 +36,10 @@
 			{% block breadcrumbs %}<a href={% url task_list %}><span class="icon icon-white ui-icon-home"></span>Home</a>{% endblock %}
 		</div></div>
 		<div id="content">
-			<div id="javascripterror" class="ui-widget ui-state-error ui-corner-all notification">
+			<noscript><div id="javascripterror" class="ui-widget ui-state-error ui-corner-all notification">
 				<p><span class="ui-icon ui-icon-alert"></span> 
 				<strong>Warnig:</strong> This site is designed to use Javascript! Enabling it is advised.</p>
-			</div>
+			</div></noscript>
 			{% comment %} 4 use with messages framework
 				<div class="ui-widget ui-state-highlight ui-corner-all notification">
 					<p><span class="ui-icon ui-icon-info"></span>

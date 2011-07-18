@@ -85,25 +85,6 @@
                                     </div>
                                 </div>
                             </div>
-                            {% if topic_post %}
-                            <fieldset class="mf-set set3">
-                                <legend><span>{% trans "Optional post settings" %}:</span></legend>
-                                <div class="mf-box checkbox">
-                                    <div class="mf-item">
-                                        <span class="fld-input">
-                                            {{form.need_replay}}
-                                        </span> 
-                                        <label for="fld3">{% trans "reply to see the post" %}</label>
-                                    </div>
-                                    <div class="mf-item">
-                                        <span class="fld-input">
-                                            {{form.need_reply_attachments}}
-                                        </span> 
-                                        <label for="fld3">{% trans "reply to see the attachments" %}</label>
-                                    </div>
-                                </div>
-                            </fieldset>
-                            {% endif %}
                         </fieldset>
                         <div class="frm-buttons">
                             <span class="submit"><input type="submit" value="{% trans "Submit" %}" name="submit"/></span>
