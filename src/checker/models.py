@@ -4,6 +4,7 @@ from os.path import *
 import subprocess
 import shutil
 import sys
+
 from django.conf import settings
 from django.db import models
 from tasks.models import Task
@@ -11,6 +12,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
 from utilities import encoding, file_operations
+from utilities.deleting_file_field import DeletingFileField
 
 import string
 	
@@ -34,7 +36,7 @@ def execute(command, working_directory, environment_variables={}, use_default_us
 
 
 
-class CheckerFileField(models.FileField):
+class CheckerFileField(DeletingFileField):
     """ Custom filefield with with greater path length and default upload location. Use this in all checker subclasses!"""
     
     def get_storage_path(instance, filename):
@@ -48,7 +50,7 @@ class CheckerFileField(models.FileField):
 
 # Tell South how to handle this field
 from south.modelsinspector import add_introspection_rules
-add_introspection_rules([], ["^praktomat\.checker\.models\.CheckerFileField"])    
+add_introspection_rules([], ["^checker\.models\.CheckerFileField"])    
 
 
 
