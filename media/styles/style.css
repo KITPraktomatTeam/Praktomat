@@ -792,7 +792,11 @@ div.result div.log {
 }
 
 #rating #export{
-	text-align: right;
+	float: right;
+}
+
+#rating #email {
+	float: right;
 }
 
 #rating .calculated_grade_cell {
