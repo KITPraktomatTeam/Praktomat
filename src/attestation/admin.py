@@ -40,7 +40,7 @@ class AttestationAdmin(admin.ModelAdmin):
 	readonly_fields = ('created',)
 	fields = ( 'solution', 'author', 'created', 'public_comment', 'private_comment', 'final_grade', 'final', 'published')
 	list_display = ('solution', 'author', 'created', 'final', 'published')
-	list_filter = ('final', 'published', 'author')
+	list_filter = ('final', 'published', 'author', 'solution__author', 'solution__task')
 	inlines = (RatingResultAdminInline, AnnotatedSolutionFileAdminInline)
 
 	def get_form(self, request, obj=None, **kwargs):
