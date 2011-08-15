@@ -10,6 +10,9 @@
 	$("#edit_soluton_button").click(function(){
 		location.href = $("#user_selector")[0].value;
 	});
+	$("#attest_selected_user_button").click(function(){
+		location.href = $("#solution_selector")[0].value;
+	});
  })
 
 </script>
@@ -44,8 +47,18 @@
 				<input id="edit_soluton_button" type="button" value="Edit Solution"/></br></br>
 			{% endif %}			
 			
-			{% if not user|in_group:'Trainer'%}
-			<input id="next_attestation_button" type="button" value="Attest next solution" {% if number_of_unatested_solutions == 0 %}disabled="disabled"{% endif %} onclick="location.href ='{% url new_attestation task_id=task.id %}'"/> {{ number_of_unatested_solutions }} solutions to attest.</br></br>
+			{% if user|in_group:'Tutor'%}
+				{% if show_author %}
+					<select id="solution_selector" {% if unatested_solutions|length == 0 %}disabled="disabled"{% endif %}>
+						{% for solution in unatested_solutions %}
+						<option value="{% url new_attestation_for_solution solution_id=solution.id %}">{{solution.author.last_name}}, {{solution.author.first_name}}</option>
+						{% endfor %}
+					</select>
+					<input id="attest_selected_user_button" type="button" value="Attest selected user" {% if unatested_solutions|length == 0 %}disabled="disabled"{% endif %}/>
+				{% else %}
+					<input id="next_attestation_button" type="button" value="Attest next solution" {% if unatested_solutions|length == 0 %}disabled="disabled"{% endif %} onclick="location.href ='{% url new_attestation_for_task task_id=task.id %}'"/> 
+				{% endif %}
+				{{ unatested_solutions|length }} solutions to attest.</br></br></br>
 			{% endif %}
 			
 			{% if solutions_with_plagiarism %}
