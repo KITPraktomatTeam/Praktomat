@@ -21,7 +21,7 @@ from solutions.forms import SolutionFormSet
 from attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, Script, RatingScaleItem
 from attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm, ScriptForm, PublishFinalGradeForm
 from accounts.templatetags.in_group import in_group
-from accounts.models import User
+from accounts.models import User, Tutorial
 from accounts.views import access_denied
 from configuration import get_settings
 
@@ -202,32 +202,39 @@ def view_attestation(request, attestation_id):
 		submitable = attest.author == request.user and not attest.published
 		return render_to_response("attestation/attestation_view.html", {"attest": attest, 'submitable':submitable, 'form':form, 'show_author': not get_settings().anonymous_attestation},	context_instance=RequestContext(request))
 
-@login_required	
-def rating_overview(request):
-	if not (in_group(request.user,'Trainer') or request.user.is_superuser):
-		return access_denied(request)
-	
-	attestations = Attestation.objects.filter(published=True, solution__plagiarism=False)
+
+def user_task_attestation_map(users,tasks):
+	attestations = Attestation.objects.filter( published=True, solution__plagiarism=False)
 	
 	attestation_dict = {} 	#{(task_id,user_id):attestation}
 	for attestation in attestations:
-			attestation_dict[attestation.solution.task_id, attestation.solution.author_id] = attestation
+		attestation_dict[attestation.solution.task_id, attestation.solution.author_id] = attestation
 	
-	task_id_list = Task.objects.filter(submission_date__lt = datetime.datetime.now).order_by('publication_date','submission_date').values_list('id', flat=True)
-	user_id_list = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name').values_list('id', flat=True)
-	
-	task_list = map(lambda task_id:Task.objects.get(id=task_id), task_id_list)	
+	task_id_list = tasks.values_list('id', flat=True)
+	user_id_list = users.values_list('id', flat=True)
 	
 	rating_list = []
 	for user_id in user_id_list:
-		rating_for_user_list = [User.objects.get(id=user_id)]
+		rating_for_user_list = []
 		for task_id in task_id_list:
 			try:
 				rating = attestation_dict[task_id,user_id]
 			except KeyError:
 				rating = None
 			rating_for_user_list.append(rating)
-		rating_list.append(rating_for_user_list)
+		rating_list.append((User.objects.get(id=user_id),rating_for_user_list))
+	
+	return rating_list
+
+
+@login_required	
+def rating_overview(request):
+	if not (in_group(request.user,'Trainer') or request.user.is_superuser):
+		return access_denied(request)
+	
+	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now).order_by('publication_date','submission_date')
+	users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name')
+	rating_list = user_task_attestation_map(users, tasks)
 		
 	FinalGradeFormSet = modelformset_factory(User, fields=('final_grade',), extra=0)
 	# corresponding user to user_id_list in reverse order! important for easy displaying in template
@@ -248,7 +255,33 @@ def rating_overview(request):
 		script_form = ScriptForm(instance=script)
 		publish_final_grade_form = PublishFinalGradeForm(instance=get_settings())
 	
-	return render_to_response("attestation/rating_overview.html", {'rating_list':rating_list, 'task_list':task_list, 'final_grade_formset':final_grade_formset, 'script_form':script_form, 'publish_final_grade_form':publish_final_grade_form},	context_instance=RequestContext(request))
+	return render_to_response("attestation/rating_overview.html", {'rating_list':rating_list, 'task_list':tasks, 'final_grade_formset':final_grade_formset, 'script_form':script_form, 'publish_final_grade_form':publish_final_grade_form},	context_instance=RequestContext(request))
+
+@login_required	
+def tutorial_overview(request, tutorial_id=None):
+	if not (in_group(request.user,'Trainer,Tutor') or request.user.is_superuser):
+		return access_denied(request)
+		
+	if (tutorial_id):
+		tutorial = get_object_or_404(Tutorial, pk=tutorial_id)
+		if (in_group(request.user,'Tutor') and not tutorial.tutors.filter(id=request.user.id)):
+			return access_denied(request)
+	else:
+		tutorial = request.user.tutored_tutorials.all()[0]
+
+	if (in_group(request.user,'Tutor')):
+		other_tutorials = request.user.tutored_tutorials.all()
+	else:
+		other_tutorials = Tutorial.objects.all()
+	other_tutorials = other_tutorials.exclude(id=tutorial.id)
+	
+	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now).order_by('publication_date','submission_date')
+	users = User.objects.filter(groups__name='User').filter(is_active=True, tutorial=tutorial).order_by('last_name','first_name')
+	rating_list = user_task_attestation_map(users, tasks)
+	script = Script.objects.get_or_create(id=1)[0]
+	
+	return render_to_response("attestation/tutorial_overview.html", {'other_tutorials':other_tutorials, 'tutorial':tutorial, 'rating_list':rating_list, 'task_list':tasks, 'final_grades_published': get_settings().final_grades_published, 'script':script},	context_instance=RequestContext(request))
+
 
 @login_required	
 def rating_export(request):

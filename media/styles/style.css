@@ -861,6 +861,42 @@ IE8 */
 
 /* @end */
 
+
+
+/* @group tutorial */
+
+#tutorial .odd {
+	background-color: #e9edf1;
+}
+
+#tutorial .noLinkHighlight a:link, .noLinkHighlight a:visited {
+	color: #333;
+	text-decoration: none;
+}
+
+#v .noLinkHighlight a:hover {
+	text-decoration: underline;
+}
+
+#tutorial .heading {
+	width: 50px;
+	margin-bottom: 10px;
+	-moz-transform: rotate(-45deg);
+	-o-transform: rotate(-45deg);
+	-webkit-transform: rotate(-45deg);
+	filter: progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand', 
+                     M11=0.7071067811865476, M12=0.7071067811865475, M21=-0.7071067811865475, M22=0.7071067811865476);
+	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', 
+                     M11=0.7071067811865476, M12=0.7071067811865475, M21=-0.7071067811865475, M22=0.7071067811865476)";
+	zoom: 1;
+}
+
+#tutorial table {
+	margin-top: 40px;
+}
+
+/* @end */
+
 /* @group Accounts */
 
 #login #form {

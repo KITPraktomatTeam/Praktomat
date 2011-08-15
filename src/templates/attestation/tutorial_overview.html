@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load highlight %} {% load i18n  %}
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript">	
+	
+	
+	var editor;
+	window.onload = function() {
+		calculate();		
+	};	
+	
+	function calculate(){
+		var all_grades = new Array();
+		$('.user_row').each(function(index) {
+			var grades=new Array();
+			var result;
+			$(this).find('.grade_cell').each(function(index) {
+				grades[index] = $(this).text()
+			});
+			all_grades[index] = grades
+			});
+		for (index in all_grades){
+			var grades = all_grades[index];
+			var result;
+			{{script.script}};
+			$("#calculated_grade_cell"+index).text(result);
+		}
+	}
+	
+</script>
+{% endblock %} 
+{% block breadcrumbs %} {{block.super}} > Rating Overview {% endblock %}
+{% block content %}<div id="tutorial">
+
+{% if other_tutorials %}
+	<h2>Other Tutorials</h2>
+	<ul>
+	{% for tutorial in other_tutorials %}
+		<li><a href="{% url tutorial_overview tutorial_id=tutorial.id  %}">{{tutorial}}</a></li>
+	{% endfor %}
+	</ul>
+{% endif %}
+	
+<h2>{{tutorial.name}}</h2>
+{% for tutor in tutorial.tutors.all %}
+	{% if not forloop.first %}, {% endif %}
+	{{tutor}}
+{% endfor %}
+	
+<div>
+	<table class="noLinkHighlight">
+		<tr>
+			<th>User</th>
+			{% for task in task_list %}
+				<th><div class="heading"><a href="{% url task_detail task_id=task.id  %}">{{task.title}}</a></div></th>
+			{% endfor %}
+			<th><div class="heading" id="calculated_grade_heading">Calculated grade</div></th>
+			<th><div class="heading">Final grade</div></th>	
+		</tr>
+		{% for user, attestations in rating_list %}
+			<tr class="{% cycle 'odd' 'even' %} user_row">
+				<td><a href="mailto:{{user.email}}">{{user.get_full_name}}</a></td>
+				{% for attestation in attestations %}
+					{% if attestation.final_grade %}
+						<td class="grade_cell"><a href="{% url view_attestation attestation_id=attestation.id%}">{{attestation.final_grade}}</a></td>
+					{% else %}
+						<td class="grade_cell">-</td>
+					{% endif %}	
+				{% endfor %}
+				<td class="calculated_grade_cell" id="calculated_grade_cell{{forloop.counter0}}"></td>
+				<td>
+					{% if final_grades_published %}
+						{{user.final_grade}}
+					{% endif %}	
+				</td>
+			</tr>
+		{% endfor %}
+	</table>
+	<br/>
+	<a href="mailto:?bcc={% for user, attestations in rating_list %}{{user.email}},{% endfor %}"><span class="icon ui-icon-mail-closed"></span>Email all users</a>
+	
+</div>
+</div>
+{% endblock %}

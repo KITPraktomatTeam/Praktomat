@@ -73,9 +73,9 @@
 	
 	{{script_form.script}}
 	<input type="button" id="calculate_button" value="calculate" onClick="calculate()" />
-	<p class="help">This JavaScript will be executed for every user listed below to calculate a proposed end note. <i><b>grades</b></i> is an Array containing all final grades for one user as Stings. <i><b>all_grades</b></i> is an array containing all <i><b>grades</b></i> arrays. Save the end note recomendation in <i><b>result</b></i> so it can be displayed in the row 'Calculated grade'.</p>
+	<p class="help">This JavaScript will be executed for every user listed below to calculate a proposed end note. This calculation is also shown to the tutors and users. <i><b>grades</b></i> is an Array containing all final grades for one user as Stings. <i><b>all_grades</b></i> is an array containing all <i><b>grades</b></i> arrays. Save the end note recomendation in <i><b>result</b></i> so it can be displayed in the row 'Calculated grade'.</p>
 
-	<div id="export"><span class="icon ui-icon-extlink"></span><a href="{% url rating_export %}">Export as csv (utf-8)</a></div>
+	<div id="email"><a href="mailto:?bcc={% for user, attestations in rating_list %}{{user.email}},{% endfor %}"><span class="icon ui-icon-mail-closed"></span>Email all users</a></div>  <div id="export"><a href="{% url rating_export %}"><span class="icon ui-icon-extlink"></span>Export as csv (utf-8)</a></div>
 
     {{ final_grade_formset.management_form }}
 	<table class="noLinkHighlight">
@@ -87,18 +87,16 @@
 			<th><div class="heading" id="calculated_grade_heading">Calculated grade</div></th>
 			<th>Final grade</th>
 		</tr>
-		{% for user_row in rating_list %}
+		{% for user, attestations in rating_list %}
 			<tr class="{% cycle 'odd' 'even' %} user_row">
-				{% for attestation in user_row %}
-					{% if forloop.first %}
-						<td>{{attestation.get_full_name}}</td>
-					{% else %}
+				<td><a href="mailto:{{user.email}}">{{user.get_full_name}}</a></td>
+				{% for attestation in attestations %}
 						{% if attestation.final_grade %}
 							<td class="grade_cell"><a href="{% url view_attestation attestation_id=attestation.id%}">{{attestation.final_grade}}</a></td>
 						{% else %}
 							<td class="grade_cell">-</td>
 						{% endif %}
-					{% endif %}		
+	
 				{% endfor %}
 				<td class="calculated_grade_cell" id="calculated_grade_cell{{forloop.counter0}}"></td>
 				<td>

@@ -44,6 +44,9 @@ urlpatterns = patterns('',
 	url(r'^attestation/rating_overview$', 'attestation.views.rating_overview', name='rating_overview'),
 	url(r'^attestation/rating_export.csv$', 'attestation.views.rating_export', name='rating_export'),
 	
+	url(r'^tutorial/$', 'attestation.views.tutorial_overview', name='tutorial_overview'),
+   	url(r'^tutorial/(?P<tutorial_id>\d+)$', 'attestation.views.tutorial_overview', name='tutorial_overview'),
+	
 	# Uploaded media
 	url(r'^upload/(?P<path>SolutionArchive/Task_\d+/User_.*/Solution_(?P<solution_id>\d+)/.*)$', 'utilities.views.serve_solution_file'),
 	url(r'^upload/(?P<path>TaskMediaFiles.*)$', 'utilities.views.serve_unrestricted'),
