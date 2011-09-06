@@ -95,25 +95,17 @@ def attestation_list(request, task_id):
 		# show from my toturials
 		attestations_by_others = all_attestations_for_my_tutorials.exclude(author = request.user)
 		solutions_with_plagiarism = Solution.objects.filter(task = task, plagiarism = True, author__tutorial__in = request.user.tutored_tutorials.all())
-				
-	# first published => all published
-	try:
-		published = all_attestations_for_my_tutorials[0].published
-	except IndexError:
-		published = False
+
+	all_attestations_published = all_attestations_for_my_tutorials.filter(published = False).count() == 0
 	
-	all_solutions_attested = unatested_solutions.count() == 0
-	all_attestations_final = reduce(lambda x,y: x and y, map(lambda attestation: attestation.final , all_attestations_for_my_tutorials), True)
-	publishable = all_solutions_attested and all_attestations_final and task.expired()
+	all_attestations_final = all_attestations_for_my_tutorials.filter(final = False).count() == 0
 	
 	show_author = not get_settings().anonymous_attestation or in_group(request.user,'Trainer') or published
 
-	if request.method == "POST" and publishable:
-		for solution in solutions:
-			for attestation in solution.attestations_by(request.user):
-				attestation.publish(request)
-				published = True
-	data = {'task':task, 'tutored_users':tutored_users, 'solutions_with_plagiarism':solutions_with_plagiarism, 'my_attestations':my_attestations, 'attestations_by_others':attestations_by_others, 'unatested_solutions':unatested_solutions, 'published': published, 'publishable': publishable, 'show_author': show_author}
+	if request.method == "POST":
+		for attestation in all_attestations_for_my_tutorials.filter(final = True):
+			attestation.publish(request)
+	data = {'task':task, 'tutored_users':tutored_users, 'solutions_with_plagiarism':solutions_with_plagiarism, 'my_attestations':my_attestations, 'attestations_by_others':attestations_by_others, 'unatested_solutions':unatested_solutions, 'published': all_attestations_published, 'show_author': show_author}
 	return render_to_response("attestation/attestation_list.html", data, context_instance=RequestContext(request))
 
 
@@ -196,6 +188,8 @@ def view_attestation(request, attestation_id):
 		form = AttestationPreviewForm(request.POST, instance=attest)
 		if form.is_valid():
 			form.save()
+			if 'publish' in request.POST:
+				attest.publish(request)
 			return HttpResponseRedirect(reverse('attestation_list', args=[attest.solution.task.id]))
 	else:
 		form = AttestationPreviewForm(instance=attest)

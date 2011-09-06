@@ -62,11 +62,11 @@ DATABASE_PORT = ''             # Set to empty string for default. Not used with 
 
 
 # DEFAULT_FROM_EMAIL = ""
-EMAIL_HOST = "smtp.googlemail.com"
-EMAIL_PORT = 587
-EMAIL_HOST_USER = "praktomat@googlemail.com"
-EMAIL_HOST_PASSWORD = "baertram"
-EMAIL_USE_TLS = True
+#EMAIL_HOST = "smtp.googlemail.com"
+#EMAIL_PORT = 587
+#EMAIL_HOST_USER = "praktomat@googlemail.com"
+#EMAIL_HOST_PASSWORD = "baertram"
+#EMAIL_USE_TLS = True
 
 # Private key used to sign uploded solution files in submission confirmation email
 PRIVATE_KEY = '/Users/danielkleinert/Documents/Arbeit/Praktomat/examples/certificates/privkey.pem'

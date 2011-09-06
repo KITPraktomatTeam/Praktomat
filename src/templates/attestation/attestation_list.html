@@ -116,11 +116,9 @@
 			
 			{% if not user|in_group:'Trainer'%}
 				<form enctype="multipart/form-data" method="post" action="">{% csrf_token %}	
-					<input type="submit" value="Publish all" {% if not publishable or published %} disabled {% endif %}/>
+					<input type="submit" value="Publish all final attestations" {% if published %} disabled {% endif %}/>
 					{% if published %}	
-						<span id='comment'>Allready published</span> 
-					{% else %}
-						{% if not publishable %} <span id='comment'>Not all attestations are read to be published.</span> {% endif %}
+						<span id='comment'>All attested Solutions are allready published.</span> 
 					{% endif %}
 				</form>
 			{% endif %}

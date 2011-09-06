@@ -3,6 +3,19 @@
 {% block extrahead %}{{ block.super }}
 	<script type="text/javascript" src="{{MEDIA_URL}}script/solution_inlines.js"></script>
 	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}/styles/pygments_friendly.css" />
+	<script type="text/javascript">	
+		function updatePublishButton(){
+			if ($('#id_final').is(':checked')) {
+				$('#publishButton').removeAttr('disabled');
+			} else {
+				$('#publishButton').attr('disabled', true);
+			} 
+		}
+		$(document).ready(function(){
+			updatePublishButton();
+		  	$('#id_final').click(function(){updatePublishButton()});
+	  	});
+	</script>
 {% endblock %}
 {% block breadcrumbs %} {{block.super}} > <a href={% url task_detail task_id=attest.solution.task.id%}>{{attest.solution.task.title}}</a> 
 {% if user|in_group:"Tutor"%}
@@ -83,7 +96,8 @@
 	<br/><br/>
 	<form method="post">{% csrf_token %}
 		{% include "forms/form_as_div.html" %}
-		<input type="submit" value="Save" />
+		<input type="submit" name="save" value="Save" />
+		<input id="publishButton" type="submit" name="publish" value="Save and publish" />
 		<input type="button" value="Edit again" onClick="parent.location='{% url edit_attestation attest.id %}'">
 	</form>
 {% endif %}
