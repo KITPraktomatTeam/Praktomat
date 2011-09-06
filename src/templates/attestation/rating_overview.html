@@ -73,7 +73,7 @@
 	
 	{{script_form.script}}
 	<input type="button" id="calculate_button" value="calculate" onClick="calculate()" />
-	<p class="help">This JavaScript will be executed for every user listed below to calculate a proposed end note. This calculation is also shown to the tutors and users. <i><b>grades</b></i> is an Array containing all final grades for one user as Stings. <i><b>all_grades</b></i> is an array containing all <i><b>grades</b></i> arrays. Save the end note recomendation in <i><b>result</b></i> so it can be displayed in the row 'Calculated grade'.</p>
+	<p class="help">This JavaScript will be executed for every user listed below to calculate a proposed end note. This calculation is also shown to the tutors and users. <i><b>grades</b></i> is an Array containing all final grades for one user as Stings. Save the end note recomendation in <i><b>result</b></i> so it can be displayed in the row 'Calculated grade' and on the user index page.</p>
 
 	<div id="email"><a href="mailto:?bcc={% for user, attestations in rating_list %}{{user.email}},{% endfor %}"><span class="icon ui-icon-mail-closed"></span>Email all users</a></div>  <div id="export"><a href="{% url rating_export %}"><span class="icon ui-icon-extlink"></span>Export as csv (utf-8)</a></div>
 

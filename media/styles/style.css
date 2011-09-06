@@ -430,8 +430,9 @@ form .errorlist li {
 	clear: both;
 }
 
-#task_list tr#final_grade {
+#task_list tr.final_grade {
 	border-top: 1px solid gray;
+	font-weight: bold;
 }
 
 #task_list #welcome {
