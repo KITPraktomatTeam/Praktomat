@@ -47,7 +47,7 @@ def change(request):
 			return HttpResponseRedirect(reverse('task_list'))
 	else:
 		form = UserChangeForm(instance=request.user)
-	return render_to_response('registration/registration_change.html', {'form':form}, context_instance=RequestContext(request))
+	return render_to_response('registration/registration_change.html', {'form':form, 'user':request.user}, context_instance=RequestContext(request))
 
 def access_denied(request):
 	request_path = request.META['HTTP_HOST'] + request.get_full_path()

@@ -13,6 +13,14 @@
 
 <form method="post" action="." autocomplete="off"> {% csrf_token %}
 {%comment%} autocomplete is a not standardized tag! {%endcomment%}
+	<div class="form-row">
+        <label>Email:</label> 
+		<a> {{user.email}} </a>
+	</div>
+	<div class="form-row">
+        <label>Matnumber:</label> 
+		<a> {{user.mat_number}} </a>
+	</div>
 	{% include "forms/form_as_div.html" %}
 	<input type="submit" value="save" />
 </form>
