@@ -3,7 +3,7 @@ import tempfile
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response, get_object_or_404
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.template.context import RequestContext
 from django.core.urlresolvers import reverse
 from django.views.generic.list_detail import object_detail
@@ -84,3 +84,22 @@ def solution_detail(request,solution_id):
 		attestations = Attestation.objects.filter(solution__task=solution.task, author__tutored_tutorials=request.user.tutorial)
 		attestationsPublished = attestations[0].published if attestations else False
 		return object_detail(request, Solution.objects.all(), solution_id, extra_context={"attestationsPublished":attestationsPublished, "accept_all_solutions":get_settings().accept_all_solutions}, template_object_name='solution' )
+
+@login_required
+def solution_download(request,solution_id):
+	solution = get_object_or_404(Solution, pk=solution_id)	
+	if (not (solution.author == request.user or in_group(request.user,'Trainer,Tutor'))): #tutor
+		return access_denied(request)
+
+	zip_file = tempfile.SpooledTemporaryFile()
+	zip = zipfile.ZipFile(zip_file,'w')
+	for solutionfile in solution.solutionfile_set.all():
+		file = solutionfile.file
+		zip.write(file.path, file.name)
+	zip.close()	
+	zip_file.seek(0)
+
+	response = HttpResponse(zip_file.read(), mimetype="application/zip")
+	response['Content-Disposition'] = 'attachment; filename=Solution.zip'
+	return response
+
