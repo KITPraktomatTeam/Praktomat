@@ -79,6 +79,10 @@
 
 		
 		<div id="annotated_solution_files">
+			<h1 class="heading">Checker results</h1>
+			{% with solution.checkerresult_set.all as results %}
+			{% include "solutions/checker_results_inline.html" %}
+			{% endwith %}
 			<h1 class="heading">Annotated solution files</h1>
 			<div id="file_form_set">
 				{% with attestFileFormSet as formset %}	
