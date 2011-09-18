@@ -124,3 +124,10 @@ Update
 2. update python dependencies with "./bin/buildout"
 
 3. backup your database(seriously!) and run "./bin/praktomat syncdb" to install any new 3rd party tables as well as "./bin/praktomat migrate" to update praktomats tables
+
+
+PhpBB integration 
+=================
+
+To access the praktomat usersessions from an phpBB folow the instructions in src/sessionprofile/phpbb/README.txt.
+
