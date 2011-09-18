@@ -1,0 +1,20 @@
+<!-- INCLUDE overall_header.html -->
+
+<div class="panel">
+  <div class="inner"><span class="corners-top"><span></span></span>
+
+  <div class="content">
+    <h2><!-- IF LOGIN_EXPLAIN -->{LOGIN_EXPLAIN}<!-- ELSE -->{L_LOGIN}<!-- ENDIF --></h2>
+
+    <p>
+    Only registered users on our site can post in these forums.  If you have registered
+    already, you can <a href="/usermanagement/login/">log in</a>; if not you can
+    <a href="/usermanagement/register/">register</a> - it only takes a few minutes.
+
+  </div>
+  <span class="corners-bottom"><span></span></span></div>
+</div>
+
+</form>
+
+<!-- INCLUDE overall_footer.html -->

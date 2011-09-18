@@ -56,30 +56,6 @@ urlpatterns = patterns('',
 	
 )
 
-# Forum
-# strip some urls(mainly the profile) from url(r'^forum/', include('lbforum.urls'))
-# also require Login
-
-from lbforum import views, accountviews 
-
-urlpatterns += patterns('',
-    url(r'^forum/$', login_required(views.index), name='lbforum_index'),
-    url(r'^forum/recent/$', login_required(views.recent), name='lbforum_recent'),
-    url(r'^forum/forum/(?P<forum_slug>\w+)/$', login_required(views.forum), name='lbforum_forum'),
-    url(r'^forum/forum/(?P<forum_slug>\w+)/(?P<topic_type>\w+)/$', login_required(views.forum), name='lbforum_forum_ext'),
-    url(r'^forum/forum/(?P<forum_slug>\w+)/(?P<topic_type>\w+)/(?P<topic_type2>\w+)/$', login_required(views.forum), name='lbforum_forum_ext2'),
-    url('^forum/topic/(?P<topic_id>\d+)/$', login_required(views.topic), name='lbforum_topic'),    
-    url('^forum/topic/new/(?P<forum_id>\d+)/$', login_required(views.new_post), name='lbforum_new_topic'),
-    url('^forum/reply/new/(?P<topic_id>\d+)/$', login_required(views.new_post), name='lbforum_new_replay'),    
-    url('^forum/post/(?P<post_id>\d+)/$', login_required(views.post), name='lbforum_post'),    
-    url('^forum/post/(?P<post_id>\d+)/edit/$', login_required(views.edit_post), name='lbforum_post_edit'),      
-
-    url(r'^forum/lang.js$', direct_to_template, {'template': 'lbforum/lang.js'}, name='lbforum_lang_js'),
-
-    url('^forum/markitup_preview/$', views.markitup_preview, name='markitup_preview'),    
-)
-
-
 
 # only serve static files through django while in development - for safety and speediness
 if 'runserver' in sys.argv or 'runserver_plus' in sys.argv or 'runconcurrentserver' in sys.argv: 

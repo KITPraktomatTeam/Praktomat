@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/8/trunk/django/sessionprofile
+END
+middleware.py
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/2/trunk/django/sessionprofile/middleware.py
+END
+cleanup_inactive_sessions.py
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/8/trunk/django/sessionprofile/cleanup_inactive_sessions.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/2/trunk/django/sessionprofile/__init__.py
+END
+tests.py
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/2/trunk/django/sessionprofile/tests.py
+END
+models.py
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/2/trunk/django/sessionprofile/models.py
+END

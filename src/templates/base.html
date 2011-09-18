@@ -22,10 +22,9 @@
 					Welcome, {% firstof user.get_full_name user.username %} 
 					/ <a href="{% url registration_change %}">Change Account</a>  
 					/ <a href="{% url auth_logout %}">Log-out</a><br/>
-					<a href="{% url lbforum_index %}">Forum</a> 
-					{% if user.is_staff %}/ <a href={% url rating_overview %}>{% trans "Rating overview"%}</a> 
-					/ <a href="{% url admin:index %}">Admin Panel</a>	{%endif%}
-					{% if user|in_group:"Tutor" %}/ <a href={% url tutorial_overview %}>{% trans "My Tutorial"%}</a>{%endif%}
+					{% if user.is_staff %}<a href={% url rating_overview %}>{% trans "Rating overview"%} / </a> 
+					<a href="{% url admin:index %}">Admin Panel</a>	{%endif%}
+					{% if user|in_group:"Tutor" %} <a href={% url tutorial_overview %}>{% trans "My Tutorial"%}</a>{%endif%}
 				{% else %}
 					<a href="{% url auth_login %}">Login</a> 
 					<a href="{% url registration_register %}">Register</a> 

@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 27
+/svn/!svn/ver/7/trunk/phpbb
+END
+login_body.html
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/3/trunk/phpbb/login_body.html
+END
+auth_django.php
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/4/trunk/phpbb/auth_django.php
+END
+getdjangouser_postgresql.php
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/7/trunk/phpbb/getdjangouser_postgresql.php
+END
+README.txt
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/7/trunk/phpbb/README.txt
+END
+getdjangouser_mysql.php
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/7/trunk/phpbb/getdjangouser_mysql.php
+END
