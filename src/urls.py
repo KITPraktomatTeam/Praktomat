@@ -53,6 +53,9 @@ urlpatterns = patterns('',
 	url(r'^upload/(?P<path>TaskMediaFiles.*)$', 'utilities.views.serve_unrestricted'),
 	url(r'^upload/(?P<path>CheckerFiles.*)$', 'utilities.views.serve_staff_only'),
 	url(r'^upload/(?P<path>.*)$', 'utilities.views.serve_access_denied'),
+
+	# Embedded phpBB3
+	url(r'^phpbb/$','sessionprofile.views.phpbb'),
 	
 )
 
