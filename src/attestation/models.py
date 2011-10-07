@@ -106,7 +106,7 @@ class Rating(models.Model):
 class RatingResult(models.Model):
 	""" the rating of particular aspect of a specific solution """
 	attestation = models.ForeignKey(Attestation)
-	aspect = models.ForeignKey(RatingAspect)
+	rating = models.ForeignKey(Rating)
 	mark = models.ForeignKey(RatingScaleItem, null=True) # allow for db-null so that rating results can be created programaticly without mark (blank = False !)
 
 	def __unicode__(self):

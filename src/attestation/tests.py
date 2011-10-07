@@ -27,7 +27,7 @@ class TestViews(TestCase):
 			self.failUnlessEqual(response.status_code, 200)
 
 		def test_get_new_attestation(self):
-			response = self.client.get(reverse('new_attestation', args=[self.solution.id]), follow=True)
+			response = self.client.get(reverse('new_attestation_for_solution', args=[self.solution.id]), follow=True)
 			self.failUnlessEqual(response.status_code, 200)
 			
 		def test_get_edit_attestation(self):

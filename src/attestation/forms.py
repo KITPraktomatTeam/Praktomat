@@ -39,10 +39,9 @@ class RatingResultForm(ModelForm):
 	def __init__(self, *args, **kwargs): 
 		super(RatingResultForm, self).__init__(*args, **kwargs)
 		ratingResult = kwargs['instance']
-		self.fields['mark'].label = ratingResult.aspect.name 
-		self.fields['mark'].help_text = ratingResult.aspect.description 
-		# beware, the following line is kind of creepy
-		self.fields['mark'].choices = [ (item['id'], item['name']) for item in ratingResult.attestation.solution.task.rating_set.get(aspect=ratingResult.aspect).scale.ratingscaleitem_set.values() ]
+		self.fields['mark'].label = ratingResult.rating.aspect.name 
+		self.fields['mark'].help_text = ratingResult.rating.aspect.description 
+		self.fields['mark'].choices = [ (item['id'], item['name']) for item in ratingResult.rating.scale.ratingscaleitem_set.values() ]
 	
 	class Meta:
 		model = RatingResult

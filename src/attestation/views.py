@@ -143,7 +143,7 @@ def new_attestation_for_solution(request, solution_id):
 		annotatedFile = AnnotatedSolutionFile(attestation = attest, solution_file=solutionFile, content=solutionFile.content())
 		annotatedFile.save()
 	for rating in solution.task.rating_set.all():
-		ratingResult = RatingResult(attestation = attest, aspect=rating.aspect)
+		ratingResult = RatingResult(attestation = attest, rating=rating)
 		ratingResult.save()
 	return HttpResponseRedirect(reverse('edit_attestation', args=[attest.id]))
 	
