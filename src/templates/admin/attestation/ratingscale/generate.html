@@ -11,15 +11,15 @@
 {% block breadcrumbs %}{% if not is_popup %}
 <div class="breadcrumbs">
      <a href="../../../">{% trans "Home" %}</a> &rsaquo;
-     <a href="../../">Accounts</a> &rsaquo; 
-     <a href="../">User</a> &rsaquo; 
-     {% trans "Import User" %}
+     <a href="../../">Attestation</a> &rsaquo; 
+     <a href="../">Rating scales</a> &rsaquo; 
+     {% trans "Generate ratingScale" %}
 </div>
 {% endif %}{% endblock %}
 
 {% block content %}<div id="content-main">
 
-<form enctype="multipart/form-data" action="." method="post">{% csrf_token %}
+<form enctype="multipart/form-data" action="" method="post">{% csrf_token %}
 <div>
 {% if form.errors %}
     <p class="errornote">

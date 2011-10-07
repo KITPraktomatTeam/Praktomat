@@ -57,3 +57,9 @@ class PublishFinalGradeForm(ModelForm):
 	class Meta:
 		model = Settings
 		fields = ('final_grades_published',)
+
+class GenerateRatingScaleForm(forms.Form):
+	name = forms.CharField(max_length=200,  help_text = 'The Name of the rating scale for the aspects. E.g.: "School marks"')
+	start = forms.FloatField(initial=0, help_text="The first RatingScaleItem to generate.")
+	end = forms.FloatField(initial=15, help_text="The last RatingScaleItem to generate.")
+	step = forms.FloatField(initial=1, help_text="The step size between the RatingScaleItems.")

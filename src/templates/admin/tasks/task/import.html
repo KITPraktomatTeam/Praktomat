@@ -28,19 +28,9 @@
     <ul class="errorlist">{% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul>
 {% endif %}
 
-
-
-
 <fieldset class="module aligned ">
-      <div class="form-row title  ">      
-		<div>
-		  {{ form.file.errors }}
-          <label class="required" for="id_file">{{ form.file.label }}:</label>{{ form.file }}
-        </div>
-      </div>
+	{% include "forms/form_as_div.html" %}
 </fieldset>
-
-
 
 <div class="submit-row">
 <input type="submit" value="{% trans 'Save' %}" class="default" name="_save" {{ onclick_attrib }}/></div>

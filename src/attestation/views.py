@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
@@ -18,8 +19,8 @@ import codecs
 from tasks.models import Task
 from solutions.models import Solution, SolutionFile
 from solutions.forms import SolutionFormSet
-from attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, Script, RatingScaleItem
-from attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm, ScriptForm, PublishFinalGradeForm
+from attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, Script, RatingScale, RatingScaleItem
+from attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm, ScriptForm, PublishFinalGradeForm, GenerateRatingScaleForm
 from accounts.templatetags.in_group import in_group
 from accounts.models import User, Tutorial
 from accounts.views import access_denied
@@ -313,3 +314,35 @@ def rating_export(request):
 	response.write(t.render(c))
 	return response
 	
+def frange(start, end, inc):
+	"A range function, that does accept float increments..."
+	L = []
+	while 1:
+		next = start + len(L) * inc
+		if inc > 0 and next > end:
+			break
+		elif inc < 0 and next < end:
+			break
+		L.append(next)
+	return L
+
+@staff_member_required
+def generate_ratingscale(request):
+	""" View in the admin """
+	if request.method == 'POST': 
+		form = GenerateRatingScaleForm(request.POST)		
+		if form.is_valid():
+			scale = RatingScale(name=form.cleaned_data['name'])
+			scale.save()
+			start = form.cleaned_data['start']
+			end = form.cleaned_data['end']
+			step = form.cleaned_data['step']
+			count = 0
+			for x in frange(start, end, step):
+				item = RatingScaleItem(scale=scale, name=x, position=count)
+				item.save()
+				count += 1
+			return HttpResponseRedirect(reverse('admin:attestation_ratingscale_changelist')) 			
+	else:
+		form = GenerateRatingScaleForm()
+	return render_to_response('admin/attestation/ratingscale/generate.html', {'form': form, 'title':"Generate RatingScale"  }, RequestContext(request))

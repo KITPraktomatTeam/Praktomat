@@ -16,6 +16,7 @@ urlpatterns = patterns('',
 	# Admin
 	url(r'^admin/tasks/task/(?P<task_id>\d+)/model_solution', 'tasks.views.model_solution', name="model_solution"),
 	url(r'^admin/tasks/task/(?P<task_id>\d+)/final_solutions', 'tasks.views.download_final_solutions', name="download_final_solutions"),
+	url(r'^admin/attestation/ratingscale/generate', 'attestation.views.generate_ratingscale', name="generate_ratingscale"),
 	(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
     
