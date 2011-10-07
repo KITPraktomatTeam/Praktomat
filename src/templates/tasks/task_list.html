@@ -73,13 +73,14 @@
 		<div id="attestation_overview">
 			<h2>Result Overview</h2>
 			<table>
-				<tr><th>Task</th><th>Grade</th></tr>
+				<tr><th>Task</th><th>Grade</th><th>Rating Scale</th></tr>
 				{% for task, attestation in attestations%}
 					<tr>
 						<td>{{task}}</td>
 						<td class="grade_cell">{% if attestation %}
-							<a href={% url view_attestation attestation_id=attestation.id%}>{{attestation.final_grade}}</a>
-							{%else%}-{%endif%}</td>
+							<a href={% url view_attestation attestation_id=attestation.id%}>{{attestation.final_grade}} </a>
+							{%else%}-{%endif%} </td>
+						<td>{{task.final_grade_rating_scale.name}}</td>
 					</tr>
 				{% endfor %}
 				
