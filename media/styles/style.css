@@ -690,6 +690,10 @@ input[type="submit"]{
 	margin-left: 60px;
 }
 
+#attestation_view #download {
+	float: right;
+}
+
 /* @end */
 
 /* @end */
