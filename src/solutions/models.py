@@ -27,7 +27,7 @@ class Solution(models.Model):
 	author = models.ForeignKey(User)
 	creation_date = models.DateTimeField(auto_now_add=True)
 	
-	accepted = models.BooleanField( default = True, help_text = _('Indicates whether the solution has passed all public and required tests'))
+	accepted = models.BooleanField( default = False, help_text = _('Indicates whether the solution has passed all public and required tests'))
 	warnings = models.BooleanField( default = False, help_text = _('Indicates whether the solution has at least failed one public and not required tests'))
 	plagiarism = models.BooleanField( default = False, help_text = _('Indicates whether the solution is a rip-off of another one.'))
 	final = models.BooleanField( default = False, help_text = _('Indicates whether this solution is the last (accepted) of the author.'))
