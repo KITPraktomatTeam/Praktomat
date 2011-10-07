@@ -227,6 +227,7 @@ def run_checks(solution, env, run_all):
 	unsorted_checker = sum(map(lambda x: list(x.objects.filter(task=solution.task)), checker_classes),[])
 	checkers = sorted(unsorted_checker, key=lambda checker: checker.order)
 	
+	solution_accepted = True
 	for checker in checkers:
 		if (checker.always or run_all):
 		
@@ -262,11 +263,12 @@ def run_checks(solution, env, run_all):
 
 			if not result.passed and checker.public:
 				if checker.required:
-					solution.accepted = False
+					solution_accepted = False
 				else:
 					solution.warnings= True
 					
 			if result.passed:
 				passed_checkers.add(checker.__class__)
+	solution.accepted = solution_accepted
 	solution.save()
 
