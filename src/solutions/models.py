@@ -62,10 +62,13 @@ class Solution(models.Model):
 
 	def copy(self):
 		""" create a copy of this solution """
+		self.final = False
+		self.save()
 		solutionfiles = self.solutionfile_set.all()
 		checkerresults = self.checkerresult_set.all()
 		self.id = None
 		self.number = None
+		self.final = True
 		self.save()
 		for file in solutionfiles:
 			file.id = None
