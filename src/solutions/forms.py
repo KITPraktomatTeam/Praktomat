@@ -31,6 +31,8 @@ class SolutionFileForm(ModelForm):
 					zip = zipfile.ZipFile(data)
 					if zip.testzip():
 						raise forms.ValidationError(_('The zip file seams to be corrupt.'))
+					if sum(fileinfo.file_size for fileinfo in zip.infolist()) > 1000000:
+						raise forms.ValidationError(_('The zip file is to big.'))	
 					for fileinfo in zip.infolist():
 						(type, encoding) = mimetypes.guess_type(fileinfo.filename)
 						ignorred = SolutionFile.ignorred_file_names_re.search(fileinfo.filename)
