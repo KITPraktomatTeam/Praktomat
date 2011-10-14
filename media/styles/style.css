@@ -500,25 +500,25 @@ a.add-row {
 }
 
 #soluion_upload .simple_overlay {
-	/* mu
-
-st be initially hidden */ 
+	/* must be hidden initially */ 
     display: none;
 	/* styling */ 
-    
-
-color: #fff;
-	width: 30%;
+	color: #fff;
+	width: 100%;
 	min-height: 200px;
 	padding: 35px;
 	font-size: 20px;
+}
+
+#soluion_upload .simple_overlay p{
+	margin: 0;
 }
 
 #soluion_upload img#spinner {
 	display: inline;
 	float: left;
 	position: relative;
-	top: 4px;
+	top: -4px;
 	margin-right: 10px;
 }
 
