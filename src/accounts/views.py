@@ -5,8 +5,8 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.template import RequestContext, Template, Context
 from django.conf import settings
-from accounts.forms import MyRegistrationForm, UserChangeForm, ImportForm
-from accounts.models import User
+from accounts.forms import MyRegistrationForm, UserChangeForm, ImportForm, ImportTutorialAssignmentForm
+from accounts.models import User, Tutorial
 from django.contrib.auth.models import Group
 from django.contrib.sites.models import Site, RequestSite
 from django.contrib.admin.views.decorators import staff_member_required
@@ -15,6 +15,7 @@ from django.utils.http import int_to_base36
 from django.core.mail import send_mail
 from django.utils.translation import ugettext_lazy as _
 from configuration import get_settings
+import csv
 
 def register(request):
 	extra_context = {}
@@ -89,3 +90,28 @@ def import_user(request):
 	else:
 		form = ImportForm()
 	return render_to_response('admin/accounts/user/import.html', {'form': form, 'title':"Import User"  }, RequestContext(request))
+
+@staff_member_required
+def import_tutorial_assignment(request):
+	""" View in the admin """
+	if request.method == 'POST': 
+		form = ImportTutorialAssignmentForm(request.POST, request.FILES)
+		if form.is_valid(): 
+			file = form.files['csv_file']
+			reader = csv.reader(file, delimiter=str(form.cleaned_data['delimiter']), quotechar=str(form.cleaned_data['quotechar']))
+			succeded = failed = 0
+			for row in reader:
+				try:
+					user = User.objects.get(mat_number = row[form.cleaned_data['mat_coloum']])
+					tutorial = Tutorial.objects.get(name = row[form.cleaned_data['name_coloum']])
+					user.tutorial = tutorial
+					user.save()
+					succeded += 1
+				except:
+					failed += 1
+			#assert False
+			request.user.message_set.create(message="%i assignments were imported successfully, %i failed." % (succeded, failed))
+			return HttpResponseRedirect(urlresolvers.reverse('admin:accounts_user_changelist'))
+	else:
+		form = ImportTutorialAssignmentForm()
+	return render_to_response('admin/accounts/user/import_tutorial_assignment.html', {'form': form, 'title':"Import tutorial assignment"  }, RequestContext(request))

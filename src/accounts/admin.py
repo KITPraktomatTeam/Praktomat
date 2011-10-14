@@ -75,6 +75,7 @@ class UserAdmin(UserBaseAdmin):
 		urls = super(UserAdmin, self).get_urls()
 		from django.conf.urls.defaults import url, patterns
 		my_urls = patterns('', url(r'^import/$', 'accounts.views.import_user', name='user_import')) 
+		my_urls += patterns('', url(r'^import_tutorial_assignment/$', 'accounts.views.import_tutorial_assignment', name='import_tutorial_assignment')) 
 		return my_urls + urls
 
 admin.site.unregister(UserBase) 

@@ -141,3 +141,12 @@ class ImportForm(forms.Form):
 	require_reactivation = forms.BooleanField(initial=True, required=False, help_text = "Deactivate all imported users and send activation mail.")
 	meassagetext = forms.CharField(required=False, widget=forms.Textarea, initial = reactivation_message_text, help_text = "Message to be embedded into activation mail if reactivation is required.")
 
+class ImportTutorialAssignmentForm(forms.Form):
+	csv_file = forms.FileField(required=True, help_text = "The csv file containing the tutorial name and the students mat number.")
+	delimiter = forms.CharField(required=True, max_length = 1, initial = ";", help_text = "A one-character string used to separate fields.")
+	quotechar = forms.CharField(required=True, max_length = 1, initial = "|", help_text = "A one-character string used to quote fields.")
+	name_coloum = forms.IntegerField(required=True, initial = 0, help_text = "The index of the field containing the name of the tutorial.")
+	mat_coloum = forms.IntegerField(required=True, initial = 1, help_text = "The index of the field containing the mat number of the user.")
+	
+	
+
