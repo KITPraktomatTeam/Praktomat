@@ -9,6 +9,8 @@
 
 <h1>{% trans "Register a new Account" %}</h1>
 {% if form %}
+	<p>The username you choose will also be your public name for the forum and can not be changed after registration.</p>
+
 	<form method="post" action="." autocomplete="off"> {% csrf_token %}
 	{%comment%} autocomplete is a not standardized tag! {%endcomment%}
 		{% include "forms/form_as_div.html" %}
