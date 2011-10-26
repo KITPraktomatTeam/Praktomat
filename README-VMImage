@@ -12,6 +12,8 @@ After importing the Praktomat Appliance,  do the following:
      change the following settings to match your network:
        BASE_URL
        EMAIL_*
+       DEFAULT_FROM_EMAIL
+       ADMINS
        
 
      Make sure apache recognizes your changes:
