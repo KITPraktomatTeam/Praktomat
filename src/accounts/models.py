@@ -164,7 +164,7 @@ class Tutorial(models.Model):
 	tutors = models.ManyToManyField('User', limit_choices_to = {'groups__name': 'Tutor'}, related_name='tutored_tutorials', help_text = _("The tutors in charge of the tutorium."))
 
 	def tutors_flat(self):
-		return reduce(lambda x, y: x.get_full_name() + ', ' + y.get_full_name(), self.tutors.all())
+		return reduce(lambda x, y: x + ', ' + y.get_full_name(), self.tutors.all(),'')[2:]
 	tutors_flat.short_description = _('Tutors')
 
 	def __unicode__(self):
