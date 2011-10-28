@@ -13,10 +13,11 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.files import File
 from django.db.models import Max
 from django.conf import settings
-
+from django.template.loader import render_to_string
 
 from accounts.models import User
 from utilities import encoding, file_operations
+from configuration import get_settings
 
 class Solution(models.Model):
 	""" """
@@ -170,4 +171,25 @@ class SolutionFile(models.Model):
 		else:
 			file_operations.create_file(new_file_path, self.content())
 
+def get_solutions_zip(solutions):
+	
+	zip_file = tempfile.SpooledTemporaryFile()
+	zip = zipfile.ZipFile(zip_file,'w')
+	for solution in solutions:
+		if get_settings().anonymous_attestation:
+			project_name = 'User ' + index 
+		else:
+			project_name = solution.author.get_full_name() 
+		base_name = solution.task.title + '/' + project_name + '/'
+		
+		zip.writestr(base_name+'.project', render_to_string('solutions/eclipse/project.xml', { 'name': project_name }))
+		zip.writestr(base_name+'.classpath', render_to_string('solutions/eclipse/classpath.xml', { }))
+		
+		for index, solutionfile in enumerate(solution.solutionfile_set.all()):
+			file = solutionfile.file
+			name = base_name + solutionfile.path()
+			zip.write(file.path, name)
+	zip.close()	
+	zip_file.seek(0)
+	return zip_file
 

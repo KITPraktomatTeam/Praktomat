@@ -16,7 +16,7 @@ from django.contrib.sites.models import RequestSite
 
 from tasks.models import Task
 from attestation.models import Attestation
-from solutions.models import Solution, SolutionFile
+from solutions.models import Solution, SolutionFile, get_solutions_zip
 from solutions.forms import SolutionFormSet
 from accounts.views import access_denied
 from accounts.templatetags.in_group import in_group
@@ -89,18 +89,24 @@ def solution_detail(request,solution_id):
 @login_required
 def solution_download(request,solution_id):
 	solution = get_object_or_404(Solution, pk=solution_id)	
-	if (not (solution.author == request.user or in_group(request.user,'Trainer,Tutor'))): #tutor
+	if (not (solution.author == request.user or in_group(request.user,'Trainer,Tutor'))):
 		return access_denied(request)
-
-	zip_file = tempfile.SpooledTemporaryFile()
-	zip = zipfile.ZipFile(zip_file,'w')
-	for solutionfile in solution.solutionfile_set.all():
-		file = solutionfile.file
-		zip.write(file.path, file.name)
-	zip.close()	
-	zip_file.seek(0)
-
+	zip_file = get_solutions_zip([solution])
 	response = HttpResponse(zip_file.read(), mimetype="application/zip")
 	response['Content-Disposition'] = 'attachment; filename=Solution.zip'
+	return response
+
+@login_required
+def solution_download_for_task(request, task_id):
+	if (not in_group(request.user,'Trainer,Tutor')):
+		return access_denied(request)
+
+	task = get_object_or_404(Task, pk=task_id)
+	solutions = task.solution_set.filter(final=True)
+	if not in_group(request.user,'Trainer'):
+		solutions = solutions.filter(author__tutorial__id__in=request.user.tutored_tutorials.values_list('id', flat=True))
+	zip_file = get_solutions_zip(solutions)
+	response = HttpResponse(zip_file.read(), mimetype="application/zip")
+	response['Content-Disposition'] = 'attachment; filename=Solutions.zip'
 	return response
 

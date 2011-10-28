@@ -621,6 +621,10 @@ body.fullscreen{
 
 /* @group Attestation List */
 
+#attestation_list #download {
+	float: right;
+}
+
 #attestation_list .plagiarism {
 	right: 67px;
 	margin-left: 10px;

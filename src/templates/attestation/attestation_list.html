@@ -38,6 +38,7 @@
 	{% else %}
 	
 		<div id="Solutions">
+			<a href={% url solution_download_for_task task_id=task.id %} id='download'><span class="ui-icon ui-icon-disk" title="Download all solutions"></span></a>
 			{% if tutored_users %}
 				<select id="user_selector">
 					{% for user in tutored_users %}
