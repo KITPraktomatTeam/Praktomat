@@ -117,7 +117,9 @@ class AdminUserChangeForm(UserBaseChangeForm):
 			self._errors["groups"] = self.error_class(["This field is required."])
 		if ( groups and groups.filter(name="User") and not cleaned_data.get("mat_number")):
 			self._errors["mat_number"] = self.error_class(["This field is required for Users."])
-			del cleaned_data["mat_number"]
+			if "mat_number" in cleaned_data:
+				#mat_number was probably removed prior to this validation (eg. no number)
+				del cleaned_data["mat_number"]
 		return cleaned_data
 
 
