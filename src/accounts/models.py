@@ -32,8 +32,11 @@ class User(BasicUser):
 	# Use UserManager to get the create_user method, etc.
 	objects = UserManager()
 	
+	class Meta:
+		ordering = ['first_name', 'last_name']
+
+
 	def __unicode__(self):
-		
 		return self.get_full_name() or self.username
 	
 	def set_new_activation_key(self):

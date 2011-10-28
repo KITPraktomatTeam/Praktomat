@@ -95,4 +95,10 @@ class TutorialAdmin(admin.ModelAdmin):
 	model = Tutorial
 	list_display = ('name', 'tutors_flat',)
 		
+	class Media:
+		css = {
+			"all": ("styles/admin_style.css",)
+		}
+
+		
 admin.site.register(Tutorial, TutorialAdmin)
