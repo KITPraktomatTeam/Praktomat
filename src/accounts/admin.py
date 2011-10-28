@@ -1,14 +1,14 @@
 from random import randint
 from django.utils.translation import ugettext_lazy as _
 from django.contrib import admin
-from django.contrib.auth.models import User as UserBase
+from django.contrib.auth.models import User as UserBase, Group
 from django.contrib.auth.admin import UserAdmin as UserBaseAdmin
 from django.db.models import Count
 from accounts.models import User, Tutorial
 from accounts.templatetags.in_group import in_group
 from accounts.forms import AdminUserCreationForm, AdminUserChangeForm
 
- 
+
 class UserAdmin(UserBaseAdmin):
 	model = User
 	
@@ -16,7 +16,7 @@ class UserAdmin(UserBaseAdmin):
 	list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'is_trainer', 'is_tutor', 'email', 'date_joined' )
 	list_filter = ('groups', 'tutorial', 'is_staff', 'is_superuser', 'is_active')
 	date_hierarchy = 'date_joined'
-	actions = ['set_active', 'set_inactive', 'distribute_to_tutorials', 'export_users']
+	actions = ['set_active', 'set_inactive', 'set_tutor', 'distribute_to_tutorials', 'export_users']
 	readonly_fields = ('last_login','date_joined')
 	# exclude user_permissions
 	fieldsets = (
@@ -47,6 +47,16 @@ class UserAdmin(UserBaseAdmin):
 		""" Export Task action """
 		queryset.update(is_active=False)
 		self.message_user(request, "Users were successfully inactivated.")
+
+	def set_tutor(self, request, queryset):
+		""" Change students to tutors """
+		tutor_group = Group.objects.get(name='Tutor')
+		user_group = Group.objects.get(name='User')
+		for user in queryset:
+			user.groups.add(tutor_group)
+			user.groups.remove(user_group)
+			user.save()
+		self.message_user(request, "Users were successfully made to tutors.")
 
 	def distribute_to_tutorials(self, request, queryset):
 		""" Distribute selectet users evenly to all tutorials """
