@@ -15,6 +15,7 @@ class UserAdmin(UserBaseAdmin):
 	# add active status
 	list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'is_trainer', 'is_tutor', 'email', 'date_joined' )
 	list_filter = ('groups', 'tutorial', 'is_staff', 'is_superuser', 'is_active')
+	search_fields = ['username', 'first_name', 'last_name', 'mat_number', 'email']
 	date_hierarchy = 'date_joined'
 	actions = ['set_active', 'set_inactive', 'set_tutor', 'distribute_to_tutorials', 'export_users']
 	readonly_fields = ('last_login','date_joined')
