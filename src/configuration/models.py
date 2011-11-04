@@ -11,6 +11,7 @@ class Settings(models.Model):
 	email_validation_regex = models.CharField(max_length=200, blank=True, default=".*@(student.)?kit.edu", help_text="Regular expression used to check the email domain of registering users.")
 	mat_number_validation_regex = models.CharField(max_length=200, blank=True, default="\d{5,7}", help_text="Regular expression used to check the student number.")
 	deny_registration_from = models.DateTimeField(default=date(2222, 01, 01), help_text="After this date, registration wont be possible.")
+	acount_activation_days = models.IntegerField(default=10, help_text="Days until the user has time to activate his account with the link send in the registation email.")
 
 	accept_all_solutions = models.BooleanField(default=False, help_text="If enabled, solutions with required checkers, which are not passed, can become the final soution.")
 	

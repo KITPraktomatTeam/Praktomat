@@ -37,7 +37,7 @@ def register(request):
 
 def activate(request, activation_key):
 	account = User.activate_user(activation_key)
-	return render_to_response('registration/registration_activated.html', { 'account': account, 'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS }, context_instance=RequestContext(request))
+	return render_to_response('registration/registration_activated.html', { 'account': account, 'expiration_days': get_settings().acount_activation_days }, context_instance=RequestContext(request))
 
 
 def change(request):
@@ -78,7 +78,7 @@ def import_user(request):
 							'user': user,
 							'protocol': request.is_secure() and 'https' or 'http',
 							'activation_key': user.activation_key,
-							'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,
+							'expiration_days': get_settings().acount_activation_days,
 						}
 						send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(Context(c)), None, [user.email])
 				return HttpResponseRedirect(urlresolvers.reverse('admin:accounts_user_changelist'))

@@ -60,13 +60,13 @@ class User(BasicUser):
 			
 		2. 	Otherwise, the date the user signed up is incremented by
 			the number of days specified in the setting
-			''ACCOUNT_ACTIVATION_DAYS`` (which should be the number of
+			''get_settings().acount_activation_days`` (which should be the number of
 			days after signup during which a user is allowed to
 			activate their account); if the result is less than or
 			equal to the current date, the key has expired and this
 			method returns ``True``.
 		"""
-		expiration_date = datetime.timedelta(days=settings.ACCOUNT_ACTIVATION_DAYS)
+		expiration_date = datetime.timedelta(days=get_settings().acount_activation_days)
 		return self.activation_key == u"ALREADY_ACTIVATED" or \
 			(self.user.date_joined + expiration_date <= datetime.datetime.now())
 	activation_key_expired.boolean = True

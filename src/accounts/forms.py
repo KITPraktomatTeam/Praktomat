@@ -82,7 +82,7 @@ class MyRegistrationForm(UserBaseCreationForm):
 			'user': user,
 			'protocol': self.use_https and 'https' or 'http',
 			'activation_key': user.activation_key,
-			'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,
+			'expiration_days': get_settings().acount_activation_days,
 			}
 		send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(Context(c)), None, [user.email])
 		

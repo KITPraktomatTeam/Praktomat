@@ -90,8 +90,6 @@ INSTALLED_APPS = (
 
 LOGIN_REDIRECT_URL = '/tasks/'
 
-ACCOUNT_ACTIVATION_DAYS = 5
-
 DEFAULT_FILE_STORAGE = 'utilities.storage.UploadStorage'
 
 try:
