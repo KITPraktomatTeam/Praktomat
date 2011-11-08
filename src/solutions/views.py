@@ -56,7 +56,7 @@ def solution_list(request, task_id, user_id=None):
 					'solution': solution,
 				}
 				if solution.author.email:
-					send_mail(_("%s submission conformation") % settings.SITE_NAME, t.render(Context(c)), None, [solution.author.email])
+					send_mail(_("%s submission confirmation") % settings.SITE_NAME, t.render(Context(c)), None, [solution.author.email])
 		
 			if solution.accepted or get_settings().accept_all_solutions:
 				solution.final = True
