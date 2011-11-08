@@ -8,6 +8,7 @@ from django.conf import settings
 from accounts.forms import MyRegistrationForm, UserChangeForm, ImportForm, ImportTutorialAssignmentForm
 from accounts.models import User, Tutorial
 from django.contrib.auth.models import Group
+from django.contrib.auth.decorators import login_required
 from django.contrib.sites.models import Site, RequestSite
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core import urlresolvers
@@ -39,7 +40,7 @@ def activate(request, activation_key):
 	account = User.activate_user(activation_key)
 	return render_to_response('registration/registration_activated.html', { 'account': account, 'expiration_days': get_settings().acount_activation_days }, context_instance=RequestContext(request))
 
-
+@login_required
 def change(request):
 	if request.method == 'POST':
 		form = UserChangeForm(request.POST, instance=request.user)
