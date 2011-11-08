@@ -112,6 +112,9 @@ class Builder(Checker):
 		args = [self.compiler()] + self.output_flags(env) + self.flags(env) + self.get_file_names(env) + self.libs()
 		output = execute(args, env.tmpdir(),self.environment())[0]
 		output = self.enhance_output(env, output)
+		
+		# Allow server to delete created subfolders
+		execute('chmod -R 0777 *', env.tmpdir())		
 
 		# The executable has to exist and we mustn't have any warnings.
 		passed = not self.has_warnings(output)	
