@@ -207,12 +207,16 @@ def check(solution, run_secret = 0):
 	try:			
 		solution.copySolutionFiles(env.tmpdir())
 		run_checks(solution, env, run_secret)
+	except:
+		# show error only in debug mode
+		if settings.DEBUG:
+			raise
 	finally:
 		# Delete temporary directory
 		if not settings.DEBUG:
 			try:
 				shutil.rmtree(env.tmpdir())
-			except IOError:
+			except:
 				pass
 	
 	
