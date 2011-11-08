@@ -203,21 +203,18 @@ def check(solution, run_secret = 0):
 	solution.checkerresult_set.all().delete()
 	# set up environment
 	env = CheckerEnvironment(solution)
+				
+	solution.copySolutionFiles(env.tmpdir())
+	run_checks(solution, env, run_secret)
 	
-	try:			
-		solution.copySolutionFiles(env.tmpdir())
-		run_checks(solution, env, run_secret)
-	except:
-		# show error only in debug mode
-		if settings.DEBUG:
-			raise
-	finally:
-		# Delete temporary directory
-		if not settings.DEBUG:
-			try:
-				shutil.rmtree(env.tmpdir())
-			except:
-				pass
+	# Delete temporary directory
+	if not settings.DEBUG:
+		try:
+			shutil.rmtree(env.tmpdir())
+		except:
+			pass
+
+
 	
 	
 
