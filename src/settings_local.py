@@ -40,10 +40,10 @@ ADMIN_MEDIA_PREFIX = '/media/admin/'
 UPLOAD_ROOT = "/Users/danielkleinert/Documents/Arbeit/PraktomatSupport/"
 
 
-ADMINS = (
+ADMINS = [
 		  # ('Your Name', 'your_email@domain.com'),
 		  ('Daniel Kleinert', 'herr.kleinert@googlemail.com')
-		  )
+		  ]
 
 #DATABASE_ENGINE = 'postgresql_psycopg2'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 #DATABASE_NAME ='praktomat'   # Or path to database file if using sqlite3.
