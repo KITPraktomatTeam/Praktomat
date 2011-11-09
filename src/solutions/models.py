@@ -177,17 +177,19 @@ def get_solutions_zip(solutions):
 	zip = zipfile.ZipFile(zip_file,'w')
 	for solution in solutions:
 		if get_settings().anonymous_attestation:
+			project_path = 'User' + index
 			project_name = 'User ' + index 
 		else:
+			project_path = solution.author.username 
 			project_name = solution.author.get_full_name() 
-		base_name = solution.task.title + '/' + project_name + '/'
-		
-		zip.writestr(base_name+'.project', render_to_string('solutions/eclipse/project.xml', { 'name': project_name }))
-		zip.writestr(base_name+'.classpath', render_to_string('solutions/eclipse/classpath.xml', { }))
+		base_name = solution.task.title + '/' + project_path + '/'
+
+		zip.writestr((base_name+'.project').encode('cp437'), render_to_string('solutions/eclipse/project.xml', { 'name': project_name }).encode("utf-8"))
+		zip.writestr((base_name+'.classpath').encode('cp437'), render_to_string('solutions/eclipse/classpath.xml', { }))
 		
 		for index, solutionfile in enumerate(solution.solutionfile_set.all()):
 			file = solutionfile.file
-			name = base_name + solutionfile.path()
+			name = (base_name + solutionfile.path()).encode('cp437')
 			zip.write(file.path, name)
 	zip.close()	
 	zip_file.seek(0)
