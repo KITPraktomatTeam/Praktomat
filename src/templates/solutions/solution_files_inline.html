@@ -9,12 +9,12 @@
 <div class="filetabs">
 	<ul>
 		{% for solutionfile in solutionfiles %}
-			<li><a href="#{{solutionfile|cut:"."}}">{{solutionfile}}</a></li> 
+			<li><a href="#file{{forloop.counter}}">{{solutionfile}}</a></li> 
 		{%endfor%} 
 	</ul> 	
 
 	{% for solutionfile in solutionfiles%}
-		<div class="file" id="{{solutionfile|cut:"."}}">
+		<div class="file" id="file{{forloop.counter}}">
       <h3>{{solutionfile}}</h3>
       <div class="download">
         <span class="ui-icon ui-icon-disk"></span><a href={{solutionfile.file.url}}>Download</a>

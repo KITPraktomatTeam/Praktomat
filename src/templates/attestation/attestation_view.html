@@ -81,12 +81,12 @@
 <div class="filetabs">
 	<ul>
 		{% for anotfile in attest.annotatedsolutionfile_set.all%}
-			<li><a href="#{{anotfile|cut:"."}}">{{anotfile}}{% if anotfile.has_anotations%}<span class="has_anotations">*</span>{% endif %}</a></li> 
+			<li><a href="#file{{forloop.counter}}">{{anotfile}}{% if anotfile.has_anotations%}<span class="has_anotations">*</span>{% endif %}</a></li> 
 		{%endfor%} 
 	</ul> 	
 
 	{% for anotfile in attest.annotatedsolutionfile_set.all%}
-		<div class="file" id="{{anotfile|cut:"."}}">
+		<div class="file" id="file{{forloop.counter}}">
 			<h3>{{solutionfile}}</h3>
 			<div class="content">{{anotfile.content_diff|highlight_table:anotfile.solution_file.file.name|highlight_diff}}</div>
 		</div>
