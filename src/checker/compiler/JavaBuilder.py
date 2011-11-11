@@ -50,7 +50,7 @@ class CheckerForm(AlwaysChangedModelForm):
 		self.fields["_flags"].initial = ""
 		self.fields["_output_flags"].initial = ""
 		#self.fields["_libs"].initial = ""
-		self.fields["_file_pattern"].initial = r"^[a-zA-Z0-9_/\\]*\.[jJ][aA][vV][aA]$"
+		self.fields["_file_pattern"].initial = r"^.*\.[jJ][aA][vV][aA]$"
 	
 class JavaBuilderInline(CheckerInline):
 	model = JavaBuilder

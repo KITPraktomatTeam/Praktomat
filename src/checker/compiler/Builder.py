@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from pipes import quote
 import re, subprocess
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -15,7 +16,7 @@ class Builder(Checker):
 	# builder configuration. override in subclass
 	_compiler				= "gcc"						# command to invoce the compiler in the shell
 	_language				= "konfigurierbar"			# the language of the compiler eg. C++ or Java
-	_rx_warnings			= r"^([^ :]*:[^:].*)$"		# Regular expression describing warings and errors in the output of the compiler
+	_rx_warnings			= r"^([^:]*:[^:].*)$"		# Regular expression describing warings and errors in the output of the compiler
 	_env                            = {}
 	
 			
@@ -108,8 +109,9 @@ class Builder(Checker):
 			result.set_log(e)
 			result.set_passed(False)
 			return result
-
-		args = [self.compiler()] + self.output_flags(env) + self.flags(env) + self.get_file_names(env) + self.libs()
+		
+		filenames = [quote(name) for name in self.get_file_names(env)]
+		args = [self.compiler()] + self.output_flags(env) + self.flags(env) + filenames + self.libs()
 		output = execute(args, env.tmpdir(),self.environment())[0]
 		output = self.enhance_output(env, output)
 		
