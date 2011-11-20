@@ -54,7 +54,7 @@
 		<h2>Ratings</h2>
 		{% for ratingresult in attest.ratingresult_set.all%}
 			<div class="result">
-				<h3 href="#">{{ratingresult.aspect.name}}: <span class="mark">{{ratingresult.mark}}</h3>
+				<h3 href="#">{{ratingresult.rating.aspect.name}}: <span class="mark">{{ratingresult.mark}}</h3>
 				<p>{{ratingresult.aspect.description}}</p>
 			</div>
 		{%endfor%}
