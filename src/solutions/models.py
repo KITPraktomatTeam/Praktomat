@@ -25,7 +25,7 @@ class Solution(models.Model):
 	number = models.IntegerField(null=False, editable=False, help_text = _("Id unique in task and user.Eg. Solution 1 of user X in task Y in contrast to global solution Z"))
 	
 	task = models.ForeignKey('tasks.task')
-	author = models.ForeignKey(User)
+	author = models.ForeignKey(User, verbose_name="solution author")
 	creation_date = models.DateTimeField(auto_now_add=True)
 	
 	accepted = models.BooleanField( default = False, help_text = _('Indicates whether the solution has passed all public and required tests'))

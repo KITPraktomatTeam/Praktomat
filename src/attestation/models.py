@@ -15,7 +15,7 @@ class Attestation(models.Model):
 
 	created = models.DateTimeField(auto_now_add=True)
 	solution = models.ForeignKey(Solution)
-	author = models.ForeignKey(User)
+	author = models.ForeignKey(User, verbose_name="attestation author", limit_choices_to = {'groups__name': 'Tutor'})
 
 	public_comment = models.TextField(blank=True, help_text = _('Comment which is shown to the user.'))
 	private_comment = models.TextField(blank=True, help_text = _('Comment which is only visible to tutors'))
