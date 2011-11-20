@@ -74,6 +74,8 @@ It is *required* - it must be passed for submission
 	required = models.BooleanField(default=False, help_text = _('The test must be passed to submit the solution.'))
 	always = models.BooleanField(default=True, help_text = _('The test will run on submission time.'))
 	
+	results = generic.GenericRelation("CheckerResult") # enables cascade on delete.
+	
 	class Meta:
 		abstract = True
 		app_label = 'checker'
