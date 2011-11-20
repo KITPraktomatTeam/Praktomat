@@ -23,6 +23,7 @@
 			$( "#ace_settings_button" ).click( function(){
 											  $( "#ace_settings" ).dialog("open");
 			});
+			$("#tabs").tabs( "select" , 3);
 		});
 		
 		function fullscreen() {
@@ -36,6 +37,11 @@
 {% endblock %}
 {% block breadcrumbs %} {{block.super}} > <a href={% url task_detail task_id=solution.task.id%}>{{solution.task.title}}</a> > <a href={% url attestation_list solution.task_id %}>My attestations</a> > Attestation {% endblock %}
 {% block content %}<div id='attestation_edit'>
+	
+<div id="form_actions">
+	<input type="submit" value="Save/Preview"/>
+	<input type="button" value="Discard/Back" onClick="parent.location='{% url attestation_list solution.task_id %}'">
+</div>
 
 <h1>{{solution.task.title}}</h1>
 	
@@ -115,8 +121,6 @@
 				{% with ratingResultFormSet as formset %}	
 					{% include "forms/formset_as_div.html" %}
 				{% endwith %}
-				<input type="submit" value="Save/Preview"/>
-				<input type="button" value="Discard/Back" onClick="parent.location='{% url attestation_list solution.task_id %}'">
 
 		</div>
 	</div>

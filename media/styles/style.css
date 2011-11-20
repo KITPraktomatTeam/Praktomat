@@ -530,6 +530,10 @@ a.add-row {
 
 /* @group Attestation Edit */
 
+#attestation_edit #form_actions {
+	float: right;
+}
+
 #attestation_edit .activeFile {
 	font-weight: bold;
 }
