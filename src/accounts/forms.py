@@ -50,10 +50,11 @@ class MyRegistrationForm(UserBaseCreationForm):
 		data = self.cleaned_data['mat_number']
 		if not data:
 			raise forms.ValidationError("This field is required.")
-		if User.objects.filter(mat_number=data):
-			trainers = map(lambda user: "<a href='mailto:%s'>%s</a>" % (user.email, user.get_full_name() or user.email), Group.objects.get(name='Trainer').user_set.all())
-			trainers = ', '.join(trainers)
-			raise forms.ValidationError(mark_safe("A user with this number is allready registered. Please Contact an Trainer: %s" % trainers ))
+		for user in User.objects.filter(mat_number=data):
+			if user.is_activated():
+				trainers = map(lambda user: "<a href='mailto:%s'>%s</a>" % (user.email, user.get_full_name() or user.email), Group.objects.get(name='Trainer').user_set.all())
+				trainers = ', '.join(trainers)
+				raise forms.ValidationError(mark_safe("A user with this number is allready registered. Please Contact an Trainer: %s" % trainers ))
 		return data
 		
 	def save(self):
