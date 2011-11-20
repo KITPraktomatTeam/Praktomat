@@ -110,7 +110,7 @@ class RatingResult(models.Model):
 	mark = models.ForeignKey(RatingScaleItem, null=True) # allow for db-null so that rating results can be created programaticly without mark (blank = False !)
 
 	def __unicode__(self):
-		return unicode(self.aspect) 
+		return unicode(self.rating.aspect) 
 	
 class Script(models.Model):
 	""" save java script function of the rating overview page """
