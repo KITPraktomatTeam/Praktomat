@@ -45,8 +45,19 @@
 						<option value="{% url solution_list task_id=task.id user_id=user.id %}">{{user.last_name}}, {{user.first_name}}</option>
 					{% endfor %}
 				</select>
-				<input id="edit_soluton_button" type="button" value="Edit Solution"/></br></br>
+				<input id="edit_soluton_button" type="button" value="Edit Solutions"/></br></br>
 			{% endif %}			
+			
+			{% if user|in_group:'Trainer'%}
+				<h2>{% trans "Unatested solutions" %}</h2>
+				<div class='attestation'>
+					{% for solution in unatested_solutions %}
+						<span class="icon ui-icon-search" title="view only"></span> <a href="{% url solution_detail solution_id=solution.id %}">Solution by {{solution.author}}</a></br>
+					{% empty %}
+						<p>All solutions have been attested.</p>
+					{% endfor %}
+				</div>
+			{% endif %}
 			
 			{% if user|in_group:'Tutor'%}
 				{% if show_author %}

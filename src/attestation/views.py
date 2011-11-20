@@ -84,7 +84,9 @@ def attestation_list(request, task_id):
 	
 	tutored_users = User.objects.filter(groups__name="User", is_active=True).order_by('last_name') if in_group(request.user,'Trainer') or request.user.is_superuser else None
 	
-	unatested_solutions = Solution.objects.filter(task = task, final=True, plagiarism = False, author__tutorial__in = request.user.tutored_tutorials.all(), attestation = None)		
+	unatested_solutions = Solution.objects.filter(task = task, final=True, plagiarism = False, attestation = None)		
+	if in_group(request.user,'Tutor'): # the trainer sees them all
+		unatested_solutions.filter(author__tutorial__in = request.user.tutored_tutorials.all())
 		
 	my_attestations = Attestation.objects.filter(solution__task = task, author = request.user)
 	all_attestations_for_my_tutorials = Attestation.objects.filter(solution__task = task, solution__author__tutorial__in = request.user.tutored_tutorials.all())
