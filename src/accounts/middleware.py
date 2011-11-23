@@ -1,4 +1,5 @@
 from accounts.models import User
+from django.contrib.auth import logout
 
 class LazyUser(object):
 	def __get__(self, request, obj_type=None):
@@ -16,3 +17,11 @@ class AuthenticationMiddleware(object):
 	def process_request(self, request):
 		request.__class__.user = LazyUser() 
 		return None
+
+class LogoutInactiveUserMiddleware(object):
+	""" Logout users who have been set to inactive so they cant use their sessions to operate on the site. """
+	def process_request(self, request):
+		if not request.user.is_authenticated():
+			return
+		if not request.user.is_active:
+			logout(request)

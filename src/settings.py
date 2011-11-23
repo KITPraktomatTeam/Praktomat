@@ -44,7 +44,8 @@ MIDDLEWARE_CLASSES = (
 	'sessionprofile.middleware.SessionProfileMiddleware', #phpBB integration
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'accounts.middleware.AuthenticationMiddleware',
+    'accounts.middleware.AuthenticationMiddleware',	
+	'accounts.middleware.LogoutInactiveUserMiddleware',
 	'django.middleware.transaction.TransactionMiddleware',
 )
 
