@@ -37,6 +37,8 @@
 {% endblock %}
 {% block breadcrumbs %} {{block.super}} > <a href={% url task_detail task_id=solution.task.id%}>{{solution.task.title}}</a> > <a href={% url attestation_list solution.task_id %}>My attestations</a> > Attestation {% endblock %}
 {% block content %}<div id='attestation_edit'>
+
+<form enctype="multipart/form-data" method="post" action="">{% csrf_token %}	
 	
 <div id="form_actions">
 	<input type="submit" value="Save/Preview"/>
@@ -45,7 +47,6 @@
 
 <h1>{{solution.task.title}}</h1>
 	
-<form enctype="multipart/form-data" method="post" action="">{% csrf_token %}	
 	
 	<div id="tabs">
 		<ul>
