@@ -31,13 +31,21 @@ from configuration import get_settings
 def statistics(request,task_id):
 	task = get_object_or_404(Task, pk=task_id)
 	
-	if not (in_group(request.user,'Trainer') or request.user.is_superuser):
+	if not (in_group(request.user,'Trainer,Tutor') or request.user.is_superuser):
 		return access_denied(request)
 	
 	final_solutions = task.solution_set.filter(final=True)
 	unfinal_solutions = task.solution_set.filter(final=False)
+	user = Group.objects.get(name='User').user_set.filter(is_active=True)
+	
+	tutorials = request.user.tutored_tutorials.all()
+	if in_group(request.user,'Tutor'):
+		final_solutions = final_solutions.filter(author__tutorial__in = tutorials)
+		unfinal_solutions = unfinal_solutions.filter(author__tutorial__in = tutorials)
+		user = User.objects.filter(tutorial__in = tutorials)
+		
 	final_solution_count = final_solutions.count()
-	user_count = Group.objects.get(name='User').user_set.filter(is_active=True).count()
+	user_count = user.count()
 	
 	submissions = []
 	submissions_final = []
@@ -54,15 +62,25 @@ def statistics(request,task_id):
 	creation_times = map(lambda dict:[(dict['creation_date'].time().hour*3600+dict['creation_date'].time().minute*60)*1000, dict['creation_date'].weekday()], unfinal_solutions.values('creation_date'))
 	creation_times_final = map(lambda dict:[(dict['creation_date'].time().hour*3600+dict['creation_date'].time().minute*60)*1000, dict['creation_date'].weekday()], final_solutions.values('creation_date'))
 	
-	attestations = Attestation.objects.filter(solution__task__id=task.id, final=True, published=False).aggregate(final=Count('id'))
-	attestations.update( Attestation.objects.filter(solution__task__id=task.id, final=True, published=True).aggregate(published=Count('id')) )
+	if in_group(request.user,'Trainer'):
+		attestations = Attestation.objects.filter(solution__task__id=task.id, final=True, published=False).aggregate(final=Count('id'))
+		attestations.update( Attestation.objects.filter(solution__task__id=task.id, final=True, published=True).aggregate(published=Count('id')) )
+	else: # Tutor
+		attestations = Attestation.objects.filter(solution__task__id=task.id, final=True, published=False, author__tutored_tutorials__in = tutorials).aggregate(final=Count('id'))
+		attestations.update( Attestation.objects.filter(solution__task__id=task.id, final=True, published=True, author__tutored_tutorials__in = tutorials).aggregate(published=Count('id')))
+		
 	attestations['all'] = final_solution_count
+
 
 	all_items = sorted(task.final_grade_rating_scale.ratingscaleitem_set.values_list('name','position'), key = lambda (name,position) : position)
 	final_grade_rating_scale_items = "['" + "','".join([name.strip() for (name,position) in all_items]) + "']"
-	ratings = RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True).annotate(Count('id')).values_list('position','id__count')
-	ratings = map(lambda (position,number): [ [pos for (name,pos) in all_items].index(position),number] ,ratings)
-
+	if in_group(request.user,'Trainer'):
+		ratings = RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True)
+	else:
+		ratings = RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__author__tutored_tutorials__in = tutorials)
+	ratings = ratings.annotate(Count('id')).values_list('position','id__count')
+	ratings = map(lambda tupel:list(tupel), ratings)
+	
 	return render_to_response("attestation/statistics.html", {'task':task, \
 															'user_count': user_count, 'solution_count': final_solution_count,\
 															'submissions':submissions, 'submissions_final':submissions_final, 'creation_times':creation_times, 'creation_times_final':creation_times_final, 'acc_submissions':acc_submissions, \
