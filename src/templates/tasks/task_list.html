@@ -8,6 +8,9 @@
 		$('.grade_cell').each(function(index) {
 			grades[index] = $(this).text()
 		});
+		
+		{% include "attestation/rating_scale_items_js_inline.html" %}
+		
 		var result;
 		{{script}}
 		if (result) {

@@ -1,0 +1,7 @@
+var ratingScaleItems = new Array();
+{% for task in tasks %}
+	ratingScaleItems[{{forloop.counter0}}] = new Array();
+	{% for ratingscaleitem in task.final_grade_rating_scale.ratingscaleitem_set.all %}
+		ratingScaleItems[{{forloop.parentloop.counter0}}][{{forloop.counter0}}] = "{{ratingscaleitem.name}}";
+	{% endfor %}
+{% endfor %}

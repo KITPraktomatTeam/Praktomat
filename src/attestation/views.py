@@ -253,7 +253,7 @@ def rating_overview(request):
 		script_form = ScriptForm(instance=script)
 		publish_final_grade_form = PublishFinalGradeForm(instance=get_settings())
 	
-	return render_to_response("attestation/rating_overview.html", {'rating_list':rating_list, 'task_list':tasks, 'final_grade_formset':final_grade_formset, 'script_form':script_form, 'publish_final_grade_form':publish_final_grade_form},	context_instance=RequestContext(request))
+	return render_to_response("attestation/rating_overview.html", {'rating_list':rating_list, 'tasks':tasks, 'final_grade_formset':final_grade_formset, 'script_form':script_form, 'publish_final_grade_form':publish_final_grade_form},	context_instance=RequestContext(request))
 
 @login_required	
 def tutorial_overview(request, tutorial_id=None):
@@ -278,7 +278,7 @@ def tutorial_overview(request, tutorial_id=None):
 	rating_list = user_task_attestation_map(users, tasks)
 	script = Script.objects.get_or_create(id=1)[0]
 	
-	return render_to_response("attestation/tutorial_overview.html", {'other_tutorials':other_tutorials, 'tutorial':tutorial, 'rating_list':rating_list, 'task_list':tasks, 'final_grades_published': get_settings().final_grades_published, 'script':script},	context_instance=RequestContext(request))
+	return render_to_response("attestation/tutorial_overview.html", {'other_tutorials':other_tutorials, 'tutorial':tutorial, 'rating_list':rating_list, 'tasks':tasks, 'final_grades_published': get_settings().final_grades_published, 'script':script},	context_instance=RequestContext(request))
 
 
 @login_required	

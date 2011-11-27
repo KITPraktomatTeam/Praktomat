@@ -10,6 +10,9 @@
 	};	
 	
 	function calculate(){
+	
+		{% include "attestation/rating_scale_items_js_inline.html" %}
+				
 		var all_grades = new Array();
 		$('.user_row').each(function(index) {
 			var grades=new Array();
@@ -51,7 +54,7 @@
 	<table class="noLinkHighlight">
 		<tr>
 			<th>User</th>
-			{% for task in task_list %}
+			{% for task in tasks %}
 				<th><div class="heading"><a href="{% url task_detail task_id=task.id  %}">{{task.title}}</a></div></th>
 			{% endfor %}
 			<th><div class="heading" id="calculated_grade_heading">Calculated grade</div></th>
