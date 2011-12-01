@@ -72,7 +72,7 @@ def statistics(request,task_id):
 	attestations['all'] = final_solution_count
 
 
-	all_items = sorted(task.final_grade_rating_scale.ratingscaleitem_set.values_list('name','position'), key = lambda (name,position) : position)
+	all_items = task.final_grade_rating_scale.ratingscaleitem_set.values_list('name','position')
 	final_grade_rating_scale_items = "['" + "','".join([name.strip() for (name,position) in all_items]) + "']"
 	if in_group(request.user,'Trainer'):
 		ratings = RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True)

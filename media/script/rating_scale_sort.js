@@ -27,9 +27,12 @@ $(document).ready(function(){
 	
   	// On save: fill positions into textbox
 	$("input[type=submit]").click(function() { 
-		$(".dynamic-ratingscaleitem_set").each(function(i) {
-			if ($(this).find('input[id$=name]').val() != ""){
-				$(this).find('input[id$=position]').val(i);
+		var position = 0;
+		$(".dynamic-ratingscaleitem_set").each(function() {
+			var deleteBox = $(this).find(".delete input")[0];
+			if ($(this).find('input[id$=name]').val() != "" && (!deleteBox || deleteBox.checked != true)){
+				$(this).find('input[id$=position]').val(position);
+				position++;
 			}
 		})	
 	})
