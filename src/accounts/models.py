@@ -74,8 +74,11 @@ class User(BasicUser):
 		1. 	If the user has already activated, re-activating is not permitted, and so this method returns ``False`` in this case.
 		
 		2. 	If the activation key has expired this method returns ``False``.
+		
+		3. 	If an other user allready activated an account with the same matnumber this method returns ``False``.
 		"""
-		return not self.is_activated() and not self.activation_key_expired()
+		dublicate_matnumber = User.objects.filter(mat_number=self.mat_number, is_active=True).count() >= 1
+		return not self.is_activated() and not self.activation_key_expired() and not dublicate_matnumber
 	can_activate.boolean = True
 	
 	def activate_user(activation_key):
