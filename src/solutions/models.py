@@ -129,7 +129,7 @@ class SolutionFile(models.Model):
 					new_solution_file = SolutionFile(solution=self.solution)
 					temp_file = tempfile.NamedTemporaryFile()									# autodeleted
 					temp_file.write(zip.open(zip_file_name).read()) 
-					new_solution_file.file.save(zip_file_name, File(temp_file), save=True)		# need to check for filenames begining with / or ..?
+					new_solution_file.file.save(unicode(zip_file_name,errors='replace'), File(temp_file), save=True)		# need to check for filenames begining with / or ..?
 		else:
 			self.mime_type = mimetypes.guess_type(self.file.name)[0]
 			models.Model.save(self, force_insert, force_update, using)
