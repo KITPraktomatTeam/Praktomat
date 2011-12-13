@@ -167,6 +167,9 @@ class SolutionFile(models.Model):
 		""" Copies this file to the given directory """
 		new_file_path = os.path.join(directory, self.path())
 		if self.isBinary():
+			full_directory = os.path.join(directory,os.path.dirname(self.path()))
+			if not os.path.exists(full_directory):
+				file_operations.makedirs(full_directory)
 			shutil.copy(self.file.file.name, new_file_path)
 		else:
 			file_operations.create_file(new_file_path, self.content())
