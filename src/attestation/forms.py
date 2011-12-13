@@ -13,6 +13,11 @@ class AttestationForm(ModelForm):
 	class Meta:
 		model = Attestation
 		exclude = ('solution', 'author', 'final', 'published')
+		widgets = {
+			'public_comment': forms.Textarea(attrs={'cols': 80, 'rows': 10}),
+			'private_comment': forms.Textarea(attrs={'cols': 80, 'rows': 10}),
+		}
+
 		
 	def __init__(self, *args, **kwargs): 
 		super(AttestationForm, self).__init__(*args, **kwargs) 
@@ -63,3 +68,4 @@ class GenerateRatingScaleForm(forms.Form):
 	start = forms.FloatField(initial=0, help_text="The first RatingScaleItem to generate.")
 	end = forms.FloatField(initial=15, help_text="The last RatingScaleItem to generate.")
 	step = forms.FloatField(initial=1, help_text="The step size between the RatingScaleItems.")
+
