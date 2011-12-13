@@ -5,6 +5,7 @@
 	<script type="text/javascript" src="{{MEDIA_URL}}script/solution_inlines.js"></script>
 	<script type="text/javascript" src="{{MEDIA_URL}}frameworks/ace/demo/require.js"></script>
 	<script type="text/javascript" src="{{MEDIA_URL}}script/boot_ace.js"></script>
+	<script typr="text/javascript" src="{{MEDIA_URL}}script/confirm_close.js"></script>
 	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}styles/pygments_friendly.css" />
 	
 	<script type="text/javascript">		
@@ -41,7 +42,7 @@
 <form enctype="multipart/form-data" method="post" action="">{% csrf_token %}	
 	
 <div id="form_actions">
-	<input type="submit" value="Save/Preview"/>
+	<input type="submit" value="Save/Preview"/ id="id_save">
 	<input type="button" value="Discard/Back" onClick="parent.location='{% url attestation_list solution.task_id %}'">
 </div>
 

@@ -103,6 +103,7 @@ exports.launch = function(env) {
 		var name = $("#doc")[0].options[index].innerHTML;
 		docs[index].setMode(getMode(name));
 		docs[index].setUndoManager(new UndoManager());
+		docs[index].on('change',function(){somethingWasChanged = true;});
 	});
 	   
 	// restore text areas   
