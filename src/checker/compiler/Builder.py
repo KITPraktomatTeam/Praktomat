@@ -5,6 +5,7 @@ import re, subprocess
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+
 from checker.models import Checker, CheckerResult, execute
 
 class Builder(Checker):
@@ -120,6 +121,9 @@ class Builder(Checker):
 
 		# The executable has to exist and we mustn't have any warnings.
 		passed = not self.has_warnings(output)	
-		result.set_log("<pre>" + output + "</pre>" if output else "")
+		result.set_log(self.build_log(output,args,filenames))
 		result.set_passed(passed)
 		return result
+
+	def build_log(self,output,args,filenames):
+		return	"<pre>" + output + "</pre>" if output else ""
