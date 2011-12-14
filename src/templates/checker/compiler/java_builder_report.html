@@ -1,4 +1,3 @@
-<div>{{ filenames|length }} <tt>.java</tt> Files found: {% for javafile in filenames%} {{ javafile }} &nbsp; {% endfor %}</div>
-<div>Java Compiler called as: <tt>{{ cmdline }}</tt></div>
+<div>{{ filenames|length }} <tt>Java</tt> Files found for Compilation: {% for javafile in filenames%} {{ javafile }} &nbsp; {% endfor %}</div>
 <div>Java Compiler Output:</div>
 <pre>{{output|safe}}</pre>

@@ -126,6 +126,13 @@ class CheckerEnvironment:
 		# Executable program
 		self._program = None 
 
+		# The Solution
+		self._solution = solution
+
+	def solution(self):
+		""" Returns the Solution being checked """
+		return self._solution
+
 	def tmpdir(self):
 		""" Returns the path name of temporary build directory. """
 		return self._tmpdir
