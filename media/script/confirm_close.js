@@ -1,6 +1,6 @@
 var somethingWasChanged = false;
 window.onbeforeunload = function() {
-	if(somethingWasChanged)	return "You made changes on this page that you have not yet confirmed. If you navigate away from this page you will loose your unsaved changes";
+	if(somethingWasChanged)	return "You made changes on this page that you have not yet confirmed. If you navigate away from this page you will lose your unsaved changes.";
 }
 
 $(window).load(function () {
