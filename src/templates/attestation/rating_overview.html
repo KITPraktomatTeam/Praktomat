@@ -53,7 +53,10 @@
 			var grades = all_grades[index];
 			var result;
 			
-			eval(editor.getSession().getValue());
+			try {
+				eval(editor.getSession().getValue());
+			} catch (e) {
+			}
 			
 			$("#calculated_grade_cell"+index).text(result);
 		}

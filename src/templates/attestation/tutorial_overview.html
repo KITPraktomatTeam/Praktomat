@@ -25,7 +25,10 @@
 		for (index in all_grades){
 			var grades = all_grades[index];
 			var result;
-			{{script.script}};
+			try{
+				{{script.script|safe}};
+			} catch(e) {
+			}
 			$("#calculated_grade_cell"+index).text(result);
 		}
 	}
