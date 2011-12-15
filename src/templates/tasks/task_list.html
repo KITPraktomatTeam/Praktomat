@@ -12,7 +12,11 @@
 		{% include "attestation/rating_scale_items_js_inline.html" %}
 		
 		var result;
-		{{script}}
+		try {
+			{{script|safe}}
+		} catch (e) {
+		}
+
 		if (result) {
 			$("#calculated_grade_cell").text(result);
 		} else {
@@ -80,7 +84,7 @@
 						<td>{{task}}</td>
 						<td class="grade_cell">{% if attestation %}
 							<a href={% url view_attestation attestation_id=attestation.id%}>{{attestation.final_grade}} </a>
-							{%else%}-{%endif%} </td>
+							{%else%}-{%endif%}</td>
 						<td>{{task.final_grade_rating_scale.name}}</td>
 					</tr>
 				{% endfor %}
