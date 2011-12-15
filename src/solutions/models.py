@@ -4,7 +4,7 @@ import zipfile
 import tempfile
 import mimetypes
 import shutil
-import os, re
+import os, re, string
 
 from M2Crypto import RSA, EVP
 
@@ -179,13 +179,14 @@ def get_solutions_zip(solutions):
 	zip_file = tempfile.SpooledTemporaryFile()
 	zip = zipfile.ZipFile(zip_file,'w')
 	for solution in solutions:
+		# TODO: make this work for anonymous attesration, too
 		if get_settings().anonymous_attestation:
 			project_path = 'User' + index
 			project_name = 'User ' + index 
 		else:
-			project_path = solution.author.username 
+			project_path = path_for_user(solution.author)
 			project_name = solution.author.get_full_name() 
-		base_name = solution.task.title + '/' + project_path + '/'
+		base_name = path_for_task(solution.task) + '/' + project_path + '/'
 
 		zip.writestr((base_name+'.project').encode('cp437'), render_to_string('solutions/eclipse/project.xml', { 'name': project_name }).encode("utf-8"))
 		zip.writestr((base_name+'.classpath').encode('cp437'), render_to_string('solutions/eclipse/classpath.xml', { }))
@@ -197,4 +198,21 @@ def get_solutions_zip(solutions):
 	zip.close()	
 	zip_file.seek(0)
 	return zip_file
+
+def ascii_without(chars):
+	return string.maketrans('','').translate(None,chars)
+
+non_ascii_letters            = ascii_without(string.ascii_letters)
+non_ascii_letters_and_digits = ascii_without(string.ascii_letters + string.digits)
+
+def path_for_user(user):
+	return user.get_full_name().encode('ascii','ignore').translate(None,non_ascii_letters)+'-'+str(user.mat_number)+'-'+str(user.id)
+
+def path_for_task(task):
+	return task.title.encode('ascii','ignore').translate(None,non_ascii_letters_and_digits)
+
+path_regexp = re.compile(r'[^-]*-[^-]*-(.*)')
+
+def id_for_path(path):
+	return path_regexp.match(path).group(1)
 
