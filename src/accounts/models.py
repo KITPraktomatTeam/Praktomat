@@ -181,4 +181,12 @@ class Tutorial(models.Model):
 
 
 	
+class ShowAllUser(User):
+	class Meta:
+		proxy=True
+		verbose_name_plural="Users (showing all, slow!)"
+		verbose_name="User"
+		
+
+
 	

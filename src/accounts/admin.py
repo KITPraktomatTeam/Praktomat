@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User as UserBase, Group
 from django.contrib.auth.admin import UserAdmin as UserBaseAdmin
 from django.db.models import Count
-from accounts.models import User, Tutorial
+from accounts.models import User, Tutorial, ShowAllUser
 from accounts.templatetags.in_group import in_group
 from accounts.forms import AdminUserCreationForm, AdminUserChangeForm
 
@@ -92,6 +92,11 @@ class UserAdmin(UserBaseAdmin):
 admin.site.unregister(UserBase) 
 admin.site.register(User, UserAdmin)
 
+
+class ShowAllUserAdmin(UserAdmin):
+	def get_paginator(self, request, queryset, per_page, orphans=0, allow_empty_first_page=True):
+		return self.paginator(queryset, 10000, orphans, allow_empty_first_page)
+
 class TutorialAdmin(admin.ModelAdmin):
 	model = Tutorial
 	list_display = ('name', 'tutors_flat',)
@@ -100,6 +105,6 @@ class TutorialAdmin(admin.ModelAdmin):
 		css = {
 			"all": ("styles/admin_style.css",)
 		}
-
+admin.site.register(ShowAllUser,ShowAllUserAdmin)
 		
 admin.site.register(Tutorial, TutorialAdmin)
