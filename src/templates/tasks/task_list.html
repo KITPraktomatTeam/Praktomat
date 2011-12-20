@@ -9,7 +9,7 @@
 			grades[index] = $(this).text()
 		});
 		
-		{% include "attestation/rating_scale_items_js_inline.html" %}
+		{% include "attestation/rating_scale_items_js_inline.html" with tasks=expired_tasks %}
 		
 		var result;
 		try {

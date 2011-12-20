@@ -38,7 +38,7 @@ def taskList(Request):
 
 	script = Script.objects.get_or_create(id=1)[0].script
 
-	return render_to_response('tasks/task_list.html',{'tasks':expired_Tasks, 'attestations':attestations, 'show_final_grade': get_settings().final_grades_published, 'tutors':tutors, 'trainers':trainers, 'script':script}, context_instance=RequestContext(Request))
+	return render_to_response('tasks/task_list.html',{'tasks':tasks, 'expired_tasks': expired_Tasks, 'attestations':attestations, 'show_final_grade': get_settings().final_grades_published, 'tutors':tutors, 'trainers':trainers, 'script':script}, context_instance=RequestContext(Request))
 
 @login_required
 def taskDetail(Request,task_id):
