@@ -2,6 +2,7 @@
 
 from pipes import quote
 import re, subprocess
+import string
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -91,14 +92,14 @@ class Builder(Checker):
 	
 	def main_module(self, env):
 		""" Creates the name of the main module from the (first) source file name. """
-		
-		for (module_name, module_content) in env.sources():
+		for module_name in self.get_file_names(env):
 			try:
 				return module_name[:string.index(module_name, '.')]
-			except:
+			except ValueError:
 				pass
 		# Module name not found
-		raise self.NotFoundError("The main module could not be found.")
+
+		raise self.NotFoundError("The main module could not be found.\n")
 
 	def run(self, env):
 		""" Build it. """
