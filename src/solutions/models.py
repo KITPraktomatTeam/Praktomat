@@ -194,7 +194,7 @@ def get_solutions_zip(solutions):
 		
 		for index, solutionfile in enumerate(solution.solutionfile_set.all()):
 			file = solutionfile.file
-			name = (base_name + solutionfile.path()).encode('cp437')
+			name = (base_name + solutionfile.path()).encode('cp437','ignore')
 			zip.write(file.path, name)
 	zip.close()	
 	zip_file.seek(0)

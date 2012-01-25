@@ -5,6 +5,7 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.views.static import serve
+from django.utils.encoding import smart_str
 
 from accounts.views import access_denied
 from solutions.models import Solution
@@ -35,7 +36,7 @@ def sendfile(request, path):
 		# serve with development server when not run in apache
 		return serve(request, path, document_root=settings.UPLOAD_ROOT)
 	response = HttpResponse() 
-	response['X-Sendfile'] = filename  
+	response['X-Sendfile'] = smart_str(filename)
 	content_type, encoding = mimetypes.guess_type(path) 
 	if not content_type: 
 		content_type = 'application/octet-stream' 
