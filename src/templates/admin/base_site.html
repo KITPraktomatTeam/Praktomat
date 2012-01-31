@@ -4,7 +4,7 @@
 {% block title %}{% blocktrans %}Praktomat admin: {{ title }}{% endblocktrans %}{% endblock %}
 
 {% block branding %}
-<h1 id="site-name">{% blocktrans %}Praktomat admin{% endblocktrans %}</h1>
+<h1 id="site-name">{% blocktrans %}{{SITE_NAME}}: Admin{% endblocktrans %}</h1>
 {% endblock %}
 
 {% block userlinks %}{{ block.super }} / <a href="{% url task_list %}">{% trans 'User site' %}</a> {% endblock %}
