@@ -94,6 +94,11 @@ admin.site.register(User, UserAdmin)
 
 
 class ShowAllUserAdmin(UserAdmin):
+	model = User
+	
+	def __init__(self, model, admin_site):
+		UserAdmin.__init__(self,User,admin_site)	
+
 	def get_paginator(self, request, queryset, per_page, orphans=0, allow_empty_first_page=True):
 		return self.paginator(queryset, 10000, orphans, allow_empty_first_page)
 
