@@ -141,7 +141,8 @@ The {{ site_name }} team
 
 class ImportForm(forms.Form):
 	file = forms.FileField(required=True, help_text = "The file exported from the list view. Allready existing users will be ignorred.")
-	require_reactivation = forms.BooleanField(initial=True, required=False, help_text = "Deactivate all imported users and send activation mail.")
+	require_reactivation = forms.BooleanField(initial=True, required=False, help_text = "Deactivate all imported users")
+	send_reactivation_email = forms.BooleanField(initial=False, required=False, help_text = "Send activation email to imported users (if deactivated during import)")
 	meassagetext = forms.CharField(required=False, widget=forms.Textarea, initial = reactivation_message_text, help_text = "Message to be embedded into activation mail if reactivation is required.")
 
 class ImportTutorialAssignmentForm(forms.Form):

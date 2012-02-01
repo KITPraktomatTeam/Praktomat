@@ -65,23 +65,24 @@ def import_user(request):
 				imported_user = User.import_user(form.files['file'])
 				request.user.message_set.create(message="The import was successfull. %i users imported." % imported_user.count())
 				if form.cleaned_data['require_reactivation']:
-					for user in imported_user:
+					for user in [user for user in imported_user if user.is_active]:
 						user.is_active = False
 						user.set_new_activation_key()
 						user.save()
-						# Send activation email
-						t = Template(form.cleaned_data['meassagetext'])
-						c = {
-							'email': user.email,
-							'domain': RequestSite(request).domain,
-							'site_name': settings.SITE_NAME,
-							'uid': int_to_base36(user.id),
-							'user': user,
-							'protocol': request.is_secure() and 'https' or 'http',
-							'activation_key': user.activation_key,
-							'expiration_days': get_settings().acount_activation_days,
-						}
-						send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(Context(c)), None, [user.email])
+						if form.cleaned_data['send_reactivation_email']:
+							# Send activation email
+							t = Template(form.cleaned_data['meassagetext'])
+							c = {
+								'email': user.email,
+								'domain': RequestSite(request).domain,
+								'site_name': settings.SITE_NAME,
+								'uid': int_to_base36(user.id),
+								'user': user,
+								'protocol': request.is_secure() and 'https' or 'http',
+								'activation_key': user.activation_key,
+								'expiration_days': get_settings().acount_activation_days,
+							}
+							send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(Context(c)), None, [user.email])
 				return HttpResponseRedirect(urlresolvers.reverse('admin:accounts_user_changelist'))
 			except:
 				raise
