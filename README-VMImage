@@ -8,7 +8,7 @@ After importing the Praktomat Appliance,  do the following:
      VirtialBox Console or ssh. The password is 'foobar'
 
  3.) In the file
-       ~/installations/default/Praktomat/src/praktomat/settings_local.py
+       ~/installations/default/Praktomat/src/settings_local.py
      change the following settings to match your network:
        BASE_URL
        EMAIL_*
