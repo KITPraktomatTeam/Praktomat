@@ -57,7 +57,10 @@ def statistics(request,task_id):
 		submissions_final.append(creation_dates_final.count(date))
 		acc_submissions.append(acc_submissions[-1]+submissions_final[-1])
 	acc_submissions.pop(0)
-	acc_submissions = map(lambda submissions: float(submissions)/user_count, acc_submissions)
+	if (user_count > 0):
+		acc_submissions = map(lambda submissions: float(submissions)/user_count, acc_submissions)
+	else:
+		acc_submissions = 0;
 	
 	creation_times = map(lambda dict:[(dict['creation_date'].time().hour*3600+dict['creation_date'].time().minute*60)*1000, dict['creation_date'].weekday()], unfinal_solutions.values('creation_date'))
 	creation_times_final = map(lambda dict:[(dict['creation_date'].time().hour*3600+dict['creation_date'].time().minute*60)*1000, dict['creation_date'].weekday()], final_solutions.values('creation_date'))
@@ -283,6 +286,10 @@ def tutorial_overview(request, tutorial_id=None):
 		if (in_group(request.user,'Tutor') and not tutorial.tutors.filter(id=request.user.id)):
 			return access_denied(request)
 	else:
+		tutorials = request.user.tutored_tutorials.all()
+		if (not tutorials):
+			return render_to_response("attestation/tutorial_none.html",context_instance=RequestContext(request))
+ 
 		tutorial = request.user.tutored_tutorials.all()[0]
 
 	if (in_group(request.user,'Tutor')):
