@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.mail import EmailMessage
 from django.template import Context, loader
 from django.contrib.sites.models import RequestSite
+from datetime import datetime
 import difflib
 
 from accounts.models import User
@@ -23,10 +24,12 @@ class Attestation(models.Model):
 	
 	final = models.BooleanField(default = False, help_text = _('Indicates whether the attestation is ready to be published'))
 	published = models.BooleanField(default = False, help_text = _('Indicates whether the user can see the attestation.'))
+	published_on = models.DateTimeField(blank=True,null=True,help_text = _('The Date/Time the attestation was published.'))
 	
 	def publish(self, request):
 		""" Set attestation to published and send email to user """
 		self.published = True
+		self.published_on = datetime.now()
 		self.save()
 		
 		# Send confirmation email

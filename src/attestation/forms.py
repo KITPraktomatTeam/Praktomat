@@ -12,7 +12,7 @@ from configuration.models import Settings
 class AttestationForm(ModelForm):
 	class Meta:
 		model = Attestation
-		exclude = ('solution', 'author', 'final', 'published')
+		exclude = ('solution', 'author', 'final', 'published','published_on')
 		widgets = {
 			'public_comment': forms.Textarea(attrs={'cols': 80, 'rows': 10}),
 			'private_comment': forms.Textarea(attrs={'cols': 80, 'rows': 10}),

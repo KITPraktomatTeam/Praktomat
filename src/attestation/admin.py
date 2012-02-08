@@ -38,8 +38,8 @@ class RatingResultAdminInline(admin.StackedInline):
 class AttestationAdmin(admin.ModelAdmin):
 	model = Attestation
 	readonly_fields = ('created',)
-	fields = ( 'solution', 'author', 'created', 'public_comment', 'private_comment', 'final_grade', 'final', 'published')
-	list_display = ('solution', 'author', 'created', 'final', 'published')
+	fields = ( 'solution', 'author', 'created', 'public_comment', 'private_comment', 'final_grade', 'final', 'published','published_on')
+	list_display = ('solution', 'author', 'created', 'final', 'published','published_on')
 	list_filter = ('final', 'published', 'author', 'solution__author', 'solution__task')
 	inlines = (RatingResultAdminInline, AnnotatedSolutionFileAdminInline)
 
