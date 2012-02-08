@@ -122,7 +122,7 @@ class Builder(Checker):
 
 		# The executable has to exist and we mustn't have any warnings.
 		passed = not self.has_warnings(output)	
-		result.set_log(self.build_log(output,args,set(filenames).intersection([solutionfile.path() for solutionfile in env.solution().solutionfile_set.all()])))
+		result.set_log(self.build_log(output,args,set(filenames).intersection([quote(solutionfile.path()) for solutionfile in env.solution().solutionfile_set.all()])))
 		result.set_passed(passed)
 		return result
 
