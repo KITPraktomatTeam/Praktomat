@@ -113,6 +113,7 @@ class DejaGnuTester(Checker, DejaGnu):
 		environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
 
 		[output, error, exitcode] = execute(cmd, testsuite, environment_variables=environ)
+		output = encoding.get_unicode(output)
 
 		try:
 			summary = encoding.get_unicode(open(os.path.join(testsuite, program_name + ".sum")).read())
