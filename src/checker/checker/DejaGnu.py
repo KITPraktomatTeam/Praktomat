@@ -13,6 +13,7 @@ import subprocess
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import escape
 from checker.models import Checker, CheckerFileField, CheckerResult, execute
 from checker.compiler.Builder import Builder
 from utilities import encoding
@@ -85,7 +86,7 @@ class DejaGnuTester(Checker, DejaGnu):
 		log = re.sub(RXREMOVE, "", log)
 
 		# HTMLize it all
-		# log = htmlize(log)
+		log = escape(log)
 		
 		# Every line that contains a passed message is to be enhanced.
 		log = re.sub(RXPASS, r"\1 <B class=\"pass\"> \2 </B> \3", log)
