@@ -10,7 +10,8 @@ from utilities.encoding import *
 
 class CreateFileChecker(Checker):
 	
-	file = CheckerFileField(help_text=_("The file that is copied into the temporary test directory"))
+	file = CheckerFileField(help_text=_("The file that is copied into the sandbox"))
+	filename = models.CharField(max_length=500, blank=True, help_text=_("What the file will be named in the sandbox. If empty, the name the file is stored under on the webserver is used!"))
 	path = models.CharField(max_length=500, blank=True, help_text=_("Subfolder in the sandbox which shall contain the file."))
 	
 	def title(self):
@@ -25,7 +26,9 @@ class CreateFileChecker(Checker):
 	def run(self, env):
 		""" Runs tests in a special environment. Here's the actual work. 
 		This runs the check in the environment ENV, returning a CheckerResult. """
-		path = os.path.join(os.path.join(env.tmpdir(),string.lstrip(self.path,"/ ")),os.path.basename(self.file.path))
+
+		filename = self.filename if self.filename else self.file.path
+		path = os.path.join(os.path.join(env.tmpdir(),string.lstrip(self.path,"/ ")),os.path.basename(filename))
 		overridden = os.path.exists(path)
 		copy_file(self.file.path, path)
 		result = CheckerResult(checker=self)
