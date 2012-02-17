@@ -38,7 +38,7 @@ class CreateFileChecker(Checker):
 		else:
 			result.set_log("The file '%s' was overridden" % os.path.join(self.path, os.path.basename(self.file.path)))
 			result.set_passed(False)
-		source_path = os.path.join(string.lstrip(self.path,"/ "), os.path.basename(self.file.path))
+		source_path = os.path.join(string.lstrip(self.path,"/ "), os.path.basename(filename))
 		env.add_source(source_path, get_unicode(self.file.read()))
 		return result
 	
