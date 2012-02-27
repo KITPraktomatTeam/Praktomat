@@ -19,7 +19,7 @@
 	{% endif %}
 {% else %}
 	<p class="error" id='commit_text'>{% trans "Not all required tests have been passed." %}
-	{% if not solution.task.expired %}{% trans "Please corect the errors below and try again!" %}{% endif %}</p>
+	{% if not solution.task.expired %}{% trans "Please correct the errors below and try again!" %}{% endif %}</p>
 {% endif %}
 
 <p> {% if solution.final %}
