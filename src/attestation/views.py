@@ -109,11 +109,11 @@ def attestation_list(request, task_id):
 	if in_group(request.user,'Tutor'): # the trainer sees them all
 		unatested_solutions = unatested_solutions.filter(author__tutorial__in = request.user.tutored_tutorials.all())
 		
-	my_attestations = Attestation.objects.filter(solution__task = task, author = request.user)
-	all_attestations_for_my_tutorials = Attestation.objects.filter(solution__task = task, solution__author__tutorial__in = request.user.tutored_tutorials.all())
+	my_attestations = Attestation.objects.filter(solution__task = task, author = request.user).order_by('-created')
+	all_attestations_for_my_tutorials = Attestation.objects.filter(solution__task = task, solution__author__tutorial__in = request.user.tutored_tutorials.all()).order_by('-created')
 	if (in_group(request.user,'Trainer')):
 		# show all to trainer
-		attestations_by_others  = Attestation.objects.filter(solution__task = task)
+		attestations_by_others  = Attestation.objects.filter(solution__task = task).order_by('-created')
 		solutions_with_plagiarism = Solution.objects.filter(task = task, plagiarism = True)
 	else:
 		# show from my toturials

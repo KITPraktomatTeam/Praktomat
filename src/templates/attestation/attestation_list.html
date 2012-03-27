@@ -117,6 +117,7 @@
 							<span class='plagiarism error'><span class="icon ui-icon-alert icon-red"></span>{% trans "Marked as Plagiarism" %}</span>
 						{% endif %}
 						<span id='comment'>{{ attestation.private_comment|truncatewords:15}}</span>
+						<span style="float:right">Created: {{attestation.created|date:"Y-m-d H:i"}}</span>
 						<br/>
 					</div>
 				{% endfor %}
