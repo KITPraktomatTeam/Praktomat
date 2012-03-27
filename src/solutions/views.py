@@ -22,7 +22,7 @@ from accounts.views import access_denied
 from accounts.templatetags.in_group import in_group
 from accounts.models import User
 from configuration import get_settings
-
+from checker.models import CheckerResult
 from django.db import transaction
 
 @login_required
@@ -109,4 +109,27 @@ def solution_download_for_task(request, task_id):
 	response = HttpResponse(zip_file.read(), mimetype="application/zip")
 	response['Content-Disposition'] = 'attachment; filename=Solutions.zip'
 	return response
+
+
+@login_required
+def checker_result_list(request,task_id):
+	task = get_object_or_404(Task, pk=task_id)	
+	if (not in_group(request.user,'Trainer')):
+		return access_denied(request)
+	else:
+
+		users_with_checkerresults = [(user,checkerresults)                              \
+		for user           in User.objects.filter(groups__name='User').order_by('mat_number')          \
+		for final_solution in Solution.objects.filter(author=user,final=True,task=task) \
+		for checkerresults in [sorted(CheckerResult.objects.all().filter(solution=final_solution),key=lambda result : result.checker.order)]]
+
+		number_of_checker = None		
+		for checkerresults in users_with_checkerresults:
+			if (number_of_checker and (len(checkerresults) != number_of_checker)):
+				return acces_denied(request)	#TODO: issue proper error message
+			else:
+				number_of_checker = len(checkerresults) 
+
+		_, prototype = users_with_checkerresults[0]
+		return render_to_response("solutions/checker_result_list.html", {"users_with_checkerresults": users_with_checkerresults,  "prototype":  prototype, "task":task},context_instance=RequestContext(request))
 
