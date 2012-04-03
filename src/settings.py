@@ -119,6 +119,7 @@ TINYMCE_DEFAULT_CONFIG = {
 	'extended_valid_elements' : "textarea[cols|rows|disabled|name|readonly|class]" ,
 	
 	'content_css' : MEDIA_URL+'/styles/style.css',
+  'relative_urls': False,
 }
 TINYMCE_SPELLCHECKER = False
 TINYMCE_COMPRESSOR = False
