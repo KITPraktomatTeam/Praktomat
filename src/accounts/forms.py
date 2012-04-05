@@ -56,6 +56,15 @@ class MyRegistrationForm(UserBaseCreationForm):
 				trainers = ', '.join(trainers)
 				raise forms.ValidationError(mark_safe("A user with this number is allready registered. Please Contact an Trainer: %s" % trainers ))
 		return data
+
+	def clean_username(self):
+		username = super(MyRegistrationForm,self).clean_username()
+		try:
+			User.objects.get(username__iexact=username)
+		except User.DoesNotExist:
+			return username
+		raise forms.ValidationError(_("A user with that username already exists."))
+
 		
 	def save(self):
 		user = super(MyRegistrationForm, self).save()
@@ -105,6 +114,14 @@ class UserChangeForm(forms.ModelForm):
 class AdminUserCreationForm(UserBaseCreationForm):
 	class Meta:
 		model = User
+
+	def clean_username(self):
+		username = super(AdminUserCreationForm,self).clean_username()
+		try:
+			User.objects.get(username__iexact=username)
+		except User.DoesNotExist:
+			return username
+		raise forms.ValidationError(_("A user with that username already exists."))
 		
 class AdminUserChangeForm(UserBaseChangeForm):
 	class Meta:
