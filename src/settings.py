@@ -95,6 +95,8 @@ DEFAULT_FILE_STORAGE = 'utilities.storage.UploadStorage'
 
 NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 1
 
+USE_KILL_LOG = False
+
 try:
     from settings_local import * 
 except ImportError: 

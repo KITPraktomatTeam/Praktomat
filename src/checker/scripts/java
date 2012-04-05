@@ -11,6 +11,12 @@ else
    KILL_LOG="kill.log"
 fi
 
+if [ ! "$USE_KILL_LOG" = "True" ]
+then
+   KILL_LOG="/dev/null"
+fi
+  
+
 if [ ! -n "$JAVA" ]
 then
    JAVA=java

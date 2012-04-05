@@ -112,6 +112,7 @@ class DejaGnuTester(Checker, DejaGnu):
 		environ['USER'] = env.user().get_full_name().encode(sys.getdefaultencoding(), 'ignore')
 		environ['HOME'] = testsuite
 		environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
+		environ['USE_KILL_LOG'] = str(settings.USE_KILL_LOG)
 		environ['ULIMIT_FILESIZE'] = '128'  # Have the checker script set a filesize-ulimit of 128kb
 		                                    # Specifically, this limits the DejaGNU .log file size,
 		                                    # and thus deals with Programs that output lots of junk
