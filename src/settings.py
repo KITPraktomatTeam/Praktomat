@@ -93,6 +93,8 @@ LOGIN_REDIRECT_URL = '/tasks/'
 
 DEFAULT_FILE_STORAGE = 'utilities.storage.UploadStorage'
 
+NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 1
+
 try:
     from settings_local import * 
 except ImportError: 

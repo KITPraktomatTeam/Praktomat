@@ -3,6 +3,7 @@ from django.contrib.contenttypes import generic
 from django.shortcuts import render_to_response
 from django.contrib.auth.admin import UserAdmin
 from django.db import models
+from django.db import transaction
 from tinymce.widgets import TinyMCE
 
 from tasks.models import Task, MediaFile
@@ -52,6 +53,8 @@ class TaskAdmin(admin.ModelAdmin):
 		response['Content-Disposition'] = 'attachment; filename=TaskExport.zip'
 		return response
 		
+	
+	@transaction.autocommit
 	def run_all_checkers(self, request, queryset):
 		""" Rerun all checker including "not always" action """
 		for task in queryset:
