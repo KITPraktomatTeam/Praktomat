@@ -114,7 +114,7 @@ Installation
 
         sudo -u postgres createdb -O praktomat praktomat_default
 	
-5. Reconfigure django settings in `Praktomat/src/settings_local.py` (http://docs.djangoproject.com/en/1.1/topics/settings/#topics-settings)
+5. Reconfigure django settings in `Praktomat/src/settings_local.py` (http://docs.djangoproject.com/en/1.3/topics/settings/#topics-settings)
 
 6. Run `./bin/praktomat syncdb` to populate the database with the required tables of 3rd party applications. If prompted don't create a superuser as required tables will be created in the next step.
 	
