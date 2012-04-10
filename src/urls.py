@@ -31,7 +31,8 @@ urlpatterns = patterns('',
 	url(r'^tasks/(?P<task_id>\d+)/$', 'tasks.views.taskDetail', name='task_detail'),
 
 	# Solutions
-	url(r'^solutions/(?P<solution_id>\d+)/$', 'solutions.views.solution_detail', name='solution_detail'),
+	url(r'^solutions/(?P<solution_id>\d+)/$', 'solutions.views.solution_detail', name='solution_detail',kwargs={'full' : False}),
+	url(r'^solutions/(?P<solution_id>\d+)/(?P<full>full)/$', 'solutions.views.solution_detail', name='solution_detail'),
    	url(r'^solutions/(?P<solution_id>\d+)/download$', 'solutions.views.solution_download', name='solution_download'),
 	url(r'^tasks/(?P<task_id>\d+)/checkerresults/$', 'solutions.views.checker_result_list', name='checker_result_list'),
 	url(r'^tasks/(?P<task_id>\d+)/solutiondownload$', 'solutions.views.solution_download_for_task', name='solution_download_for_task'),

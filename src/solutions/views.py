@@ -73,7 +73,7 @@ def solution_list(request, task_id, user_id=None):
 		context_instance=RequestContext(request))
 
 @login_required
-def solution_detail(request,solution_id):
+def solution_detail(request,solution_id,full):
 	solution = get_object_or_404(Solution, pk=solution_id)	
 	if (not (solution.author == request.user or in_group(request.user,'Trainer') or (solution.author.tutorial and solution.author.tutorial.tutors.filter(id=request.user.id)) )):
 		return access_denied(request)
@@ -84,7 +84,8 @@ def solution_detail(request,solution_id):
 	else:	
 		attestations = Attestation.objects.filter(solution__task=solution.task, author__tutored_tutorials=request.user.tutorial)
 		attestationsPublished = attestations[0].published if attestations else False
-		return object_detail(request, Solution.objects.all(), solution_id, extra_context={"attestationsPublished":attestationsPublished, "accept_all_solutions":get_settings().accept_all_solutions}, template_object_name='solution' )
+		return object_detail(request, Solution.objects.all(), solution_id, extra_context={"attestationsPublished":attestationsPublished, "accept_all_solutions":get_settings().accept_all_solutions, "full":full}, template_object_name='solution' )
+
 
 @login_required
 def solution_download(request,solution_id):
@@ -118,10 +119,10 @@ def checker_result_list(request,task_id):
 		return access_denied(request)
 	else:
 
-		users_with_checkerresults = [(user,checkerresults)                              \
+		users_with_checkerresults = [(user,checkerresults,final_solution)                              \
 		for user           in User.objects.filter(groups__name='User').order_by('mat_number')          \
-		for final_solution in Solution.objects.filter(author=user,final=True,task=task) \
-		for checkerresults in [sorted(CheckerResult.objects.all().filter(solution=final_solution),key=lambda result : result.checker.order)]]
+		for final_solution in Solution.objects.filter(author=user,final=True,task=task).values() \
+		for checkerresults in [sorted(CheckerResult.objects.all().filter(solution=final_solution['id']),key=lambda result : result.checker.order)]]
 
 		number_of_checker = None		
 		for checkerresults in users_with_checkerresults:
@@ -130,6 +131,6 @@ def checker_result_list(request,task_id):
 			else:
 				number_of_checker = len(checkerresults) 
 
-		_, prototype = users_with_checkerresults[0]
+		_, prototype,_ = users_with_checkerresults[0]
 		return render_to_response("solutions/checker_result_list.html", {"users_with_checkerresults": users_with_checkerresults,  "prototype":  prototype, "task":task},context_instance=RequestContext(request))
 

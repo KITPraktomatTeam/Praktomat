@@ -35,10 +35,13 @@ class Solution(models.Model):
 	
 	def __unicode__(self):
 		return unicode(self.task) + ":" + unicode(self.author) + ":" + unicode(self.number)
-	
+
+	def allCheckerResults(self):
+		return sorted(self.checkerresult_set.all(), key=lambda result: result.checker.order)
+
 	def publicCheckerResults(self):
-		# return self.checkerresult_set.filter(public=True) won't work, because public() isn't a field of result!
-		return filter(lambda x: x.public(), self.checkerresult_set.all())
+		# return self.checkerresult_set.filter(checker__public=True) won't work, because checker is a genericForeignKey!
+		return sorted(filter(lambda x: x.public(), self.checkerresult_set.all()), key = lambda result: result.checker.order)
 		
 	def copySolutionFiles(self, toTempDir):
 		for file in self.solutionfile_set.all():

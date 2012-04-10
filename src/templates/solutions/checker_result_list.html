@@ -39,9 +39,9 @@
 			<th>{{result.checker}}</th>
 			{% endfor %}
 		</tr>
-		{% for user,results in users_with_checkerresults %}
+		{% for user,results,solution in users_with_checkerresults %}
 		<tr>
-			<td nowrap>{{user}}</td>
+			<td nowrap><a href={% url solution_detail solution_id=solution.id full='full' %}>{{user}}</a></td>
 			<td nowrap>{{user.mat_number}}</td>
 			<td nowrap>{{user.username}}</td>
 			{% for result in results %}

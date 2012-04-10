@@ -8,7 +8,7 @@
 {% endblock %}
 {% block content %}<div id='solution_detail'>
 
-<h1>{{solution.task.title}} {% if user|in_group:"Tutor,Trainer"%}(as seen by {{solution.author}}){% endif %}</h1>
+<h1>{{solution.task.title}} {% if user|in_group:"Tutor,Trainer" and not full %}(as seen by {{solution.author}}){% endif %}</h1>
 
 {% if solution.accepted %}
 	{% if solution.warnings %}
@@ -44,13 +44,21 @@
 	{% endif %}
 {% endif %}
 
-
+{% if full and user|in_group:"Tutor,Trainer" %}
+{% with solution.allCheckerResults as results %}
+	{% if results %}
+		<h2>{% trans "Results" %}</h2>
+		{% include "solutions/checker_results_inline.html" %}
+	{% endif %}
+{% endwith %}
+{% else %}
 {% with solution.publicCheckerResults as results %}
 	{% if results %}
 		<h2>{% trans "Results" %}</h2>
 		{% include "solutions/checker_results_inline.html" %}
 	{% endif %}
 {% endwith %}
+{% endif %}
 
 <h2>{% trans "Files" %}</h2>
 {% with solution.solutionfile_set.all as solutionfiles %}
