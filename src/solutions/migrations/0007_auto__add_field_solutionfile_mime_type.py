@@ -11,9 +11,10 @@ class Migration(SchemaMigration):
         
         # Adding field 'SolutionFile.mime_type'
         db.add_column('solutions_solutionfile', 'mime_type', self.gf('django.db.models.fields.CharField')(default="", max_length=100), keep_default=False)
-        for solution_file in orm['solutions.solutionfile'].objects.all():
-          solution_file.mime_type = mimetypes.guess_type(solution_file.file.name)[0]  # this orm doesn't pick up the save() override
-          solution_file.save()
+	if not db.dry_run:
+	        for solution_file in orm['solutions.solutionfile'].objects.all():
+        	  solution_file.mime_type = mimetypes.guess_type(solution_file.file.name)[0]  # this orm doesn't pick up the save() override
+	          solution_file.save()
 
     def backwards(self, orm):
         
