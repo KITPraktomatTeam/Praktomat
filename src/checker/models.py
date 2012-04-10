@@ -119,7 +119,7 @@ class CheckerEnvironment:
 		self._tmpdir = file_operations.create_tempfolder(sandbox)
 		# Sources as [(name, content)...]
 		self._sources = []   
-		for file in solution.solutionfile_set.all(): 
+		for file in solution.solutionfile_set.all().order_by('file'): 
 			self._sources.append((file.path(),file.content()))
 		# Submitter of this program
 		self._user = solution.author	
