@@ -6,8 +6,10 @@ import zipfile
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render_to_response, get_object_or_404
+from django.http import Http404
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.generic.list_detail import object_detail
+from django.views.generic import date_based
 from django.template.context import RequestContext
 from datetime import datetime
 from django import forms
@@ -17,6 +19,8 @@ from tasks.models import Task
 from solutions.forms import ModelSolutionFormSet
 from solutions.models import Solution, SolutionFile
 from accounts.models import User
+from accounts.templatetags.in_group import in_group
+from accounts.views import access_denied
 from attestation.models import Attestation, Script
 from configuration import get_settings
 
@@ -41,9 +45,14 @@ def taskList(Request):
 	return render_to_response('tasks/task_list.html',{'tasks':tasks, 'expired_tasks': expired_Tasks, 'attestations':attestations, 'show_final_grade': get_settings().final_grades_published, 'tutors':tutors, 'trainers':trainers, 'script':script}, context_instance=RequestContext(Request))
 
 @login_required
-def taskDetail(Request,task_id):
-	my_solutions = Task.objects.get(pk=task_id).solution_set.filter(author = Request.user)
-	return object_detail(Request, Task.objects.all(), task_id, extra_context={'solutions': my_solutions}, template_object_name='task')
+def taskDetail(request,task_id):
+	task = get_object_or_404(Task,pk=task_id)
+
+	if (task.publication_date >= datetime.now()) and (not  in_group(request.user,'Trainer')):
+		raise Http404
+
+	my_solutions = Task.objects.get(pk=task_id).solution_set.filter(author = request.user)
+	return object_detail(request, Task.objects.all(), task_id, extra_context={'solutions': my_solutions}, template_object_name='task')
 
 class ImportForm(forms.Form):
 	file = forms.FileField()

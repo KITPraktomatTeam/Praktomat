@@ -3,6 +3,7 @@ import tempfile
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response, get_object_or_404
+from django.http import Http404
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template.context import RequestContext
 from django.core.urlresolvers import reverse
@@ -13,6 +14,8 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.models import RequestSite
+
+from datetime import datetime
 
 from tasks.models import Task
 from attestation.models import Attestation
@@ -36,6 +39,9 @@ def solution_list(request, task_id, user_id=None):
 	author = get_object_or_404(User,pk=user_id) if user_id else request.user
 	solutions = task.solution_set.filter(author = author).order_by('-id')
 	final_solution = task.final_solution(author)
+
+	if (task.publication_date >= datetime.now()) and (not  in_group(request.user,'Trainer')):
+		raise Http404
 	
 	if request.method == "POST":	
 		solution = Solution(task = task, author=author)
