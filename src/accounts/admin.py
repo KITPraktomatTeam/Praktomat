@@ -13,7 +13,7 @@ class UserAdmin(UserBaseAdmin):
 	model = User
 	
 	# add active status
-	list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'is_trainer', 'is_tutor', 'email', 'date_joined' )
+	list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'is_trainer', 'is_tutor', 'email', 'date_joined','is_failed_attempt' )
 	list_filter = ('groups', 'tutorial', 'is_staff', 'is_superuser', 'is_active')
 	search_fields = ['username', 'first_name', 'last_name', 'mat_number', 'email']
 	date_hierarchy = 'date_joined'
@@ -38,6 +38,11 @@ class UserAdmin(UserBaseAdmin):
 	def is_tutor(self, user):
 		return in_group(user,"Tutor")
 	is_tutor.boolean = True
+
+	def is_failed_attempt(self,user):
+		successfull = [ u for u in User.objects.all().filter(mat_number=user.mat_number) if u.is_activated()]
+		return (not successfull) 	
+	is_failed_attempt.boolean = True
 	
 	def set_active(self, request, queryset):
 		""" Export Task action """
@@ -88,6 +93,23 @@ class UserAdmin(UserBaseAdmin):
 		my_urls = patterns('', url(r'^import/$', 'accounts.views.import_user', name='user_import')) 
 		my_urls += patterns('', url(r'^import_tutorial_assignment/$', 'accounts.views.import_tutorial_assignment', name='import_tutorial_assignment')) 
 		return my_urls + urls
+
+# This should work in Django 1.4 :O
+# from django.contrib.admin import SimpleListFilter
+# class FailedRegistrationAttempts(admin.SimpleListFilter):
+#	title = _('Registration')
+#	
+#	def lookups(self,request,model_admin):
+#		return ( (('failed'), _('failed')), (('successfull'), _('sucessfull')) )
+#
+#	def queryset(self,request,users):
+#		failed = User.objects.all().values('mat_number').annotate(failed=Count('mat_number')).filter(failed__gt=1)
+#		if self.value() == 'failed':
+#			return users.filter(mat_number__in=[u['mat_number'] for u in  failed])
+#		
+#		if self.value() == 'successfull':
+#			return user.exclude(mat_number__in=[u['mat_number'] for u in  failed])
+
 
 admin.site.unregister(UserBase) 
 admin.site.register(User, UserAdmin)
