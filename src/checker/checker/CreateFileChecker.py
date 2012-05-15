@@ -21,7 +21,7 @@ class CreateFileChecker(Checker):
 	@staticmethod
 	def description():
 		""" Returns a description for this Checker. """
-		return u"Diese Prüfung wird immer bestanden."
+		return u"Diese Prüfung wird bestanden, falls die Zieldatei nicht schon vorhanden ist (z.B.: vom Studenten eingereicht wurde)!"
 	
 	def run(self, env):
 		""" Runs tests in a special environment. Here's the actual work. 
