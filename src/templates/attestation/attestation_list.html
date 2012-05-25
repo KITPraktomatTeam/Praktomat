@@ -49,6 +49,19 @@
 			{% endif %}			
 			
 			{% if user|in_group:'Trainer'%}
+				<h2>{% trans "Attestation Progress by Tutor" %}</h2>
+				<div class='attestation'>
+					<table>
+					{% for entry in attestation_stats %}
+						<tr>
+                                                      <td>{{entry.tutor.first_name}} {{entry.tutor.last_name}}</td>
+                                                      <td align="right">{{entry.final}} final</td><td> + </td><td align="right">{{entry.nonfinal}} nonfinal</td><td>=</td> 
+                                                      <td align="right">{{entry.attested}}</td><td>of</td><td align="right">{{entry.total}}</td>
+                                                </tr>
+					{% endfor %}
+					</table>
+				</div>
+
 				<h2>{% trans "Unatested solutions" %}</h2>
 				<div class='attestation'>
 					{% for solution in unatested_solutions %}

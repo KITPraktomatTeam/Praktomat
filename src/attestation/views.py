@@ -13,6 +13,7 @@ from django.views.decorators.cache import cache_control
 from django.http import HttpResponse
 from django.template import loader, Context
 from django.conf import settings
+from collections import Counter
 import datetime
 import codecs
 
@@ -102,7 +103,19 @@ def attestation_list(request, task_id):
 		return access_denied(request)
 	
 	task = Task.objects.get(pk=task_id)
-	
+
+	if (in_group(request.user,'Trainer')):
+		attestation_stats =  [ {'tutor': tutor,
+        	                        'unattested' : Solution.objects.filter(task = task, final=True, plagiarism = False, attestation = None,author__tutorial__tutors=tutor).count(), 
+                	                'final': Attestation.objects.filter(solution__task = task,final=True,author=tutor).count(),
+                        	        'nonfinal': Attestation.objects.filter(solution__task = task,final=False,author=tutor).count() }
+	                              for tutor in User.objects.filter(groups__name="Tutor")]
+
+		for entry in attestation_stats:
+			entry['attested'] = entry['final']+entry['nonfinal']
+			entry['total']    = entry['final']+entry['nonfinal']+entry['unattested']
+
+
 	tutored_users = User.objects.filter(groups__name="User", is_active=True).order_by('last_name') if in_group(request.user,'Trainer') or request.user.is_superuser else None
 	
 	unatested_solutions = Solution.objects.filter(task = task, final=True, plagiarism = False, attestation = None)		
@@ -130,7 +143,7 @@ def attestation_list(request, task_id):
 	
 	show_author = not get_settings().anonymous_attestation or in_group(request.user,'Trainer') or published
 
-	data = {'task':task, 'tutored_users':tutored_users, 'solutions_with_plagiarism':solutions_with_plagiarism, 'my_attestations':my_attestations, 'attestations_by_others':attestations_by_others, 'unatested_solutions':unatested_solutions, 'published': all_attestations_published, 'show_author': show_author}
+	data = {'task':task, 'tutored_users':tutored_users, 'solutions_with_plagiarism':solutions_with_plagiarism, 'my_attestations':my_attestations, 'attestations_by_others':attestations_by_others, 'unatested_solutions':unatested_solutions, 'published': all_attestations_published, 'show_author': show_author, 'attestation_stats' : attestation_stats}
 	return render_to_response("attestation/attestation_list.html", data, context_instance=RequestContext(request))
 
 
