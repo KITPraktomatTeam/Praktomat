@@ -40,7 +40,7 @@ class UserAdmin(UserBaseAdmin):
 	is_tutor.boolean = True
 
 	def is_failed_attempt(self,user):
-		successfull = [ u for u in User.objects.all().filter(mat_number=user.mat_number) if u.is_activated()]
+		successfull = [ u for u in User.objects.all().filter(mat_number=user.mat_number) if u.is_active]
 		return (not successfull) 	
 	is_failed_attempt.boolean = True
 	
