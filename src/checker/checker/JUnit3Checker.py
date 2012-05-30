@@ -10,7 +10,7 @@ from checker.compiler.Builder import Builder
 
 
 class JUnit3Checker(Checker):
-	""" Checker for JUnit3 Unittests. """
+	""" Checker for JUnit3 Unittests. Deprecated. Please use JUnitChecker """
 	
 	# Add fields to configure checker instances. You can use any of the Django fields. (See online documentation)
 	# The fields created, task, public, required and always will be inherited from the abstract base class Checker
@@ -22,7 +22,7 @@ class JUnit3Checker(Checker):
 
 	@staticmethod
 	def description():
-		return u"This class implements a checke for JUnit3 Testcases."
+		return u"Deprecated!!! Please use the JUnitChecker"
 
 	def requires(self):
 		return [ Builder ]	

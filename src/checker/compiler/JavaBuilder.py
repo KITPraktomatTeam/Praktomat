@@ -39,6 +39,15 @@ class JavaBuilder(Builder):
 				return result
 		raise self.NotFoundError("The class containing the main method('public static void main(String[] args)') could not be found.")
 
+
+	def libs(self):
+		def toPath(lib):
+			if lib=="junit3":
+				 return settings.JUNIT38_JAR
+			return lib 
+
+		return ["-cp ",".".join([ toPath(lib) for lib in super(JavaBuilder,self).libs()])]
+
 	def flags(self, env):
 		""" Accept unicode characters. """
 		return self._flags.split(" ") + ["-encoding", "utf-8"]

@@ -8,7 +8,7 @@ then
 fi
 
 if [ "$USEPRAKTOMATTESTER" == "TRUE" ]; then
-	sudo -E -u tester "$@"
+	sudo -E -u tester unbuffer "$@"
 else
-	"$@"
+	unbuffer "$@"
 fi
