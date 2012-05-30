@@ -104,6 +104,7 @@ def attestation_list(request, task_id):
 	
 	task = Task.objects.get(pk=task_id)
 
+	attestation_stats = []
 	if (in_group(request.user,'Trainer')):
 		attestation_stats =  [ {'tutor': tutor,
         	                        'unattested' : Solution.objects.filter(task = task, final=True, plagiarism = False, attestation = None,author__tutorial__tutors=tutor).count(), 
