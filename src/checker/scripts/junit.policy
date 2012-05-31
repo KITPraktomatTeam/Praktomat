@@ -2,4 +2,5 @@ grant {
 	permission java.util.PropertyPermission "user.home","read";
 	permission java.io.FilePermission "/home/praktomat/junit.properties", "read";
 	permission java.io.FilePermission "/home/tester/junit.properties", "read";
+	permission java.lang.RuntimePermission 	"accessDeclaredMembers";
 };

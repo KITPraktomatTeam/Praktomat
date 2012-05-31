@@ -91,7 +91,7 @@ FORTRAN_BINARY = 'g77'
 DEJAGNU_RUNTEST = '/usr/local/Cellar/deja-gnu/1.4.4/bin/runtest'
 CHECKSTYLEALLJAR = '/Users/danielkleinert/Documents/Arbeit/checkstyle/checkstyle-all-4.4.jar'
 JUNIT38='junit'
-JUNIT38_JAR='/usr/share/java/junit.jar'
+JAVA_LIBS = { 'junit3' : '/usr/share/java/junit.jar', 'junit4' : '/praktomatng/junit-4.10.jar' }
 JCFDUMP='jcf-dump'
 
 

@@ -11,7 +11,7 @@ from utilities.file_operations import *
 
 from checker.compiler.JavaBuilder import JavaBuilder
 
-RXFAIL	   = re.compile(r"^(.*)(FAILURES!!!|your program crashed|cpu time limit exceeded|ABBRUCH DURCH ZEITUEBERSCHREITUNG)(.*)$",	re.MULTILINE)
+RXFAIL	   = re.compile(r"^(.*)(FAILURES!!!|your program crashed|cpu time limit exceeded|ABBRUCH DURCH ZEITUEBERSCHREITUNG|Could not find class)(.*)$",	re.MULTILINE)
 
 class JUnitChecker(Checker):
 	""" New Checker for JUnit3 Unittests. """
@@ -19,21 +19,30 @@ class JUnitChecker(Checker):
 	# Add fields to configure checker instances. You can use any of the Django fields. (See online documentation)
 	# The fields created, task, public, required and always will be inherited from the abstract base class Checker
 	class_name = models.CharField(max_length=100, help_text=_("The fully qualified name of the Testcase class"))
-	# description = models.CharField(max_length=5000, help_text=_("Description of the Testcase"))
-	test_description = models.TextField(help_text = _("Description of the Testcase."))
+	test_description = models.TextField(help_text = _("Description of the Testcase. To be displayed on Checker Results page when checker is  unfolded."))
+	name = models.CharField(max_length=100, help_text=_("Name of the Testcase. To be displayed as title on Checker Results page"))
+
+	JUNIT_CHOICES = (
+	  (u'junit4', u'JUnit 4'),
+	  (u'junit3', u'JUnit 3'),
+	)
+	junit_version = models.CharField(max_length=16, choices=JUNIT_CHOICES,default="junit3")
+
+	def runner(self):
+		return {'junit4' : 'org.junit.runner.JUnitCore', 'junit3' : 'junit.textui.TestRunner' }[self.junit_version]
 	
 	def title(self):
-		return u"JUnit Tests"
+		return u"JUnit Test: " + self.name
 
 	@staticmethod
 	def description():
-		return u"This Checker runs a JUnit 3 Testcases existing in the sandbox. You may want to use CreateFile Checker to create JUnit .java files in the sandbox before running the JavaBuilder."
+		return u"This Checker runs a JUnit Testcases existing in the sandbox. You may want to use CreateFile Checker to create JUnit .java files in the sandbox before running the JavaBuilder."
 
 	def output_ok(self, output):
 		return (RXFAIL.search(output) == None)
 
 	def run(self, env):
-		java_builder = JavaBuilder(_flags="", _libs="junit3",_file_pattern=r"^.*\.[jJ][aA][vV][aA]$",_output_flags="")
+		java_builder = JavaBuilder(_flags="", _libs=self.junit_version,_file_pattern=r"^.*\.[jJ][aA][vV][aA]$",_output_flags="")
 
 		build_result = java_builder.run(env)
 
@@ -53,7 +62,7 @@ class JUnitChecker(Checker):
 		                                    # Specifically, this limits the DejaGNU .log file size,
 		                                    # and thus deals with Programs that output lots of junk
 
-		cmd = settings.JVM_SECURE  + " -cp " + settings.JUNIT38_JAR + ":." + " junit.textui.TestRunner " + self.class_name
+		cmd = settings.JVM_SECURE  + " -cp " + settings.JAVA_LIBS[self.junit_version] + ":. " + self.runner() + " " + self.class_name
 		[output, error, exitcode] = execute(cmd, env.tmpdir(),environment_variables=environ)
 
 		result = CheckerResult(checker=self)

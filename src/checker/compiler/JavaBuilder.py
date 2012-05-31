@@ -46,7 +46,9 @@ class JavaBuilder(Builder):
 				 return settings.JUNIT38_JAR
 			return lib 
 
-		return ["-cp ",".:"+(":".join([ toPath(lib) for lib in super(JavaBuilder,self).libs()]))]
+		required_libs = super(JavaBuilder,self).libs()
+
+		return ["-cp ",".:"+(":".join([ settings.JAVA_LIBS[lib] for lib in required_libs if lib in settings.JAVA_LIBS ]))]
 
 	def flags(self, env):
 		""" Accept unicode characters. """
