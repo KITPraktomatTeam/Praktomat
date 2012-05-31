@@ -88,6 +88,10 @@ It is *required* - it must be passed for submission
 		May be overloaded by subclasses."""
 		return CheckerResult(checker=self)
 		
+	def show_publicly(self,passed):
+		""" Are results of this Checker to be shown publicly, given whether the result was passed? """
+		return self.public
+
 	def run(self, env):
 		""" Runs tests in a special environment.
 		Returns a CheckerResult. """
@@ -167,8 +171,6 @@ class CheckerResult(models.Model):
 	""" A CheckerResult returns the result of a Checker.
 	It contains:
 		- A flag that indicates if the check passed.
-		- A flag that indicates if the check is *required* to pass.
-		- A flag that indicates it the check is *public*.
 		- The title of the check.
 		- The log of the run.
 		- The time of the run. """
@@ -192,8 +194,8 @@ class CheckerResult(models.Model):
 		return self.checker.required
 
 	def public(self):
-		""" Checks if the results of the Checker are *public*. """
-		return self.checker.public
+		""" Checks if the results of the Checker are to be shown *publicly*, i.e.: even to the submitter """
+		return self.checker.show_publicly(self.passed)
 
 	def set_log(self, log):
 		""" Sets the log of the Checker run. """

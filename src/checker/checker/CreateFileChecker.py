@@ -41,6 +41,9 @@ class CreateFileChecker(Checker):
 		source_path = os.path.join(string.lstrip(self.path,"/ "), os.path.basename(filename))
 		env.add_source(source_path, get_unicode(self.file.read()))
 		return result
+
+	def show_publicly(self,passed):
+		return super(CreateFileChecker,self).show_publicly(passed) or (not passed)
 	
 from checker.admin import	CheckerInline, AlwaysChangedModelForm
 

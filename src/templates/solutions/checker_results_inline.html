@@ -11,7 +11,7 @@
 			<span class="ui-icon {{result.log|yesno:'ui-icon-triangle-1-s,icon-none'}}"></span> 
 			{{result.title}} <span class="{{result.public|yesno:',ui-icon ui-icon-locked icon-orange'}}"></span>: 
 			<span class="{% if result.passed %} passed {% else %}{% if result.required %} error {% else %} warning {% endif %}{% endif %}">
-				{{result.passed|yesno:_("passed, failed")}}
+				{{result.passed|yesno:_("passed, failed")}} {% if result.passed %} {% else %} {% if result.required %} {% else %} (but not required) {% endif %} {% endif %}
 			</span>
 		</h3>
 		<div class="log">
