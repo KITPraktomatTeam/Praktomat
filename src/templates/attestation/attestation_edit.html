@@ -100,8 +100,8 @@
 			<div id="file_form_set_replacement" class="hidden">
 				<div id="editor_controls">
 					<select id="doc" size="1">
-						{% for file in solution.solutionfile_set.all %}
-							<option value="{{forloop.counter0}}">{{file}}</option>
+						{% for file in solution.textSolutionFiles %}
+							<option value="{{file.id}}">{{file}}</option>
 						{% endfor %}
 					</select>
 				

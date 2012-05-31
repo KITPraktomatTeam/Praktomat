@@ -83,6 +83,8 @@ class Solution(models.Model):
 			result.solution = self
 			result.save()
 
+	def textSolutionFiles(self):
+		return [file for file in self.solutionfile_set.all() if (not file.isBinary()) ]
 
 
 def sign(file):

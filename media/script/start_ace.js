@@ -96,23 +96,31 @@ exports.launch = function(env) {
 	   csharp: new CSharpMode()
    };
 	   
-    var docs = [];
+    var docs = {};
 	// get text from text areas    
-	$("[id^='id_attestfiles'][id$='content']").each(function(index) {
-		docs[index] = new EditSession($(this).text());
-		var name = $("#doc")[0].options[index].innerHTML;
-		docs[index].setMode(getMode(name));
-		docs[index].setUndoManager(new UndoManager());
-		docs[index].on('change',function(){somethingWasChanged = true;});
+	$("[id^='id_attestfiles'][id$='id']").each(function(index) {
+		
+		solutionfile_id = $("[id='id_attestfiles-"+index+"-solution_file']")[0].value 
+		content = $("[id='id_attestfiles-"+index+"-content']");
+
+		docs[solutionfile_id] = new EditSession(content.text());
+		var name = $("#doc > [value="+solutionfile_id+"]").text();
+
+		docs[solutionfile_id].setMode(getMode(name));
+		docs[solutionfile_id].setUndoManager(new UndoManager());
+		docs[solutionfile_id].on('change',function(){somethingWasChanged = true;});
 	});
-	   
 	// restore text areas   
 	$("form").submit(function() {
-	  for (i=0;i<docs.length; i++) {
-	  	$("#id_attestfiles-"+i+"-content").text(docs[i].getValue())
-	  }
+
+		$("[id^='id_attestfiles'][id$='id']").each(function(index) {
+			solutionfile_id = $("[id='id_attestfiles-"+index+"-solution_file']")[0].value 
+			content = $("[id='id_attestfiles-"+index+"-content']");
+
+			content.text(docs[solutionfile_id].getValue());
+		});
 	});
-	   
+
 	
 
 	var container = document.getElementById("editor");

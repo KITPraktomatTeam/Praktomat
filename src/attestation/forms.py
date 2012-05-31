@@ -5,7 +5,7 @@ from django.forms.models import ModelForm, inlineformset_factory, BaseInlineForm
 from django.forms.formsets import formset_factory
 from django import forms
 
-from attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, Script
+from attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, Script,SolutionFile
 from configuration.models import Settings
 											
 
@@ -35,7 +35,20 @@ class AttestationPreviewForm(ModelForm):
 class AnnotatedFileForm(ModelForm):
 	class Meta:
 		model = AnnotatedSolutionFile
-		fields=('content',)
+		fields=('content','solution_file',)
+
+	solution_file = forms.IntegerField(widget=forms.HiddenInput)
+
+	def clean_solution_file(self):
+		solution_file_id = self.cleaned_data.get('solution_file')
+		try:
+			solution_file  = SolutionFile.objects.get(pk=solution_file_id)
+		except SolutionFile.DoesNotExist:
+			raise forms.ValidationError("No Solutionfile exists by id"+solution_file_id)
+
+		return solution_file
+
+
 		
 AnnotatedFileFormSet = inlineformset_factory(Attestation, AnnotatedSolutionFile, form=AnnotatedFileForm, formset=BaseInlineFormSet, can_delete=False, extra=0)
 
