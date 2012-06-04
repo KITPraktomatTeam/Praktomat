@@ -85,6 +85,8 @@ class DejaGnuTester(Checker, DejaGnu):
 		# Clean the output
 		log = re.sub(RXREMOVE, "", log)
 
+		log = re.sub(re.escape(settings.JVM_SECURE),os.path.basename(settings.JVM_SECURE),log)
+
 		# HTMLize it all
 		log = escape(log)
 		
