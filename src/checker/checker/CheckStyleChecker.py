@@ -6,6 +6,7 @@ from django.conf import settings
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import escape
 from checker.models import Checker, CheckerResult, CheckerFileField, execute
 from utilities.file_operations import *
 
@@ -34,8 +35,11 @@ class CheckStyleChecker(Checker):
 		args = [settings.JVM, "-cp", settings.CHECKSTYLEALLJAR, "-Dbasedir=.", "com.puppycrawl.tools.checkstyle.Main", "-c", "checks.xml"] + [quote(name) for (name,content) in env.sources()]
 		(output, error, exitcode) = execute(args, env.tmpdir())
 		
+		# Remove Praktomat-Path-Prefixes from result:
+		output = re.sub(r"^"+re.escape(env.tmpdir())+"/+","",output,flags=re.MULTILINE)
+
 		result = CheckerResult(checker=self)
-		result.set_log('<pre>' + output + '</pre>')
+		result.set_log('<pre>' + escape(output) + '</pre>')
 		
 		result.set_passed(not error and not re.match('Starting audit...\nAudit done.', output) == None)
 		
