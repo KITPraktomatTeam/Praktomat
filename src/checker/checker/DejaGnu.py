@@ -14,7 +14,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.models import Checker, CheckerFileField, CheckerResult, execute
+from checker.models import Checker, CheckerFileField, CheckerResult, execute, execute_arglist
 from checker.compiler.Builder import Builder
 from utilities import encoding
 from utilities.file_operations import *
@@ -106,8 +106,15 @@ class DejaGnuTester(Checker, DejaGnu):
 
 		testsuite = self.testsuite_dir(env)
 		program_name = env.program()
+
+		if " " in program_name:
+			result = self.result()
+			result.set_log("<pre><b class=\"fail\">Error</b>: Path to the main() - source file contains spaces.\n\nFor Java .zip submittions, the directory hierarchy of the .zip file must excactly match the package structure.\nThe default package must correspond to the .zip root directory.</pre>")
+			result.set_passed(False)
+			return result
 		
-		cmd = settings.DEJAGNU_RUNTEST + " --tool " + program_name + " tests.exp"
+		cmd = [settings.DEJAGNU_RUNTEST, "--tool", program_name, "tests.exp"] 
+
 		environ = {}
 		environ['JAVA'] = settings.JVM
 		environ['POLICY'] = join(join(dirname(dirname(__file__)),"scripts"),"praktomat.policy")
@@ -119,7 +126,7 @@ class DejaGnuTester(Checker, DejaGnu):
 		                                    # Specifically, this limits the DejaGNU .log file size,
 		                                    # and thus deals with Programs that output lots of junk
 
-		[output, error, exitcode] = execute(cmd, testsuite, environment_variables=environ)
+		[output, error, exitcode] = execute_arglist(cmd, testsuite, environment_variables=environ)
 		output = encoding.get_unicode(output)
 
 		try:
