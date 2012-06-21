@@ -293,7 +293,7 @@ def run_checks(solution, env, run_all):
 			result.solution = solution
 			result.save()
 
-			if not result.passed and checker.public:
+                        if not result.passed and checker.show_publicly(result.passed):
 				if checker.required:
 					solution_accepted = False
 				else:
