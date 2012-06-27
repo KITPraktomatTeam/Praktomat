@@ -2,6 +2,7 @@ import zipfile
 import tempfile
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import Http404
 from django.http import HttpResponseRedirect, HttpResponse
@@ -15,6 +16,7 @@ from django.core.mail import send_mail
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.models import RequestSite
 
+
 from datetime import datetime
 
 from tasks.models import Task
@@ -26,6 +28,7 @@ from accounts.templatetags.in_group import in_group
 from accounts.models import User
 from configuration import get_settings
 from checker.models import CheckerResult
+from checker.models import check
 from django.db import transaction
 
 @login_required
@@ -140,3 +143,10 @@ def checker_result_list(request,task_id):
 		_, prototype,_ = users_with_checkerresults[0]
 		return render_to_response("solutions/checker_result_list.html", {"users_with_checkerresults": users_with_checkerresults,  "prototype":  prototype, "task":task},context_instance=RequestContext(request))
 
+@staff_member_required
+def solution_run_checker(request,solution_id):
+	solution = Solution.objects.get(pk=solution_id)
+	check(solution,True)
+	# Since Django suxx (see https://code.djangoproject.com/ticket/8764) and cant mix args with kwargs in reverse(),
+	# we suck too, and just mess around with the url
+	return HttpResponseRedirect(reverse('solution_detail', args=[solution_id]) + 'full')
