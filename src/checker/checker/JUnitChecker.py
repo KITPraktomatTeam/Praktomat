@@ -11,7 +11,7 @@ from utilities.file_operations import *
 
 from checker.compiler.JavaBuilder import JavaBuilder
 
-RXFAIL	   = re.compile(r"^(.*)(FAILURES!!!|your program crashed|cpu time limit exceeded|ABBRUCH DURCH ZEITUEBERSCHREITUNG|Could not find class)(.*)$",	re.MULTILINE)
+RXFAIL	   = re.compile(r"^(.*)(FAILURES!!!|your program crashed|cpu time limit exceeded|ABBRUCH DURCH ZEITUEBERSCHREITUNG|Could not find class|Killed|failures)(.*)$",	re.MULTILINE)
 
 class JUnitChecker(Checker):
 	""" New Checker for JUnit3 Unittests. """
