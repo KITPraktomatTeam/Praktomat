@@ -12,17 +12,6 @@ from django.db.models import Max
 
 from utilities.deleting_file_field import DeletingFileField
 
-from multiprocessing import Pool
-
-# Assumes to be called from within a @transaction.autocommit Context!!!!
-def check_with_own_connection(solution):
-	# Close the current db connection - will cause Django to create a new connection (not shared with other processes)
-	# when one is needed, see https://groups.google.com/forum/#!msg/django-users/eCAIY9DAfG0/6DMyz3YuQDgJ
-	db.close_connection()
-	solution.check(True)
-
-	# Don't leave idle connections behind
-	db.close_connection()
 
 class Task(models.Model):
 	title = models.CharField(max_length=100, help_text = _("The name of the Task"))
@@ -53,13 +42,8 @@ class Task(models.Model):
 		return self.submission_date + timedelta(hours=1) < datetime.now()
 	
 	def check_all_final_solutions(self):
-		if settings.NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL <= 1:
-			for solution in self.solution_set.filter(final=True):
-				solution.check(True)
-		else:
-			pool = Pool(processes=settings.NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL)  # Check n solutions at once 
-			pool.map(check_with_own_connection, self.solution_set.filter(final=True),1)
-			db.close_connection()
+		from checker.models import check_multiple
+		check_multiple(self.solution_set.filter(final=True), True)
 
 		if self.expired():
 				self.all_checker_finished = True

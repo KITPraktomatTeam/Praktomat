@@ -14,6 +14,12 @@ from django.utils.translation import ugettext_lazy as _
 from utilities import encoding, file_operations
 from utilities.deleting_file_field import DeletingFileField
 
+from functools import partial
+from multiprocessing import Pool
+
+from django.db import transaction
+from django import db
+
 import string
 	
 def execute(command, working_directory, environment_variables={}, use_default_user_configuration=True):
@@ -227,7 +233,7 @@ class CheckerResult(models.Model):
 		self.passed = passed
 
 
-def check(solution, run_secret = 0): 
+def check(solution, run_all = 0): 
 	"""Builds and tests this solution."""
 	
 	# Delete previous results if the checker have allready been run
@@ -236,7 +242,7 @@ def check(solution, run_secret = 0):
 	env = CheckerEnvironment(solution)
 				
 	solution.copySolutionFiles(env.tmpdir())
-	run_checks(solution, env, run_secret)
+	run_checks(solution, env, run_all)
 	
 	# Delete temporary directory
 	if not settings.DEBUG:
@@ -245,6 +251,27 @@ def check(solution, run_secret = 0):
 		except:
 			pass
 
+# Assumes to be called from within a @transaction.autocommit Context!!!!
+def check_with_own_connection(solution,run_all = True):
+	# Close the current db connection - will cause Django to create a new connection (not shared with other processes)
+	# when one is needed, see https://groups.google.com/forum/#!msg/django-users/eCAIY9DAfG0/6DMyz3YuQDgJ
+	db.close_connection()
+	solution.check(run_all)
+
+	# Don't leave idle connections behind
+	db.close_connection()
+
+def check_multiple(solutions, run_secret = False):
+	if settings.NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL <= 1:
+		for solution in solutions:
+			solution.check(run_secret)
+	else:
+		check_it = partial(check_with_own_connection,run_all=run_secret)
+
+		pool = Pool(processes=settings.NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL)  # Check n solutions at once 
+		pool.map(check_it, solutions,1)
+		db.close_connection()
+	
 
 	
 	

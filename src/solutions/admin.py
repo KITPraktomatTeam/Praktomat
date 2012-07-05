@@ -1,8 +1,12 @@
 from django.contrib import admin
 from solutions.models import Solution, SolutionFile
 from checker.models import CheckerResult
+from checker.models import check_multiple
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.db import transaction
+
+
 
 class CheckerResultInline(admin.TabularInline):
 	model = CheckerResult
@@ -27,6 +31,25 @@ class SolutionAdmin(admin.ModelAdmin):
 			  	}),)
 	readonly_fields=["task", "author", "creation_date", "accepted", "final", "warnings"]
 	inlines =  [CheckerResultInline, SolutionFileInline]
+	actions = ['run_checkers','run_checkers_all']
+
+	@transaction.autocommit
+	def run_checkers_all(self, request, queryset):
+		""" Run Checkers (including those not run at submission) for selected solution """
+		check_multiple(queryset,True)
+		self.message_user(request, "Checkers (including those not run at submission) for selected solutions were successfully run.")
+
+	run_checkers_all.short_description = "Run Checkers (including those not run at submission) for selected solution "
+
+
+	@transaction.autocommit
+	def run_checkers(self, request, queryset):
+		""" Run Checkers (only those also run at submission) for selected solutions"""
+		check_multiple(queryset,False)
+		self.message_user(request, "Checkers (only those also run at submission) for selected solutions were successfully run.")
+
+	run_checkers.short_description = " Run Checkers (only those also run at submission) for selected solutions"
+		
 
 	def edit(self,solution):
 		return 'Edit'
@@ -43,9 +66,9 @@ class SolutionAdmin(admin.ModelAdmin):
 	download_url.short_description = 'Download'
 
 	def run_checker_url(self,solution):
-		return '<a href="%s">Run Checker</a>' % (reverse('solution_run_checker', args=[solution.id]))
+		return '<a href="%s">Run Checkers</a>' % (reverse('solution_run_checker', args=[solution.id]))
 	run_checker_url.allow_tags = True
-	run_checker_url.short_description = 'Run Checker'
+	run_checker_url.short_description = 'Run Checker (incl. those run at submission)'
 
 admin.site.register(Solution, SolutionAdmin)
 	
