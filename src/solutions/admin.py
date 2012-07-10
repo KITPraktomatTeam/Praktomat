@@ -5,6 +5,7 @@ from checker.models import check_multiple
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import transaction
+from django.db.models import Max
 
 
 
@@ -24,7 +25,7 @@ class SolutionFileInline(admin.TabularInline):
 
 class SolutionAdmin(admin.ModelAdmin):
 	model = Solution
-	list_display = ["edit", "view_url", "download_url", "run_checker_url", "task", "author", "number", "creation_date", "final", "accepted", "warnings", "plagiarism"]
+	list_display = ["edit", "view_url", "download_url", "run_checker_url", "task", "author", "number", "creation_date", "final", "accepted", "warnings", "latest_of_only_failed", "plagiarism"]
 	list_filter = ["task", "author", "creation_date", "final", "accepted", "warnings", "plagiarism"]
 	fieldsets = ((None, {
 		  			'fields': ( "task", "author", "creation_date", ("final", "accepted", "warnings"), "plagiarism")
@@ -69,6 +70,12 @@ class SolutionAdmin(admin.ModelAdmin):
 		return '<a href="%s">Run Checkers</a>' % (reverse('solution_run_checker', args=[solution.id]))
 	run_checker_url.allow_tags = True
 	run_checker_url.short_description = 'Run Checker (incl. those run at submission)'
+
+	def latest_of_only_failed(self,solution):
+		successfull_solution_from_user_for_task_available = solution.final or  [ s for s in Solution.objects.all().filter(author=solution.author,task=solution.task) if s.final]
+		is_latest_failed_attempt = (not solution.final) and (Solution.objects.all().filter(task=solution.task,author=solution.author).aggregate(Max('number'))['number__max'] == solution.number)
+		return (not successfull_solution_from_user_for_task_available) and is_latest_failed_attempt
+	latest_of_only_failed.boolean = True
 
 admin.site.register(Solution, SolutionAdmin)
 	
