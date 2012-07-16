@@ -1,0 +1,22 @@
+{% extends "base.html"%}
+
+{% load i18n %}
+
+{% block breadcrumbs %}
+	{{ block.super }} > {% trans 'Registration' %}
+{% endblock %}
+
+{% block content %}
+
+<h1>{% trans 'Activation enabled' %}</h1>
+
+<p>{% trans "The user has received an e-Mail containing his activation code." %}</p>
+
+<pre>
+{% trans "Username:" %}      {{ new_user.username }}
+{% trans "Matr. Number:" %}  {{ new_user.mat_number }}
+{% trans "eMail Address:" %} {{ new_user.email }}
+{% trans "Full Name:" %}      {{ new_user }}
+</pre> 
+
+{% endblock %}

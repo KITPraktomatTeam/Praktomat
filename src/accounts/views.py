@@ -1,9 +1,9 @@
 #from accounts.forms import MyRegistrationForm
 from datetime import datetime
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from django.template import RequestContext, Template, Context
+from django.template import RequestContext, Template, Context, loader
 from django.conf import settings
 from accounts.forms import MyRegistrationForm, UserChangeForm, ImportForm, ImportTutorialAssignmentForm
 from accounts.models import User, Tutorial
@@ -16,6 +16,7 @@ from django.utils.http import int_to_base36
 from django.core.mail import send_mail
 from django.utils.translation import ugettext_lazy as _
 from configuration import get_settings
+
 import csv
 
 def register(request):
@@ -39,6 +40,24 @@ def register(request):
 def activate(request, activation_key):
 	account = User.activate_user(activation_key)
 	return render_to_response('registration/registration_activated.html', { 'account': account, 'expiration_days': get_settings().acount_activation_days }, context_instance=RequestContext(request))
+
+@staff_member_required
+def activation_allow(request,user_id):
+	user = get_object_or_404(User,pk=user_id)
+	# Send activation email
+	t = loader.get_template('registration/registration_email.html')
+	c = {
+		'email': user.email,
+		'domain': RequestSite(request).domain,
+		'site_name': settings.SITE_NAME,
+		'uid': int_to_base36(user.id),
+		'user': user,
+		'protocol': request.is_secure() and 'https' or 'http',
+		'activation_key': user.activation_key,
+		'expiration_days': get_settings().acount_activation_days,
+	}
+	send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(Context(c)), None, [user.email])
+	return render_to_response('registration/registration_activation_allowed.html', { 'new_user': user, }, context_instance=RequestContext(request))
 
 @login_required
 def change(request):

@@ -16,7 +16,7 @@ class ChunkInline(admin.StackedInline):
 
 class SettingsAdmin(admin.ModelAdmin):	
 	
-	fields = ('email_validation_regex', 'mat_number_validation_regex', 'deny_registration_from', 'acount_activation_days', 'accept_all_solutions', 'anonymous_attestation')
+	fields = ('email_validation_regex', 'mat_number_validation_regex', 'deny_registration_from', 'acount_activation_days', 'accept_all_solutions', 'anonymous_attestation', 'account_manual_validation')
 	inlines = [ChunkInline]
 
 admin.site.register(Settings, SettingsAdmin)

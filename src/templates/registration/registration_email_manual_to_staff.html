@@ -1,0 +1,15 @@
+{% load i18n %}{% autoescape off %}
+{% blocktrans %}A user has registered an account on {{ site_name }}{% endblocktrans %}.
+
+{% trans "Username:" %}      {{ user.username }}
+{% trans "Matr. Number:" %}  {{ user.mat_number }}
+{% trans "eMail Address:" %} {{ user.email }}
+{% trans "Full Name:" %}     {{ user }}
+
+{% blocktrans %}If you want allow this user to activate his account, please visit the following page{% endblocktrans %}:
+
+{{ protocol }}://{{ domain }}{% url activation_allow user_id=user.id %}
+
+{% blocktrans %}Upon visiting that page, the user will be sent his activation key {% endblocktrans %}.
+
+{% endautoescape %}

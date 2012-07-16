@@ -82,8 +82,6 @@ class MyRegistrationForm(UserBaseCreationForm):
 		user.save()
 		
 		# Send activation email
-
-		t = loader.get_template('registration/registration_email.html')
 		c = {
 			'email': user.email,
 			'domain': self.domain,
@@ -94,7 +92,16 @@ class MyRegistrationForm(UserBaseCreationForm):
 			'activation_key': user.activation_key,
 			'expiration_days': get_settings().acount_activation_days,
 			}
-		send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(Context(c)), None, [user.email])
+
+		if get_settings().account_manual_validation:
+			t = loader.get_template('registration/registration_email_manual_to_staff.html')
+ 			send_mail(_("Account activation on %s for %s (%s) ") % (settings.SITE_NAME,user.username,str(user)), t.render(Context(c)), None, [staff.email for staff in User.objects.all().filter(is_staff=True)])
+
+			t = loader.get_template('registration/registration_email_manual_to_user.html')
+ 			send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(Context(c)), None, [user.email])
+		else:
+			t = loader.get_template('registration/registration_email.html')
+			send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(Context(c)), None, [user.email])
 		
 		return user
 

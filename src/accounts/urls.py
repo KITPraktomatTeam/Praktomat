@@ -20,6 +20,7 @@ urlpatterns = patterns('',
 	url(r'^password/reset/done/$', auth_views.password_reset_done, name='auth_password_reset_done'),
 	url(r'^register/$', 'accounts.views.register', name='registration_register'),
 	url(r'^register/complete/$', direct_to_template, {'template': 'registration/registration_complete.html'}, name='registration_complete'),
+	url(r'^register/allow/(?P<user_id>\d+)/$', 'accounts.views.activation_allow', name='activation_allow'),
 	url(r'^activate/(?P<activation_key>.+)/$', 'accounts.views.activate', name='registration_activate'),
 )
 
