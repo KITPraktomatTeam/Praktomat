@@ -95,7 +95,7 @@ class MyRegistrationForm(UserBaseCreationForm):
 
 		if get_settings().account_manual_validation:
 			t = loader.get_template('registration/registration_email_manual_to_staff.html')
- 			send_mail(_("Account activation on %s for %s (%s) ") % (settings.SITE_NAME,user.username,str(user)), t.render(Context(c)), None, [staff.email for staff in User.objects.all().filter(is_staff=True)])
+ 			send_mail(_("Account activation on %s for %s (%s) ") % (settings.SITE_NAME,user.username,unicode(user)), t.render(Context(c)), None, [staff.email for staff in User.objects.all().filter(is_staff=True)])
 
 			t = loader.get_template('registration/registration_email_manual_to_user.html')
  			send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(Context(c)), None, [user.email])
