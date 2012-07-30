@@ -11,7 +11,7 @@ from utilities.encoding import *
 class CreateFileChecker(Checker):
 	
 	file = CheckerFileField(help_text=_("The file that is copied into the sandbox"))
-	filename = models.CharField(max_length=500, blank=True, help_text=_("What the file will be named in the sandbox. If empty, the name the file is stored under on the webserver is used!"))
+	filename = models.CharField(max_length=500, blank=True, help_text=_("What the file will be named in the sandbox. If empty, we try to guess the right filename!"))
 	path = models.CharField(max_length=500, blank=True, help_text=_("Subfolder in the sandbox which shall contain the file."))
 	
 	def title(self):
@@ -53,6 +53,16 @@ class CopyForm(AlwaysChangedModelForm):
 		super(CopyForm, self).__init__(**args)
 		self.fields["public"].initial = False
 		self.fields["required"].initial = False
+
+	def clean_filename(self):
+		filename = self.cleaned_data['filename']
+		file = self.cleaned_data['file']
+		if (not filename.strip()):
+			return (os.path.basename(file.name))
+		else:
+			return filename
+			
+
 
 class CreateFileCheckerInline(CheckerInline):
 	model = CreateFileChecker
