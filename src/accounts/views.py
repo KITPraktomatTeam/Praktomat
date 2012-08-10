@@ -70,6 +70,10 @@ def change(request):
 		form = UserChangeForm(instance=request.user)
 	return render_to_response('registration/registration_change.html', {'form':form, 'user':request.user}, context_instance=RequestContext(request))
 
+@login_required
+def view(request):
+	return render_to_response('registration/registration_view.html', {'user':request.user}, context_instance=RequestContext(request))
+
 def access_denied(request):
 	request_path = request.META['HTTP_HOST'] + request.get_full_path()
 	return render_to_response('access_denied.html', {'request_path': request_path}, context_instance=RequestContext(request))

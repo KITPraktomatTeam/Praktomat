@@ -1,0 +1,38 @@
+{% extends "base.html"%}
+{% load i18n %}
+
+{% block breadcrumbs %}
+	{{ block.super }} > {% trans 'View Account' %}
+{% endblock %}
+
+{% block content %}
+
+<h1>{% trans "View Account" %}</h1>
+
+<menu>
+	<div class="form-row">
+        <label>Username:</label> 
+		<a> {{user.username}} </a>
+	</div>
+	<div class="form-row">
+        <label>Email:</label> 
+		<a> {{user.email}} </a>
+	</div>
+	<div class="form-row">
+        <label>Matnumber:</label> 
+		<a> {{user.mat_number}} </a>
+	</div>
+	<div class="form-row">
+        <label>First name:</label> 
+		<a> {{user.first_name}} </a>
+	</div>
+	<div class="form-row">
+        <label>Second name:</label> 
+		<a> {{user.last_name}} </a>
+	</div>
+	<div class="form-row">
+        <label>e-Mail:</label> 
+		<a> {{user.email}} </a>
+	</div>
+</menu>
+{% endblock %}
