@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %} {% load chunks %}
+
+{% block breadcrumbs %}
+	{{ block.super }} > {% trans 'Shibboleth-Login' %}
+{% endblock %}
+
+{% block content %}<div id="login">
+{% chunk "Login Message" %}	
+
+<a href="{% url shib_login %}">Log in using Shibboleth Single-Sign-On</a>
+
+<br/>
+
+<a href="{% url auth_login %}">Direct login</a>
+</div>{% endblock %}

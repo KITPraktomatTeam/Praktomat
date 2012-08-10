@@ -107,3 +107,10 @@ JCFDUMP='jcf-dump'
 USEPRAKTOMATTESTER = False
 
 
+SHIB_ATTRIBUTE_MAP = {
+	"mail": (True, "email"),
+	"givenName": (True, "first_name"),
+	"sn": (True, "last_name"),
+}
+
+SHIB_USERNAME = "email"

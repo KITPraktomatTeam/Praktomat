@@ -9,6 +9,8 @@ admin.autodiscover()
 from django.contrib.auth import views as auth_views
 
 urlpatterns = patterns('',
+	url(r'^shib_login/$', 'accounts.shib_views.shib_login', name='shib_login'),
+	url(r'^shib_hello/$', 'accounts.shib_views.shib_hello', name='shib_hello'),
 	url(r'^login/$', auth_views.login, {'template_name': 'registration/login.html'}, name='auth_login'),
 	url(r'^logout/$', auth_views.logout_then_login, name='auth_logout'),
 	url(r'^change/$', 'accounts.views.change', name='registration_change'),				   
