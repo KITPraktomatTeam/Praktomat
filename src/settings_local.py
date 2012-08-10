@@ -114,3 +114,6 @@ SHIB_ATTRIBUTE_MAP = {
 }
 
 SHIB_USERNAME = "email"
+
+# This is shown as the name of the identitiy provider on the welcome page
+SHIB_PROVIDER = "kit.edu"

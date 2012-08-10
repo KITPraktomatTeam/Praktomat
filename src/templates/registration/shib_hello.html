@@ -8,9 +8,9 @@
 {% block content %}<div id="login">
 {% chunk "Login Message" %}	
 
-<a href="{% url shib_login %}">Log in using Shibboleth Single-Sign-On</a>
+<a class="shib_hello_shib" href="{% url shib_login %}">Log in via {{ provider }}</a>
 
 <br/>
 
-<a href="{% url auth_login %}">Direct login</a>
+<a class="shib_hello_direct" href="{% url auth_login %}">(direct login)</a>
 </div>{% endblock %}

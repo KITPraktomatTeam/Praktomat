@@ -35,7 +35,7 @@ def render_forbidden(*args, **kwargs):
 									 **httpresponse_kwargs)
 
 def shib_hello(request):
-	return render_to_response('registration/shib_hello.html', {'title':"Login via shibboleth"  }, RequestContext(request))
+	return render_to_response('registration/shib_hello.html', {'title':"Login via shibboleth", 'provider': settings.SHIB_PROVIDER}, RequestContext(request))
 
 def shib_login(request):
 	attr, error = parse_attributes(request.META)

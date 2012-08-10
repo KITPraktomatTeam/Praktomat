@@ -945,3 +945,17 @@ IE8 */
 	float: right;
 }
 
+.shib_hello_shib {
+	font-size:x-large;
+	text-align:center;
+	display:block;
+	margin-top:1em;
+	margin-bottom:1em;
+}
+
+.shib_hello_direct {
+	text-align:right;
+	display:block;
+	text-decoration:none;
+}
+	
