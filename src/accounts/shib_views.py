@@ -74,7 +74,7 @@ def shib_login(request):
 	user.first_name = attr['first_name']
 	user.last_name = attr['last_name']
 	user.email = attr['email']
-	user.mat_number = int("12345")
+	user.mat_number = attr['matriculationNumber']
 	user.save()
 
 	user.backend = 'django.contrib.auth.backends.ModelBackend'

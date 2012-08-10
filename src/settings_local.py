@@ -111,6 +111,7 @@ SHIB_ATTRIBUTE_MAP = {
 	"mail": (True, "email"),
 	"givenName": (True, "first_name"),
 	"sn": (True, "last_name"),
+	"matriculationNumber": (True, "matriculationNumber"),
 }
 
 SHIB_USERNAME = "email"
