@@ -7,6 +7,7 @@ from django.template import RequestContext, Template, Context, loader
 from django.conf import settings
 from accounts.forms import MyRegistrationForm, UserChangeForm, ImportForm, ImportTutorialAssignmentForm
 from accounts.models import User, Tutorial
+from accounts.decorators import local_user_required
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.models import Site, RequestSite
@@ -59,7 +60,7 @@ def activation_allow(request,user_id):
 	send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(Context(c)), None, [user.email])
 	return render_to_response('registration/registration_activation_allowed.html', { 'new_user': user, }, context_instance=RequestContext(request))
 
-@login_required
+@local_user_required
 def change(request):
 	if request.method == 'POST':
 		form = UserChangeForm(request.POST, instance=request.user)
