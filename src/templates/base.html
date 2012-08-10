@@ -31,7 +31,9 @@
 					{% if user|in_group:"Tutor" %} <a href={% url tutorial_overview %}>{% trans "My Tutorial"%}</a>{%endif%}
 				{% else %}
 					<a href="{{ LOGIN_URL }}">Login</a> 
-					<a href="{% url registration_register %}">Register</a> 
+					{% if REGISTRATION_POSSIBLE %}
+						<a href="{% url registration_register %}">Register</a> 
+					{%endif%}
 				{%endif%}
 			</div>
 		</div></div>

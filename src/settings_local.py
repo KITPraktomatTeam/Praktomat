@@ -117,3 +117,6 @@ SHIB_USERNAME = "email"
 
 # This is shown as the name of the identitiy provider on the welcome page
 SHIB_PROVIDER = "kit.edu"
+
+# Set this to False to disable registration via the website, e.g. when Single Sign On is used
+REGISTRATION_POSSIBLE = False

@@ -22,7 +22,7 @@ import csv
 
 def register(request):
 	extra_context = {}
-	if get_settings().deny_registration_from < datetime.now():
+	if (not settings.REGISTRATION_POSSIBLE) or get_settings().deny_registration_from < datetime.now():
 		extra_context['deny_registration_from'] = get_settings().deny_registration_from
 		extra_context['admins'] = User.objects.filter(is_superuser=True)
 		extra_context['trainers'] = Group.objects.get(name="Trainer").user_set.all()
