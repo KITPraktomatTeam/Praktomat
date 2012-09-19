@@ -33,7 +33,10 @@ MEDIA_URL = BASE_URL + 'media/'
 # URL prefix for the administration site media (CSS, JavaScript and images) contained in the django package. 
 # Make sure to use a trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/admin/'
+ADMIN_MEDIA_PREFIX = BASE_URL + 'media/admin/'
+
+SESSION_COOKIE_PATH = '/' + PRAKTOMAT_ID + '/'
+CSRF_COOKIE_NAME = 'csrftoken_' + PRAKTOMAT_ID
 
 # Absolute path to the directory that shall hold all uploaded files as well as files created at runtime.
 # Example: "/home/media/media.lawrence.com/"

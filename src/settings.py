@@ -102,10 +102,6 @@ try:
 except ImportError: 
     pass 
 
-# Required to be set when baseurl ist not a top level domain
-LOGIN_URL = BASE_URL + 'accounts/login/'
-LOGIN_REDIRECT_URL = BASE_URL + 'tasks/'
-
 # TinyMCE
 TINYMCE_JS_URL = MEDIA_URL+'frameworks/tiny_mce/tiny_mce_src.js'
 TINYMCE_DEFAULT_CONFIG = {
