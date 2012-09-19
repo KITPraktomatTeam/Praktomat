@@ -97,10 +97,19 @@ NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 1
 
 USE_KILL_LOG = False
 
+SHIB_ENABLED = False
+
 try:
     from settings_local import * 
 except ImportError: 
     pass 
+
+LOGIN_REDIRECT_URL = BASE_URL + 'tasks/'
+if SHIB_ENABLED:
+	LOGIN_URL = BASE_URL + 'accounts/shib_hello/'
+else:
+	LOGIN_URL = BASE_URL + 'accounts/login/'
+
 
 # TinyMCE
 TINYMCE_JS_URL = MEDIA_URL+'frameworks/tiny_mce/tiny_mce_src.js'

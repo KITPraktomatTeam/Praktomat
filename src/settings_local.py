@@ -107,6 +107,21 @@ JCFDUMP='jcf-dump'
 USEPRAKTOMATTESTER = False
 
 
+# This enables Shibboleth-Support.
+# In order to actually get it working, you need to protec the location
+# .../accounts/shib_login in the apache configuration, e.g. with this stanca:
+#	<Location /shibtest/accounts/shib_login>
+#		Order deny,allow
+#		AuthType shibboleth
+#		ShibRequireSession On
+#		Require valid-user
+#	</Location>
+#
+# You probably want to disable REGISTRATION_POSSIBLE if you enable Shibboleth
+# support
+
+SHIB_ENABLED = True
+
 SHIB_ATTRIBUTE_MAP = {
 	"mail": (True, "email"),
 	"givenName": (True, "first_name"),

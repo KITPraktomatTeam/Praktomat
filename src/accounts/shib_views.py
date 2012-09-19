@@ -7,6 +7,7 @@ from django.conf import settings
 from accounts.models import User
 from django.contrib.auth.models import Group
 from accounts.forms import MyRegistrationForm
+from accounts.decorators import *
 
 def parse_attributes(META):
 	shib_attrs = {}
@@ -34,9 +35,11 @@ def render_forbidden(*args, **kwargs):
 	return HttpResponseForbidden(loader.render_to_string(*args, **kwargs),
 									 **httpresponse_kwargs)
 
+@shibboleth_support_required
 def shib_hello(request):
 	return render_to_response('registration/shib_hello.html', {'title':"Login via shibboleth", 'provider': settings.SHIB_PROVIDER}, RequestContext(request))
 
+@shibboleth_support_required
 def shib_login(request):
 	attr, error = parse_attributes(request.META)
 
@@ -47,19 +50,19 @@ def shib_login(request):
 	context = {'shib_attrs': attr,
 			   'was_redirected': was_redirected}
 	if error:
-		return render_forbidden('shibboleth/attribute_error.html',
+		return render_forbidden('registration/shib_error.html',
 								  context,
 								  context_instance=RequestContext(request))
 	try:
 		username = attr[settings.SHIB_USERNAME]
 		# TODO this should log a misconfiguration.
 	except:
-		return render_forbidden('shibboleth/attribute_error.html',
+		return render_forbidden('registration/shib_error.html',
 								  context,
 								  context_instance=RequestContext(request))
 
 	if not attr[settings.SHIB_USERNAME] or attr[settings.SHIB_USERNAME] == '':
-		return render_forbidden('shibboleth/attribute_error.html',
+		return render_forbidden('registration/shib_error.html',
 								  context,
 								  context_instance=RequestContext(request))
 
@@ -84,6 +87,4 @@ def shib_login(request):
 		redirect_url = settings.LOGIN_REDIRECT_URL
 
 	return HttpResponseRedirect(redirect_url)
-
-
 
