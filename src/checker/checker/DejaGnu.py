@@ -91,9 +91,9 @@ class DejaGnuTester(Checker, DejaGnu):
 		log = escape(log)
 		
 		# Every line that contains a passed message is to be enhanced.
-		log = re.sub(RXPASS, r"\1 <B class=\"pass\"> \2 </B> \3", log)
+		log = re.sub(RXPASS, r'\1 <B class="passed"> \2 </B> \3', log)
 		# Every line that contains a failure message is to be enhanced.
-		return  "<TT><PRE>" + re.sub(RXFAIL, r"\1 <B class=\"fail\"> \2 </B> \3", log) + "</PRE></TT>"
+		return  "<TT><PRE>" + re.sub(RXFAIL, r'\1 <B class="error"> \2 </B> \3', log) + "</PRE></TT>"
 
 
 	# Run tests.  Return a CheckerResult.

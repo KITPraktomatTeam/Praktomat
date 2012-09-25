@@ -4,6 +4,7 @@
 	<script type="text/javascript" src="{{MEDIA_URL}}frameworks/jquery/jquery.Storage.js"></script>
 	<script type="text/javascript" src="{{MEDIA_URL}}script/solution_inlines.js"></script>
 	<script type="text/javascript" src="{{MEDIA_URL}}frameworks/ace/demo/require.js"></script>
+{#	<script type="text/javascript" src="{{MEDIA_URL}}frameworks/ace/support/cockpit/scripts/require.js"></script> #}
 	<script type="text/javascript" src="{{MEDIA_URL}}script/boot_ace.js"></script>
 	<script typr="text/javascript" src="{{MEDIA_URL}}script/confirm_close.js"></script>
 	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}styles/pygments_friendly.css" />
@@ -17,8 +18,14 @@
 			$(".heading").addClass("hidden");
 			$("#tabs").tabs({ // instanciate tabs
 				show: function(event, ui) { 	// call dimensionsChanged of bespin when the tab is opend
-	    			if (ui.panel.id == "annotated_solution_files") { window.env.editor.resize(); }
-				}
+	    			if (ui.panel.id == "annotated_solution_files") { env.editor.resize(); }
+				},
+				select:	function(event, ui) {
+				  	  if (ui.panel.id == "download") {
+					    window.open("{% url solution_download solution_id=solution.id %}","Download");
+					    return false;
+					  } else  return true;
+					}
 			})
 			$( "#ace_settings" ).dialog({ autoOpen: false, resizable: false, title: "ACE Editor Settings" });
 			$( "#ace_settings_button" ).click( function(){
@@ -30,6 +37,12 @@
 		function fullscreen() {
 			$("#file_form_set_replacement").toggleClass("fullscreen");
 			$("body").toggleClass("fullscreen");
+
+			if ($("#file_form_set_replacement").hasClass("fullscreen")) {
+				$("#editor").css("height","");
+			} else {
+				$("#editor_height").change();
+			}
 			env.editor.resize();
 		}
 		
@@ -47,6 +60,8 @@
 </div>
 
 <h1>{{solution.task.title}}</h1>
+<p id='author'>{% if show_author%} Solution by: {{solution.author}} {% endif %}</p>
+
 	
 	
 	<div id="tabs">
@@ -56,6 +71,7 @@
 			<li><a href="#solution">Solution</a></li>
 			<li><a href="#annotated_solution_files">Annotate solution files</a></li>
 			<li><a href="#attestation">Attest solution</a></li>
+			<li><a href="#download"><span class="ui-icon ui-icon-circle-triangle-s"></span>Download Solution</a></li>
 		</ul>
 		
 		<div id="task">
@@ -107,7 +123,6 @@
 				
 					<a id="ace_settings_button"><span class="icon ui-icon-wrench"></span></a>
 					<a id="ace_fullscreen" onclick="fullscreen()"><span class="icon ui-icon-arrow-4-diag"></span></a>
-					<a href={% url solution_download solution_id=solution.id %}><span class="ui-icon ui-icon-disk"></span></a>
 				</div>
 				<div id="editor"></div>
 			</div>
@@ -125,6 +140,12 @@
 				{% endwith %}
 
 		</div>
+		<div id="download">
+		</div>
+	</div>
+	<div>
+		<span><a href="#" onClick='$("#tabs").tabs("select",3); setTimeout(function() {$("#editor_controls")[0].scrollIntoView()},100);'>Annotate Solution Files</a></span>
+		<span><a href="#" onClick='$("#tabs").tabs("select",4);                                                                 '>Attest Solution</a></span>
 	</div>
 	
 </form>	
@@ -245,6 +266,22 @@
 	<div class="form-row">		
 		<label for="highlight_selected_word">Highlight selected word</label>
 		<input type="checkbox" id="highlight_selected_word" checked>
+	</div>
+{#
+	<div class="form-row">		
+		<label for="tabsize">Tab Size</label>
+		<select id="tabsize" size="1">
+			<option value="2">2</option>
+			<option value="4">4</option>
+			<option value="8">8</option>
+			<option value="12">12</option>
+
+		</select>
+	</div>
+#}
+	<div class="form-row">		
+		<label for="tabsize">Editor Window Height</label>
+		<input type="text" id="editor_height" value="500px" size="10">
 	</div>
 </div>
 

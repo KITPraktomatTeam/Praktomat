@@ -45,7 +45,7 @@
 			<td nowrap>{{user.mat_number}}</td>
 			<td nowrap>{{user.username}}</td>
 			{% for result in results %}
-			<td>{{result.passed}}</td>
+	<td><img src="{{MEDIA_URL}}admin/img/admin/icon-{{ result.passed|yesno:"yes,no" }}.gif" alt="{{result.passed}}"></td>
 			{% endfor %}
 		{% endfor %}
 	</table>

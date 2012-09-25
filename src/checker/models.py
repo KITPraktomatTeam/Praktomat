@@ -287,6 +287,7 @@ def run_checks(solution, env, run_all):
 	checkers = sorted(unsorted_checker, key=lambda checker: checker.order)
 	
 	solution_accepted = True
+	solution.warnings = False
 	for checker in checkers:
 		if (checker.always or run_all):
 		

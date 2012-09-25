@@ -215,7 +215,9 @@ def edit_attestation(request, attestation_id):
 		attestForm = AttestationForm(instance=attest, prefix='attest')
 		attestFileFormSet = AnnotatedFileFormSet(instance=attest, prefix='attestfiles')
 		ratingResultFormSet = RatingResultFormSet(instance=attest, prefix='ratingresult')
-	return render_to_response("attestation/attestation_edit.html", {"attestForm": attestForm, "attestFileFormSet": attestFileFormSet, "ratingResultFormSet":ratingResultFormSet, "solution": solution, "model_solution":model_solution},	context_instance=RequestContext(request))
+	
+	show_author = not get_settings().anonymous_attestation 
+	return render_to_response("attestation/attestation_edit.html", {"attestForm": attestForm, "attestFileFormSet": attestFileFormSet, "ratingResultFormSet":ratingResultFormSet, "solution": solution, "model_solution":model_solution, "show_author":show_author},	context_instance=RequestContext(request))
 
 @login_required	
 def view_attestation(request, attestation_id):
@@ -236,8 +238,8 @@ def view_attestation(request, attestation_id):
 		return render_to_response("attestation/attestation_view.html", {"attest": attest, 'submitable':submitable, 'form':form, 'show_author': not get_settings().anonymous_attestation},	context_instance=RequestContext(request))
 
 
-def user_task_attestation_map(users,tasks):
-	attestations = Attestation.objects.filter( published=True, solution__plagiarism=False)
+def user_task_attestation_map(users,tasks,only_published=True):
+	attestations = Attestation.objects.filter( published=only_published, solution__plagiarism=False)
 	
 	attestation_dict = {} 	#{(task_id,user_id):attestation}
 	for attestation in attestations:
@@ -314,10 +316,26 @@ def tutorial_overview(request, tutorial_id=None):
 	
 	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now).order_by('publication_date','submission_date')
 	users = User.objects.filter(groups__name='User').filter(is_active=True, tutorial=tutorial).order_by('last_name','first_name')
-	rating_list = user_task_attestation_map(users, tasks)
+	rating_list = user_task_attestation_map(users, tasks,False)
+	
+	def to_float(a,default,const):
+		try:
+			return (float(str(a.final_grade)),const)
+		except (ValueError,TypeError,AttributeError):
+			return (default,default)
+
+	averages     = [0.0 for i in range(len(tasks))]
+	nr_of_grades = [0 for i in range(len(tasks))]
+	for (user,attestations) in rating_list:
+		averages     = [avg+to_float(att,0.0,None)[0] for (avg,att) in zip(averages,attestations)]
+		nr_of_grades = [n+to_float(att,0,1)[1] for (n,att) in zip(nr_of_grades,attestations)]
+
+	nr_of_grades = [ (n if n>0 else 1) for n in nr_of_grades]
+
+	averages = [a/n for (a,n) in zip(averages,nr_of_grades)]
 	script = Script.objects.get_or_create(id=1)[0]
 	
-	return render_to_response("attestation/tutorial_overview.html", {'other_tutorials':other_tutorials, 'tutorial':tutorial, 'rating_list':rating_list, 'tasks':tasks, 'final_grades_published': get_settings().final_grades_published, 'script':script},	context_instance=RequestContext(request))
+	return render_to_response("attestation/tutorial_overview.html", {'other_tutorials':other_tutorials, 'tutorial':tutorial, 'rating_list':rating_list, 'tasks':tasks, 'final_grades_published': get_settings().final_grades_published, 'script':script, 'averages':averages},	context_instance=RequestContext(request))
 
 
 @login_required	

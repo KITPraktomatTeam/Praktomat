@@ -10,6 +10,15 @@
 	{% block extrahead %}{% endblock %}	
 	<title>{{ site_name }} {% block title %}{% endblock %}</title>
 </head>
+<script type="text/javascript">
+maxWidth = false;
+function toggleMaxWidth() {
+	if (maxWidth) $("#container").css("max-width","1000px");
+	else          $("#container").css("max-width","none");
+	maxWidth = !maxWidth;
+	if (env.editor) { env.editor.resize(); }
+}
+</script>
 
 <body>
 	<div id="container">
@@ -32,7 +41,7 @@
 			</div>
 		</div></div>
 		<div id="sub_header"><div class="inner">
-			{% block breadcrumbs %}<a href={% url task_list %}><span class="icon icon-white ui-icon-home"></span>Home</a>{% endblock %}
+				{% block breadcrumbs %}<a href={% url task_list %}><span class="icon icon-white ui-icon-home"></span>Home</a>{% endblock %} <a href="#" onClick="toggleMaxWidth()"><span style="float:right" class="icon icon-white ui-icon-arrow-2-e-w"></span></a>
 		</div></div>
 		<div id="content">
 			<noscript><div id="javascripterror" class="ui-widget ui-state-error ui-corner-all notification">

@@ -59,6 +59,7 @@
 			<th>User</th>
 			{% for task in tasks %}
 				<th><div class="heading"><a href="{% url task_detail task_id=task.id  %}">{{task.title}}</a></div></th>
+				<th><div class="heading">Rating Aspects</div></th>
 			{% endfor %}
 			<th><div class="heading" id="calculated_grade_heading">Calculated grade</div></th>
 			<th><div class="heading">Final grade</div></th>	
@@ -67,11 +68,29 @@
 			<tr class="{% cycle 'odd' 'even' %} user_row">
 				<td><a href="mailto:{{user.email}}">{{user.get_full_name}}</a></td>
 				{% for attestation in attestations %}
+				<td class="grade_cell">
+					{% if attestation.id %}
+					<a href="{% url view_attestation attestation_id=attestation.id%}">
+					{% endif %}
+					
 					{% if attestation.final_grade %}
-						<td class="grade_cell"><a href="{% url view_attestation attestation_id=attestation.id%}">{{attestation.final_grade}}</a></td>
+						{{attestation.final_grade}}
 					{% else %}
-						<td class="grade_cell">-</td>
-					{% endif %}	
+						-
+					{% endif %}
+
+					{% if attestation.id %}
+					</a>
+					{% endif %}
+				</td>
+				<td class="grade_cell">
+					&nbsp;
+					[
+					{% for ratingresult in attestation.ratingresult_set.all%}
+						 {{ratingresult.rating.aspect.name}}: <span class="mark">{{ratingresult.mark}}</span>
+					{%endfor%}
+					] 
+				</td>
 				{% endfor %}
 				<td class="calculated_grade_cell" id="calculated_grade_cell{{forloop.counter0}}"></td>
 				<td>
@@ -81,6 +100,12 @@
 				</td>
 			</tr>
 		{% endfor %}
+			<tr>
+				<th>Average:</td>
+				{% for average in averages %}
+				<td>{{average}}</td>
+				{% endfor %}
+			</tr> 
 	</table>
 	<br/>
 	<a href="mailto:?bcc={% for user, attestations in rating_list %}{{user.email}},{% endfor %}"><span class="icon ui-icon-mail-closed"></span>Email all users</a>

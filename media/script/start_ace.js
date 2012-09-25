@@ -211,6 +211,14 @@ exports.launch = function(env) {
     bindDropdown("fontsize", function(value) {
         document.getElementById("editor").style.fontSize = value;
     });
+/*
+    bindDropdown("tabsize", function(value) {
+        env.editor.getSession().setTabSize(value);
+	for (var i in docs) {
+		docs[i].setTabSize(value);
+	}
+    });
+*/ 
 
     bindDropdown("soft_wrap", function(value) {
         var session = env.editor.getSession();
@@ -268,6 +276,11 @@ exports.launch = function(env) {
 
     bindCheckbox("soft_tab", function(checked) {
         env.editor.getSession().setUseSoftTabs(checked);
+    });
+
+    bindDropdown("editor_height", function(value) {
+        $("#editor").css("height",value);
+	env.editor.resize();
     });
 
     function bindCheckbox(id, callback) {
