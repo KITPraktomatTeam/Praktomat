@@ -74,10 +74,10 @@ def shib_login(request):
 		user.groups.add(user_group)
 
 	# This needs to be made more general smarter
-	user.first_name = attr['first_name']
-	user.last_name = attr['last_name']
-	user.email = attr['email']
-	user.mat_number = attr['matriculationNumber']
+	user.first_name = attr['first_name']          if attr['first_name'] is not None else user.first_name
+	user.last_name = attr['last_name']            if attr['last_name']  is not None else user.last_name
+	user.email = attr['email']                    if attr['email']      is not None else user.email
+	user.mat_number = attr['matriculationNumber'] if attr['matriculationNumber'] is not None else user.mat_number 
 	user.save()
 
 	user.backend = 'django.contrib.auth.backends.ModelBackend'
