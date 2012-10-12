@@ -30,14 +30,20 @@
 			<div id="user-tools">
 				{% if user.is_authenticated %}
 					Welcome, {% firstof user.get_full_name user.username %} 
-					/ <a href="{% url registration_change %}">Change Account</a>  
+					{% if user.is_shibboleth_user %}
+					/ <a href="{% url registration_view %}">View Account</a>
+					{% else %}
+					/ <a href="{% url registration_change %}">Change Account</a>
+                    {% endif %}
 					/ <a href="{% url auth_logout %}">Log-out</a><br/>
 					{% if user.is_staff %}<a href={% url rating_overview %}>{% trans "Rating overview"%}</a> / 
 					<a href="{% url admin:index %}">Admin Panel</a>	{%endif%}
 					{% if user|in_group:"Tutor" %} <a href={% url tutorial_overview %}>{% trans "My Tutorial"%}</a>{%endif%}
 				{% else %}
-					<a href="{% url auth_login %}">Login</a> 
-					<a href="{% url registration_register %}">Register</a> 
+					<a href="{{ LOGIN_URL }}">Login</a> 
+					{% if REGISTRATION_POSSIBLE %}
+						<a href="{% url registration_register %}">Register</a> 
+					{%endif%}
 				{%endif%}
 			</div>
 		</div></div>

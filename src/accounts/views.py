@@ -7,6 +7,7 @@ from django.template import RequestContext, Template, Context, loader
 from django.conf import settings
 from accounts.forms import MyRegistrationForm, UserChangeForm, ImportForm, ImportTutorialAssignmentForm
 from accounts.models import User, Tutorial
+from accounts.decorators import local_user_required
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.models import Site, RequestSite
@@ -21,7 +22,7 @@ import csv
 
 def register(request):
 	extra_context = {}
-	if get_settings().deny_registration_from < datetime.now():
+	if (not settings.REGISTRATION_POSSIBLE) or get_settings().deny_registration_from < datetime.now():
 		extra_context['deny_registration_from'] = get_settings().deny_registration_from
 		extra_context['admins'] = User.objects.filter(is_superuser=True)
 		extra_context['trainers'] = Group.objects.get(name="Trainer").user_set.all()
@@ -59,7 +60,7 @@ def activation_allow(request,user_id):
 	send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(Context(c)), None, [user.email])
 	return render_to_response('registration/registration_activation_allowed.html', { 'new_user': user, }, context_instance=RequestContext(request))
 
-@login_required
+@local_user_required
 def change(request):
 	if request.method == 'POST':
 		form = UserChangeForm(request.POST, instance=request.user)
@@ -69,6 +70,10 @@ def change(request):
 	else:
 		form = UserChangeForm(instance=request.user)
 	return render_to_response('registration/registration_change.html', {'form':form, 'user':request.user}, context_instance=RequestContext(request))
+
+@login_required
+def view(request):
+	return render_to_response('registration/registration_view.html', {'user':request.user}, context_instance=RequestContext(request))
 
 def access_denied(request):
 	request_path = request.META['HTTP_HOST'] + request.get_full_path()

@@ -110,6 +110,9 @@ class User(BasicUser):
 				return user
 			return False
 	activate_user = staticmethod(activate_user)
+	
+	def is_shibboleth_user(self):
+		return not self.has_usable_password()
 
 	@classmethod
 	def export_user(cls, queryset):

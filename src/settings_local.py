@@ -33,7 +33,10 @@ MEDIA_URL = BASE_URL + 'media/'
 # URL prefix for the administration site media (CSS, JavaScript and images) contained in the django package. 
 # Make sure to use a trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/admin/'
+ADMIN_MEDIA_PREFIX = BASE_URL + 'media/admin/'
+
+SESSION_COOKIE_PATH = '/' + PRAKTOMAT_ID + '/'
+CSRF_COOKIE_NAME = 'csrftoken_' + PRAKTOMAT_ID
 
 # Absolute path to the directory that shall hold all uploaded files as well as files created at runtime.
 # Example: "/home/media/media.lawrence.com/"
@@ -104,3 +107,32 @@ JCFDUMP='jcf-dump'
 USEPRAKTOMATTESTER = False
 
 
+# This enables Shibboleth-Support.
+# In order to actually get it working, you need to protec the location
+# .../accounts/shib_login in the apache configuration, e.g. with this stanca:
+#	<Location /shibtest/accounts/shib_login>
+#		Order deny,allow
+#		AuthType shibboleth
+#		ShibRequireSession On
+#		Require valid-user
+#	</Location>
+#
+# You probably want to disable REGISTRATION_POSSIBLE if you enable Shibboleth
+# support
+
+SHIB_ENABLED = True
+
+SHIB_ATTRIBUTE_MAP = {
+	"mail": (True, "email"),
+	"givenName": (True, "first_name"),
+	"sn": (True, "last_name"),
+	"matriculationNumber": (True, "matriculationNumber"),
+}
+
+SHIB_USERNAME = "email"
+
+# This is shown as the name of the identitiy provider on the welcome page
+SHIB_PROVIDER = "kit.edu"
+
+# Set this to False to disable registration via the website, e.g. when Single Sign On is used
+REGISTRATION_POSSIBLE = False
