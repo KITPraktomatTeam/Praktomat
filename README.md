@@ -14,6 +14,7 @@ Prerequisites
   On a Ubuntu/Debian System, these can be installed by installing the following packages:
 
     libpq-dev
+    zlib1g-dev
     libmysqlclient-dev
     libsasl2-dev
     libssl-dev
