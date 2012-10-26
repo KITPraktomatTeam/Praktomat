@@ -48,6 +48,7 @@ urlpatterns = patterns('',
 	url(r'^attestation/(?P<attestation_id>\d+)/edit$', 'attestation.views.edit_attestation', name='edit_attestation'),
 	url(r'^attestation/(?P<attestation_id>\d+)$', 'attestation.views.view_attestation', name='view_attestation'),
 	url(r'^attestation/rating_overview$', 'attestation.views.rating_overview', name='rating_overview'),
+	url(r'^attestation/points_by_first_submission.csv$', 'attestation.views.points_by_first_submission', name='points_by_first_submission'),
 	url(r'^attestation/rating_export.csv$', 'attestation.views.rating_export', name='rating_export'),
 	
 	url(r'^tutorial/$', 'attestation.views.tutorial_overview', name='tutorial_overview'),

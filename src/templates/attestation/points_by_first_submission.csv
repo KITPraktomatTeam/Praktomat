@@ -1,0 +1,3 @@
+{{byte_order_marker}}First Submission was submitted n days before deadline;Achieved final grade, normalized;
+{% for result_row in results %}{{result_row.first_submission_days_before_deadline}};{{result_row.normalized_grade}};{{result_row.final_solution_id}};
+{% endfor %}

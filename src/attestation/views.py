@@ -355,6 +355,38 @@ def rating_export(request):
 	#response.write(u'\ufeff') setting utf-8 BOM for Exel doesn't work
 	response.write(t.render(c))
 	return response
+
+
+@staff_member_required
+def points_by_first_submission(request):
+	users = User.objects.filter(is_active=True)
+	results = []
+	for u in User.objects.filter(groups__name='User').exclude(groups__name='Trainer').exclude(groups__name='Tutor').filter(is_active=True):
+		for t in Task.objects.filter(all_checker_finished=True):
+			first = Solution.objects.filter(author=u, task=t).order_by('creation_date')
+			final = Solution.objects.filter(author=u, task=t,final=True)
+			if first and final:
+				first = first[0]
+				final = final[0]
+				attestation = Attestation.objects.filter(solution=final)
+				if attestation and attestation[0].final:
+					attestation = attestation[0]
+					results += [{'first_submission_days_before_deadline' : (t.submission_date + datetime.timedelta(hours=1) - first.creation_date).days,
+                                                     'normalized_grade' : float(str(attestation.final_grade)) /
+                                                                          float(str(t.final_grade_rating_scale.ratingscaleitem_set.order_by('position').reverse()[0])),
+                                                     'final_solution_id' : final.id }]
+			elif first:
+				first = first[0]
+				results         += [{'first_submission_days_before_deadline' : (t.submission_date + datetime.timedelta(hours=1) - first.creation_date).days,
+                                                     'normalized_grade' : 0.0,
+				                     'final_solution_id' : ''}]
+	response = HttpResponse(mimetype='text/csv')
+	response['Content-Disposition'] = 'attachment; points_by_first_submission.csv'
+
+	t = loader.get_template('attestation/points_by_first_submission.csv')
+	c = Context({'results':results})
+	response.write(t.render(c))
+	return response
 	
 def frange(start, end, inc):
 	"A range function, that does accept float increments..."
