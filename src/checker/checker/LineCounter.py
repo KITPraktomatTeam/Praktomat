@@ -8,6 +8,7 @@ import string
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import escape
 from checker.models import Checker, CheckerResult
 
 class LineCounter(Checker):
@@ -99,7 +100,7 @@ class LineCounter(Checker):
 			try:
 				# FIXME : code_lines_in_file, comment_lines_in_file
 				#		  may be 0!!
-				log = log + (	name + ": "
+				log = log + (	escape(name) + ": "
 							 + `lines_in_file` + " Zeilen, davon "
 							 + `code_lines_in_file` + " Code ("
 							 + `code_lines_in_file*100 / lines_in_file` + "%), "

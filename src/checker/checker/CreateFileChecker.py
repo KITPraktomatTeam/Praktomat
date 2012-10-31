@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from checker.models import Checker, CheckerResult, CheckerFileField
 from utilities.file_operations import *
 from utilities.encoding import *
+from django.utils.html import escape
 
 class CreateFileChecker(Checker):
 	
@@ -36,7 +37,7 @@ class CreateFileChecker(Checker):
 			result.set_log("")
 			result.set_passed(True)
 		else:
-			result.set_log("The file '%s' was overridden" % os.path.join(self.path, os.path.basename(self.file.path)))
+			result.set_log("The file '%s' already exists. Do NOT include it in your submission!" % escape(os.path.join(self.path, os.path.basename(filename))))
 			result.set_passed(False)
 		source_path = os.path.join(string.lstrip(self.path,"/ "), os.path.basename(filename))
 		env.add_source(source_path, get_unicode(self.file.read()))

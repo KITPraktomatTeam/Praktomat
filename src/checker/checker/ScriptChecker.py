@@ -4,6 +4,7 @@ import os, re
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import escape
 from checker.models import Checker, CheckerFileField, CheckerResult, execute
 from utilities.file_operations import *
 
@@ -46,7 +47,7 @@ class ScriptChecker(Checker):
 		if self.remove:
 			output = re.sub(self.remove, "", output)
 		if not self.returns_html:
-			output = '<pre>' + output + '</pre>'
+			output = '<pre>' + escape(output) + '</pre>'
 		result.set_log(output)
 		result.set_passed(not error)
 		

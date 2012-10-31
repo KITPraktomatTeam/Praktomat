@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import escape
 from checker.models import Checker, CheckerFileField, CheckerResult, execute
 from checker.admin import	CheckerInline, AlwaysChangedModelForm
 from utilities.file_operations import *
@@ -38,7 +39,7 @@ class JUnit3Checker(Checker):
 		[output, error, exitcode] = execute(cmd, env.tmpdir())
 
 		result = CheckerResult(checker=self)			
-		result.set_log('<pre>' + output + '</pre>')
+		result.set_log('<pre>' + escape(output) + '</pre>')
 		result.set_passed(not exitcode)
 		return result
 

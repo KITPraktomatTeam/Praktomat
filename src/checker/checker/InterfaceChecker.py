@@ -8,6 +8,7 @@ import re
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import escape
 from checker.models import Checker, CheckerResult
 
 class InterfaceChecker(Checker):
@@ -66,7 +67,7 @@ class InterfaceChecker(Checker):
 		for interface in [self.interface1,self.interface2,self.interface3,self.interface4,self.interface5,self.interface6,self.interface7]: ##self.interface_set.all()
 			if not interface in implemented: ## interface.name
 				passed = 0
-				log += "Interface " + interface + " wurde nicht implementiert.<BR>" ## interface.name
+				log += "Interface " + escape(interface) + " wurde nicht implementiert.<BR>" ## interface.name
 		
 		if not passed:
 			log += u"""<p>Sie müssen alle vorgegebenen Interfaces implementieren.

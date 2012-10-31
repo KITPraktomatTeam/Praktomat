@@ -9,6 +9,7 @@ import re
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import escape
 from checker.models import Checker, CheckerResult
 
 class LineWidthChecker(Checker):
@@ -59,7 +60,7 @@ class LineWidthChecker(Checker):
 				line = self.setup_line(line, env)
 				
 				if len(line) > self.max_line_length:
-					msg = ( name + ":" + `line_number` +
+					msg = ( escape(name) + ":" + `line_number` +
 						   ": Zeile zu breit (" + `len(line)` + " Zeichen)" + "<BR>")
 					log = log + msg
 					passed = 0
@@ -68,7 +69,7 @@ class LineWidthChecker(Checker):
 
 				line_number = line_number + 1
 
-			msg = (name + ": Maximale Zeilenbreite: " +
+			msg = (escape(name) + ": Maximale Zeilenbreite: " +
 				   `max_line_length` + " Zeichen\n" + "<BR>")
 			log = log + msg
 

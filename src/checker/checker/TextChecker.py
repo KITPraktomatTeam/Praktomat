@@ -6,6 +6,7 @@ TextChecker.
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import escape
 from checker.models import Checker, CheckerResult
 
 class TextChecker(Checker):
@@ -64,11 +65,11 @@ class TextChecker(Checker):
 		# Print Results:
 		if len(occurances) <= 0:
 			passed = 0
-			log = self.text + u" kommt nicht in Ihrer Lösung vor!"
+			log = escape(self.text) + u" kommt nicht in Ihrer Lösung vor!"
 		else:
-			log = self.text + " kommt an folgenden Stellen vor<br>"
+			log = escape(self.text) + " kommt an folgenden Stellen vor<br>"
 			for (name, num) in occurances:
-				log	 += name + " Zeile: " + str(num) + "<br>" 
+				log	 += escape(name) + " Zeile: " + str(num) + "<br>" 
 		
 		result.set_log(log)
 		result.set_passed(passed)

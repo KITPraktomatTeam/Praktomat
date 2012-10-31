@@ -9,6 +9,7 @@ import os
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from checker.models import Checker, CheckerFileField, CheckerResult, execute
+from django.utils.html import escape
 from utilities.file_operations import *
 
 class DiffChecker(Checker):
@@ -45,7 +46,7 @@ class DiffChecker(Checker):
 		
 		result = CheckerResult(checker=self)
 	
-		result.set_log(output)
+		result.set_log(escape(output))
 		result.set_passed(not error)
 		
 		return result
