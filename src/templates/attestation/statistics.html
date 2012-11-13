@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load highlight %} {% load i18n  %}
+{% load highlight %} {% load i18n  %}{% load in_group %}
 {% block extrahead %}{{ block.super }}
 <script src="{{MEDIA_URL}}/frameworks/highcharts/highcharts.src.js" type="text/javascript">
 </script>
@@ -253,20 +253,23 @@
    }]
 });
 
-	var final_grade_chart = new Highcharts.Chart({
+
+
+function grade_chart(div_to_render_into, title, scale_items,ratings){ 
+	return new Highcharts.Chart({
       chart: {
-         renderTo: 'final_grade_chart',
+         renderTo: div_to_render_into,
          defaultSeriesType: 'column',
          margin: [80, 100, 100, 100]
       },
       title: {
-         text: 'Final Grades'
+         text: title
       },
 	  credits: {
         enabled: false
    	},
       xAxis: {
-         categories: {{ final_grade_rating_scale_items|safe }},
+         categories: scale_items,
          labels: {
             rotation: -45,
             align: 'right',
@@ -291,9 +294,16 @@
             return '<b>'+ this.x +'</b>:'+ Highcharts.numberFormat(this.y, 1);
          }
       },
+
+      plotOptions: {
+            series: {
+                pointWidth: 15
+            }
+      },
+
       series: [{
          name: 'Ratings',
-         data: {{ratings}},
+         data: ratings,
          dataLabels: {
             enabled: true,
             rotation: -90,
@@ -310,7 +320,11 @@
          }         
       }]
    });
-	
+}
+{% if user|in_group:'Tutor'%}
+var final_grade_chart_my_turial = grade_chart('final_grade_chart_my_tutorial','Final Grades (my Tutorials)',{{ final_grade_rating_scale_items|safe }},{{my_tutorial_ratings}});
+{% endif %}
+var final_grade_chart           = grade_chart('final_grade_chart',            'Final Grades'               ,{{ final_grade_rating_scale_items|safe }},{{ratings}});
 	
             });
 </script>
@@ -326,6 +340,11 @@
 {% if task.expired %} 
 	<div id="attestation_chart"></div>
 	<p>This chart gives an overview of how many attestations are ready to be published and how many of these are allready published by the tutors.</p><br/><br/>
+
+{% if user|in_group:'Tutor'%}
+	<div id="final_grade_chart_my_tutorial"></div>
+	<p>This chart showes the distribution of final grades for students from your tutorials. Plagiarism is excluded.</p><br/><br/>
+{% endif %}
 	<div id="final_grade_chart"></div>
 	<p>This chart showes the distribution of final grades. Plagiarism is excluded.</p><br/><br/>
 {% endif %}

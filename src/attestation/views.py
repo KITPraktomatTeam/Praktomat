@@ -78,18 +78,19 @@ def statistics(request,task_id):
 
 	all_items = task.final_grade_rating_scale.ratingscaleitem_set.values_list('name','position')
 	final_grade_rating_scale_items = "['" + "','".join([name.strip() for (name,position) in all_items]) + "']"
-	if in_group(request.user,'Trainer'):
-		ratings = RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True)
-	else:
-		ratings = RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__author__tutored_tutorials__in = tutorials)
-	ratings = ratings.annotate(Count('id')).values_list('position','id__count')
-	ratings = map(lambda tupel:list(tupel), ratings)
+
+	my_tutorial_ratings = RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__author__tutored_tutorials__in = tutorials)
+	ratings             = RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True)
+
+	[ratings,my_tutorial_ratings] = [ [list(rating) for rating in rs.annotate(Count('id')).values_list('position','id__count')] for rs in [ratings,my_tutorial_ratings] ]
+
+	# ratings = [ list(rating) for rating in ratings.annotate(Count('id')).values_list('position','id__count')]
 	
 	return render_to_response("attestation/statistics.html", {'task':task, \
 															'user_count': user_count, 'solution_count': final_solution_count,\
 															'submissions':submissions, 'submissions_final':submissions_final, 'creation_times':creation_times, 'creation_times_final':creation_times_final, 'acc_submissions':acc_submissions, \
 															'attestations':attestations, \
-															'final_grade_rating_scale_items' :final_grade_rating_scale_items, 'ratings':ratings\
+															'final_grade_rating_scale_items' :final_grade_rating_scale_items, 'ratings':ratings, 'my_tutorial_ratings' : my_tutorial_ratings \
 															}, context_instance=RequestContext(request))
 
 def daterange(start_date, end_date):
