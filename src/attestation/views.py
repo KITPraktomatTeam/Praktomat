@@ -239,7 +239,10 @@ def view_attestation(request, attestation_id):
 
 
 def user_task_attestation_map(users,tasks,only_published=True):
-	attestations = Attestation.objects.filter( published=only_published, solution__plagiarism=False)
+	if only_published:
+		attestations = Attestation.objects.filter( published=True, solution__plagiarism=False)
+	else:
+		attestations = Attestation.objects.filter( solution__plagiarism=False )
 	
 	attestation_dict = {} 	#{(task_id,user_id):attestation}
 	for attestation in attestations:
