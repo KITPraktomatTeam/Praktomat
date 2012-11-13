@@ -31,7 +31,7 @@ class CreateFileChecker(Checker):
 		filename = self.filename if self.filename else self.file.path
 		path = os.path.join(os.path.join(env.tmpdir(),string.lstrip(self.path,"/ ")),os.path.basename(filename))
 		overridden = os.path.exists(path)
-		copy_file(self.file.path, path)
+		copy_file_to_directory_verbatim(self.file.path, path,to_is_directory=False)
 		result = CheckerResult(checker=self)
 		if not overridden:
 			result.set_log("")
@@ -40,7 +40,7 @@ class CreateFileChecker(Checker):
 			result.set_log("The file '%s' already exists. Do NOT include it in your submission!" % escape(os.path.join(self.path, os.path.basename(filename))))
 			result.set_passed(False)
 		source_path = os.path.join(string.lstrip(self.path,"/ "), os.path.basename(filename))
-		env.add_source(source_path, get_unicode(self.file.read()))
+		env.add_source(source_path, self.file.read())
 		return result
 
 	def show_publicly(self,passed):

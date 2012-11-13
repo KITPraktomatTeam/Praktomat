@@ -52,8 +52,9 @@ def copy_file(from_file_path, to_file_path, replace=[], override=True):
 	create_file(to_file_path, content, replace=replace, override=override)
 
 
-def copy_file_to_directory_verbatim(from_path, to_path, override=True):
-	to_path = os.path.join(to_path, os.path.basename(from_path))
+def copy_file_to_directory_verbatim(from_path, to_path, override=True,to_is_directory=True):
+	if to_is_directory:
+		to_path = os.path.join(to_path, os.path.basename(from_path))
 	dirname = os.path.dirname(to_path)
 	if not os.path.exists(dirname):
 		makedirs(dirname)
