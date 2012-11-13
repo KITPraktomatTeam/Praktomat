@@ -25,7 +25,7 @@ class TaskAdmin(admin.ModelAdmin):
 			'fields': ('title' , ('publication_date', 'submission_date'), 'description', ('supported_file_types', 'max_file_size'), 'final_grade_rating_scale')
 		}),
 	)
-	list_display = ('title','publication_date','submission_date')
+	list_display = ('title','publication_date','submission_date','all_checker_finished')
 	list_filter = ['publication_date']
 	search_fields = ['title']
 	date_hierarchy = 'publication_date'
