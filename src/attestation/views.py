@@ -79,18 +79,32 @@ def statistics(request,task_id):
 	all_items = task.final_grade_rating_scale.ratingscaleitem_set.values_list('name','position')
 	final_grade_rating_scale_items = "['" + "','".join([name.strip() for (name,position) in all_items]) + "']"
 
-	my_tutorial_ratings = RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__author__tutored_tutorials__in = tutorials)
-	ratings             = RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True)
+	all_ratings = []
+	if in_group(request.user,'Trainer'):
+		# Each Tutors ratings
+		for t in User.objects.filter(groups__name='Tutor'):
+			all_ratings.append({'title'   : u"Final Grades for Students tutored by %s" % unicode(t),
+		                            'desc'    : u"This chart showes the distribution of final grades for students from tutorials held by  %s. Plagiarism is excluded." % unicode(t),
+                                            'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__solution__author__tutorial__in = t.tutored_tutorials.all())})
+	else:
+		# The Tutors ratings
+		all_ratings.append(        {'title'   : u"Final grades (My Tutorials)",
+		                            'desc'    : u"This chart showes the distribution of final grades for students from your tutorials. Plagiarism is excluded.",
+                                            'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__solution__author__tutorial__in = tutorials)})
+	# Overall ratings
+	all_ratings.append(                {'title'   : u"Final grades (overall)",
+	                                    'desc'    : u"This chart showes the distribution of final grades for all students. Plagiarism is excluded.",
+                                            'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True)})
 
-	[ratings,my_tutorial_ratings] = [ [list(rating) for rating in rs.annotate(Count('id')).values_list('position','id__count')] for rs in [ratings,my_tutorial_ratings] ]
+	for i,r in enumerate(all_ratings):
+		all_ratings[i]['ratings'] = [list(rating) for rating in r['ratings'].annotate(Count('id')).values_list('position','id__count')]
 
-	# ratings = [ list(rating) for rating in ratings.annotate(Count('id')).values_list('position','id__count')]
 	
 	return render_to_response("attestation/statistics.html", {'task':task, \
 															'user_count': user_count, 'solution_count': final_solution_count,\
 															'submissions':submissions, 'submissions_final':submissions_final, 'creation_times':creation_times, 'creation_times_final':creation_times_final, 'acc_submissions':acc_submissions, \
 															'attestations':attestations, \
-															'final_grade_rating_scale_items' :final_grade_rating_scale_items, 'ratings':ratings, 'my_tutorial_ratings' : my_tutorial_ratings \
+															'final_grade_rating_scale_items' :final_grade_rating_scale_items, 'all_ratings':all_ratings, \
 															}, context_instance=RequestContext(request))
 
 def daterange(start_date, end_date):

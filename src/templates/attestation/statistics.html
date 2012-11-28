@@ -270,6 +270,8 @@ function grade_chart(div_to_render_into, title, scale_items,ratings){
    	},
       xAxis: {
          categories: scale_items,
+         min: 0,
+         max: scale_items.length-1,
          labels: {
             rotation: -45,
             align: 'right',
@@ -321,11 +323,9 @@ function grade_chart(div_to_render_into, title, scale_items,ratings){
       }]
    });
 }
-{% if user|in_group:'Tutor'%}
-var final_grade_chart_my_turial = grade_chart('final_grade_chart_my_tutorial','Final Grades (my Tutorials)',{{ final_grade_rating_scale_items|safe }},{{my_tutorial_ratings}});
-{% endif %}
-var final_grade_chart           = grade_chart('final_grade_chart',            'Final Grades'               ,{{ final_grade_rating_scale_items|safe }},{{ratings}});
-	
+{% for ratings in all_ratings %}
+var final_grade_chart_{{forloop.counter}} = grade_chart('final_grade_chart_{{forloop.counter}}','{{ratings.title}}',{{ final_grade_rating_scale_items|safe }},{{ratings.ratings}});
+{% endfor %}
             });
 </script>
 {% endblock %} 
@@ -340,12 +340,9 @@ var final_grade_chart           = grade_chart('final_grade_chart',            'F
 {% if task.expired %} 
 	<div id="attestation_chart"></div>
 	<p>This chart gives an overview of how many attestations are ready to be published and how many of these are allready published by the tutors.</p><br/><br/>
-
-{% if user|in_group:'Tutor'%}
-	<div id="final_grade_chart_my_tutorial"></div>
-	<p>This chart showes the distribution of final grades for students from your tutorials. Plagiarism is excluded.</p><br/><br/>
-{% endif %}
-	<div id="final_grade_chart"></div>
-	<p>This chart showes the distribution of final grades. Plagiarism is excluded.</p><br/><br/>
+{% for ratings in all_ratings %}
+	<div id="final_grade_chart_{{forloop.counter}}"></div>
+	<p>{{ratings.desc}}</p><br/><br/>
+{% endfor %}
 {% endif %}
 {% endblock %}
