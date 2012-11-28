@@ -35,8 +35,8 @@
 			<th>Name</th>
 			<th>Matriklnr</th>
 			<th>Username</th>
-			{% for result in prototype %}
-			<th>{{result.checker}}</th>
+			{% for checker in checkers_seen %}
+			<th align="center">{{checker}}</th>
 			{% endfor %}
 		</tr>
 		{% for user,results,solution in users_with_checkerresults %}
@@ -45,7 +45,11 @@
 			<td nowrap>{{user.mat_number}}</td>
 			<td nowrap>{{user.username}}</td>
 			{% for result in results %}
-	<td><img src="{{MEDIA_URL}}admin/img/admin/icon-{{ result.passed|yesno:"yes,no" }}.gif" alt="{{result.passed}}"></td>
+				{% if result %} 
+			<td align="center"><img src="{{MEDIA_URL}}admin/img/admin/icon-{{ result.passed|yesno:"yes,no" }}.gif" alt="{{result.passed}}"></td>
+				{% else %}
+			<td></td>
+                	        {% endif %}
 			{% endfor %}
 		{% endfor %}
 	</table>
