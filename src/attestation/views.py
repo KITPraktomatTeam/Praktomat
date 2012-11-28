@@ -84,16 +84,16 @@ def statistics(request,task_id):
 		# Each Tutors ratings
 		for t in User.objects.filter(groups__name='Tutor'):
 			all_ratings.append({'title'   : u"Final Grades for Students tutored by %s" % unicode(t),
-		                            'desc'    : u"This chart showes the distribution of final grades for students from tutorials held by  %s. Plagiarism is excluded." % unicode(t),
+		                            'desc'    : u"This chart shows the distribution of final grades for students from tutorials held by  %s. Plagiarism is excluded." % unicode(t),
                                             'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__solution__author__tutorial__in = t.tutored_tutorials.all())})
 	else:
 		# The Tutors ratings
 		all_ratings.append(        {'title'   : u"Final grades (My Tutorials)",
-		                            'desc'    : u"This chart showes the distribution of final grades for students from your tutorials. Plagiarism is excluded.",
+		                            'desc'    : u"This chart shows the distribution of final grades for students from your tutorials. Plagiarism is excluded.",
                                             'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__solution__author__tutorial__in = tutorials)})
 	# Overall ratings
 	all_ratings.append(                {'title'   : u"Final grades (overall)",
-	                                    'desc'    : u"This chart showes the distribution of final grades for all students. Plagiarism is excluded.",
+	                                    'desc'    : u"This chart shows the distribution of final grades for all students. Plagiarism is excluded.",
                                             'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True)})
 
 	for i,r in enumerate(all_ratings):
