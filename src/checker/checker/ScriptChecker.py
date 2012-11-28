@@ -38,7 +38,7 @@ class ScriptChecker(Checker):
 		# Run the tests -- execute dumped shell script 'script.sh'
 		args = ["sh",  os.path.basename(self.shell_script.name)]
 		environ = {}
-		environ['USER'] = env.user().get_full_name()
+		environ['USER'] = str(env.user().id)
 		environ['HOME'] = test_dir
 		
 		(output, error, exitcode) = execute(args, working_directory=test_dir, environment_variables=environ)
