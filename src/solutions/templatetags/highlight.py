@@ -1,6 +1,7 @@
 from django import template
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
+from django.utils.html import escape
 import re
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
@@ -19,7 +20,7 @@ def colorize(value, arg=None):
     try:
         return mark_safe(highlight(value,get_lexer(value,arg),HtmlFormatter()))
     except ClassNotFound:
-        return value
+        return mark_safe("<pre>%s</pre>" % escape(value))
 
 
 @register.filter(name='highlight_table')
@@ -28,7 +29,7 @@ def colorize_table(value,arg=None):
     try:
         return mark_safe(highlight(value,get_lexer(value,arg),HtmlFormatter(linenos='table')))
     except ClassNotFound:
-        return value
+        return mark_safe("<pre>%s</pre>" % escape(value))
 
 rx_diff = re.compile('^(?P<first_line>\d*</pre></div></td><td class="code"><div class="highlight"><pre>)?(?P<line>(<span class=".*?">)?(\+|-|\?).*$)')     
 @register.filter
