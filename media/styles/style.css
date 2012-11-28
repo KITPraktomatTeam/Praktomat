@@ -945,6 +945,13 @@ IE8 */
 	float: right;
 }
 
+
+a.checkerinline:link  {text-decoration:none;}
+a.checkerinline:hover   {color:black;}
+a.checkerinline:visited {color:black;}
+a.checkerinline:link    {color:black;}
+a.checkerinline:active  {color:black;}
+
 .shib_hello_shib {
 	font-size:x-large;
 	text-align:center;

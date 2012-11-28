@@ -2,7 +2,7 @@
 $(document).ready(function(){
 	$("h3.clickable").css('cursor', 'pointer').click(function(){
 		$(this).next("div").slideToggle("fast");
-		$(this).children("span").toggleClass("ui-icon-triangle-1-s").toggleClass("ui-icon-triangle-1-e");
+		$(this).children("a").children("span").toggleClass("ui-icon-triangle-1-s").toggleClass("ui-icon-triangle-1-e");
 	}).click();
 	//Stop the link click from doing its normal thing
 	return false;
