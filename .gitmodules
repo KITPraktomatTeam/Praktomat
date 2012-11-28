@@ -1,3 +1,7 @@
 [submodule "media/frameworks/ace"]
 	path = media/frameworks/ace
 	url = git://github.com/ajaxorg/ace.git
+
+[submodule "media/frameworks/jquery.fast-confirm"]
+	path = media/frameworks/jquery.fast-confirm
+	url = git://github.com/pjparra/Fast-Confirm.git
