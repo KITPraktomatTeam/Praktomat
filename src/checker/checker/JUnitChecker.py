@@ -13,6 +13,13 @@ from checker.compiler.JavaBuilder import JavaBuilder
 
 RXFAIL	   = re.compile(r"^(.*)(FAILURES!!!|your program crashed|cpu time limit exceeded|ABBRUCH DURCH ZEITUEBERSCHREITUNG|Could not find class|Killed|failures)(.*)$",	re.MULTILINE)
 
+class IgnoringJavaBuilder(JavaBuilder):
+	_ignore = []
+
+	def get_file_names(self,env):
+		rxarg = re.compile(self.rxarg())
+		return [name for (name,content) in env.sources() if rxarg.match(name) and (not name in self._ignore)]
+
 class JUnitChecker(Checker):
 	""" New Checker for JUnit3 Unittests. """
 	
@@ -21,6 +28,7 @@ class JUnitChecker(Checker):
 	class_name = models.CharField(max_length=100, help_text=_("The fully qualified name of the Testcase class"))
 	test_description = models.TextField(help_text = _("Description of the Testcase. To be displayed on Checker Results page when checker is  unfolded."))
 	name = models.CharField(max_length=100, help_text=_("Name of the Testcase. To be displayed as title on Checker Results page"))
+	ignore = models.CharField(max_length=4096, help_text=_("space-seperated list of files to be ignored during compilation"),default="")
 
 	JUNIT_CHOICES = (
 	  (u'junit4', u'JUnit 4'),
@@ -42,8 +50,10 @@ class JUnitChecker(Checker):
 		return (RXFAIL.search(output) == None)
 
 	def run(self, env):
-		java_builder = JavaBuilder(_flags="", _libs=self.junit_version,_file_pattern=r"^.*\.[jJ][aA][vV][aA]$",_output_flags="")
+		java_builder = IgnoringJavaBuilder(_flags="", _libs=self.junit_version,_file_pattern=r"^.*\.[jJ][aA][vV][aA]$",_output_flags="")
+		java_builder._ignore = self.ignore.split(" ")
 
+		
 		build_result = java_builder.run(env)
 
 		if not build_result.passed:
