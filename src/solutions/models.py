@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import zipfile
+import tarfile
 import tempfile
 import mimetypes
 import shutil
@@ -111,7 +112,7 @@ class SolutionFile(models.Model):
 		return 'SolutionArchive/Task_' + unicode(solution.task.id) + '/User_' + solution.author.username + '/Solution_' + unicode(solution.id) + '/' + filename
 	
 	solution = models.ForeignKey(Solution)
-	file = models.FileField(upload_to = _get_upload_path, max_length=500, help_text = _('Source code file as part of a solution or Zip file containing multiple solution files.')) 
+	file = models.FileField(upload_to = _get_upload_path, max_length=500, help_text = _('Source code file as part of a solution an archive file (.zip, .tar, .tar.gz or .tar.bz2) containing multiple solution files.')) 
 	mime_type = models.CharField(max_length=100, help_text = _("Guessed file type. Automatically  set on save()."))
 	
 	# ignore hidden or os-specific files, etc. in zipfiles 
@@ -127,7 +128,7 @@ class SolutionFile(models.Model):
 	
 	def save(self, force_insert=False, force_update=False, using=None):
 		""" override save method to automatically expand zip files"""
-		if self.file.name[-3:].upper() == 'ZIP':
+		if self.file.name.upper().endswith('.ZIP'):
 			zip = zipfile.ZipFile(self.file, 'r')
 			for zip_file_name in zip.namelist():
 				if not self.ignorred_file_names_re.search(zip_file_name):
@@ -135,6 +136,15 @@ class SolutionFile(models.Model):
 					temp_file = tempfile.NamedTemporaryFile()									# autodeleted
 					temp_file.write(zip.open(zip_file_name).read()) 
 					zip_file_name = zip_file_name  if isinstance(zip_file_name, unicode) else unicode(zip_file_name,errors='replace')
+					new_solution_file.file.save(zip_file_name, File(temp_file), save=True)		# need to check for filenames begining with / or ..?
+		elif self.file.name.upper().endswith(('.TAR.GZ', '.TAR.BZ2', '.TAR')):
+			tar = tarfile.open(fileobj = self.file)
+			for member in tar.getmembers():
+				if not self.ignorred_file_names_re.search(member.name) and member.isfile():
+					new_solution_file = SolutionFile(solution=self.solution)
+					temp_file = tempfile.NamedTemporaryFile()									# autodeleted
+					temp_file.write(tar.extractfile(member.name).read()) 
+					zip_file_name = member.name  if isinstance(member.name, unicode) else unicode(member.name,errors='replace')
 					new_solution_file.file.save(zip_file_name, File(temp_file), save=True)		# need to check for filenames begining with / or ..?
 		else:
 			self.mime_type = mimetypes.guess_type(self.file.name)[0]
