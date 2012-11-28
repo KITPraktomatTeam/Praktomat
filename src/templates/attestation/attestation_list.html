@@ -3,6 +3,7 @@
 {% block extrahead %}{{ block.super }}
 <script type="text/javascript" src="{{MEDIA_URL}}/frameworks/jquery/jquery.tools.min.js"></script>
 <script type="text/javascript" src="{{MEDIA_URL}}/frameworks/dotdotdot/jquery.dotdotdot-packed.js"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}/frameworks/jquery.confirm/jquery.confirm.js"></script>
 <script type="text/javascript">	
  $(document).ready(function(){
  	$("#help_icon").tooltip({
@@ -23,7 +24,16 @@
 			}
 		});
 	});
- })
+	$(".confirm").confirm({
+		msg: 'Really publish all final attestations? ',
+		buttons: {
+			ok: 'Publish',
+			cancel: 'Cancel',
+			wrapper: '<button></button>',
+			separator: ' ',
+		},
+	})
+})
 
 </script>
 {% endblock %}
@@ -153,7 +163,7 @@
 			
 			{% if not user|in_group:'Trainer'%}
 				<form enctype="multipart/form-data" method="post" action="">{% csrf_token %}	
-					<input type="submit" value="Publish all final attestations" {% if published %} disabled {% endif %}/>
+					<input type="submit" class="confirm" value="Publish all final attestations" {% if published %} disabled {% endif %}/>
 					{% if published %}	
 						<span id='comment'>All attested Solutions are already published.</span> 
 					{% endif %}
