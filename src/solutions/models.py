@@ -198,10 +198,10 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 		# TODO: make this work for anonymous attesration, too
 		if get_settings().anonymous_attestation:
 			project_path = 'User' + index
-			project_name = 'User ' + index 
+			project_name = unicode(solution.task) + u"-" + 'User ' + index 
 		else:
 			project_path = path_for_user(solution.author)
-			project_name = solution.author.get_full_name() 
+			project_name = unicode(solution.task) + u"-" + solution.author.get_full_name() 
 		base_name = path_for_task(solution.task) + '/' + project_path + '/'
 
 		createfile_checker_files = []
