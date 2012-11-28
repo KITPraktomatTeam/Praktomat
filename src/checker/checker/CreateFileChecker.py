@@ -4,6 +4,7 @@ import os, string
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ValidationError
 from checker.models import Checker, CheckerResult, CheckerFileField
 from utilities.file_operations import *
 from utilities.encoding import *
@@ -45,7 +46,11 @@ class CreateFileChecker(Checker):
 
 	def show_publicly(self,passed):
 		return super(CreateFileChecker,self).show_publicly(passed) or (not passed)
-	
+
+	def clean(self):
+		super(CreateFileChecker, self).clean()
+		if not (self.required and self.always and (not self.public)): raise ValidationError("Florian says: CreateFileCheckers have to be required, always, non-public)")
+ 
 from checker.admin import	CheckerInline, AlwaysChangedModelForm
 
 class CopyForm(AlwaysChangedModelForm):

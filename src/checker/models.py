@@ -11,6 +11,7 @@ from tasks.models import Task
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ValidationError
 from utilities import encoding, file_operations
 from utilities.deleting_file_field import DeletingFileField
 
@@ -137,6 +138,9 @@ It is *required* - it must be passed for submission
 		""" Returns the list of passed Checkers required by this checker.
 		Overloaded by subclasses. """ 
 		return []	
+
+	def clean(self):
+		if self.required and (not self.show_publicly(False)): raise ValidationError("Checker is required, but Failure isn't publicly reported to student during submission")
 
 
 class CheckerEnvironment:
