@@ -75,7 +75,7 @@ class User(BasicUser):
 		
 		2. 	If the activation key has expired this method returns ``False``.
 		
-		3. 	If an other user allready activated an account with the same matnumber this method returns ``False``.
+		3. 	If an other user already activated an account with the same matnumber this method returns ``False``.
 		"""
 		dublicate_matnumber = User.objects.filter(mat_number=self.mat_number, is_active=True).count() >= 1
 		return not self.is_activated() and not self.activation_key_expired() and not dublicate_matnumber

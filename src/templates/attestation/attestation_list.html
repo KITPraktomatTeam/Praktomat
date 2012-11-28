@@ -155,7 +155,7 @@
 				<form enctype="multipart/form-data" method="post" action="">{% csrf_token %}	
 					<input type="submit" value="Publish all final attestations" {% if published %} disabled {% endif %}/>
 					{% if published %}	
-						<span id='comment'>All attested Solutions are allready published.</span> 
+						<span id='comment'>All attested Solutions are already published.</span> 
 					{% endif %}
 				</form>
 			{% endif %}

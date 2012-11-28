@@ -185,7 +185,7 @@ class CheckerEnvironment:
 		return self._user
 	
 	def program(self):
-		""" Returns the name of the executable program, if allready set. """
+		""" Returns the name of the executable program, if already set. """
 		return self._program
 
 	def set_program(self, program):
@@ -240,7 +240,7 @@ class CheckerResult(models.Model):
 def check(solution, run_all = 0): 
 	"""Builds and tests this solution."""
 	
-	# Delete previous results if the checker have allready been run
+	# Delete previous results if the checker have already been run
 	solution.checkerresult_set.all().delete()
 	# set up environment
 	env = CheckerEnvironment(solution)

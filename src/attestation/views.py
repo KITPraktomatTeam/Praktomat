@@ -209,7 +209,7 @@ def edit_attestation(request, attestation_id):
 	
 	attest = get_object_or_404(Attestation, pk=attestation_id)
 	if attest.published or attest.author != request.user:
-		# If if this attestation is allready final or not by this user redirect to view_attestation
+		# If if this attestation is already final or not by this user redirect to view_attestation
 		return HttpResponseRedirect(reverse('view_attestation', args=[attestation_id]))
 	
 	solution = attest.solution

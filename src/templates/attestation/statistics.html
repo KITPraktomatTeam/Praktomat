@@ -339,7 +339,7 @@ var final_grade_chart_{{forloop.counter}} = grade_chart('final_grade_chart_{{for
 <p>This chart plots on which time of day the users were most active.</p><br/><br/>
 {% if task.expired %} 
 	<div id="attestation_chart"></div>
-	<p>This chart gives an overview of how many attestations are ready to be published and how many of these are allready published by the tutors.</p><br/><br/>
+	<p>This chart gives an overview of how many attestations are ready to be published and how many of these are already published by the tutors.</p><br/><br/>
 {% for ratings in all_ratings %}
 	<div id="final_grade_chart_{{forloop.counter}}"></div>
 	<p>{{ratings.desc}}</p><br/><br/>

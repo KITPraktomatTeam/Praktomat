@@ -54,7 +54,7 @@ class MyRegistrationForm(UserBaseCreationForm):
 			if user.is_activated():
 				trainers = map(lambda user: "<a href='mailto:%s'>%s</a>" % (user.email, user.get_full_name() or user.email), Group.objects.get(name='Trainer').user_set.all())
 				trainers = ', '.join(trainers)
-				raise forms.ValidationError(mark_safe("A user with this number is allready registered. Please Contact an Trainer: %s" % trainers ))
+				raise forms.ValidationError(mark_safe("A user with this number is already registered. Please Contact an Trainer: %s" % trainers ))
 		return data
 
 	def clean_username(self):
