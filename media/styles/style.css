@@ -638,9 +638,13 @@ body.fullscreen{
 	display: inline-block;
 }
 
-#attestation_list #comment {
+#attestation_list .comment {
 	color: #c0c0c0;
-	width: 60%;
+	width: 40%;
+	height: 1em;
+	vertical-align: bottom;
+	display: inline-block;
+	overflow: hidden;
 	margin-left: 30px;
 }
 

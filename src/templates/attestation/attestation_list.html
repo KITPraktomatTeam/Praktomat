@@ -2,6 +2,7 @@
 {% load i18n %}{% load in_group %}
 {% block extrahead %}{{ block.super }}
 <script type="text/javascript" src="{{MEDIA_URL}}/frameworks/jquery/jquery.tools.min.js"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}/frameworks/dotdotdot/jquery.dotdotdot-packed.js"></script>
 <script type="text/javascript">	
  $(document).ready(function(){
  	$("#help_icon").tooltip({
@@ -12,6 +13,15 @@
 	});
 	$("#attest_selected_user_button").click(function(){
 		location.href = $("#solution_selector")[0].value;
+	});
+	$(".dotdotdot").each(function(){
+		$(this).dotdotdot({
+			callback: function (isTruncated, orgContent) {
+				if (isTruncated) {
+					$(this).attr('title',$(orgContent).text());
+				}
+			}
+		});
 	});
  })
 
@@ -114,7 +124,7 @@
 						{% if attestation.solution.plagiarism %}
 							<span class='plagiarism error'><span class="icon ui-icon-alert icon-red"></span>{% trans "Marked as Plagiarism" %}</span>
 						{% endif %}
-						<span id='comment'>{{ attestation.private_comment|truncatewords:15}}</span>
+						<span class="comment dotdotdot">{{ attestation.private_comment}}</span>
 						<br/>
 					</div>
 				{% endfor %}
@@ -130,7 +140,7 @@
 						{% if attestation.solution.plagiarism %}
 							<span class='plagiarism error'><span class="icon ui-icon-alert icon-red"></span>{% trans "Marked as Plagiarism" %}</span>
 						{% endif %}
-						<span id='comment'>{{ attestation.private_comment|truncatewords:15}}</span>
+						<span class='comment dotdotdot'>{{ attestation.private_comment}}</span>
 						<span style="float:right">Created: {{attestation.created|date:"Y-m-d H:i"}}</span>
 						<br/>
 					</div>
