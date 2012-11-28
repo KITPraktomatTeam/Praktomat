@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<fileset-config file-format-version="1.2.0" simple-config="false" sync-formatter="false">
+{% for file in checkstyle_files %}
+  <local-check-config name="{{file}}" location="{{file}}" type="project" description="">
+    <additional-data name="protect-config-file" value="true"/>
+  </local-check-config>
+{% endfor %}
+{% for file in checkstyle_files %}
+  <fileset name="all-{{file}}" enabled="true" check-config-name="{{file}}" local="true">
+    <file-match-pattern match-pattern="." include-pattern="true"/>
+  </fileset>
+{% endfor %}
+</fileset-config>
+

@@ -97,17 +97,17 @@ def solution_detail(request,solution_id,full):
 
 
 @login_required
-def solution_download(request,solution_id):
+def solution_download(request,solution_id,full):
 	solution = get_object_or_404(Solution, pk=solution_id)	
 	if (not (solution.author == request.user or in_group(request.user,'Trainer,Tutor'))):
 		return access_denied(request)
-	zip_file = get_solutions_zip([solution])
+	zip_file = get_solutions_zip([solution], full and in_group(request.user,'Trainer,Tutor'))
 	response = HttpResponse(zip_file.read(), mimetype="application/zip")
 	response['Content-Disposition'] = 'attachment; filename=Solution.zip'
 	return response
 
 @login_required
-def solution_download_for_task(request, task_id):
+def solution_download_for_task(request, task_id,full):
 	if (not in_group(request.user,'Trainer,Tutor')):
 		return access_denied(request)
 
@@ -115,7 +115,7 @@ def solution_download_for_task(request, task_id):
 	solutions = task.solution_set.filter(final=True)
 	if not in_group(request.user,'Trainer'):
 		solutions = solutions.filter(author__tutorial__id__in=request.user.tutored_tutorials.values_list('id', flat=True))
-	zip_file = get_solutions_zip(solutions)
+	zip_file = get_solutions_zip(solutions,full)
 	response = HttpResponse(zip_file.read(), mimetype="application/zip")
 	response['Content-Disposition'] = 'attachment; filename=Solutions.zip'
 	return response
@@ -127,21 +127,22 @@ def checker_result_list(request,task_id):
 	if (not in_group(request.user,'Trainer')):
 		return access_denied(request)
 	else:
-
-		users_with_checkerresults = [(user,checkerresults,final_solution)                              \
+		users_with_checkerresults = [(user,dict(checkerresults),final_solution)              \
 		for user           in User.objects.filter(groups__name='User').order_by('mat_number')          \
 		for final_solution in Solution.objects.filter(author=user,final=True,task=task).values() \
-		for checkerresults in [sorted(CheckerResult.objects.all().filter(solution=final_solution['id']),key=lambda result : result.checker.order)]]
+		for checkerresults in [[ (result.checker, result) for result in CheckerResult.objects.all().filter(solution=final_solution['id'])]] ]
 
-		number_of_checker = None		
-		for checkerresults in users_with_checkerresults:
-			if (number_of_checker and (len(checkerresults) != number_of_checker)):
-				return acces_denied(request)	#TODO: issue proper error message
-			else:
-				number_of_checker = len(checkerresults) 
+		checkers_seen = set([])
+		for _, results,_  in users_with_checkerresults:
+		    checkers_seen |= set(results.keys())
+		checkers_seen = sorted(checkers_seen, key=lambda checker: checker.order)
 
-		_, prototype,_ = users_with_checkerresults[0]
-		return render_to_response("solutions/checker_result_list.html", {"users_with_checkerresults": users_with_checkerresults,  "prototype":  prototype, "task":task},context_instance=RequestContext(request))
+		for i,(user,results,final_solution) in enumerate(users_with_checkerresults):
+			users_with_checkerresults[i] = (user,
+			                                [results[checker] if checker in results else None for (checker) in checkers_seen],
+			                                final_solution)
+
+		return render_to_response("solutions/checker_result_list.html", {"users_with_checkerresults": users_with_checkerresults,  'checkers_seen':checkers_seen, "task":task},context_instance=RequestContext(request))
 
 @staff_member_required
 def solution_run_checker(request,solution_id):

@@ -10,8 +10,18 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
+{% if checkstyle %}
+		<buildCommand>
+			<name>net.sf.eclipsecs.core.CheckstyleBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+{% endif %}
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
+{% if checkstyle %}
+		<nature>net.sf.eclipsecs.core.CheckstyleNature</nature>
+{% endif %}
 	</natures>
 </projectDescription>

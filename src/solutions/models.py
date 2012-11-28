@@ -180,7 +180,7 @@ class SolutionFile(models.Model):
 		else:
 			file_operations.create_file(new_file_path, self.content())
 
-def get_solutions_zip(solutions):
+def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 	
 	zip_file = tempfile.SpooledTemporaryFile()
 	zip = zipfile.ZipFile(zip_file,'w')
@@ -194,13 +194,38 @@ def get_solutions_zip(solutions):
 			project_name = solution.author.get_full_name() 
 		base_name = path_for_task(solution.task) + '/' + project_path + '/'
 
-		zip.writestr((base_name+'.project').encode('cp437'), render_to_string('solutions/eclipse/project.xml', { 'name': project_name }).encode("utf-8"))
-		zip.writestr((base_name+'.classpath').encode('cp437'), render_to_string('solutions/eclipse/classpath.xml', { }))
+		createfile_checker_files = []
+		checkstyle_checker_files = []
+		junit3 = False
+		junit4 = False
+		checkstyle = False
+		if include_file_copy_checker_files:
+			createfile_checker = solution.task.createfilechecker_set.all()
+			checkstyle_checker = solution.task.checkstylechecker_set.all()
+			junit_checker      = solution.task.junitchecker_set.all()
+			junit3     = bool([ 0 for j in junit_checker if  j.junit_version == 'junit3' ])
+			junit4     = bool([ 0 for j in junit_checker if  j.junit_version == 'junit4' ])
+			checkstyle = bool(checkstyle_checker)
+
+			createfile_checker_files = [(checker.path + '/' + checker.filename,        checker.file)          for checker in createfile_checker]
+			checkstyle_checker_files = [(os.path.basename(checker.configuration.name), checker.configuration) for checker in checkstyle_checker]
 		
-		for index, solutionfile in enumerate(solution.solutionfile_set.all()):
-			file = solutionfile.file
-			name = (base_name + solutionfile.path()).encode('cp437','ignore')
-			zip.write(file.path, name)
+		zip.writestr((base_name+'.project').encode('cp437'), render_to_string('solutions/eclipse/project.xml', { 'name': project_name, 'checkstyle' : checkstyle }).encode("utf-8"))
+		zip.writestr((base_name+'.classpath').encode('cp437'), render_to_string('solutions/eclipse/classpath.xml', {'junit3' : junit3, 'junit4': junit4}))
+		if checkstyle:
+			zip.writestr((base_name+'.checkstyle').encode('cp437'), render_to_string('solutions/eclipse/checkstyle.xml', {'checkstyle_files' : [os.path.basename(checker.configuration.name) for checker in checkstyle_checker]}))
+
+
+		solution_files  = [ (solutionfile.path(), solutionfile.file) for solutionfile in solution.solutionfile_set.all()]
+
+		for  (name,file) in solution_files + createfile_checker_files + checkstyle_checker_files:
+			zippath = os.path.normpath((base_name + name).encode('cp437','ignore'))
+			try: # Do not overwrite files from the solution by checker files
+				zip.getinfo(zippath)
+			except KeyError: 
+				zip.write(file.path, zippath)
+				assert zip.getinfo(zippath) # file was really added under name "zippath" (not only some normalization thereof)
+
 	zip.close()	
 	zip_file.seek(0)
 	return zip_file

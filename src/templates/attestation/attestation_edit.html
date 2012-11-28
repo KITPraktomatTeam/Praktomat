@@ -24,8 +24,11 @@
 				  	  if (ui.panel.id == "download") {
 					    window.open("{% url solution_download solution_id=solution.id %}","Download");
 					    return false;
-					  } else  return true;
-					}
+					  } else if (ui.panel.id == "download_full") {
+					    window.open("{% url solution_download solution_id=solution.id full="full" %}","Download");
+					    return false;
+					  } else return true;
+				}
 			})
 			$( "#ace_settings" ).dialog({ autoOpen: false, resizable: false, title: "ACE Editor Settings" });
 			$( "#ace_settings_button" ).click( function(){
@@ -71,7 +74,8 @@
 			<li><a href="#solution">Solution</a></li>
 			<li><a href="#annotated_solution_files">Annotate solution files</a></li>
 			<li><a href="#attestation">Attest solution</a></li>
-			<li><a href="#download"><span class="ui-icon ui-icon-circle-triangle-s"></span>Download Solution</a></li>
+			<li><a href="#download"><span class="ui-icon ui-icon-circle-triangle-s"></span>Download</a></li>
+			<li><a href="#download_full"><span class="ui-icon ui-icon-circle-triangle-s"></span>Download (incl. checker files)</a></li>
 		</ul>
 		
 		<div id="task">
@@ -142,6 +146,8 @@
 
 		</div>
 		<div id="download">
+		</div>
+		<div id="download_full">
 		</div>
 	</div>
 	<div>
