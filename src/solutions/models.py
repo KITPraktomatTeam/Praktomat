@@ -112,7 +112,7 @@ class SolutionFile(models.Model):
 		return 'SolutionArchive/Task_' + unicode(solution.task.id) + '/User_' + solution.author.username + '/Solution_' + unicode(solution.id) + '/' + filename
 	
 	solution = models.ForeignKey(Solution)
-	file = models.FileField(upload_to = _get_upload_path, max_length=500, help_text = _('Source code file as part of a solution an archive file (.zip, .tar, .tar.gz or .tar.bz2) containing multiple solution files.')) 
+	file = models.FileField(upload_to = _get_upload_path, max_length=500, help_text = _('Source code file as part of a solution an archive file (.zip, .tar or .tar.gz) containing multiple solution files.')) 
 	mime_type = models.CharField(max_length=100, help_text = _("Guessed file type. Automatically  set on save()."))
 	
 	# ignore hidden or os-specific files, etc. in zipfiles 
