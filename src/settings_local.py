@@ -23,7 +23,7 @@ LANGUAGE_CODE = 'en-us'
 SITE_NAME = 'Praktomat'
 
 # Identifie this Praktomat among multiple installation on one webserver
-PRAKTOMAT_ID = 'praktomat' 
+PRAKTOMAT_ID = 'default' 
 
 # The URL where this site is reachable. 'http://localhost:8000/' in case of the developmentserver.
 BASE_URL = 'http://localhost:8000/'  + PRAKTOMAT_ID + '/' 
