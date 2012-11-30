@@ -22,8 +22,11 @@ LANGUAGE_CODE = 'en-us'
 # The name that will be displayed on top of the page and in emails.
 SITE_NAME = 'Praktomat'
 
+# Identifie this Praktomat among multiple installation on one webserver
+PRAKTOMAT_ID = 'praktomat' 
+
 # The URL where this site is reachable. 'http://localhost:8000/' in case of the developmentserver.
-BASE_URL = 'http://localhost:8000/'
+BASE_URL = 'http://localhost:8000/'  + PRAKTOMAT_ID + '/' 
 
 # URL that serves the static media files (CSS, JavaScript and images) of praktomat contained in 'media/'.
 # Make sure to use a trailing slash if there is a path component (optional in other cases).
@@ -35,12 +38,13 @@ MEDIA_URL = BASE_URL + 'media/'
 # Examples: "http://foo.com/media/", "/media/".
 ADMIN_MEDIA_PREFIX = BASE_URL + 'media/admin/'
 
+
 SESSION_COOKIE_PATH = '/' + PRAKTOMAT_ID + '/'
 CSRF_COOKIE_NAME = 'csrftoken_' + PRAKTOMAT_ID
 
 # Absolute path to the directory that shall hold all uploaded files as well as files created at runtime.
 # Example: "/home/media/media.lawrence.com/"
-UPLOAD_ROOT = "/Users/danielkleinert/Documents/Arbeit/PraktomatSupport/"
+UPLOAD_ROOT = "/home/praktomat/installations/" + PRAKTOMAT_ID + "/PraktomatSupport/"
 
 
 ADMINS = [
@@ -74,11 +78,11 @@ DEFAULT_FROM_EMAIL = ""
 EMAIL_HOST = "smtp.googlemail.com"
 EMAIL_PORT = 587
 EMAIL_HOST_USER = "praktomat@googlemail.com"
-EMAIL_HOST_PASSWORD = "baertram"
+EMAIL_HOST_PASSWORD = ""
 EMAIL_USE_TLS = True
 
 # Private key used to sign uploded solution files in submission confirmation email
-PRIVATE_KEY = '/Users/danielkleinert/Documents/Arbeit/Praktomat/examples/certificates/privkey.pem'
+PRIVATE_KEY = '/home/praktomat/certificates/privkey.pem'
 
 MANAGERS = ADMINS
 
@@ -86,15 +90,15 @@ MANAGERS = ADMINS
 C_BINARY = 'gcc'
 CXX_BINARY = 'c++'
 JAVA_BINARY = 'javac'
-JAVA_BINARY_SECURE = 'javac'
+JAVA_BINARY_SECURE = '/home/praktomat/installations/' + PRAKTOMAT_ID + '/Praktomat/src/checker/scripts/javac'
 JAVA_GCC_BINARY = 'gcj'
 JVM = 'java'
-JVM_SECURE = 'java'
+JVM_SECURE = '/home/praktomat/installations/' + PRAKTOMAT_ID + '/Praktomat/src/checker/scripts/java'
 FORTRAN_BINARY = 'g77'
-DEJAGNU_RUNTEST = '/usr/local/Cellar/deja-gnu/1.4.4/bin/runtest'
-CHECKSTYLEALLJAR = '/Users/danielkleinert/Documents/Arbeit/checkstyle/checkstyle-all-4.4.jar'
+DEJAGNU_RUNTEST = '/usr/bin/runtest'
+CHECKSTYLEALLJAR = '/home/praktomat/contrib/checkstyle-all-4.4.jar'
 JUNIT38='junit'
-JAVA_LIBS = { 'junit3' : '/usr/share/java/junit.jar', 'junit4' : '/praktomatng/junit-4.10.jar' }
+JAVA_LIBS = { 'junit3' : '/usr/share/java/junit.jar', 'junit4' : '/usr/share/java/junit4.jar' }
 JCFDUMP='jcf-dump'
 
 

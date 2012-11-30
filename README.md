@@ -23,6 +23,7 @@ Prerequisites
 
     sun-java6-jdk (from the "Canonical Parner" Repository)
     junit
+    junit4
     dejagnu
     gcj-jdk (jfc-dump, for checking Submissions for use of javax.* etc)
    
