@@ -22,6 +22,7 @@ class IgnoringJavaBuilder(JavaBuilder):
 
 class JUnitChecker(Checker):
 	""" New Checker for JUnit3 Unittests. """
+	_max_size = 20000
 	
 	# Add fields to configure checker instances. You can use any of the Django fields. (See online documentation)
 	# The fields created, task, public, required and always will be inherited from the abstract base class Checker
@@ -76,7 +77,11 @@ class JUnitChecker(Checker):
 		[output, error, exitcode] = execute(cmd, env.tmpdir(),environment_variables=environ)
 
 		result = CheckerResult(checker=self)
-		
+		# TODO: Dont even read in output longer than _max_size
+		output_length = len(output)  
+		if output_length > JUnitChecker._max_size:
+			output = '======= Warning: Output too long, hence truncated ======\n' + output[0:JUnitChecker._max_size/2] + "\n....\n...\n...\n...\n" + output[output_length-(JUnitChecker._max_size/2):]
+
 		result.set_log('<pre>' + escape(self.test_description) + '\n\n======== Test Results ======\n\n</pre><br/><pre>' + escape(output) + '</pre>')
 		result.set_passed((not exitcode) and self.output_ok(output))
 		return result
