@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import os, re
+from pipes import quote
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.models import Checker, CheckerFileField, CheckerResult, execute
+from checker.models import Checker, CheckerFileField, CheckerResult, execute_arglist
 from utilities.file_operations import *
 
 class ScriptChecker(Checker):
@@ -31,17 +32,20 @@ class ScriptChecker(Checker):
 		This runs the check in the environment ENV, returning a CheckerResult. """
 
 		# Setup
-		test_dir	 = env.tmpdir()
 		replace = [(u'PROGRAM',env.program())] if env.program() else []
-		copy_file_to_directory(self.shell_script.path, test_dir, replace=replace)
+		copy_file_to_directory(self.shell_script.path, env.tmpdir(), replace=replace)
+		os.chmod(env.tmpdir()+'/'+os.path.basename(self.shell_script.name),0750)
 		
 		# Run the tests -- execute dumped shell script 'script.sh'
-		args = ["sh",  os.path.basename(self.shell_script.name)]
+
+		filenames = [quote(name) for (name,content) in env.sources()]
+		args = [env.tmpdir()+'/'+os.path.basename(self.shell_script.name)] + filenames
+
 		environ = {}
 		environ['USER'] = str(env.user().id)
-		environ['HOME'] = test_dir
-		
-		(output, error, exitcode) = execute(args, working_directory=test_dir, environment_variables=environ)
+		environ['HOME'] = env.tmpdir()
+
+		(output, error, exitcode) = execute_arglist(args, working_directory=env.tmpdir(), environment_variables=environ)
 
 		result = CheckerResult(checker=self)
 		if self.remove:
