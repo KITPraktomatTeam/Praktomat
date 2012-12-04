@@ -284,6 +284,7 @@ def load_defaults(settings):
         "givenName": (True, "first_name"),
         "sn": (True, "last_name"),
         "matriculationNumber": (False, "matriculationNumber"),
+        "fieldOfStudyText" : (False, "programme"),
     }
 
     d.SHIB_USERNAME = "email"

@@ -78,6 +78,7 @@ def shib_login(request):
 	user.last_name = attr['last_name']            if attr['last_name']  is not None else user.last_name
 	user.email = attr['email']                    if attr['email']      is not None else user.email
 	user.mat_number = attr['matriculationNumber'] if attr['matriculationNumber'] is not None else user.mat_number 
+	user.programme  = attr['programme']           if attr['programme']  is not None else user.programme
 	user.save()
 
 	user.backend = 'django.contrib.auth.backends.ModelBackend'

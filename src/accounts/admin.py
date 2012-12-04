@@ -13,8 +13,8 @@ class UserAdmin(UserBaseAdmin):
 	model = User
 	
 	# add active status
-	list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'is_trainer', 'is_tutor', 'email', 'date_joined','is_failed_attempt' )
-	list_filter = ('groups', 'tutorial', 'is_staff', 'is_superuser', 'is_active')
+	list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'is_trainer', 'is_tutor', 'email', 'date_joined','is_failed_attempt','programme' )
+	list_filter = ('groups', 'tutorial', 'is_staff', 'is_superuser', 'is_active','programme')
 	search_fields = ['username', 'first_name', 'last_name', 'mat_number', 'email']
 	date_hierarchy = 'date_joined'
 	actions = ['set_active', 'set_inactive', 'set_tutor', 'distribute_to_tutorials', 'export_users']
@@ -22,7 +22,7 @@ class UserAdmin(UserBaseAdmin):
 	# exclude user_permissions
 	fieldsets = (
         (None, {'fields': ('username', 'password')}),
-        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'mat_number')}),
+        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'mat_number','programme')}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
         (_('Groups'), {'fields': ('groups','tutorial')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),

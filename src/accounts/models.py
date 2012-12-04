@@ -26,7 +26,7 @@ class User(BasicUser):
 			RegexValidator("^"+regex+"$", message="This is not a valid student number.", code="")(value)
 	mat_number = models.IntegerField( null=True, blank=True, validators=[validate_mat_number]) # special blank and unique validation in forms
 	final_grade = models.CharField( null=True, blank=True, max_length=100,  help_text = _('The final grade for the whole class.'))
-	
+	programme = models.CharField(null=True, blank=True, max_length=100, help_text = _('The programme the student is enlisted in.'))
 	activation_key=models.CharField(_('activation key'), max_length=40, editable=False)
 	
 	# Use UserManager to get the create_user method, etc.
