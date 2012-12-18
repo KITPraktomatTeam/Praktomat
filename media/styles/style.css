@@ -682,6 +682,21 @@ input[type="submit"]{
 	background-color: #c4ff6f;
 }
 
+#attestation_view div.changed span.addedChar {
+	background-color: #00ff00;
+	font-weight: bold;
+}
+
+#attestation_view div.changed span.deletedChar {
+	background-color: #ff0000;
+	font-weight: bold;
+}
+
+#attestation_view div.changed span.changedChar {
+	background-color: #ffff00;
+	font-weight: bold;
+}
+
 #attestation_view .has_anotations {
 	color: #ff0092;
 }

@@ -31,15 +31,51 @@ def colorize_table(value,arg=None):
     except ClassNotFound:
         return mark_safe("<pre>%s</pre>" % escape(value))
 
-rx_diff = re.compile('^(?P<first_line>\d*</pre></div></td><td class="code"><div class="highlight"><pre>)?(?P<line>(<span class=".*?">)?(\+|-|\?).*$)')     
+rx_diff_pm = re.compile('^(?P<first_line>\d*</pre></div></td><td class="code"><div class="highlight"><pre>)?(?P<line>(<span class=".*?">)?(\+|-).*$)')     
+rx_diff_questionmark = re.compile('(?P<line>(<span class=".*?">)?\?.*$)')     
+rx_tag = re.compile('^(?P<tag>(<[^<]*>)*)(?P<rest>.*)')
 @register.filter
 def highlight_diff(value):
 	"enclose highlighted lines beginning with an +-? in a span"
 	result = ""
+	prevline = None
 	for line in value.splitlines(1):
-		m = rx_diff.match(line)
-		if m:
-			result += (m.group('first_line') or "") + "<div class='changed'>" + m.group('line') + "</div>"
+		m1 = rx_diff_questionmark.match(line)
+		if m1:
+			# We have a ? line. Instead of printing it, we annotate the previous line with the markers, which can be -, ^ or +
+			while line:
+				# First strip all leading tags from both strings
+				m2 = rx_tag.match(line)
+				line = m2.group('rest')
+
+				m2 = rx_tag.match(prevline)
+				result += m2.group('tag')
+				prevline = m2.group('rest')
+
+				if not line or not prevline:
+					result += prevline
+					continue 
+				if line[0] == '+':
+					result += "<span class=\"addedChar\">%s</span>" % prevline[0]
+				elif line[0] == '-':
+					result += "<span class=\"deletedChar\">%s</span>" % prevline[0]
+				elif line[0] == '^':
+					result += "<span class=\"changedChar\">%s</span>" % prevline[0]
+				else:
+					result += prevline[0]
+				line = line[1:]
+				prevline = prevline[1:]
+			prevline = None
 		else:
-			result += line
+			if prevline is not None:
+				result += prevline
+			m = rx_diff_pm.match(line)
+			if m:
+				if m.group('first_line'):
+					result += m.group('first_line')
+				prevline = "<div class='changed'>" + m.group('line') + "</div>"
+			else:
+				prevline = line
+	if prevline is not None:
+		result += prevline
 	return mark_safe(result)
