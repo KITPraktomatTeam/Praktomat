@@ -65,7 +65,7 @@ class AnnotatedSolutionFile(models.Model):
 		original = self.solution_file.content().replace("\r\n","\n").replace("\r","\n").splitlines(0)
 		anotated = self.content.replace("\r\n","\n").replace("\r","\n").splitlines(0)
 		result = list(d.compare(original, anotated))
-		return "\n".join(result)
+		return "\n".join(map(lambda l: l.strip("\n"), result))
 	
 	def __unicode__(self):
 		return self.solution_file.__unicode__()
