@@ -23,7 +23,7 @@ class Task(models.Model):
 	model_solution = models.ForeignKey('solutions.Solution', blank=True,
 			null=True, related_name='model_solution_task')
 	all_checker_finished = models.BooleanField(default=False, editable=False, help_text = _("Indicates whether the checker which don't run immediately on submission have been executed."))
-	final_grade_rating_scale = models.ForeignKey('attestation.RatingScale', null=True, help_text = _("The scale used to mark the hole solution."))
+	final_grade_rating_scale = models.ForeignKey('attestation.RatingScale', null=True, help_text = _("The scale used to mark the whole solution."))
 	
 	def __unicode__(self):
 		return self.title
