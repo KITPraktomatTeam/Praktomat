@@ -34,6 +34,7 @@ def colorize_table(value,arg=None):
 rx_diff_pm = re.compile('^(?P<first_line>\d*</pre></div></td><td class="code"><div class="highlight"><pre>)?(?P<line>(<span class=".*?">)?(\+|-).*$)')     
 rx_diff_questionmark = re.compile('(?P<line>(<span class="\w*">)?\?.*$)')
 rx_tag = re.compile('^(<[^<]*>)+')
+rx_char = re.compile('^(&\w+;|.)')
 @register.filter
 def highlight_diff(value):
 	"enclose highlighted lines beginning with an +-? in a span"
@@ -61,22 +62,27 @@ def highlight_diff(value):
 					continue
 
 				# First character on both strings is a proper character
-				# (TODO: HTML entities?)
-				assert prevline, ("highlight_diff: previous line ended before ? marker line: \"%s\"" % line)
+				cml = rx_char.match(line)
+				assert cml, "regex rx_tag failed to match on non-empty string"
+				cmpl = rx_char.match(prevline)
+				assert cmpl, ("highlight_diff: previous line ended before ? marker line: \"%s\"" % line)
 
-				if line[0] == '+':
-					result += "<span class=\"addedChar\">%s</span>" % prevline[0]
-				elif line[0] == '-':
-					result += "<span class=\"deletedChar\">%s</span>" % prevline[0]
-				elif line[0] == '^':
-					result += "<span class=\"changedChar\">%s</span>" % prevline[0]
-				elif line[0] == ' ' or line[0] == '?':
-					result += prevline[0]
+				lc = cml.group()
+				plc = cmpl.group()
+
+				if lc == '+':
+					result += "<span class=\"addedChar\">%s</span>" % plc
+				elif lc == '-':
+					result += "<span class=\"deletedChar\">%s</span>" % plc
+				elif lc == '^':
+					result += "<span class=\"changedChar\">%s</span>" % plc
+				elif lc == ' ' or lc == '?' or lc == '\t':
+					result += plc
 				else:
-					assert False, ("Unexpected character in diff indicator line: \"%s\"" % line[0])
-					result += prevline[0]
-				line = line[1:]
-				prevline = prevline[1:]
+					assert False, ("Unexpected character in diff indicator line: \"%s\"" % lc)
+					result += plc[0]
+				line = line[cml.end():]
+				prevline = prevline[cmpl.end():]
 			result += prevline
 			prevline = None
 		else:
