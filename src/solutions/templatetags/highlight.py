@@ -32,8 +32,8 @@ def colorize_table(value,arg=None):
         return mark_safe("<pre>%s</pre>" % escape(value))
 
 rx_diff_pm = re.compile('^(?P<first_line>\d*</pre></div></td><td class="code"><div class="highlight"><pre>)?(?P<line>(<span class=".*?">)?(\+|-).*$)')     
-rx_diff_questionmark = re.compile('(?P<line>(<span class=".*?">)?\?.*$)')     
-rx_tag = re.compile('^(?P<tag>(<[^<]*>)*)(?P<rest>.*)')
+rx_diff_questionmark = re.compile('(?P<line>(<span class="\w*">)?\?.*$)')
+rx_tag = re.compile('^(<[^<]*>)+')
 @register.filter
 def highlight_diff(value):
 	"enclose highlighted lines beginning with an +-? in a span"
@@ -43,28 +43,41 @@ def highlight_diff(value):
 		m1 = rx_diff_questionmark.match(line)
 		if m1:
 			# We have a ? line. Instead of printing it, we annotate the previous line with the markers, which can be -, ^ or +
+			# First remove newline from the end (or just all whitespace, does not hurt)
+			line = line.rstrip()
 			while line:
 				# First strip all leading tags from both strings
 				m2 = rx_tag.match(line)
-				line = m2.group('rest')
+				if m2:
+					assert m2.end() > 0
+					line = line[m2.end():]
+					continue
 
 				m2 = rx_tag.match(prevline)
-				result += m2.group('tag')
-				prevline = m2.group('rest')
+				if m2:
+					assert m2.end() > 0
+					result += m2.group()
+					prevline = prevline[m2.end():]
+					continue
 
-				if not line or not prevline:
-					result += prevline
-					continue 
+				# First character on both strings is a proper character
+				# (TODO: HTML entities?)
+				assert prevline, ("highlight_diff: previous line ended before ? marker line: \"%s\"" % line)
+
 				if line[0] == '+':
 					result += "<span class=\"addedChar\">%s</span>" % prevline[0]
 				elif line[0] == '-':
 					result += "<span class=\"deletedChar\">%s</span>" % prevline[0]
 				elif line[0] == '^':
 					result += "<span class=\"changedChar\">%s</span>" % prevline[0]
+				elif line[0] == ' ' or line[0] == '?':
+					result += prevline[0]
 				else:
+					assert False, ("Unexpected character in diff indicator line: \"%s\"" % line[0])
 					result += prevline[0]
 				line = line[1:]
 				prevline = prevline[1:]
+			result += prevline
 			prevline = None
 		else:
 			if prevline is not None:
