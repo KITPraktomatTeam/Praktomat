@@ -4,6 +4,7 @@ import chardet
 import re
 	
 def get_unicode(bytestring):
+	default_charsets = ["ISO-8859-1","utf-8"]
 	if bytestring:
 		""" Returns guessed unicode representation of file content. """
 
@@ -12,7 +13,12 @@ def get_unicode(bytestring):
 		charset = re.sub(r"ISO-8859-[0-9]","ISO-8859-1",charset)
 		charset = re.sub(r"windows-125[01235]","ISO-8859-1",charset)
 
-		return bytestring.decode(charset)
+		for chset in [charset] + default_charsets:
+			try:
+				return bytestring.decode(chset)
+			except UnicodeDecodeError:
+				pass
+		raise UnicodeDecodeError("Unable to detect proper characterset")
 	else:
 		return u''
 
