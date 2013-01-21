@@ -238,6 +238,10 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 			project_name = unicode(solution.task) + u"-" + solution.author.get_full_name() 
 		base_name = path_for_task(solution.task) + '/' + project_path + '/'
 
+		# We need to pass unicode strings to ZipInfo to ensure that it sets bit
+		# 11 appropriately if the filename contains non-ascii characters.
+		assert isinstance(base_name, unicode)
+
 		createfile_checker_files = []
 		checkstyle_checker_files = []
 		junit3 = False
@@ -254,22 +258,23 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 			createfile_checker_files = [(createfile_checker_files_destination + checker.path + '/' + checker.filename,        checker.file)          for checker in createfile_checker]
 			checkstyle_checker_files = [(checkstyle_checker_files_destination + os.path.basename(checker.configuration.name), checker.configuration) for checker in checkstyle_checker]
 		
-		zip.writestr((base_name+'.project').encode('cp437'), render_to_string('solutions/eclipse/project.xml', { 'name': project_name, 'checkstyle' : checkstyle }).encode("utf-8"))
-		zip.writestr((base_name+'.settings/org.eclipse.jdt.core.prefs').encode('cp437'), render_to_string('solutions/eclipse/settings/org.eclipse.jdt.core.prefs', { }).encode("utf-8"))
-		zip.writestr((base_name+'.classpath').encode('cp437'), render_to_string('solutions/eclipse/classpath.xml', {'junit3' : junit3, 'junit4': junit4, 'createfile_checker_files' : include_file_copy_checker_files, 'createfile_checker_files_destination' : createfile_checker_files_destination, 'testsuite_destination' : testsuite_destination }).encode("utf-8"))
+		zip.writestr(base_name+'.project', render_to_string('solutions/eclipse/project.xml', { 'name': project_name, 'checkstyle' : checkstyle }).encode("utf-8"))
+		zip.writestr(base_name+'.settings/org.eclipse.jdt.core.prefs', render_to_string('solutions/eclipse/settings/org.eclipse.jdt.core.prefs', { }).encode("utf-8"))
+		zip.writestr(base_name+'.classpath', render_to_string('solutions/eclipse/classpath.xml', {'junit3' : junit3, 'junit4': junit4, 'createfile_checker_files' : include_file_copy_checker_files, 'createfile_checker_files_destination' : createfile_checker_files_destination, 'testsuite_destination' : testsuite_destination }).encode("utf-8"))
 		if checkstyle:
-			zip.writestr((base_name+'.checkstyle').encode('cp437'), render_to_string('solutions/eclipse/checkstyle.xml', {'checkstyle_files' : [filename for (filename,_) in checkstyle_checker_files], 'createfile_checker_files_destination' : createfile_checker_files_destination, 'testsuite_destination' : testsuite_destination }).encode("utf-8"))
+			zip.writestr(base_name+'.checkstyle', render_to_string('solutions/eclipse/checkstyle.xml', {'checkstyle_files' : [filename for (filename,_) in checkstyle_checker_files], 'createfile_checker_files_destination' : createfile_checker_files_destination, 'testsuite_destination' : testsuite_destination }).encode("utf-8"))
 
 		if junit4:
-			zip.writestr((base_name+testsuite_destination+'AllJUnitTests.java').encode('cp437'), render_to_string('solutions/eclipse/AllJUnitTests.java', { 'testclasses' : [ j.class_name for j in junit_checker if j.junit_version == 'junit4' ]}).encode("utf-8"))
-			zip.writestr((base_name+praktomat_files_destination+'AllJUnitTests.launch').encode('cp437'), render_to_string('solutions/eclipse/AllJUnitTests.launch', { 'project_name' : project_name, 'praktomat_files_destination' : praktomat_files_destination}).encode("utf-8"))
+			zip.writestr(base_name+testsuite_destination+'AllJUnitTests.java', render_to_string('solutions/eclipse/AllJUnitTests.java', { 'testclasses' : [ j.class_name for j in junit_checker if j.junit_version == 'junit4' ]}).encode("utf-8"))
+			zip.writestr(base_name+praktomat_files_destination+'AllJUnitTests.launch', render_to_string('solutions/eclipse/AllJUnitTests.launch', { 'project_name' : project_name, 'praktomat_files_destination' : praktomat_files_destination}).encode("utf-8"))
 			zip.write(os.path.dirname(__file__)+"/../checker/scripts/eclipse-junit.policy", (base_name+praktomat_files_destination+'eclipse-junit.policy'))
 
 		
 		solution_files  = [ (solution_files_destination+solutionfile.path(), solutionfile.file) for solutionfile in solution.solutionfile_set.all()]
 
 		for  (name,file) in solution_files + createfile_checker_files + checkstyle_checker_files:
-			zippath = os.path.normpath((base_name + name).encode('cp437','ignore'))
+			zippath = os.path.normpath(base_name + name)
+			assert isinstance(zippath, unicode)
 			try: # Do not overwrite files from the solution by checker files
 				zip.getinfo(zippath)
 			except KeyError: 
@@ -287,10 +292,10 @@ non_ascii_letters            = ascii_without(string.ascii_letters)
 non_ascii_letters_and_digits = ascii_without(string.ascii_letters + string.digits)
 
 def path_for_user(user):
-	return user.get_full_name().encode('ascii','ignore').translate(None,non_ascii_letters)+'-'+str(user.mat_number)+'-'+str(user.id)
+	return user.get_full_name()+'-'+str(user.mat_number)+'-'+str(user.id)
 
 def path_for_task(task):
-	return task.title.encode('ascii','ignore').translate(None,non_ascii_letters_and_digits)
+	return task.title
 
 path_regexp = re.compile(r'[^-]*-[^-]*-(.*)')
 
