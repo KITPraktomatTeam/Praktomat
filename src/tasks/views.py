@@ -42,11 +42,14 @@ def taskList(request):
 
 	script = Script.objects.get_or_create(id=1)[0].script
 
+	def tasksWithSolutions(tasks):
+		return map(lambda t: (t, t.final_solution(request.user)), tasks)
+
 	return render_to_response(
                 'tasks/task_list.html',
                 {
-                        'tasks':tasks,
-                        'expired_tasks': expired_Tasks,
+                        'tasks':tasksWithSolutions(tasks),
+                        'expired_tasks': tasksWithSolutions(expired_Tasks),
                         'attestations':attestations,
                         'show_final_grade': get_settings().final_grades_published,
                         'tutors':tutors,
