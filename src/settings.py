@@ -99,6 +99,8 @@ USE_KILL_LOG = False
 
 SHIB_ENABLED = False
 
+TEST_TIMEOUT=60
+
 try:
     from settings_local import * 
 except ImportError: 

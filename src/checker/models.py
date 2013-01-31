@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 from os import *
 from os.path import *
+import signal
+import subprocess32
 import subprocess
 import shutil
 import sys
+import resource
 
 from django.conf import settings
 from django.db import models
@@ -11,6 +14,7 @@ from tasks.models import Task
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import force_unicode
 from django.core.exceptions import ValidationError
 from utilities import encoding, file_operations
 from utilities.deleting_file_field import DeletingFileField
@@ -40,25 +44,56 @@ def execute(command, working_directory, environment_variables={}, use_default_us
 	[output, error] = process.communicate()
 	return [output, error, process.returncode]
 
-def execute_arglist(args, working_directory, environment_variables={}, use_default_user_configuration=True):
+def execute_arglist(args, working_directory, environment_variables={}, use_default_user_configuration=True, join_stderr_stdout=True, timeout=None,fileseeklimit=None):
 	""" Wrapper to execute Commands with the praktomat testuser. Excpects Command as list of arguments, the first being the execeutable to run. """
 	assert isinstance(args, list)
 
-	script = join(join(dirname(__file__),'scripts'),'execute')
 
 	command = args[:]
-	command.insert(0,script)
 
 	environment = environ
 	environment.update(environment_variables)
-	if (settings.USEPRAKTOMATTESTER and use_default_user_configuration):
-		environment['USEPRAKTOMATTESTER'] = 'TRUE'
-	else:
-		environment['USEPRAKTOMATTESTER'] = 'False'
+	environ['ULIMIT_FILESIZE'] = str(fileseeklimit)
 
-	process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=working_directory, env=environment)
-	[output, error] = process.communicate()
-	return [output, error, process.returncode]
+	wrapper_prefix = [join(join(dirname(__file__),'scripts'),'execute')]
+	sudo_prefix    = ["sudo", "-E", "-u", "tester"]
+
+	use_tester = settings.USEPRAKTOMATTESTER and use_default_user_configuration
+	if use_tester:
+		command = sudo_prefix + wrapper_prefix + command
+	else:
+		command =               wrapper_prefix + command
+
+	stderr = subprocess32.STDOUT if join_stderr_stdout else subprocess32.PIPE
+
+	# TODO: Dont even read in output longer than fileseeklimit. This might be most conveniently done by supplying a file like object instead of PIPE
+
+	def prepare_subprocess():
+		# create a new session for the spawned subprocess using os.setsid,
+		# so we can later kill it and all children on timeout, taken from http://stackoverflow.com/questions/4789837/how-to-terminate-a-python-subprocess-launched-with-shell-true
+		setsid()
+		# Limit the size of files created during execution
+		resource.setrlimit(resource.RLIMIT_NOFILE,(128,128))
+		if fileseeklimit is not None:
+			resource.setrlimit(resource.RLIMIT_FSIZE,(fileseeklimit,fileseeklimit))
+			if resource.getrlimit(resource.RLIMIT_FSIZE) != (fileseeklimit,fileseeklimit):
+				raise ValueError(resource.getrlimit(resource.RLIMIT_FSIZE))
+	process = subprocess32.Popen(command, stdout=subprocess32.PIPE, stderr=stderr, cwd=working_directory, env=environment,preexec_fn=prepare_subprocess)
+
+	timed_out = False
+	try:
+		[output, error] = process.communicate(timeout=timeout)
+	except subprocess32.TimeoutExpired:
+		timed_out = True
+		kill_cmd = ["pkill","-KILL","-s",str(process.pid)]
+		if use_tester:
+			subprocess32.call(sudo_prefix+kill_cmd)
+		else:
+			subprocess32.call(kill_cmd)
+		#killpg(process.pid, signal.SIGKILL)
+		[output, error] = process.communicate()
+
+	return [output, error, process.returncode, timed_out]
 
 
 
@@ -195,6 +230,19 @@ class CheckerEnvironment:
 
 
 
+def truncated_log(log):
+	"""
+	Assumes log to be raw (ie: non-HTML) checker result log
+	Returns a (string,Bool) pair consisting of
+          * the log, truncated if appropriate, i.e.: if it is longer than settings.TEST_MAXLOGSIZE*1
+          * a flag indicating whether the log was truncated
+	"""
+
+	log_length = len(log)
+	if log_length > settings.TEST_MAXLOGSIZE*1024:
+		# since we might be truncating utf8 encoded strings here, result may be erroneous, so we explicitly replace faulty byte tokens
+		return (force_unicode('======= Warning: Output too long, hence truncated ======\n' + log[0:(settings.TEST_MAXLOGSIZE*1024)/2] + "\n...\n...\n...\n...\n" + log[log_length-((settings.TEST_MAXLOGSIZE*1024)/2):],errors='replace'), True)
+	return (log,False)
 
 
 class CheckerResult(models.Model):
@@ -227,8 +275,13 @@ class CheckerResult(models.Model):
 		""" Checks if the results of the Checker are to be shown *publicly*, i.e.: even to the submitter """
 		return self.checker.show_publicly(self.passed)
 
-	def set_log(self, log):
-		""" Sets the log of the Checker run. """
+	def set_log(self, log,timed_out=False,truncated=False):
+		""" Sets the log of the Checker run. timed_out and truncated indicated if appropriate error messages shall be appended  """
+		if timed_out:
+			log = '<div class="error">Timeout occured!</div>' + log
+		if truncated:
+			log = '<div class="error">Output too long, truncated</div>' + log
+
 		self.log = log
 
 	def set_passed(self, passed):

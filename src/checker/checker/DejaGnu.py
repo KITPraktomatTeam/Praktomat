@@ -14,7 +14,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.models import Checker, CheckerFileField, CheckerResult, execute, execute_arglist
+from checker.models import Checker, CheckerFileField, CheckerResult, execute_arglist
 from checker.compiler.Builder import Builder
 from utilities import encoding
 from utilities.file_operations import *
@@ -121,12 +121,8 @@ class DejaGnuTester(Checker, DejaGnu):
 		environ['USER'] = env.user().get_full_name().encode(sys.getdefaultencoding(), 'ignore')
 		environ['HOME'] = testsuite
 		environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
-		environ['USE_KILL_LOG'] = str(settings.USE_KILL_LOG)
-		environ['ULIMIT_FILESIZE'] = '128'  # Have the checker script set a filesize-ulimit of 128kb
-		                                    # Specifically, this limits the DejaGNU .log file size,
-		                                    # and thus deals with Programs that output lots of junk
 
-		[output, error, exitcode] = execute_arglist(cmd, testsuite, environment_variables=environ)
+		[output, error, exitcode,timed_out] = execute_arglist(cmd, testsuite, environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE)
 		output = encoding.get_unicode(output)
 
 		try:
@@ -136,13 +132,11 @@ class DejaGnuTester(Checker, DejaGnu):
 			summary = ""
 			log		= ""
 
-		complete_output = output + log
-		if error:
-			complete_output += "ERROR: Ein TimeOut ist aufgetreten!" # Or propably somsing else happend???????
-		
+		complete_output = self.htmlize_output(output + log)
+
 		result = self.result()
-		result.set_log(self.htmlize_output(complete_output))
-		result.set_passed((not error) & self.output_ok(complete_output))
+		result.set_log(complete_output,timed_out=timed_out)
+		result.set_passed(not exitcode and not timed_out and self.output_ok(complete_output))
 		return result
 
 

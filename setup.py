@@ -32,6 +32,7 @@ setup(
                         'django-tinymce', # widget to render a form field as a TinyMCE editor 
                         'chardet', # autodetect file encodings
 						'M2Crypto', # Signing uploaded files
+			'subprocess32' # backport of python 3.2/3.3 subprocess
                         ],
 
     classifiers = [
