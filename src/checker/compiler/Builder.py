@@ -41,18 +41,18 @@ class Builder(Checker):
 
 	def flags(self, env):
 		""" Compiler flags.	To be overloaded in subclasses. """
-		return self._flags.split(" ")
+		return self._flags.split(" ") if self._flags else []
 
 	def output_flags(self, env):
 		""" Output flags """
 		try:
 			return (self._output_flags % env.program()).split(" ")
 		except:
-			return self._output_flags.split(" ")
+			return self._output_flags.split(" ") if self._output_flags else []
 
 	def libs(self):
 		""" Compiler libraries.	 To be overloaded in subclasses. """
-		return self._libs.split(" ")
+		return self._libs.split(" ") if self._libs else []
 
 	def environment(self):
 		""" Environment to be set on onvocation of Compiler. """
@@ -113,9 +113,10 @@ class Builder(Checker):
 			result.set_passed(False)
 			return result
 		
-		filenames = [quote(name) for name in self.get_file_names(env)]
+		filenames = [name for name in self.get_file_names(env)]
 		args = [self.compiler()] + self.output_flags(env) + self.flags(env) + filenames + self.libs()
-		output = execute_arglist(args, env.tmpdir(),self.environment())[0]
+		[output,_,_,_]  = execute_arglist(args, env.tmpdir(),self.environment())
+
 		output = escape(output)
 		output = self.enhance_output(env, output)
 		
@@ -124,7 +125,7 @@ class Builder(Checker):
 
 		# The executable has to exist and we mustn't have any warnings.
 		passed = not self.has_warnings(output)	
-		result.set_log(self.build_log(output,args,set(filenames).intersection([quote(solutionfile.path()) for solutionfile in env.solution().solutionfile_set.all()])))
+		result.set_log(self.build_log(output,args,set(filenames).intersection([solutionfile.path() for solutionfile in env.solution().solutionfile_set.all()])))
 		result.set_passed(passed)
 		return result
 

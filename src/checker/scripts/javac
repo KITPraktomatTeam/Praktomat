@@ -20,8 +20,7 @@ then
    JCFDUMP=jcf-dump
 fi
 
-
-
+umask o+rwx
 
 # Falls Packages erlaubt sind:
 # -d . 

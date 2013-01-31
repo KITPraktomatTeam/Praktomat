@@ -1,14 +1,7 @@
 #!/bin/bash
 
-ulimit -t 60
-
-if [ -n "$ULIMIT_FILESIZE" ];
+if [[ -n "$ULIMIT_FILESIZE" && "$ULIMIT_FILESIZE" != "None" ]];
 then
-    ulimit -f "$ULIMIT_FILESIZE"
+	ulimit -f "$ULIMIT_FILESIZE"
 fi
-
-if [ "$USEPRAKTOMATTESTER" == "TRUE" ]; then
-	sudo -E -u tester -- "$@"
-else
-	"$@"
-fi
+$*

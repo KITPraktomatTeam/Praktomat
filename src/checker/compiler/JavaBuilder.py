@@ -48,11 +48,11 @@ class JavaBuilder(Builder):
 
 		required_libs = super(JavaBuilder,self).libs()
 
-		return ["-cp ",".:"+(":".join([ settings.JAVA_LIBS[lib] for lib in required_libs if lib in settings.JAVA_LIBS ]))]
+		return ["-cp",".:"+(":".join([ settings.JAVA_LIBS[lib] for lib in required_libs if lib in settings.JAVA_LIBS ]))]
 
 	def flags(self, env):
 		""" Accept unicode characters. """
-		return self._flags.split(" ") + ["-encoding", "utf-8"]
+		return (self._flags.split(" ") if self._flags else []) + ["-encoding", "utf-8"]
 
 	def build_log(self,output,args,filenames):
 		t = get_template('checker/compiler/java_builder_report.html')

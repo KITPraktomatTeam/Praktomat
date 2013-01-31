@@ -6,7 +6,7 @@ from pipes import quote
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.models import Checker, CheckerFileField, CheckerResult, execute_arglist
+from checker.models import Checker, CheckerFileField, CheckerResult, execute_arglist, truncated_log
 from utilities.file_operations import *
 
 class ScriptChecker(Checker):
@@ -45,15 +45,18 @@ class ScriptChecker(Checker):
 		environ['USER'] = str(env.user().id)
 		environ['HOME'] = env.tmpdir()
 
-		(output, error, exitcode) = execute_arglist(args, working_directory=env.tmpdir(), environment_variables=environ)
+		[output, error, exitcode,timed_out] = execute_arglist(args, working_directory=env.tmpdir(), environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE)
 
 		result = CheckerResult(checker=self)
+		(output,truncated) = truncated_log(output)
+
 		if self.remove:
 			output = re.sub(self.remove, "", output)
-		if not self.returns_html:
+		if not self.returns_html or truncated:
 			output = '<pre>' + escape(output) + '</pre>'
-		result.set_log(output)
-		result.set_passed(not error)
+
+		result.set_log(output,timed_out=timed_out,truncated=truncated)
+		result.set_passed(not exitcode and not timed_out and not truncated)
 		
 		return result
 	

@@ -141,3 +141,15 @@ SHIB_PROVIDER = "kit.edu"
 
 # Set this to False to disable registration via the website, e.g. when Single Sign On is used
 REGISTRATION_POSSIBLE = False
+
+# Length of timeout applied whenever an external check that runs a students submission is executed,
+# for example: JUnitChecker, DejaGnuChecker
+TEST_TIMEOUT=30
+
+# Maximal size (in kbyte) of files created whenever an external check that runs a students submission is executed,
+# for example: JUnitChecker, DejaGnuChecker
+TEST_MAXFILESIZE=64
+
+# Maximal size (in kbyte) of checker logs accepted. This setting is respected currently only by:
+# JUnitChecker, ScriptChecker, 
+TEST_MAXLOGSIZE=64

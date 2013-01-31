@@ -8,7 +8,7 @@ import os
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from checker.models import Checker, CheckerFileField, CheckerResult, execute
+from checker.models import Checker, CheckerFileField, CheckerResult, execute_arglist
 from django.utils.html import escape
 from utilities.file_operations import *
 
@@ -42,12 +42,12 @@ class DiffChecker(Checker):
 		environ['USER'] = env.user().get_full_name()
 		environ['HOME'] = test_dir
 		
-		(output, error, exitcode) = execute(args, working_directory=test_dir, environment_variables=environ)
+		[output, error, exitcode,_] = execute_arglist(args, working_directory=test_dir, environment_variables=environ)
 		
 		result = CheckerResult(checker=self)
 	
 		result.set_log(escape(output))
-		result.set_passed(not error)
+		result.set_passed(not exitcode)
 		
 		return result
 	
