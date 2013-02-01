@@ -32,7 +32,8 @@ class ScriptChecker(Checker):
 		This runs the check in the environment ENV, returning a CheckerResult. """
 
 		# Setup
-		replace = [(u'PROGRAM',env.program())] if env.program() else []
+		replace = [("PROGRAM",env.program())] if env.program() else []
+		replace +=[("JAVA",settings.JVM_SECURE)]
 		copy_file_to_directory(self.shell_script.path, env.tmpdir(), replace=replace)
 		os.chmod(env.tmpdir()+'/'+os.path.basename(self.shell_script.name),0750)
 		
