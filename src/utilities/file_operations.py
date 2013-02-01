@@ -35,7 +35,7 @@ def create_file(path, content, replace=[], override=True):
 			else: # throw exception
 				raise Exception('File already exists')
 	for (old, new) in replace:
-		content.replace(old, new)
+		content = content.replace(old, new)
 	with open(path, 'w') as fd:
 		fd.write(encoding.get_utf8(content))
 	if (gid):
