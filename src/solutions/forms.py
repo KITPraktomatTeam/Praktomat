@@ -3,6 +3,7 @@
 from django.utils.translation import ugettext_lazy as _
 from django.forms.models import ModelForm, inlineformset_factory, BaseInlineFormSet
 from django import forms
+from django.conf import settings
 import zipfile
 import tarfile
 import mimetypes
@@ -12,6 +13,9 @@ from solutions.models import Solution, SolutionFile
 						
 ziptype_re = re.compile(r'^application/(zip|x-zip|x-zip-compressed|x-compressed)$')	
 tartype_re = re.compile(r'^application/(tar|x-tar|x-tar-compressed)$')	
+
+for (mimetype,extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
+	mimetypes.add_type(mimetype,extension,strict=True)
 
 class SafeUncompressor(object):
 	"""Small proxy class that enables external file object

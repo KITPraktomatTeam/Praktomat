@@ -99,6 +99,8 @@ USE_KILL_LOG = False
 
 SHIB_ENABLED = False
 
+MIMETYPE_ADDITIONAL_EXTENSIONS = [("text/plain",".properties")]
+
 TEST_TIMEOUT=60
 
 try:
