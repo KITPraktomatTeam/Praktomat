@@ -10,12 +10,20 @@ from django.utils.html import escape
 from checker.models import Checker, CheckerResult, CheckerFileField, execute, execute_arglist
 from utilities.file_operations import *
 
+
+RXFAIL	   = re.compile(r"^\*\*\*",	re.MULTILINE)
+
+
 class IsabelleChecker(Checker):
 	logic = models.CharField(max_length=100, default="HOL", help_text=_("Default heap to use"))
 
 	def title(self):
 		""" Returns the title for this checker category. """
 		return "Isabelle-Checker"
+
+	def output_ok(self, output):
+		return (RXFAIL.search(output) == None)
+
 	
 	@staticmethod
 	def description():
@@ -42,7 +50,7 @@ class IsabelleChecker(Checker):
 
 		result = CheckerResult(checker=self)			
 		result.set_log('<pre>' + escape(total_output) + '</pre>')
-		result.set_passed(True)
+		result.set_passed(self.output_ok(total_output))
 		
 		return result
 	
