@@ -10,4 +10,6 @@ __all__ = [	"AnonymityChecker",
 			"JUnitChecker",
 			"JUnit3Checker",
 			"DejaGnu",
-			"CheckStyleChecker",]
+			"CheckStyleChecker",
+			"IsabelleChecker",
+		  ]

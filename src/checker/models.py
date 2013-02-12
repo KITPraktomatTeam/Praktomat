@@ -40,7 +40,7 @@ def execute(command, working_directory, environment_variables={}, use_default_us
 	[output, error] = process.communicate()
 	return [output, error, process.returncode]
 
-def execute_arglist(args, working_directory, environment_variables={}, use_default_user_configuration=True):
+def execute_arglist(args, working_directory, environment_variables={}, use_default_user_configuration=True, stdin_file=None):
 	""" Wrapper to execute Commands with the praktomat testuser. Excpects Command as list of arguments, the first being the execeutable to run. """
 	assert isinstance(args, list)
 
@@ -55,8 +55,12 @@ def execute_arglist(args, working_directory, environment_variables={}, use_defau
 		environment['USEPRAKTOMATTESTER'] = 'TRUE'
 	else:
 		environment['USEPRAKTOMATTESTER'] = 'False'
+	
+	stdin=None
+	if stdin_file is not None:
+		stdin = file(stdin_file)
 
-	process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=working_directory, env=environment)
+	process = subprocess.Popen(command, stdin=stdin, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=working_directory, env=environment)
 	[output, error] = process.communicate()
 	return [output, error, process.returncode]
 
