@@ -39,18 +39,15 @@ class IsabelleChecker(Checker):
 
 		isabelle_process = output.rstrip()
 
-		total_output = ""
-		for (name,content) in env.sources():
-			args = [isabelle_process, "-S", "-r", "-I",  self.logic]
-			(output, error, exitcode) = execute_arglist(args, env.tmpdir(), stdin_file=os.path.join(env.tmpdir(),name))
+		thys = map (lambda (name,_): ('"%s"' % os.path.splitext(name)[0]), env.sources())
 
-			# Remove Praktomat-Path-Prefixes from result:
-			# output = re.sub(r"^"+re.escape(env.tmpdir())+"/+","",output,flags=re.MULTILINE)
-			total_output += output
+		ml_cmd = 'Secure.set_secure (); use_thys [%s]' % ','.join(thys)
+		args = [isabelle_process, "-r", "-q", "-e",  ml_cmd]
+		(output, error, exitcode) = execute_arglist(args, env.tmpdir())
 
 		result = CheckerResult(checker=self)			
-		result.set_log('<pre>' + escape(total_output) + '</pre>')
-		result.set_passed(self.output_ok(total_output))
+		result.set_log('<pre>' + escape(output) + '</pre>')
+		result.set_passed(self.output_ok(output))
 		
 		return result
 	
