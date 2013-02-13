@@ -8,7 +8,7 @@ then
 fi
 
 if [ "$USEPRAKTOMATTESTER" == "TRUE" ]; then
-	sudo -E -u tester script -q -c "$*" /dev/null
+	sudo -E -u tester -- "$@"
 else
-	script -q -c "$*" /dev/null
+	"$@"
 fi
