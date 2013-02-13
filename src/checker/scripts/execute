@@ -4,4 +4,4 @@ if [[ -n "$ULIMIT_FILESIZE" && "$ULIMIT_FILESIZE" != "None" ]];
 then
 	ulimit -f "$ULIMIT_FILESIZE"
 fi
-$*
+"$@"
