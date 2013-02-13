@@ -35,7 +35,7 @@ class IsabelleChecker(Checker):
 
 		# Find out the path to isabaelle-process
 		args = [settings.ISABELLE_BINARY, "getenv", "-b", "ISABELLE_PROCESS"]
-		(output, error, exitcode) = execute(args, env.tmpdir())
+		(output, error, exitcode, _) = execute_arglist(args, env.tmpdir())
 
 		isabelle_process = output.rstrip()
 
@@ -43,11 +43,11 @@ class IsabelleChecker(Checker):
 
 		ml_cmd = 'Secure.set_secure (); use_thys [%s]' % ','.join(thys)
 		args = [isabelle_process, "-r", "-q", "-e",  ml_cmd]
-		(output, error, exitcode) = execute_arglist(args, env.tmpdir())
+		(output, error, exitcode, timed_out) = execute_arglist(args, env.tmpdir())
 
 		result = CheckerResult(checker=self)			
 		result.set_log('<pre>' + escape(output) + '</pre>')
-		result.set_passed(self.output_ok(output))
+		result.set_passed(not timed_out and self.output_ok(output))
 		
 		return result
 	
