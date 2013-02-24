@@ -1,5 +1,38 @@
 This is the source distribution of Praktomat, a programming course manager.
 
+General setup
+=============
+
+You need Python 2.7 and a recent version of pip. I also highly recommend to
+use virtualenv so your system Python installation remains clean.
+
+Developer setup
+===============
+
+Clone this repo and install the required python libs to either your system-wide
+Python installation or inside a designated virtualenv (recommended).
+
+```bash
+git clone git://github.com/martinmo/Praktomat.git
+cd Praktomat
+pip install -r requirements.txt
+```
+
+The initial database setup follows.
+
+```bash
+mkdir data
+cd src
+./manage.py syncdb --noinput --migrate
+./manage.py createsuperuser
+```
+
+Start the development server.
+
+```bash
+./manage.py runserver
+```
+
 Prerequisites
 ============
   We recommend to run Praktomat within Apache, using Postgresql as
