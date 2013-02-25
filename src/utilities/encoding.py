@@ -18,6 +18,8 @@ def get_unicode(bytestring):
 				return bytestring.decode(chset)
 			except UnicodeDecodeError:
 				pass
+			except LookupError:
+				pass
 		raise UnicodeDecodeError("Unable to detect proper characterset")
 	else:
 		return u''
