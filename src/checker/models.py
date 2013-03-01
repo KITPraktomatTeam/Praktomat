@@ -85,13 +85,13 @@ def execute_arglist(args, working_directory, environment_variables={}, use_defau
 		[output, error] = process.communicate(timeout=timeout)
 	except subprocess32.TimeoutExpired:
 		timed_out = True
+		[output, error] = process.communicate()
 		kill_cmd = ["pkill","-KILL","-s",str(process.pid)]
 		if use_tester:
 			subprocess32.call(sudo_prefix+kill_cmd)
 		else:
 			subprocess32.call(kill_cmd)
 		#killpg(process.pid, signal.SIGKILL)
-		[output, error] = process.communicate()
 
 	return [output, error, process.returncode, timed_out]
 
