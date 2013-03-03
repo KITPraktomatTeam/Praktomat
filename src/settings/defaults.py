@@ -191,6 +191,7 @@ def load_defaults(settings):
         'django.core.context_processors.i18n',
         'django.core.context_processors.media',
         'django.core.context_processors.request',
+        'django.core.context_processors.static',
         'django.contrib.messages.context_processors.messages',
     )
 
@@ -208,6 +209,10 @@ def load_defaults(settings):
 
     d.TEMPLATE_DIRS = (
         join(PRAKTOMAT_ROOT, "src", "templates") 
+    )
+
+    d.STATICFILES_DIRS = (
+        join(PRAKTOMAT_ROOT, 'media'),
     )
 
     d.INSTALLED_APPS = (
@@ -260,7 +265,7 @@ def load_defaults(settings):
 
 
     # TinyMCE
-    d.TINYMCE_JS_URL = MEDIA_URL+'frameworks/tiny_mce/tiny_mce_src.js'
+    d.TINYMCE_JS_URL = STATIC_URL + 'frameworks/tiny_mce/tiny_mce_src.js'
     d.TINYMCE_DEFAULT_CONFIG = {
       'plugins': 'safari,pagebreak,table,advhr,advimage,advlink,emotions,iespell,inlinepopups,media,searchreplace,print,contextmenu,paste,fullscreen,noneditable,visualchars,nonbreaking,syntaxhl',
 
@@ -275,7 +280,7 @@ def load_defaults(settings):
         'theme_advanced_resizing' : True,
         'extended_valid_elements' : "textarea[cols|rows|disabled|name|readonly|class]" ,
         
-        'content_css' : MEDIA_URL+'/styles/style.css',
+        'content_css' : STATIC_URL + '/styles/style.css',
       'relative_urls': False,
     }
     d.TINYMCE_SPELLCHECKER = False

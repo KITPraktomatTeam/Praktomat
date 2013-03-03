@@ -1,8 +1,8 @@
 {% extends "base.html"%}
 {% load i18n %}{% load in_group %}
 {% block extrahead %}{{ block.super }}
-<script type="text/javascript" src="{{MEDIA_URL}}/frameworks/jquery/jquery.tools.min.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}frameworks/jquery.formset/jquery.formset.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}frameworks/jquery/jquery.tools.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}frameworks/jquery.formset/jquery.formset.min.js"></script>
 <script type="text/javascript">	
  $(document).ready(function(){
  	$("#help_icon").tooltip({
@@ -46,7 +46,7 @@
 			<td nowrap>{{user.username}}</td>
 			{% for result in results %}
 				{% if result %} 
-			<td align="center"><img src="{{MEDIA_URL}}admin/img/admin/icon-{{ result.passed|yesno:"yes,no" }}.gif" alt="{{result.passed}}"></td>
+			<td align="center"><img src="{{STATIC_URL}}admin/img/admin/icon-{{ result.passed|yesno:"yes,no" }}.gif" alt="{{result.passed}}"></td>
 				{% else %}
 			<td></td>
                 	        {% endif %}

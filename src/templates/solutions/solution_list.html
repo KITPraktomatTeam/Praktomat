@@ -1,8 +1,8 @@
 {% extends "base.html"%}
 {% load i18n %}{% load in_group %}
 {% block extrahead %}{{ block.super }}
-<script type="text/javascript" src="{{MEDIA_URL}}/frameworks/jquery/jquery.tools.min.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}frameworks/jquery.formset/jquery.formset.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}frameworks/jquery/jquery.tools.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}frameworks/jquery.formset/jquery.formset.min.js"></script>
 <script type="text/javascript">	
 $(function() {
 	$('fieldset.module .form-row').formset({ 
@@ -85,7 +85,7 @@ $(function(){
 
 <div class="simple_overlay" id="progress"> 
 	<!-- spinner from http://ajaxload.info/ -->
-	<img id="spinner" src="{{MEDIA_URL}}/images/loading.gif" alt="loading" />
+	<img id="spinner" src="{{STATIC_URL}}images/loading.gif" alt="loading" />
     <p>Please wait while your solution is examined.</p>
 </div> 
 

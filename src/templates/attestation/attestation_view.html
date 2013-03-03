@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% load highlight %}{% load i18n  %}{% load in_group %} 
 {% block extrahead %}{{ block.super }}
-	<script type="text/javascript" src="{{MEDIA_URL}}script/solution_inlines.js"></script>
-	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}/styles/pygments_friendly.css" />
+	<script type="text/javascript" src="{{STATIC_URL}}script/solution_inlines.js"></script>
+	<link type="text/css" rel="stylesheet" href="{{STATIC_URL}}styles/pygments_friendly.css" />
 	<script type="text/javascript">	
 		function updatePublishButton(){
 			if ($('#id_final').is(':checked')) {

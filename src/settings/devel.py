@@ -13,8 +13,12 @@ PRAKTOMAT_ID = 'default'
 BASE_HOST = 'http://localhost:8000'
 BASE_PATH = '/'
 
+# URL to use when referring to static files.
+STATIC_URL = BASE_PATH + 'static/'
+
 # Absolute path to the directory that shall hold all uploaded files as well as
 # files created at runtime.
+
 # Example: "/home/media/media.lawrence.com/"
 UPLOAD_ROOT = join(dirname(dirname(dirname(__file__))),'data')
 

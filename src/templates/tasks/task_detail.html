@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load markup  %} {% load i18n  %} {% load in_group %} 
 {% block extrahead %}{{ block.super }}
-<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}/styles/pygments_friendly.css" />
+<link type="text/css" rel="stylesheet" href="{{STATIC_URL}}styles/pygments_friendly.css" />
 {% endblock %}
 {% block breadcrumbs %}
 	{{ block.super }} > {{task.title}}
