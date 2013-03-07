@@ -3,6 +3,7 @@ from os import *
 from os.path import *
 import signal
 import subprocess32
+import time
 import subprocess
 import shutil
 import sys
@@ -85,13 +86,16 @@ def execute_arglist(args, working_directory, environment_variables={}, use_defau
 		[output, error] = process.communicate(timeout=timeout)
 	except subprocess32.TimeoutExpired:
 		timed_out = True
+		term_cmd = ["pkill","-TERM","-s",str(process.pid)]
 		kill_cmd = ["pkill","-KILL","-s",str(process.pid)]
 		if use_tester:
-			subprocess32.call(sudo_prefix+kill_cmd)
-		else:
-			subprocess32.call(kill_cmd)
-		#killpg(process.pid, signal.SIGKILL)
+			term_cmd = sudo_prefix+term_cmd
+			kill_cmd = sudo_prefix+kill_cmd
+		subprocess32.call(term_cmd)
+		time.sleep(5)
+		subprocess32.call(kill_cmd)
 		[output, error] = process.communicate()
+		#killpg(process.pid, signal.SIGKILL)
 
 	return [output, error, process.returncode, timed_out]
 
