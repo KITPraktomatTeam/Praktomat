@@ -1,0 +1,9 @@
+grant {
+	permission java.util.PropertyPermission "user.home","read";
+	permission java.io.FilePermission "/home/praktomat/junit.properties", "read";
+	permission java.io.FilePermission "/home/tester/junit.properties", "read";
+	permission java.io.FilePermission "${user.dir}${/}data${/}-", "read";
+	permission java.lang.RuntimePermission "accessDeclaredMembers";
+	permission java.lang.RuntimePermission "getStackTrace";
+	permission java.net.SocketPermission "localhost:1024-", "connect, resolve";
+};

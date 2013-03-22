@@ -194,6 +194,12 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 	
 	zip_file = tempfile.SpooledTemporaryFile()
 	zip = zipfile.ZipFile(zip_file,'w')
+	praktomat_files_destination          = "praktomat-files/"
+	testsuite_destination                = praktomat_files_destination + "testsuite/"
+	createfile_checker_files_destination = praktomat_files_destination + "other/"
+	checkstyle_checker_files_destination = praktomat_files_destination + "checkstyle/"
+	solution_files_destination           = "solution/"
+
 	for solution in solutions:
 		# TODO: make this work for anonymous attesration, too
 		if get_settings().anonymous_attestation:
@@ -217,16 +223,21 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 			junit4     = bool([ 0 for j in junit_checker if  j.junit_version == 'junit4' ])
 			checkstyle = bool(checkstyle_checker)
 
-			createfile_checker_files = [(checker.path + '/' + checker.filename,        checker.file)          for checker in createfile_checker]
-			checkstyle_checker_files = [(os.path.basename(checker.configuration.name), checker.configuration) for checker in checkstyle_checker]
+			createfile_checker_files = [(createfile_checker_files_destination + checker.path + '/' + checker.filename,        checker.file)          for checker in createfile_checker]
+			checkstyle_checker_files = [(checkstyle_checker_files_destination + os.path.basename(checker.configuration.name), checker.configuration) for checker in checkstyle_checker]
 		
 		zip.writestr((base_name+'.project').encode('cp437'), render_to_string('solutions/eclipse/project.xml', { 'name': project_name, 'checkstyle' : checkstyle }).encode("utf-8"))
-		zip.writestr((base_name+'.classpath').encode('cp437'), render_to_string('solutions/eclipse/classpath.xml', {'junit3' : junit3, 'junit4': junit4}))
+		zip.writestr((base_name+'.classpath').encode('cp437'), render_to_string('solutions/eclipse/classpath.xml', {'junit3' : junit3, 'junit4': junit4, 'createfile_checker_files' : include_file_copy_checker_files, 'createfile_checker_files_destination' : createfile_checker_files_destination, 'testsuite_destination' : testsuite_destination }))
 		if checkstyle:
-			zip.writestr((base_name+'.checkstyle').encode('cp437'), render_to_string('solutions/eclipse/checkstyle.xml', {'checkstyle_files' : [os.path.basename(checker.configuration.name) for checker in checkstyle_checker]}))
+			zip.writestr((base_name+'.checkstyle').encode('cp437'), render_to_string('solutions/eclipse/checkstyle.xml', {'checkstyle_files' : [filename for (filename,_) in checkstyle_checker_files], 'createfile_checker_files_destination' : createfile_checker_files_destination, 'testsuite_destination' : testsuite_destination }))
 
+		if junit4:
+			zip.writestr((base_name+testsuite_destination+'AllJUnitTests.java').encode('cp437'), render_to_string('solutions/eclipse/AllJUnitTests.java', { 'testclasses' : [ j.class_name for j in junit_checker if j.junit_version == 'junit4' ]}))
+			zip.writestr((base_name+praktomat_files_destination+'AllJUnitTests.launch').encode('cp437'), render_to_string('solutions/eclipse/AllJUnitTests.launch', { 'project_name' : project_name, 'praktomat_files_destination' : praktomat_files_destination}))
+			zip.write(os.path.dirname(__file__)+"/../checker/scripts/eclipse-junit.policy", (base_name+praktomat_files_destination+'eclipse-junit.policy'))
 
-		solution_files  = [ (solutionfile.path(), solutionfile.file) for solutionfile in solution.solutionfile_set.all()]
+		
+		solution_files  = [ (solution_files_destination+solutionfile.path(), solutionfile.file) for solutionfile in solution.solutionfile_set.all()]
 
 		for  (name,file) in solution_files + createfile_checker_files + checkstyle_checker_files:
 			zippath = os.path.normpath((base_name + name).encode('cp437','ignore'))

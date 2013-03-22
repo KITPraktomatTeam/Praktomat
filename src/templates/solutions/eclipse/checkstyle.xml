@@ -11,5 +11,9 @@
     <file-match-pattern match-pattern="." include-pattern="true"/>
   </fileset>
 {% endfor %}
+  <filter name="FilesFromPackage" enabled="true">
+    <filter-data value="{{createfile_checker_files_destination}}"/>
+    <filter-data value="{{testsuite_destination}}"/>
+  </filter>
 </fileset-config>
 
