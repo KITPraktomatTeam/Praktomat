@@ -227,6 +227,7 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 			checkstyle_checker_files = [(checkstyle_checker_files_destination + os.path.basename(checker.configuration.name), checker.configuration) for checker in checkstyle_checker]
 		
 		zip.writestr((base_name+'.project').encode('cp437'), render_to_string('solutions/eclipse/project.xml', { 'name': project_name, 'checkstyle' : checkstyle }).encode("utf-8"))
+		zip.writestr((base_name+'.settings/org.eclipse.jdt.core.prefs').encode('cp437'), render_to_string('solutions/eclipse/settings/org.eclipse.jdt.core.prefs', { }).encode("utf-8"))
 		zip.writestr((base_name+'.classpath').encode('cp437'), render_to_string('solutions/eclipse/classpath.xml', {'junit3' : junit3, 'junit4': junit4, 'createfile_checker_files' : include_file_copy_checker_files, 'createfile_checker_files_destination' : createfile_checker_files_destination, 'testsuite_destination' : testsuite_destination }))
 		if checkstyle:
 			zip.writestr((base_name+'.checkstyle').encode('cp437'), render_to_string('solutions/eclipse/checkstyle.xml', {'checkstyle_files' : [filename for (filename,_) in checkstyle_checker_files], 'createfile_checker_files_destination' : createfile_checker_files_destination, 'testsuite_destination' : testsuite_destination }))
