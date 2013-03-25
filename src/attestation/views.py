@@ -185,12 +185,16 @@ def new_attestation_for_task(request, task_id):
 
 
 @login_required
-def new_attestation_for_solution(request, solution_id):
+def new_attestation_for_solution(request, solution_id, force_create = False):
 	if not (in_group(request.user,'Tutor,Trainer') or request.user.is_superuser):
 		return access_denied(request)
-	
+
 	solution = get_object_or_404(Solution, pk=solution_id)
-			
+
+	attestations = Attestation.objects.filter(solution = solution)
+	if ((not force_create) and attestations):
+		return render_to_response("attestation/attestation_already_exists_for_solution.html", { 'task' : solution.task, 'attestations' : attestations, 'solution' : solution, 'show_author': not get_settings().anonymous_attestation }, context_instance=RequestContext(request))
+
 	attest = Attestation(solution = solution, author = request.user)
 	attest.save()
 	for solutionFile in  solution.solutionfile_set.filter(mime_type__startswith='text'):
