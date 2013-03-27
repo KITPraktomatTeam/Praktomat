@@ -81,16 +81,23 @@ def statistics(request,task_id):
 
 	all_ratings = []
 	if in_group(request.user,'Trainer'):
-		# Each Tutors ratings
-		for t in User.objects.filter(groups__name='Tutor'):
-			all_ratings.append({'title'   : u"Final Grades for Students tutored by %s" % unicode(t),
-		                            'desc'    : u"This chart shows the distribution of final grades for students from tutorials held by  %s. Plagiarism is excluded." % unicode(t),
-                                            'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__solution__author__tutorial__in = t.tutored_tutorials.all())})
+		# Each Tutorials ratings
+		for t in Tutorial.objects.all():
+			all_ratings.append({'title'   : u"Final Grades for Students in Tutorial %s" % unicode(t),
+		                        'desc'    : u"This chart shows the distribution of final grades for students from Tutorial %s. Plagiarism is excluded." % unicode(t),
+                                'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__solution__author__tutorial = t)})
+   		for t in User.objects.filter(groups__name='Tutor'):
+			all_ratings.append({'title'   : u"Final Grades for Attestations created by %s" % unicode(t),
+	                            'desc'    : u"This chart shows the distribution of final grades for Attestations created by %s. Plagiarism is excluded." % unicode(t),
+                                'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__author__id = t.id)})
 	else:
-		# The Tutors ratings
+		# The Tutorials ratings
 		all_ratings.append(        {'title'   : u"Final grades (My Tutorials)",
-		                            'desc'    : u"This chart shows the distribution of final grades for students from your tutorials. Plagiarism is excluded.",
+		                            'desc'    : u"This chart shows the distribution of final grades for students from any your tutorials. Plagiarism is excluded.",
                                             'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__solution__author__tutorial__in = tutorials)})
+   		all_ratings.append(        {'title'   : u"Final grades (My Attestations)",
+		                            'desc'    : u"This chart shows the distribution of final grades for your attestations. Plagiarism is excluded.",
+                                            'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__author__id = request.user.id)})
 	# Overall ratings
 	all_ratings.append(                {'title'   : u"Final grades (overall)",
 	                                    'desc'    : u"This chart shows the distribution of final grades for all students. Plagiarism is excluded.",
