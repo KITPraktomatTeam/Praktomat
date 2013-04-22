@@ -43,5 +43,10 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Topic :: Education :: Testing',
-    ]
+    ],
+
+    entry_points = """
+		[pygments.lexers]
+		isar = utilities.isar_lexer:IsarLexer
+    """
 )
