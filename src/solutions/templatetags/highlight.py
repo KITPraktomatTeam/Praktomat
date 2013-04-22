@@ -65,7 +65,11 @@ def highlight_diff(value):
 				cml = rx_char.match(line)
 				assert cml, "regex rx_tag failed to match on non-empty string"
 				cmpl = rx_char.match(prevline)
-				assert cmpl, ("highlight_diff: previous line ended before ? marker line: \"%s\"" % line)
+				if not cmpl:
+					# This can only happen if the syntax highlighter changes the number of symbols (e.g. the Isabelle syntax highlighter)
+					#assert cmpl, ("highlight_diff: previous line ended before ? marker. line: \"%s\", prevline: \"%s\"" % (line, prevline))
+					line = line[cml.end():]
+					continue
 
 				lc = cml.group()
 				plc = cmpl.group()
