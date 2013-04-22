@@ -9,14 +9,15 @@ class IsarLexer(RegexLexer):
 	tokens = {
 		'root': [
 			(r'\s+', Text),
+			(ur'`[^`]+`', Name.Variable),
 			(r'(theory|imports|begin|end|text|lemma|theorem|proof|assume|show|thus|next|qed|hence|have|by|from|with)', Keyword),
-			(r'{\*', Text, 'longstring'),
+			(r'{\*', String, 'longstring'),
 			(r'[^\s]+', Text),
 		],
 		'longstring': [
-			(r'\*}', Text, 'root'),
-			(r'[^\*]+', Text),
-			(r'\*', Text),
+			(r'\*}', String, 'root'),
+			(r'[^\*]+', String),
+			(r'\*', String),
 		],
 	}
 
