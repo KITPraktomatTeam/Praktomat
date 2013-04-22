@@ -83,9 +83,9 @@
 					</table>
 				</div>
 
-				<h2>{% trans "Unatested solutions" %}</h2>
+				<h2>{% trans "Unattested solutions" %}</h2>
 				<div class='attestation'>
-					{% for solution in unatested_solutions %}
+					{% for solution in unattested_solutions %}
 						<span class="icon ui-icon-search" title="view only"></span> <a href="{% url solution_detail solution_id=solution.id %}">Solution by {{solution.author}}</a></br>
 					{% empty %}
 						<p>All solutions have been attested.</p>
@@ -96,18 +96,18 @@
 			{% if user|in_group:'Tutor'%}
 				{% if show_author %}
 				<div>
-					<select id="solution_selector" {% if unatested_solutions|length == 0 %}disabled="disabled"{% endif %}>
-						{% for solution in unatested_solutions %}
+					<select id="solution_selector" {% if unattested_solutions|length == 0 %}disabled="disabled"{% endif %}>
+						{% for solution in unattested_solutions %}
 						<option value="{% url new_attestation_for_solution solution_id=solution.id %}">{{solution.author.last_name}}, {{solution.author.first_name}}</option>
 						{% endfor %}
 					</select>
-					<input id="attest_selected_user_button" type="button" value="Attest selected user" {% if unatested_solutions|length == 0 %}disabled="disabled"{% endif %}/>
+					<input id="attest_selected_user_button" type="button" value="Attest selected user" {% if unattested_solutions|length == 0 %}disabled="disabled"{% endif %}/>
 				</div>
 				{% endif %}
 				<div style="margin-top:50px">
-					<input id="next_attestation_button" type="button" value="Attest next solution" {% if unatested_solutions|length == 0 %}disabled="disabled"{% endif %} onclick="location.href ='{% url new_attestation_for_task task_id=task.id %}'"/> 
+					<input id="next_attestation_button" type="button" value="Attest next solution" {% if unattested_solutions|length == 0 %}disabled="disabled"{% endif %} onclick="location.href ='{% url new_attestation_for_task task_id=task.id %}'"/> 
 				</div>
-				{{ unatested_solutions|length }} solutions to attest.</br></br></br>
+				{{ unattested_solutions|length }} solutions to attest.</br></br></br>
 			{% endif %}
 			
 			{% if solutions_with_plagiarism %}

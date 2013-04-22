@@ -141,9 +141,9 @@ def attestation_list(request, task_id):
 
 	tutored_users = User.objects.filter(groups__name="User", is_active=True).order_by('last_name') if in_group(request.user,'Trainer') or request.user.is_superuser else None
 	
-	unatested_solutions = Solution.objects.filter(task = task, final=True, plagiarism = False, attestation = None)		
+	unattested_solutions = Solution.objects.filter(task = task, final=True, plagiarism = False, attestation = None)		
 	if in_group(request.user,'Tutor'): # the trainer sees them all
-		unatested_solutions = unatested_solutions.filter(author__tutorial__in = request.user.tutored_tutorials.all())
+		unattested_solutions = unattested_solutions.filter(author__tutorial__in = request.user.tutored_tutorials.all())
 		
 	my_attestations = Attestation.objects.filter(solution__task = task, author = request.user).order_by('-created')
 	all_attestations_for_my_tutorials = Attestation.objects.filter(solution__task = task, solution__author__tutorial__in = request.user.tutored_tutorials.all()).order_by('-created')
@@ -166,7 +166,7 @@ def attestation_list(request, task_id):
 	
 	show_author = not get_settings().anonymous_attestation or in_group(request.user,'Trainer') or published
 
-	data = {'task':task, 'tutored_users':tutored_users, 'solutions_with_plagiarism':solutions_with_plagiarism, 'my_attestations':my_attestations, 'attestations_by_others':attestations_by_others, 'unatested_solutions':unatested_solutions, 'published': all_attestations_published, 'show_author': show_author, 'attestation_stats' : attestation_stats}
+	data = {'task':task, 'tutored_users':tutored_users, 'solutions_with_plagiarism':solutions_with_plagiarism, 'my_attestations':my_attestations, 'attestations_by_others':attestations_by_others, 'unattested_solutions':unattested_solutions, 'published': all_attestations_published, 'show_author': show_author, 'attestation_stats' : attestation_stats}
 	return render_to_response("attestation/attestation_list.html", data, context_instance=RequestContext(request))
 
 
