@@ -2,7 +2,7 @@
 {% load i18n %} {% load chunks %}
 
 {% block breadcrumbs %}
-	{{ block.super }} > {% trans 'Login' %}
+	{{ block.super }} &gt; {% trans 'Login' %}
 {% endblock %}
 
 {% block content %}<div id="login">
@@ -17,8 +17,9 @@
 	
 	<form method="post" action=".">{% csrf_token %}
 	    {% include "forms/form_as_div.html" %}
-		<input type="submit" value="login" />
+		<input type="submit" value="Login" />
 		<input type="hidden" name="next" value="{{ next }}" />
 	</form>
 </div>
-</div>{% endblock %}
+</div>
+{% endblock %}

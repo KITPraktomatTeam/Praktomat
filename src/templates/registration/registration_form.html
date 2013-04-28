@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block breadcrumbs %}
-	{{ block.super }} > {% trans 'Registration' %}
+	{{ block.super }} &gt; {% trans 'Registration' %}
 {% endblock %}
 
 {% block content %}
@@ -14,7 +14,7 @@
 	<form method="post" action="." autocomplete="off"> {% csrf_token %}
 	{%comment%} autocomplete is a not standardized tag! {%endcomment%}
 		{% include "forms/form_as_div.html" %}
-		<input type="submit" value="register" />
+		<input type="submit" value="Register" />
 	</form>
 {% else %}
 <div class='error'>Registration is closed. Please Contact a Trainer: {% for user in trainers %} <a href='mailto:{{ user.email }}'>{{user.get_full_name}}</a> {% endfor %} or Administrator:{% for user in admins %} <a href='mailto:{{ user.email }}'>{{user.get_full_name}}</a>{% endfor %}.</div>
