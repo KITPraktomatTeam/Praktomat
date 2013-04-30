@@ -2,6 +2,8 @@ import re
 from pygments.lexer import RegexLexer
 from pygments.token import *
 
+import encoding
+
 class IsarLexer(RegexLexer):
 	name = 'Isar'
 	filenames = ['*.thy']
@@ -10,7 +12,7 @@ class IsarLexer(RegexLexer):
 		'root': [
 			(r'\s+', Text),
 			(ur'`[^`]+`', Name.Variable),
-			(r'(theory|imports|begin|end|text|lemma|theorem|proof|assume|show|thus|next|qed|hence|have|by|from|with|fix|obtian|obtains|where|definition|section|also|finally|moverover|ultimately|consts|fun|def|inductive|inductive_set|apply)', Keyword),
+			(r'(theory|imports|begin|end|text|lemma|theorem|proof|assume|show|thus|next|qed|hence|have|by|from|with|fix|obtains|obtian|where|definition|section|also|finally|moverover|ultimately|consts|fun|def|inductive|inductive_set|apply|oops)', Keyword),
 			(r'{\*', String, 'longstring'),
 			(r'[^\s]+', Text),
 		],
@@ -21,31 +23,35 @@ class IsarLexer(RegexLexer):
 		],
 	}
 
-	def __init__(self, **options):
-		super(RegexLexer,self).__init__(**options)
-		global symbol_table
-		if symbol_table is None:
-			symbol_table = {}
-			for line in symbols_raw.splitlines():
-				if line:
-					if re.match(r"^#", line):
-						continue
-					m = re.match(r"^(\\<.*>)\s+code:\s+0x([0-9a-f]+).*$", line)
-					assert m, "Failed to parse " + line
-					n = int(m.group(2),16)
-					if n < 0x10000:
-						symbol_table[m.group(1)] = unichr(n)
-
 	def get_tokens_unprocessed(self, text):
 		for index, token, value in RegexLexer.get_tokens_unprocessed(self, text):
-			def repl(m):
-				if m.group(0) in symbol_table:
-					return symbol_table[m.group(0)]
-				else:
-					return m.group(0)
-			value = re.sub(r"\\<[a-zA-Z]+>", repl, value)
+			value = isar_decode(value)
 			yield index, token, value
 
+
+def isar_decode(raw):
+	global symbol_table
+	if symbol_table is None:
+		symbol_table = {}
+		for line in symbols_raw.splitlines():
+			if line:
+				if re.match(r"^#", line):
+					continue
+				m = re.match(r"^(\\<.*>)\s+code:\s+0x([0-9a-f]+).*$", line)
+				assert m, "Failed to parse " + line
+				n = int(m.group(2),16)
+				if n < 0x10000:
+					symbol_table[m.group(1)] = unichr(n)
+
+	if isinstance(raw, str):
+		raw = encoding.get_unicode(raw)
+	def repl(m):
+		if m.group(0) in symbol_table:
+			return symbol_table[m.group(0)]
+		else:
+			return m.group(0)
+	return re.sub(r"\\<[a-zA-Z]+>", repl, raw)
+	
 
 # ~~/etc/symbols from Isabelle2013
 symbol_table = None
