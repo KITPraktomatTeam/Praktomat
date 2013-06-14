@@ -42,7 +42,7 @@ class IsabelleChecker(Checker):
 		thys = map (lambda (name,_): ('"%s"' % os.path.splitext(name)[0]), env.sources())
 
 		ml_cmd = 'Secure.set_secure (); use_thys [%s]' % ','.join(thys)
-		args = [isabelle_process, "-r", "-q", "-e",  ml_cmd]
+		args = [isabelle_process, "-r", "-q", "-e",  ml_cmd, self.logic]
 		(output, error, exitcode, timed_out) = execute_arglist(args, env.tmpdir(),timeout=settings.TEST_TIMEOUT)
 
 		if timed_out:

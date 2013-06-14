@@ -12,7 +12,7 @@ class IsarLexer(RegexLexer):
 		'root': [
 			(r'\s+', Text),
 			(ur'`[^`]+`', Name.Variable),
-			(r'(theory|imports|begin|end|text|lemma|theorem|proof|assume|show|thus|next|qed|hence|have|by|from|then|let|datatype|print_theorems|case|with|fix|obtains|obtain|where|definition|section|also|finally|moverover|ultimately|consts|fun|def|inductive|inductive_set|apply|oops)', Keyword),
+			(r'(theory|imports|begin|end|text|lemma|theorem|proof|assume|show|thus|using|next|and|type_synonym|value|qed|hence|have|by|from|then|let|datatype|print_theorems|case|with|fix|obtains|obtain|where|definition|section|also|finally|moverover|ultimately|consts|fun|def|inductive|inductive_set|apply|oops)', Keyword),
 			(r'{\*', String, 'longstring'),
 			(r'[^\s]+', Text),
 		],
