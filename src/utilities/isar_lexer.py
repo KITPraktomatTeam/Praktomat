@@ -13,7 +13,7 @@ class IsarLexer(RegexLexer):
 			(r'\s+', Text),
 			(ur'`[^`]+`', Name.Variable),
 			(ur'"[^"]*"', String),
-			(r'(theory|imports|begin|end|text|lemma|theorem|assumes|shows|obtains|proof|assume|show|thus|using|next|and|type_synonym|value|qed|hence|have|by|from|then|let|datatype|print_theorems|case|with|fix|obtains|obtain|where|definition|section|subsection|subsubsection|also|finally|moreover|ultimately|consts|fun|def|inductive|inductive_set|apply|oops)\b', Keyword),
+			(r'(theory|imports|begin|end|abbreviation|text|lemma|theorem|assumes|shows|obtains|proof|assume|show|thus|using|next|and|type_synonym|value|qed|hence|have|by|from|then|let|datatype|print_theorems|case|with|fix|obtains|obtain|where|definition|section|subsection|subsubsection|also|finally|moreover|ultimately|consts|fun|def|inductive|inductive_set|apply|oops)\b', Keyword),
 			(r'{\*', String, 'longstring'),
 			(r'[^\s:]+', Text),
 			(r':', Text),
