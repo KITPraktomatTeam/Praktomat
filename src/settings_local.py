@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # settings which depend on the machine django runs on 
 
+from os.path import dirname, join
+
 # This will show debug information in the browser if an exception occurs.
 # Note that there are always going to be sections of your debug output that 
 # are inappropriate for public consumption. File paths, configuration options, 
@@ -47,6 +49,10 @@ CSRF_COOKIE_NAME = 'csrftoken_' + PRAKTOMAT_ID
 UPLOAD_ROOT = "/home/praktomat/installations/" + PRAKTOMAT_ID + "/PraktomatSupport/"
 
 
+# Absolute path to the praktomat source
+PRAKTOMAT_ROOT = dirname(dirname(__file__))
+
+
 ADMINS = [
 		  # ('Your Name', 'your_email@domain.com'),
 		  ('Daniel Kleinert', 'herr.kleinert@googlemail.com')
@@ -90,10 +96,10 @@ MANAGERS = ADMINS
 C_BINARY = 'gcc'
 CXX_BINARY = 'c++'
 JAVA_BINARY = 'javac'
-JAVA_BINARY_SECURE = '/home/praktomat/installations/' + PRAKTOMAT_ID + '/Praktomat/src/checker/scripts/javac'
+JAVA_BINARY_SECURE = PRAKTOMAT_ROOT + '/src/checker/scripts/javac'
 JAVA_GCC_BINARY = 'gcj'
 JVM = 'java'
-JVM_SECURE = '/home/praktomat/installations/' + PRAKTOMAT_ID + '/Praktomat/src/checker/scripts/java'
+JVM_SECURE = PRAKTOMAT_ROOT + '/src/checker/scripts/java'
 FORTRAN_BINARY = 'g77'
 DEJAGNU_RUNTEST = '/usr/bin/runtest'
 CHECKSTYLEALLJAR = '/home/praktomat/contrib/checkstyle-all-4.4.jar'
