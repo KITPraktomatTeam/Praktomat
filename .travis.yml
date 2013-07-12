@@ -1,0 +1,15 @@
+language: python
+
+python:
+ - "2.7"
+
+install:
+ - sudo apt-get install python2.7-dev swig libsasl2-dev libssl-dev libpq-dev
+ - sudo apt-get install openjdk-6-jdk dejagnu checkstyle gcj-jdk
+ - pip install setuptools --upgrade
+ - pip install --upgrade git+https://github.com/msabramo/M2Crypto.git@1de89f579e5377412fd428fb96edbfd3ef4e5c4d
+
+script:
+ - python bootstrap.py
+ - ./bin/buildout
+ - ./bin/praktomat test
