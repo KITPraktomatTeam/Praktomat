@@ -14,7 +14,7 @@ setup(
     long_description = read('README.md'),
 
     author='IPD Snelting, KIT',
-    author_email='praktomat@googlemail.com',
+    author_email='praktomat@ipd.info.uni-karlsruhe.de',
 
     packages = find_packages('src'),
     package_dir = {'': 'src'},
