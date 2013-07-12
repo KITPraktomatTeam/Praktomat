@@ -13,4 +13,4 @@ script:
  - python bootstrap.py
  - ./bin/buildout
  - mkdir /tmp/praktomat-upload
- - ./bin/praktomat test --settings=settings_test
+ - ./bin/praktomat test --settings=settings_test accounts attestation checker configuration sessionprofile solutions tasks
