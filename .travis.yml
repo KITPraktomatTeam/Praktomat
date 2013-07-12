@@ -12,4 +12,4 @@ install:
 script:
  - python bootstrap.py
  - ./bin/buildout
- - ./bin/praktomat test
+ - ./bin/praktomat test --settings=settings_test
