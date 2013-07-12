@@ -29,12 +29,11 @@ class TestChecker(TestCase):
 		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'check style', 'check_ws.xml')
 		# circumvent SuspiciousOperation exception
 		copy_file(src,dest)
-		with open(dest) as file:
-			CheckStyleChecker.CheckStyleChecker.objects.create(
-						task = self.task,
-						order = 0,
-						configuration = file.read()
-						)
+		CheckStyleChecker.CheckStyleChecker.objects.create(
+					task = self.task,
+					order = 0,
+					configuration = dest
+					)
 		self.solution.check()
 
 	def test_createfile_checker(self):
@@ -142,6 +141,6 @@ class TestChecker(TestCase):
 		self.solution.check()
 		# Check if they are all finished, or if one of the dependencies failed.
 		for checkerresult in self.solution.checkerresult_set.all():
-			self.failUnlessEqual(checkerresult.passed, True)
+			self.failUnless(checkerresult.passed, checkerresult.log)
 			
 
