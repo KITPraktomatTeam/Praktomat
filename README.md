@@ -93,11 +93,11 @@ Installation
 
 1. Clone praktomat from github including submodules: 
 
-        git clone --recursive git://github.com/danielkleinert/Praktomat.git
+        git clone --recursive git://github.com/KITPraktomatTeam/Praktomat.git
 
     If your git version does not support the `--recursive` option:
 
-     1. Clone praktomat *without* submodules: `git clone git://github.com/danielkleinert/Praktomat.git`
+     1. Clone praktomat *without* submodules: `git clone git://github.com/KITPraktomatTeam/Praktomat.git`
      2. From the praktomat root directory,            run `git submodule init` and then `git submodule update`
      3. From the subdirectory `media/frameworks/ace`, run `git submodule init` and then `git submodule update`
 
