@@ -33,6 +33,11 @@ Prerequisites
 
     http://sourceforge.net/projects/checkstyle/files/checkstyle/4.4/
 
+ If you want your users to submit Isabelle theories, add the following line to
+ /etc/mime.types:
+
+    text/x-isabelle thy
+
 
 Python 2.7
 ==========
