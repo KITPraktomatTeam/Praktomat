@@ -49,7 +49,7 @@ class CreateFileChecker(Checker):
 
 	def clean(self):
 		super(CreateFileChecker, self).clean()
-		if not (self.required and self.always and (not self.public)): raise ValidationError("Florian says: CreateFileCheckers have to be required, always, non-public)")
+		if not (self.required and self.always and (not self.public)): raise ValidationError("Florian says: CreateFileCheckers have to be required, always, non-public")
  
 from checker.admin import	CheckerInline, AlwaysChangedModelForm
 
