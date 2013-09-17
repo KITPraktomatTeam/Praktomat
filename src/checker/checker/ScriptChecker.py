@@ -6,6 +6,7 @@ from pipes import quote
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
+from django.utils.encoding import force_unicode
 from checker.models import Checker, CheckerFileField, CheckerResult, execute_arglist, truncated_log
 from utilities.file_operations import *
 
@@ -48,6 +49,7 @@ class ScriptChecker(Checker):
 		environ['JAVA'] = settings.JVM
 
 		[output, error, exitcode,timed_out] = execute_arglist(args, working_directory=env.tmpdir(), environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE)
+		output = force_unicode(output, errors='replace')
 
 		result = CheckerResult(checker=self)
 		(output,truncated) = truncated_log(output)
