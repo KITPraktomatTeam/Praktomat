@@ -3,7 +3,7 @@
 # parameter, but only if it is not already defined.
 
 # The following variables have _no_ sane default, and need to be set!
-no_defaults = [ "SITE_NAME", "PRAKTOMAT_ID", "BASE_HOST", "BASE_PATH", "UPLOAD_ROOT"]
+no_defaults = [ "SITE_NAME", "PRAKTOMAT_ID", "BASE_HOST", "BASE_PATH", "UPLOAD_ROOT", "PRIVATE_KEY"]
 
 import os
 from os.path import dirname, join
@@ -82,7 +82,7 @@ def load_defaults(settings):
     d.EMAIL_USE_TLS = True
     
     # Private key used to sign uploded solution files in submission confirmation email
-    d.PRIVATE_KEY = '/home/praktomat/certificates/privkey.pem'
+    #d.PRIVATE_KEY = '/home/praktomat/certificates/privkey.pem'
 
     d.MANAGERS = ADMINS
 
