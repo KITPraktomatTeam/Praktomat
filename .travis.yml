@@ -4,6 +4,7 @@ python:
  - "2.7"
 
 install:
+ - sudo apt-get update
  - sudo apt-get install python2.7-dev swig libsasl2-dev libssl-dev libpq-dev
  - sudo apt-get install openjdk-6-jdk dejagnu checkstyle gcj-jdk
    # m2crypto does not compile out of the box, see https://github.com/boto/boto/pull/841
