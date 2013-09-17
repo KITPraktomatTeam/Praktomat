@@ -13,4 +13,4 @@ install:
 
 script:
  - mkdir /tmp/praktomat-upload
- - ./src/manage.py test --settings=settings_test accounts attestation checker configuration sessionprofile solutions tasks
+ - ./src/manage.py test --settings=settings.test accounts attestation checker configuration sessionprofile solutions tasks
