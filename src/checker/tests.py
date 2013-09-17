@@ -67,6 +67,9 @@ class TestChecker(TestCase):
 					interface1 = 'Test'
 					)
 		self.solution.check()
+        # This fails (no good test data)
+		for checkerresult in self.solution.checkerresult_set.all():
+			self.failIf(checkerresult.passed, checkerresult.log)
 
 	def test_linecounter_checker(self):
 		LineCounter.LineCounter.objects.create(
@@ -74,6 +77,8 @@ class TestChecker(TestCase):
 					order = 0,
 					)
 		self.solution.check()
+		for checkerresult in self.solution.checkerresult_set.all():
+			self.failUnless(checkerresult.passed, checkerresult.log)
 
 	def test_linewidth_checker(self):
 		LineWidthChecker.LineWidthChecker.objects.create(
@@ -81,6 +86,8 @@ class TestChecker(TestCase):
 					order = 0,
 					)
 		self.solution.check()
+		for checkerresult in self.solution.checkerresult_set.all():
+			self.failUnless(checkerresult.passed, checkerresult.log)
 
 	def test_script_checker(self):
 		src = join(dirname(dirname(dirname(__file__))), 'examples', 'Power.sh')	
@@ -93,14 +100,18 @@ class TestChecker(TestCase):
 					shell_script = dest
 					)
 		self.solution.check()
+		for checkerresult in self.solution.checkerresult_set.all():
+			self.failUnless(checkerresult.passed, checkerresult.log)
 
 	def test_text_checker(self):
 		TextChecker.TextChecker.objects.create(
 					task = self.task,
 					order = 0,
-					text = 'Test'
+					text = 'System.out'
 					)
 		self.solution.check()
+		for checkerresult in self.solution.checkerresult_set.all():
+			self.failUnless(checkerresult.passed, checkerresult.log)
 
 	def test_dejagnu_checker(self):
 		src = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'GGT', 'solutions', 'javagently', 'Stream.java')	
