@@ -8,3 +8,4 @@ django-extensions>=1.0.3
 django-tinymce>=1.5.1b4
 docutils>=0.10
 subprocess32
+psycopg2
