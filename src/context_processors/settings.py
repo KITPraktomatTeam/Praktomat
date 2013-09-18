@@ -6,5 +6,6 @@ def from_settings(request):
 		'SITE_NAME': settings.SITE_NAME,
 	    'LOGIN_URL': settings.LOGIN_URL,
 	    'REGISTRATION_POSSIBLE': settings.REGISTRATION_POSSIBLE,
+	    'MIRROR' : settings.MIRROR
 	}
 

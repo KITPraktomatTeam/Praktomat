@@ -224,6 +224,10 @@ body {
 	font-size: 12px;
 }
 
+.mirror #header {
+	background: #009682;
+}
+
 #sub_header {
 	background: #313d47;
 	overflow: hidden;
