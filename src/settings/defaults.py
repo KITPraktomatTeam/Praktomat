@@ -190,9 +190,9 @@ def load_defaults(settings):
     d.EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     d.EMAIL_HOST = "smtp.googlemail.com"
     d.EMAIL_PORT = 587
-    d.EMAIL_HOST_USER = "praktomat@googlemail.com"
+    d.EMAIL_HOST_USER = ""
     d.EMAIL_HOST_PASSWORD = ""
-    d.EMAIL_USE_TLS = True
+    d.EMAIL_USE_TLS = False
 
     d.DEFAULT_FILE_STORAGE = 'utilities.storage.UploadStorage'
 
