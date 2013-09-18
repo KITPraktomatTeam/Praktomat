@@ -233,6 +233,9 @@ def load_defaults(settings):
     # Private key used to sign uploded solution files in submission confirmation email
     #d.PRIVATE_KEY = '/home/praktomat/certificates/privkey.pem'
 
+	# Is this a mirror of another instance (different styling)
+    d.MIRROR = False
+
     # The Compiler binarys used to compile a submitted solution
     d.C_BINARY = 'gcc'
     d.CXX_BINARY = 'c++'
