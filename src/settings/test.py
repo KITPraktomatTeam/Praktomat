@@ -15,7 +15,9 @@ BASE_PATH = '/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-UPLOAD_ROOT = "/tmp/upload"
+UPLOAD_ROOT = "/tmp/does-not-exist"
+
+SECRET_KEY = "not-so-secret"
 
 DATABASE_ENGINE = 'sqlite3'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 DATABASE_NAME = UPLOAD_ROOT+'/Database'   # Or path to database file if using sqlite3.
