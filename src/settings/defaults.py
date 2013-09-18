@@ -108,6 +108,8 @@ def load_defaults(settings):
         'django.middleware.transaction.TransactionMiddleware',
     )
 
+    d.DEFAULT_FILE_STORAGE = 'utilities.storage.UploadStorage'
+
     # URL and file paths
     
     d.TEMPLATE_DIRS = (
@@ -200,8 +202,6 @@ def load_defaults(settings):
     d.EMAIL_HOST_USER = ""
     d.EMAIL_HOST_PASSWORD = ""
     d.EMAIL_USE_TLS = False
-
-    d.DEFAULT_FILE_STORAGE = 'utilities.storage.UploadStorage'
 
     # TinyMCE
 
