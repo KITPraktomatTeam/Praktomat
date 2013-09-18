@@ -143,7 +143,16 @@ def load_defaults(settings):
     d.CSRF_COOKIE_NAME = 'csrftoken_' + PRAKTOMAT_ID
 
     # Make this unique, and don't share it with anybody.
-    d.SECRET_KEY = 'db(@293vg@52-2mgn2zjypq=pc@28t@==$@@vt^yf78l$429yn'
+    if 'SECRET_KEY' not in globals():
+        secret_keyfile = join(UPLOAD_ROOT, 'SECRET_KEY')
+        if os.path.exists(secret_keyfile):
+            d.SECRET_KEY = open(secret_keyfile).read()
+            if not SECRET_KEY:
+                raise RuntimeError("File %s empty!" % secret_keyfile)
+        else:
+            import uuid
+            d.SECRET_KEY = uuid.uuid4().hex
+            open(secret_keyfile,'w').write(SECRET_KEY)
 
     # Templates
 
