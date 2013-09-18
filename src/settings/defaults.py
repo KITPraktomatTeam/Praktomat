@@ -131,6 +131,13 @@ def load_defaults(settings):
     # It must end in a slash if set to a non-empty value.
     d.STATIC_URL = BASE_PATH + 'static/'
 
+	# The URL prefix for admin media - CSS, JavaScript and images used by the
+    # Django administrative interface. Make sure to use a trailing slash, and to
+    # have this be different from the MEDIA_URL setting (since the same URL cannot
+    # be mapped onto two different sets of files). For integration with
+    # staticfiles, this should be the same as STATIC_URL followed by 'admin/'.
+    d.ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
+
     # Security
 
     d.SESSION_COOKIE_PATH = BASE_PATH
