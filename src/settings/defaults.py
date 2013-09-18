@@ -25,6 +25,15 @@ def load_defaults(settings):
                 globals()[k] = v
     d = D()
 
+    # Absolute path to the praktomat source
+    d.PRAKTOMAT_ROOT = dirname(dirname(dirname(__file__)))
+
+    #############################################################################
+    # Django Settings                                                           #
+    #############################################################################
+
+    # General setup
+
     # This will show debug information in the browser if an exception occurs.
     # Note that there are always going to be sections of your debug output that 
     # are inappropriate for public consumption. File paths, configuration options, 
@@ -43,28 +52,120 @@ def load_defaults(settings):
     # http://www.i18nguy.com/unicode/language-identifiers.html
     d.LANGUAGE_CODE = 'en-us'
 
-    d.BASE_URL = BASE_HOST + BASE_PATH
+    # A tuple that lists people who get code error notifications. When
+    # DEBUG=False and a view raises an exception, Django will email these
+    # people with the full exception information. Each member of the tuple
+    # should be a tuple of (Full name, email address). 
+    d.ADMINS = []
 
-    # URL that serves the static media files (CSS, JavaScript and images) of
-    # praktomat contained in 'media/'.  Make sure to use a trailing slash if
-    # there is a path component (optional in other cases).  Examples:
-    # "http://media.lawrence.com", "http://example.com/media/"
-    d.MEDIA_URL = BASE_URL + 'media/'
+    # A tuple in the same format as ADMINS that specifies who should get broken
+    # link notifications when BrokenLinkEmailsMiddleware is enabled.
+    d.MANAGERS = ADMINS
 
-    # URL prefix for the administration site media (CSS, JavaScript and images)
-    # contained in the django package. 
-    # Make sure to use a trailing slash.
-    # Examples: "http://foo.com/media/", "/media/".
-    #d.ADMIN_MEDIA_PREFIX = BASE_URL + 'media/admin/'
+    # If you set this to False, Django will make some optimizations so as not
+    # to load the internationalization machinery.
+    d.USE_I18N = True
 
+    # Apps and plugins
+
+    d.INSTALLED_APPS = (
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.admin',
+        'django.contrib.admindocs',
+        'django.contrib.markup',
+        'django.contrib.staticfiles',
+
+        # ./manage.py runserver_plus allows for debugging on werkzeug traceback page. invoke error with assert false
+        # not needed for production
+        'django_extensions',
+
+        # intelligent schema and data migrations
+        'south', 
+
+        # contains a widget to render a form field as a TinyMCE editor
+        'tinymce',
+
+        'configuration',
+        'accounts',
+        'tasks',
+        'solutions',
+        'attestation',
+        'checker',
+        'utilities',
+                      
+        'sessionprofile', #phpBB integration
+    )
+
+    d.MIDDLEWARE_CLASSES = (
+        'django.middleware.common.CommonMiddleware',
+        'sessionprofile.middleware.SessionProfileMiddleware', #phpBB integration
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'accounts.middleware.AuthenticationMiddleware',	
+        'accounts.middleware.LogoutInactiveUserMiddleware',
+        'django.middleware.transaction.TransactionMiddleware',
+    )
+
+    # URL and file paths
+    
+    d.TEMPLATE_DIRS = (
+        join(PRAKTOMAT_ROOT, "src", "templates") 
+    )
+
+    d.STATICFILES_DIRS = (
+        join(PRAKTOMAT_ROOT, "media"),
+    )
+
+    d.ROOT_URLCONF = 'urls'
+
+    d.LOGIN_URL = BASE_PATH + 'accounts/login/'
+
+    d.LOGIN_REDIRECT_URL = BASE_PATH + '/tasks/'
+
+    # URL to use when referring to static files located in STATIC_ROOT.
+    # Example: "/static/" or "http://static.example.com/"
+    # If not None, this will be used as the base path for asset definitions
+    # (the Media class) and the staticfiles app.
+    # It must end in a slash if set to a non-empty value.
+    d.STATIC_URL = BASE_PATH + 'static/'
+
+    # Security
 
     d.SESSION_COOKIE_PATH = BASE_PATH
+
     d.CSRF_COOKIE_NAME = 'csrftoken_' + PRAKTOMAT_ID
 
-    # Absolute path to the praktomat source
-    d.PRAKTOMAT_ROOT = dirname(dirname(dirname(__file__)))
+    # Make this unique, and don't share it with anybody.
+    d.SECRET_KEY = 'db(@293vg@52-2mgn2zjypq=pc@28t@==$@@vt^yf78l$429yn'
 
-    d.ADMINS = []
+    # Templates
+
+    # A boolean that turns on/off template debug mode. If this is True, the fancy 
+    # error page will display a detailed report for any TemplateSyntaxError. 
+    # Note that Django only displays fancy error pages if DEBUG is True.
+    d.TEMPLATE_DEBUG = True
+
+    # List of callables that know how to import templates from various sources.
+    d.TEMPLATE_LOADERS = (
+        'django.template.loaders.filesystem.load_template_source',
+        'django.template.loaders.app_directories.load_template_source',
+    )
+
+    d.TEMPLATE_CONTEXT_PROCESSORS = (
+        'context_processors.settings.from_settings',
+        'django.contrib.auth.context_processors.auth',
+        'django.core.context_processors.debug',
+        'django.core.context_processors.i18n',
+        'django.core.context_processors.media',
+        'django.core.context_processors.request',
+        'django.core.context_processors.static',
+        'django.contrib.messages.context_processors.messages',
+    )
+
+
+    # Database
 
     d.DATABASE_ENGINE = 'sqlite3'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
     d.DATABASE_NAME = UPLOAD_ROOT+'/Database'   # Or path to database file if using sqlite3.
@@ -73,6 +174,11 @@ def load_defaults(settings):
     d.DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
     d.DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
+
+    # Email
+    
+    # Default email address to use for various automated correspondence from
+    # the site manager(s).
     d.DEFAULT_FROM_EMAIL = ""
     d.EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     d.EMAIL_HOST = "smtp.googlemail.com"
@@ -80,11 +186,38 @@ def load_defaults(settings):
     d.EMAIL_HOST_USER = "praktomat@googlemail.com"
     d.EMAIL_HOST_PASSWORD = ""
     d.EMAIL_USE_TLS = True
-    
+
+    d.DEFAULT_FILE_STORAGE = 'utilities.storage.UploadStorage'
+
+    # TinyMCE
+
+    d.TINYMCE_JS_URL = STATIC_URL + 'frameworks/tiny_mce/tiny_mce_src.js'
+    d.TINYMCE_DEFAULT_CONFIG = {
+      'plugins': 'safari,pagebreak,table,advhr,advimage,advlink,emotions,iespell,inlinepopups,media,searchreplace,print,contextmenu,paste,fullscreen,noneditable,visualchars,nonbreaking,syntaxhl',
+
+      'theme': "advanced",
+      'theme_advanced_buttons1' : "formatselect,|,bold,italic,underline,strikethrough,|,forecolor,|,bullist,numlist,|,sub,sup,|,outdent,indent,blockquote,syntaxhl,|,visualchars,nonbreaking,|,link,unlink,anchor,image,cleanup,help,code,|,print,|,fullscreen",
+        'theme_advanced_buttons2' : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,undo,redo,|,tablecontrols,|,hr,removeformat,visualaid,|,charmap,emotions,iespell,media,advhr",				   
+        'theme_advanced_buttons3' : "",
+        'theme_advanced_buttons4' : "",
+        'theme_advanced_toolbar_location' : "top",
+        'theme_advanced_toolbar_align' : "left",
+        'theme_advanced_statusbar_location' : "bottom",
+        'theme_advanced_resizing' : True,
+        'extended_valid_elements' : "textarea[cols|rows|disabled|name|readonly|class]" ,
+        
+        'content_css' : STATIC_URL + '/styles/style.css',
+      'relative_urls': False,
+    }
+    d.TINYMCE_SPELLCHECKER = False
+    d.TINYMCE_COMPRESSOR = False
+
+    #############################################################################
+    # Praktomat-specific settings                                               #
+    #############################################################################
+
     # Private key used to sign uploded solution files in submission confirmation email
     #d.PRIVATE_KEY = '/home/praktomat/certificates/privkey.pem'
-
-    d.MANAGERS = ADMINS
 
     # The Compiler binarys used to compile a submitted solution
     d.C_BINARY = 'gcc'
@@ -156,132 +289,16 @@ def load_defaults(settings):
     # JUnitChecker, ScriptChecker, 
     d.TEST_MAXLOGSIZE=64
 
-    
-
-    # A boolean that turns on/off template debug mode. If this is True, the fancy 
-    # error page will display a detailed report for any TemplateSyntaxError. 
-    # Note that Django only displays fancy error pages if DEBUG is True.
-    d.TEMPLATE_DEBUG = True
-
-    # Subclassed TestSuitRunner to prepopulate unit test database.
-    d.TEST_RUNNER = 'utilities.TestSuite.TestSuiteRunner'
-
-    # The ID, as an integer, of the current site in the django_site database table. 
-    # This is used so that application data can hook into specific site(s) and 
-    # a single database can manage content for multiple sites.
-    d.SITE_ID = 1
-
-    # If you set this to False, Django will make some optimizations so as not
-    # to load the internationalization machinery.
-    d.USE_I18N = True
-
-    # Make this unique, and don't share it with anybody.
-    d.SECRET_KEY = 'db(@293vg@52-2mgn2zjypq=pc@28t@==$@@vt^yf78l$429yn'
-
-    # List of callables that know how to import templates from various sources.
-    d.TEMPLATE_LOADERS = (
-        'django.template.loaders.filesystem.load_template_source',
-        'django.template.loaders.app_directories.load_template_source',
-    )
-
-    d.TEMPLATE_CONTEXT_PROCESSORS = (
-        'context_processors.settings.from_settings',
-        'django.contrib.auth.context_processors.auth',
-        'django.core.context_processors.debug',
-        'django.core.context_processors.i18n',
-        'django.core.context_processors.media',
-        'django.core.context_processors.request',
-        'django.core.context_processors.static',
-        'django.contrib.messages.context_processors.messages',
-    )
-
-    d.MIDDLEWARE_CLASSES = (
-        'django.middleware.common.CommonMiddleware',
-        'sessionprofile.middleware.SessionProfileMiddleware', #phpBB integration
-        'django.contrib.sessions.middleware.SessionMiddleware',
-        'django.middleware.csrf.CsrfViewMiddleware',
-        'accounts.middleware.AuthenticationMiddleware',	
-        'accounts.middleware.LogoutInactiveUserMiddleware',
-        'django.middleware.transaction.TransactionMiddleware',
-    )
-
-    d.ROOT_URLCONF = 'urls'
-
-    d.TEMPLATE_DIRS = (
-        join(PRAKTOMAT_ROOT, "src", "templates") 
-    )
-
-    d.STATICFILES_DIRS = (
-        join(PRAKTOMAT_ROOT, 'media'),
-    )
-
-    d.INSTALLED_APPS = (
-        'django.contrib.auth',
-        'django.contrib.contenttypes',
-        'django.contrib.sessions',
-        'django.contrib.admin',
-        'django.contrib.admindocs',
-        'django.contrib.markup',
-
-        # ./manage.py runserver_plus allows for debugging on werkzeug traceback page. invoke error with assert false
-        # not needed for production
-        'django_extensions',
-
-        # intelligent schema and data migrations
-        'south', 
-
-        # contains a widget to render a form field as a TinyMCE editor
-        'tinymce',
-
-        'configuration',
-        'accounts',
-        'tasks',
-        'solutions',
-        'attestation',
-        'checker',
-        'utilities',
-                      
-        'sessionprofile', #phpBB integration
-    )
-
-    d.LOGIN_REDIRECT_URL = '/tasks/'
-
-    d.DEFAULT_FILE_STORAGE = 'utilities.storage.UploadStorage'
-
     d.NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 1
-
-    d.USE_KILL_LOG = False
 
     d.MIMETYPE_ADDITIONAL_EXTENSIONS = [("text/plain",".properties")]
 
     d.TEST_TIMEOUT=60
 
-    d.LOGIN_REDIRECT_URL = BASE_URL + 'tasks/'
+    # Subclassed TestSuitRunner to prepopulate unit test database.
+    d.TEST_RUNNER = 'utilities.TestSuite.TestSuiteRunner'
 
+    # This is actually a django setting, but depends on a praktomat setting:
     if SHIB_ENABLED:
-        d.LOGIN_URL = BASE_URL + 'accounts/shib_hello/'
-    else:
-        d.LOGIN_URL = BASE_URL + 'accounts/login/'
+        d.LOGIN_URL = BASE_PATH + 'accounts/shib_hello/'
 
-
-    # TinyMCE
-    d.TINYMCE_JS_URL = STATIC_URL + 'frameworks/tiny_mce/tiny_mce_src.js'
-    d.TINYMCE_DEFAULT_CONFIG = {
-      'plugins': 'safari,pagebreak,table,advhr,advimage,advlink,emotions,iespell,inlinepopups,media,searchreplace,print,contextmenu,paste,fullscreen,noneditable,visualchars,nonbreaking,syntaxhl',
-
-      'theme': "advanced",
-      'theme_advanced_buttons1' : "formatselect,|,bold,italic,underline,strikethrough,|,forecolor,|,bullist,numlist,|,sub,sup,|,outdent,indent,blockquote,syntaxhl,|,visualchars,nonbreaking,|,link,unlink,anchor,image,cleanup,help,code,|,print,|,fullscreen",
-        'theme_advanced_buttons2' : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,undo,redo,|,tablecontrols,|,hr,removeformat,visualaid,|,charmap,emotions,iespell,media,advhr",				   
-        'theme_advanced_buttons3' : "",
-        'theme_advanced_buttons4' : "",
-        'theme_advanced_toolbar_location' : "top",
-        'theme_advanced_toolbar_align' : "left",
-        'theme_advanced_statusbar_location' : "bottom",
-        'theme_advanced_resizing' : True,
-        'extended_valid_elements' : "textarea[cols|rows|disabled|name|readonly|class]" ,
-        
-        'content_css' : STATIC_URL + '/styles/style.css',
-      'relative_urls': False,
-    }
-    d.TINYMCE_SPELLCHECKER = False
-    d.TINYMCE_COMPRESSOR = False
