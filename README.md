@@ -110,14 +110,14 @@ The initial database setup follows.
 ```bash
 cd Praktomat
 mkdir data
-./src/manage.py syncdb --noinput --migrate
-./src/manage.py createsuperuser
+./src/manage-devel.py syncdb --noinput --migrate
+./src/manage-devel.py createsuperuser
 ```
 
 Start the development server.
 
 ```bash
-./src/manage.py runserver
+./src/manage-devel.py runserver
 ```
 
 
@@ -148,14 +148,14 @@ Create the upload directory, populate the database and create a super user:
 
 ```bash
 mkdir PraktomatSupport
-./Praktomat/src/manage.py collectstatic --settings=settings.local --noinput --link
-./Praktomat/src/manage.py syncdb --settings=settings.local --noinput --migrate
-./Praktomat/src/manage.py createsuperuser --settings=settings.local -
+./Praktomat/src/manage-local.py collectstatic --noinput --link
+./Praktomat/src/manage-local.py syncdb --noinput --migrate
+./Praktomat/src/manage-local.py createsuperuser -
 ```
 
 It should now be possible to start the developmet server with:
 ```bash
-./Praktomat/src/manage.py runserver --settings=settings.local
+./Praktomat/src/manage-local.py runserver
 ```
 If you want to deploy the project using mod_wsgi in apache you could use `documentation/apache_praktomat_wsgi.conf` as a starting point. Don't forget to install `mod_xsendfile` to serve uploaded files. 
 
@@ -170,8 +170,8 @@ Update
 3. update the static files and the database:
 
 ```bash
-./Praktomat/src/manage.py syncdb --settings=settings.local --noinput --migrate
-./Praktomat/src/manage.py createsuperuser --settings=settings.local -
+./Praktomat/src/manage-local.py syncdb --noinput --migrate
+./Praktomat/src/manage-local.py createsuperuser -
 ```
 
 PhpBB integration 
