@@ -65,6 +65,11 @@ DATABASE_NAME = PRAKTOMAT_ID
 # Private key used to sign uploded solution files in submission confirmation email
 PRIVATE_KEY = '/praktomatng/certificates/mailsign/signer_key.pem'
 
+# Enable Shibboleth:
+SHIB_ENABLED = True
+REGISTRATION_POSSIBLE = False
+
+
 # Finally load defaults for missing setttings.
 import defaults
 defaults.load_defaults(globals())

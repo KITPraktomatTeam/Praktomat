@@ -120,8 +120,6 @@ def load_defaults(settings):
 
     d.ROOT_URLCONF = 'urls'
 
-    d.LOGIN_URL = BASE_PATH + 'accounts/login/'
-
     d.LOGIN_REDIRECT_URL = BASE_PATH + '/tasks/'
 
     # URL to use when referring to static files located in STATIC_ROOT.
@@ -308,4 +306,7 @@ def load_defaults(settings):
     # This is actually a django setting, but depends on a praktomat setting:
     if SHIB_ENABLED:
         d.LOGIN_URL = BASE_PATH + 'accounts/shib_hello/'
+    else:
+		d.LOGIN_URL = BASE_PATH + 'accounts/login/'
+
 
