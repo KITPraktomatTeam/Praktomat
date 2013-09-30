@@ -26,7 +26,7 @@ def serve_access_denied(request, path):
 @login_required
 def serve_solution_file(request, path, solution_id):
 	solution = get_object_or_404(Solution, pk=solution_id)
-	if solution.author == request.user or request.user.is_staff or request.user.tutored_tutorials.filter(id=solution.author.tutorial.id): 	
+	if solution.author == request.user or request.user.is_staff or (solution.author.tutorial is not None and request.user.tutored_tutorials.filter(id=solution.author.tutorial.id)):
 		return sendfile(request, path)
 	return forbidden(request, path)
 
