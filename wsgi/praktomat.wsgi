@@ -9,6 +9,10 @@ site.addsitedir(join(dirname(dirname(dirname(__file__))), "env", "lib", "python2
 import sys
 sys.path.append(join(dirname(dirname(__file__)), "src"))
 
+import warnings
+from django.core.cache import CacheKeyWarning
+warnings.simplefilter("ignore", CacheKeyWarning)
+
 import django.core.handlers.wsgi
 application = django.core.handlers.wsgi.WSGIHandler()
 

@@ -108,6 +108,8 @@ def load_defaults(settings):
         'django.middleware.transaction.TransactionMiddleware',
     )
 
+    d.DEFAULT_FILE_STORAGE = 'utilities.storage.UploadStorage'
+
     # URL and file paths
     
     d.TEMPLATE_DIRS = (
@@ -119,8 +121,6 @@ def load_defaults(settings):
     )
 
     d.ROOT_URLCONF = 'urls'
-
-    d.LOGIN_URL = BASE_PATH + 'accounts/login/'
 
     d.LOGIN_REDIRECT_URL = BASE_PATH + '/tasks/'
 
@@ -145,7 +145,16 @@ def load_defaults(settings):
     d.CSRF_COOKIE_NAME = 'csrftoken_' + PRAKTOMAT_ID
 
     # Make this unique, and don't share it with anybody.
-    d.SECRET_KEY = 'db(@293vg@52-2mgn2zjypq=pc@28t@==$@@vt^yf78l$429yn'
+    if 'SECRET_KEY' not in globals():
+        secret_keyfile = join(UPLOAD_ROOT, 'SECRET_KEY')
+        if os.path.exists(secret_keyfile):
+            d.SECRET_KEY = open(secret_keyfile).read()
+            if not SECRET_KEY:
+                raise RuntimeError("File %s empty!" % secret_keyfile)
+        else:
+            import uuid
+            d.SECRET_KEY = uuid.uuid4().hex
+            open(secret_keyfile,'w').write(SECRET_KEY)
 
     # Templates
 
@@ -194,8 +203,6 @@ def load_defaults(settings):
     d.EMAIL_HOST_PASSWORD = ""
     d.EMAIL_USE_TLS = False
 
-    d.DEFAULT_FILE_STORAGE = 'utilities.storage.UploadStorage'
-
     # TinyMCE
 
     d.TINYMCE_JS_URL = STATIC_URL + 'frameworks/tiny_mce/tiny_mce_src.js'
@@ -225,6 +232,9 @@ def load_defaults(settings):
 
     # Private key used to sign uploded solution files in submission confirmation email
     #d.PRIVATE_KEY = '/home/praktomat/certificates/privkey.pem'
+
+	# Is this a mirror of another instance (different styling)
+    d.MIRROR = False
 
     # The Compiler binarys used to compile a submitted solution
     d.C_BINARY = 'gcc'
@@ -308,4 +318,7 @@ def load_defaults(settings):
     # This is actually a django setting, but depends on a praktomat setting:
     if SHIB_ENABLED:
         d.LOGIN_URL = BASE_PATH + 'accounts/shib_hello/'
+    else:
+		d.LOGIN_URL = BASE_PATH + 'accounts/login/'
+
 
