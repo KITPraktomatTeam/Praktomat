@@ -48,17 +48,6 @@ class TestChecker(TestCase):
 					)
 		self.solution.check()
 
-	def test_diff_checker(self):
-		src = join(dirname(dirname(dirname(__file__))), 'examples', 'ls.sh')	
-		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'ls.sh')
-		# circumvent SuspiciousOperation exception
-		copy_file(src,dest)
-		DiffChecker.DiffChecker.objects.create(
-					task = self.task,
-					order = 0,
-					shell_script = dest
-					)
-		self.solution.check()
 
 	def test_interface_checker(self):
 		InterfaceChecker.InterfaceChecker.objects.create(
