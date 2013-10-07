@@ -281,7 +281,7 @@ def load_defaults(settings):
         "mail": (True, "email"),
         "givenName": (True, "first_name"),
         "sn": (True, "last_name"),
-        "matriculationNumber": (True, "matriculationNumber"),
+        "matriculationNumber": (False, "matriculationNumber"),
     }
 
     d.SHIB_USERNAME = "email"
