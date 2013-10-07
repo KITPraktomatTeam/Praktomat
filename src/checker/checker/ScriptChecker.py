@@ -13,7 +13,7 @@ from utilities.file_operations import *
 class ScriptChecker(Checker):
 
 	name = models.CharField(max_length=100, default="Externen Tutor ausführen", help_text=_("Name to be displayed on the solution detail page."))
-	shell_script = CheckerFileField(help_text=_("The shell script whose output for the given input file is compared to the given output file."))
+	shell_script = CheckerFileField(help_text=_("The shell script whose output for the given input file is compared to the given output file. The environment will contain the variables JAVA and PROGRAM."))
 	remove = models.CharField(max_length=5000, blank=True, help_text=_("Regular expression describing passages to be removed from the output."))
 	returns_html = models.BooleanField(default= False, help_text=_("If the script doesn't return HTML it will be enclosed in &lt; pre &gt; tags."))
 
@@ -33,9 +33,7 @@ class ScriptChecker(Checker):
 		This runs the check in the environment ENV, returning a CheckerResult. """
 
 		# Setup
-		replace = [("PROGRAM",env.program())] if env.program() else []
-		replace +=[("JAVA",settings.JVM_SECURE)]
-		copy_file_to_directory(self.shell_script.path, env.tmpdir(), replace=replace)
+		copy_file_to_directory(self.shell_script.path, env.tmpdir())
 		os.chmod(env.tmpdir()+'/'+os.path.basename(self.shell_script.name),0750)
 		
 		# Run the tests -- execute dumped shell script 'script.sh'
@@ -47,6 +45,7 @@ class ScriptChecker(Checker):
 		environ['USER'] = str(env.user().id)
 		environ['HOME'] = env.tmpdir()
 		environ['JAVA'] = settings.JVM
+		environ['PROGRAM'] = env.program() or ''
 
 		[output, error, exitcode,timed_out] = execute_arglist(args, working_directory=env.tmpdir(), environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE)
 		output = force_unicode(output, errors='replace')
