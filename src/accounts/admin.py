@@ -2,7 +2,7 @@ from random import randint
 from django.utils.translation import ugettext_lazy as _
 from django.contrib import admin
 from django.contrib.auth.models import User as UserBase, Group
-from django.contrib.auth.admin import UserAdmin as UserBaseAdmin
+from django.contrib.auth.admin import UserAdmin as UserBaseAdmin, GroupAdmin as GroupBaseAdmin
 from django.db.models import Count
 from accounts.models import User, Tutorial, ShowAllUser
 from accounts.templatetags.in_group import in_group
@@ -114,6 +114,17 @@ class UserAdmin(UserBaseAdmin):
 admin.site.unregister(UserBase) 
 admin.site.register(User, UserAdmin)
 
+class GroupAdmin(GroupBaseAdmin):
+	def get_urls(self):
+		""" Add URL to user import """
+		urls = super(GroupAdmin, self).get_urls()
+		from django.conf.urls.defaults import url, patterns
+		my_urls = patterns('', url(r'^(\d+)/import_matriculation_list/$', 'accounts.views.import_matriculation_list', name='import_matriculation_list')) 
+		return my_urls + urls
+
+admin.site.unregister(Group) 
+admin.site.register(Group, GroupAdmin)
+
 
 class ShowAllUserAdmin(UserAdmin):
 	model = User
@@ -123,6 +134,7 @@ class ShowAllUserAdmin(UserAdmin):
 
 	def get_paginator(self, request, queryset, per_page, orphans=0, allow_empty_first_page=True):
 		return self.paginator(queryset, 10000, orphans, allow_empty_first_page)
+admin.site.register(ShowAllUser,ShowAllUserAdmin)
 
 class TutorialAdmin(admin.ModelAdmin):
 	model = Tutorial
@@ -132,6 +144,5 @@ class TutorialAdmin(admin.ModelAdmin):
 		css = {
 			"all": ("styles/admin_style.css",)
 		}
-admin.site.register(ShowAllUser,ShowAllUserAdmin)
 		
 admin.site.register(Tutorial, TutorialAdmin)

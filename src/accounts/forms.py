@@ -178,3 +178,5 @@ class ImportTutorialAssignmentForm(forms.Form):
 	
 	
 
+class ImportMatriculationListForm(forms.Form):
+    mat_number_file = forms.FileField(required=True, help_text = "A text file consisting of one matriculatoin number per line.")

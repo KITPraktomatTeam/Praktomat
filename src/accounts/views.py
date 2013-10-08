@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.template import RequestContext, Template, Context, loader
 from django.conf import settings
-from accounts.forms import MyRegistrationForm, UserChangeForm, ImportForm, ImportTutorialAssignmentForm
+from accounts.forms import MyRegistrationForm, UserChangeForm, ImportForm, ImportTutorialAssignmentForm, ImportMatriculationListForm
 from accounts.models import User, Tutorial
 from accounts.decorators import local_user_required
 from django.contrib.auth.models import Group
@@ -141,3 +141,30 @@ def import_tutorial_assignment(request):
 	else:
 		form = ImportTutorialAssignmentForm()
 	return render_to_response('admin/accounts/user/import_tutorial_assignment.html', {'form': form, 'title':"Import tutorial assignment"  }, RequestContext(request))
+
+
+@staff_member_required
+def import_matriculation_list(request, group_id):
+    """ Set the group memembership of all users according to an uploaded list of matriculation numbers. """
+    group = get_object_or_404(Group,pk=group_id)
+    if request.method == 'POST':
+        form = ImportMatriculationListForm(request.POST, request.FILES)
+        if form.is_valid():
+            file = form.files['mat_number_file']
+            reader = csv.reader(file)
+            mats = set(int(row[0]) for row in reader)
+            nr_in_group = nr_not_in_group = 0
+            for u in User.objects.all():
+                if u.mat_number in mats:
+                    u.groups.add(group)
+                    nr_in_group += 1
+                else:
+                    u.groups.remove(group)
+                    nr_not_in_group += 1
+                u.save()
+            request.user.message_set.create(message="%i users added to group %s, %i not." % (nr_in_group, group.name, nr_not_in_group))
+            return HttpResponseRedirect(urlresolvers.reverse('admin:auth_group_change', args=[group_id]))
+    else:
+        form = ImportMatriculationListForm()
+    return render_to_response('admin/auth/group/import_matriculation_list.html', {'form': form, 'title':"Import matriuculation number list"}, RequestContext(request))
+
