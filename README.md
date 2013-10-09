@@ -188,5 +188,5 @@ PhpBB integration
 To access the praktomat usersessions from an phpBB folow the instructions in `src/sessionprofile/phpbb/README.txt`.
 
 
-[Bug tacker]: https://github.com/KITPraktomatTeam/Praktomat/issues
+[Bug tracker]: https://github.com/KITPraktomatTeam/Praktomat/issues
 [praktomat-users@list.kit.edu]: https://www.lists.kit.edu/wws/info/praktomat-users
