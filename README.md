@@ -41,6 +41,7 @@ Prerequisites
     junit4
     dejagnu
     gcj-jdk (jfc-dump, for checking Submissions for use of javax.* etc)
+    jclassinfo
    
     git-core
 

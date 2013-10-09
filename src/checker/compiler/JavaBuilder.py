@@ -11,6 +11,7 @@ from django.conf import settings
 from django.template.loader import get_template
 from django.template import Context
 
+from checker.models import execute_arglist
 
 class JavaBuilder(Builder):
 	"""	 A Java bytecode compiler for construction. """
@@ -23,21 +24,19 @@ class JavaBuilder(Builder):
 	_env['JCFDUMP'] = settings.JCFDUMP
 
 	def main_module(self, env):
-		""" find the first source code file containing a main method """
-		file_name_filter = re.compile(self.rxarg())
-		# public static void main(String[] args) or public static void main(String... args)
-		# allow variable spacing, ignore case and allow for other parameter names than args
-		main_method_regex = re.compile(r"public\s+static\s+void\s+main\s*\(\s*(final\s*)?String\s*(\[\]|\.\.\.)\s*\S*\s*\)", re.IGNORECASE)
-		for (name,content) in  env.sources():
-			if file_name_filter.match(name) and main_method_regex.search(content):
-				# convert file to class name
-				chopped = name[:-len(".java")]
-				(head, result) = os.path.split(chopped)
-				while head != "":
-					chopped = string.join((head, result), ".")
-					(head, result) = os.path.split(chopped)			
-				return result
-		raise self.NotFoundError("The class containing the main method('public static void main(String[] args)') could not be found.")
+		""" find the first class file containing a main method """
+		main_method = re.compile(r"^public static void main\(java.lang.String\[\]\)$", re.MULTILINE)
+		main_method = "public static void main(java.lang.String[])"
+		class_name  = re.compile(r"^public( abstract)?( final)? class ([^ ]*) extends .*$", re.MULTILINE)
+		for dirpath, dirs, files in os.walk(env.tmpdir()):
+			for filename in files:
+				if filename.endswith(".class"):
+					[classinfo,_,_,_]  = execute_arglist([settings.JCLASSINFO, "--methods", "--general-info", os.path.join(dirpath,filename)], env.tmpdir(), self.environment())
+					if string.find(classinfo,main_method) >= 0:
+						main_class_name = class_name.search(classinfo, re.MULTILINE).group(3)
+						return main_class_name
+
+		raise self.NotFoundError("A class containing the main method('public static void main(String[] args)') could not be found.")
 
 
 	def libs(self):
