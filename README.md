@@ -1,5 +1,13 @@
 This is the source distribution of Praktomat, a programming course manager.
 
+Resources
+=========
+
+In case of bugs or feature requests, please use the [Bug tracker]. There is
+also a moderated mailing list for Praktomat administrators:
+[praktomat-users@lists.kit.edu].
+
+
 General setup
 =============
 
@@ -179,3 +187,6 @@ PhpBB integration
 
 To access the praktomat usersessions from an phpBB folow the instructions in `src/sessionprofile/phpbb/README.txt`.
 
+
+[Bug tacker]: https://github.com/KITPraktomatTeam/Praktomat/issues
+[praktomat-users@list.kit.edu]: https://www.lists.kit.edu/wws/info/praktomat-users
