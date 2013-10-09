@@ -4,8 +4,8 @@ Resources
 =========
 
 In case of bugs or feature requests, please use the [Bug tracker]. There is
-also a moderated mailing list for Praktomat administrators:
-[praktomat-users@lists.kit.edu].
+also a moderated [mailing list] for Praktomat administrators:
+praktomat-users@lists.kit.edu.
 
 
 General setup
@@ -189,4 +189,4 @@ To access the praktomat usersessions from an phpBB folow the instructions in `sr
 
 
 [Bug tracker]: https://github.com/KITPraktomatTeam/Praktomat/issues
-[praktomat-users@list.kit.edu]: https://www.lists.kit.edu/wws/info/praktomat-users
+[mailing list]: https://www.lists.kit.edu/wws/info/praktomat-users
