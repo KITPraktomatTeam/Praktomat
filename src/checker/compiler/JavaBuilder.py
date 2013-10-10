@@ -27,13 +27,13 @@ class JavaBuilder(Builder):
 		""" find the first class file containing a main method """
 		main_method = re.compile(r"^public static void main\(java.lang.String\[\]\)$", re.MULTILINE)
 		main_method = "public static void main(java.lang.String[])"
-		class_name  = re.compile(r"^public( abstract)?( final)? class ([^ ]*) extends .*$", re.MULTILINE)
+		class_name  = re.compile(r"^(public )?(abstract )?(final )?class ([^ ]*) extends .*$", re.MULTILINE)
 		for dirpath, dirs, files in os.walk(env.tmpdir()):
 			for filename in files:
 				if filename.endswith(".class"):
 					[classinfo,_,_,_]  = execute_arglist([settings.JCLASSINFO, "--methods", "--general-info", os.path.join(dirpath,filename)], env.tmpdir(), self.environment())
 					if string.find(classinfo,main_method) >= 0:
-						main_class_name = class_name.search(classinfo, re.MULTILINE).group(3)
+						main_class_name = class_name.search(classinfo, re.MULTILINE).group(4)
 						return main_class_name
 
 		raise self.NotFoundError("A class containing the main method('public static void main(String[] args)') could not be found.")
