@@ -45,6 +45,9 @@ Prerequisites
    
     git-core
 
+  If youre going to use Praktomat to check Haskell submissions, you will also require the packages:
+    ghc libghc-test-framework-dev libghc-test-framework-hunit-dev libghc-test-framework-quickcheck2-dev
+
  For Checkstyle, we recommend getting checkstyle-all-4.4.jar  
 
     http://sourceforge.net/projects/checkstyle/files/checkstyle/4.4/
