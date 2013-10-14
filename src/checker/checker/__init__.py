@@ -11,4 +11,5 @@ __all__ = [	"AnonymityChecker",
 			"DejaGnu",
 			"CheckStyleChecker",
 			"IsabelleChecker",
+			"HaskellTestFrameWorkChecker",
 		  ]

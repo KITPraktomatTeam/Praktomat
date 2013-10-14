@@ -1,5 +1,13 @@
 This is the source distribution of Praktomat, a programming course manager.
 
+Resources
+=========
+
+In case of bugs or feature requests, please use the [Bug tracker]. There is
+also a moderated [mailing list] for Praktomat administrators:
+praktomat-users@lists.kit.edu.
+
+
 General setup
 =============
 
@@ -33,8 +41,13 @@ Prerequisites
     junit4
     dejagnu
     gcj-jdk (jfc-dump, for checking Submissions for use of javax.* etc)
+    jclassinfo
    
     git-core
+
+  If youre going to use Praktomat to check Haskell submissions, you will also require the packages:
+
+    ghc libghc-test-framework-dev libghc-test-framework-hunit-dev libghc-test-framework-quickcheck2-dev
 
  For Checkstyle, we recommend getting checkstyle-all-4.4.jar  
 
@@ -179,3 +192,6 @@ PhpBB integration
 
 To access the praktomat usersessions from an phpBB folow the instructions in `src/sessionprofile/phpbb/README.txt`.
 
+
+[Bug tracker]: https://github.com/KITPraktomatTeam/Praktomat/issues
+[mailing list]: https://www.lists.kit.edu/wws/info/praktomat-users

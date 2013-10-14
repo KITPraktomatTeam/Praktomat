@@ -1,0 +1,24 @@
+{% comment %}
+	include the folowing depenencies once in the including pages head:
+	<script type="text/javascript" src="{{STATIC_URL}}script/solution_inlines.js"></script>
+	<link type="text/css" rel="stylesheet" href="{{STATIC_URL}}styles/pygments_friendly.css" />
+{% endcomment %}
+{% load highlight %}
+<br/>
+<div class="filetabs">
+	<ul>
+	  <li><a href="#file0">{{testfilename}}</a></li> 
+	</ul> 	
+        <div class="file" id="file0">
+          <h3>{{testfilename}}</h3>
+          <div class="download">
+            <span class="ui-icon ui-icon-disk"></span>
+            <a href="{{testfile.url}}">Download</a>
+          </div>
+          {% if showSource %}
+          <div class="content">
+            {{testfileContent|highlight_table:testfilename}}
+          </div>
+          {% endif %}
+        </div>
+</div>

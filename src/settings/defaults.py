@@ -251,6 +251,8 @@ def load_defaults(settings):
     d.JUNIT38='junit'
     d.JAVA_LIBS = { 'junit3' : '/usr/share/java/junit.jar', 'junit4' : '/usr/share/java/junit4.jar' }
     d.JCFDUMP='jcf-dump'
+    d.JCLASSINFO='jclassinfo'
+    d.GHC='ghc'
 
     # Enable to run all scripts (checker) as the unix user 'tester'. Therefore
     # put 'tester' as well as the Apache user '_www' (and your development user
