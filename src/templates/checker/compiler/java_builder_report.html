@@ -1,3 +1,7 @@
-<div>{{ filenames|length }} <tt>Java</tt> User-submitted files found for Compilation: {% for javafile in filenames%} {{ javafile }} &nbsp; {% endfor %}</div>
-<div>Java Compiler Output:</div>
+<div>{{ filenames|length }} <tt>Java</tt> user-submitted files found for compilation: {% for javafile in filenames%} {{ javafile }} &nbsp; {% endfor %}</div>
+{% if output %}
+<div>Java compiler output:</div>
 <pre>{{output|safe}}</pre>
+{% else %}
+<div>The Java compiler produced no output</div>
+{% endif %}
