@@ -131,8 +131,10 @@ class Builder(Checker):
 		try:
 			if passed : env.set_program(self.main_module(env))
 		except self.NotFoundError as e:
-			passed = not self._main_required
-			log += "<pre>" + str(e) + "</pre>"
+			# But only complain if the main method is required
+			if self._main_required:
+				log += "<pre>" + str(e) + "</pre>"
+				passed = False
 
 		result.set_passed(passed)
 		result.set_log(log)
