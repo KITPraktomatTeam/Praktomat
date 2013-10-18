@@ -13,6 +13,13 @@ import warnings
 from django.core.cache import CacheKeyWarning
 warnings.simplefilter("ignore", CacheKeyWarning)
 
+import resource
+def set_to_hard(res):
+	(s,h) = resource.getrlimit(res)
+	resource.setrlimit(res,(h,h))
+set_to_hard(resource.RLIMIT_AS)
+set_to_hard(resource.RLIMIT_NPROC)
+
 import django.core.handlers.wsgi
 application = django.core.handlers.wsgi.WSGIHandler()
 
