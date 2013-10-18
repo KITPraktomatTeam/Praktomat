@@ -5,6 +5,7 @@ import grp
 import tempfile
 from django.conf import settings
 from utilities import encoding
+import shutil
 
 gid = None
 if (settings.USEPRAKTOMATTESTER):
@@ -45,11 +46,17 @@ def create_file(path, content, replace=[], override=True):
 		os.chmod(path, 0770)			
 
 
-def copy_file(from_file_path, to_file_path, replace=[], override=True):
+def copy_file(from_file_path, to_file_path, replace=[], override=True, binary=False):
 	""" """
-	with open(from_file_path) as fd:
-		content = encoding.get_unicode(fd.read())
-	create_file(to_file_path, content, replace=replace, override=override)
+	if binary:
+		dirname = os.path.dirname(to_file_path)
+		if not os.path.exists(dirname):
+			makedirs(dirname)
+		shutil.copyfile(from_file_path, to_file_path)
+        else:
+		with open(from_file_path) as fd:
+			content = encoding.get_unicode(fd.read())
+			create_file(to_file_path, content, replace=replace, override=override)
 
 
 def copy_file_to_directory_verbatim(from_path, to_path, override=True,to_is_directory=True):

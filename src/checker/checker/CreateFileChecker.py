@@ -10,7 +10,7 @@ from utilities.file_operations import *
 from utilities.encoding import *
 from django.utils.html import escape
 from django.contrib import admin
-
+import zipfile
 
 
 class CheckerWithFile(Checker):
@@ -20,28 +20,50 @@ class CheckerWithFile(Checker):
 	file = CheckerFileField(help_text=_("The file that is copied into the sandbox"))
 	filename = models.CharField(max_length=500, blank=True, help_text=_("What the file will be named in the sandbox. If empty, we try to guess the right filename!"))
 	path = models.CharField(max_length=500, blank=True, help_text=_("Subfolder in the sandbox which shall contain the file."))
+        unpack_zipfile = models.BooleanField(default=False, help_text=_("Unpack the zip file into the given subfolder. (It will be an error if the file is not a zip file; the filename is ignored.)")) 
 
         _add_to_environment = True
 
         def path_relative_to_sandbox(self):
 		filename = self.filename if self.filename else self.file.path
                 return os.path.join(string.lstrip(self.path,"/ "), os.path.basename(filename))
-
+	
 	def run_file(self, env):
-		filename = self.filename if self.filename else self.file.path
-		path = os.path.join(os.path.join(env.tmpdir(),string.lstrip(self.path,"/ ")),os.path.basename(filename))
-		overridden = os.path.exists(path)
-		copy_file_to_directory_verbatim(self.file.path, path,to_is_directory=False)
 		result = CheckerResult(checker=self)
-		if not overridden:
-			result.set_log("")
-			result.set_passed(True)
+		clashes = []
+		if (self.unpack_zipfile):
+			lpath = string.lstrip(self.path,"/ ")
+			path = os.path.join(env.tmpdir(),lpath)
+			if not zipfile.is_zipfile(self.file.path):
+				raise ValidationError("File %s is not a zipfile." % self.file.path)
+			zip = zipfile.ZipFile(self.file.path, 'r')
+			
+			if zip.testzip():
+				raise ValidationError("File %s is invalid." % self.file.path)
+			# zip.extractall would not protect against ..-paths,
+			# it would do so from python 2.7.4 on.
+			for finfo in zip.infolist():
+				dest = os.path.join(path, finfo.filename)
+				# This check is from http://stackoverflow.com/a/10077309/946226
+				if not os.path.realpath(os.path.abspath(dest)).startswith(path):
+					raise ValidationError("File %s contains illegal path %s." % (self.file.path, finfo.filename))
+				if os.path.exists(dest):
+					clashes.append(os.path.join(lpath, finfo.filename))
+				zip.extract(finfo, path)
 		else:
-			result.set_log("The file '%s' already exists. Do NOT include it in your submission!" % escape(os.path.join(self.path, os.path.basename(filename))))
-			result.set_passed(False)
-		source_path = os.path.join(string.lstrip(self.path,"/ "), os.path.basename(filename))
-		if (self._add_to_environment):
-                        env.add_source(source_path, self.file.read())
+			filename = self.filename if self.filename else self.file.path
+			path = os.path.join(os.path.join(env.tmpdir(),string.lstrip(self.path,"/ ")),os.path.basename(filename))
+			overridden = os.path.exists(path)
+			copy_file_to_directory_verbatim(self.file.path, path,to_is_directory=False)
+			if overridden:
+				clashes.append(os.path.join(self.path, os.path.basename(filename)))
+			source_path = os.path.join(string.lstrip(self.path,"/ "), os.path.basename(filename))
+			if (self._add_to_environment):
+				env.add_source(source_path, self.file.read())
+
+		result.set_passed(not clashes)
+		if clashes:
+			result.set_log("These files already existed. Do NOT include them in your submissions:<br/><ul>\n" + "\n".join(map(lambda f: "<li>%s</li>" % escape(f), clashes)) + "</ul>")
 		return result
 
 class CreateFileChecker(CheckerWithFile):

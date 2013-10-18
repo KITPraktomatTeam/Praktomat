@@ -1,5 +1,6 @@
 from os.path import dirname, join
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from utilities.TestSuite import TestCase
 from utilities.file_operations import copy_file
 
@@ -47,6 +48,79 @@ class TestChecker(TestCase):
 					file = dest
 					)
 		self.solution.check()
+		for checkerresult in self.solution.checkerresult_set.all():
+			self.failUnless(checkerresult.passed, checkerresult.log)
+
+	def test_createfile_override_checker(self):
+		src = join(dirname(dirname(dirname(__file__))), 'examples', 'check style', 'check_ws.xml')	
+		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'check style', 'createfile.xml')
+		# circumvent SuspiciousOperation exception
+		copy_file(src,dest)
+		CreateFileChecker.CreateFileChecker.objects.create(
+					task = self.task,
+					order = 0,
+					file = dest
+					)
+		CreateFileChecker.CreateFileChecker.objects.create(
+					task = self.task,
+					order = 1,
+					file = dest
+					)
+		self.solution.check()
+		for checkerresult in self.solution.checkerresult_set.all():
+                        if checkerresult.checker.order == 1:
+                            self.failIf(checkerresult.passed, checkerresult.log)
+
+	def test_createfile_zip_checker(self):
+		src = join(dirname(dirname(dirname(__file__))), 'examples', 'simple_zip_file.zip')
+		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'simple_zip_file.zip')
+		# circumvent SuspiciousOperation exception
+		copy_file(src,dest, binary=True)
+		CreateFileChecker.CreateFileChecker.objects.create(
+					task = self.task,
+					order = 0,
+                                        unpack_zipfile = True,
+					file = dest
+					)
+		self.solution.check()
+		for checkerresult in self.solution.checkerresult_set.all():
+			self.failUnless(checkerresult.passed, checkerresult.log)
+
+	def test_createfile_illegal_zip_checker(self):
+		src = join(dirname(dirname(dirname(__file__))), 'examples', 'badzipfile.zip')
+		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'badzipfile.zip')
+		# circumvent SuspiciousOperation exception
+		copy_file(src,dest, binary=True)
+		CreateFileChecker.CreateFileChecker.objects.create(
+					task = self.task,
+					order = 0,
+                                        unpack_zipfile = True,
+					file = dest
+					)
+                self.assertRaises(ValidationError, self.solution.check)
+
+	def test_createfile_zip_override_checker(self):
+		src = join(dirname(dirname(dirname(__file__))), 'examples', 'simple_zip_file.zip')
+		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'simple_zip_file.zip')
+		# circumvent SuspiciousOperation exception
+		copy_file(src,dest, binary=True)
+		CreateFileChecker.CreateFileChecker.objects.create(
+					task = self.task,
+					order = 0,
+                                        unpack_zipfile = True,
+					file = dest
+					)
+		CreateFileChecker.CreateFileChecker.objects.create(
+					task = self.task,
+					order = 1,
+                                        unpack_zipfile = True,
+					file = dest
+					)
+		self.solution.check()
+		for checkerresult in self.solution.checkerresult_set.all():
+                        if checkerresult.checker.order == 1:
+                            self.failIf(checkerresult.passed, checkerresult.log)
+
 
 
 	def test_interface_checker(self):
@@ -56,7 +130,7 @@ class TestChecker(TestCase):
 					interface1 = 'Test'
 					)
 		self.solution.check()
-        # This fails (no good test data)
+                # This fails (no good test data)
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.failIf(checkerresult.passed, checkerresult.log)
 
