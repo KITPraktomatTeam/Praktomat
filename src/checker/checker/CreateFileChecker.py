@@ -95,7 +95,7 @@ class CopyForm(AlwaysChangedModelForm):
 		""" override public and required """
 		super(CopyForm, self).__init__(**args)
 		self.fields["public"].initial = False
-		self.fields["required"].initial = False
+		self.fields["required"].initial = True
 
 	def clean_filename(self):
 		filename = self.cleaned_data['filename']
