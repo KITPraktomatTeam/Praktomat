@@ -24,7 +24,7 @@ def makedirs(path):
 		os.chmod(path, 0770)
 
 
-def create_file(path, content, replace=[], override=True):
+def create_file(path, content, override=True):
 	""" """	
 	dirname = os.path.dirname(path)
 	if not os.path.exists(dirname):
@@ -35,8 +35,6 @@ def create_file(path, content, replace=[], override=True):
 				os.remove(path)
 			else: # throw exception
 				raise Exception('File already exists')
-	for (old, new) in replace:
-		content = content.replace(old, new)
 	with open(path, 'w') as fd:
 		fd.write(encoding.get_utf8(content))
 	if (gid):
@@ -46,7 +44,7 @@ def create_file(path, content, replace=[], override=True):
 		os.chmod(path, 0770)			
 
 
-def copy_file(from_file_path, to_file_path, replace=[], override=True, binary=False):
+def copy_file(from_file_path, to_file_path, override=True, binary=False):
 	""" """
 	if binary:
 		dirname = os.path.dirname(to_file_path)
@@ -56,7 +54,7 @@ def copy_file(from_file_path, to_file_path, replace=[], override=True, binary=Fa
         else:
 		with open(from_file_path) as fd:
 			content = encoding.get_unicode(fd.read())
-			create_file(to_file_path, content, replace=replace, override=override)
+			create_file(to_file_path, content, override=override)
 
 
 def copy_file_to_directory_verbatim(from_path, to_path, override=True,to_is_directory=True):
@@ -81,8 +79,8 @@ def copy_file_to_directory_verbatim(from_path, to_path, override=True,to_is_dire
 
 
 
-def copy_file_to_directory(from_file_path, to_path, replace=[], override=True):
-	copy_file(from_file_path, os.path.join(to_path, os.path.basename(from_file_path)), replace=replace, override=override)
+def copy_file_to_directory(from_file_path, to_path, override=True):
+	copy_file(from_file_path, os.path.join(to_path, os.path.basename(from_file_path)), override=override)
 
 
 def create_tempfolder(path):
