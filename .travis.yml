@@ -5,8 +5,10 @@ python:
 
 install:
  - sudo apt-get update
- - sudo apt-get install python2.7-dev python-m2crypto python-psycopg2
+ - sudo apt-get install python2.7-dev swig libsasl2-dev libssl-dev libpq-dev
  - sudo apt-get install openjdk-6-jdk dejagnu checkstyle gcj-jdk jclassinfo
+   # m2crypto does not compile out of the box, see https://github.com/boto/boto/pull/841
+ - pip install --upgrade git+https://github.com/msabramo/M2Crypto.git@1de89f579e5377412fd428fb96edbfd3ef4e5c4d
  - pip install -r requirements.txt
 
 script:
