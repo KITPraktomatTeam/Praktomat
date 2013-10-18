@@ -55,6 +55,7 @@ def execute_arglist(args, working_directory, environment_variables={}, use_defau
 	environment = environ
 	environment.update(environment_variables)
 	environ['ULIMIT_FILESIZE'] = str(fileseeklimit)
+	fileseeklimitbytes = fileseeklimit * 1014
 
 	wrapper_prefix = [join(join(dirname(__file__),'scripts'),'execute')]
 	sudo_prefix    = ["sudo", "-E", "-u", "tester"]
@@ -76,8 +77,8 @@ def execute_arglist(args, working_directory, environment_variables={}, use_defau
 		# Limit the size of files created during execution
 		resource.setrlimit(resource.RLIMIT_NOFILE,(128,128))
 		if fileseeklimit is not None:
-			resource.setrlimit(resource.RLIMIT_FSIZE,(fileseeklimit,fileseeklimit))
-			if resource.getrlimit(resource.RLIMIT_FSIZE) != (fileseeklimit,fileseeklimit):
+			resource.setrlimit(resource.RLIMIT_FSIZE,(fileseeklimitbytes, fileseeklimitbytes))
+			if resource.getrlimit(resource.RLIMIT_FSIZE) != (fileseeklimitbytes, fileseeklimitbytes):
 				raise ValueError(resource.getrlimit(resource.RLIMIT_FSIZE))
 	process = subprocess32.Popen(command, stdout=subprocess32.PIPE, stderr=stderr, cwd=working_directory, env=environment,preexec_fn=prepare_subprocess)
 
