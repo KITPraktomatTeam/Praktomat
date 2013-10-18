@@ -68,12 +68,14 @@ def create_tempfolder(path):
 class InvalidZipFile(Exception):
 	pass
 
-def unpack_zipfile_to(zipfilename, to_path, override_cb=None):
+def unpack_zipfile_to(zipfilename, to_path, override_cb=None, file_cb=None):
 	"""
 	Extracts a zipfile to the given location, trying to safeguard against wrong paths
 
 	The override_cb is called for every file that overwrites an existing file,
 	with the name of the file in the archive as the parameter.
+
+	The file_cb is called for every file, after extracting it.
 	"""	
 	if not zipfile.is_zipfile(zipfilename):
 		raise InvalidZipFile("File %s is not a zipfile." % zipfilename)
@@ -93,5 +95,5 @@ def unpack_zipfile_to(zipfilename, to_path, override_cb=None):
 		if override_cb is not None and os.path.exists(dest):
 			override_cb(finfo.filename)
 		zip.extract(finfo, to_path)
-
-	
+		if file_cb is not None and os.path.isfile(os.path.join(to_path,finfo.filename)):
+			file_cb(finfo.filename)

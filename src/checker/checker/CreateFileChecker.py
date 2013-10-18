@@ -26,24 +26,29 @@ class CheckerWithFile(Checker):
         def path_relative_to_sandbox(self):
 		filename = self.filename if self.filename else self.file.path
                 return os.path.join(string.lstrip(self.path,"/ "), os.path.basename(filename))
+
+   	def add_to_environment(self, env, path):
+		if (self._add_to_environment):
+			env.add_source(path, file(os.path.join(env.tmpdir(),path)).read())
 	
 	def run_file(self, env):
 		result = CheckerResult(checker=self)
 		clashes = []
+		cleanpath = string.lstrip(self.path,"/ ")
 		if (self.unpack_zipfile):
-			lpath = string.lstrip(self.path,"/ ")
-			path = os.path.join(env.tmpdir(),lpath)
-                        unpack_zipfile_to(self.file.path, path, lambda n: clashes.append(os.path.join(lpath, n)))
+			path = os.path.join(env.tmpdir(),cleanpath)
+			unpack_zipfile_to(self.file.path, path,
+				lambda n: clashes.append(os.path.join(cleanpath, n)),
+				lambda f: self.add_to_environment(env, os.path.join(cleanpath,f)))
 		else:
 			filename = self.filename if self.filename else self.file.path
-			path = os.path.join(os.path.join(env.tmpdir(),string.lstrip(self.path,"/ ")),os.path.basename(filename))
+			source_path = os.path.join(cleanpath, os.path.basename(filename))
+			path = os.path.join(env.tmpdir(),source_path)
 			overridden = os.path.exists(path)
 			copy_file(self.file.path, path, binary=True)
 			if overridden:
 				clashes.append(os.path.join(self.path, os.path.basename(filename)))
-			source_path = os.path.join(string.lstrip(self.path,"/ "), os.path.basename(filename))
-			if (self._add_to_environment):
-				env.add_source(source_path, self.file.read())
+			self.add_to_environment(env, source_path)
 
 		result.set_passed(not clashes)
 		if clashes:
