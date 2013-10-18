@@ -60,7 +60,7 @@ Prerequisites
 
 Python 2.7
 ==========
-  Unfortunately, Praktomat currently requires Python 2.7
+  The Praktomat currently requires Python 2.7
 
   On Ubuntu 11.04, Python2.7 is installed by default,
   but you may need to install the packages
@@ -68,42 +68,9 @@ Python 2.7
     python2.7-dev
     python-setuptools
     python-psycopg2
-    
-    sudo easy_install -U setuptools
+    python-m2crypto
+    python-virtualenv
 
-  On Linux-Distributions (Ubuntu 10.4 LTS, Debian squeeze) that 
-  ship with Python 2.6, we recommend to compile and install
-  python 2.7 manually from source, by installing required packages with:
-
-    sudo apt-get build-dep python
-    sudo apt-get install libdb4.8-dev libgdbm-dev  
-
-  and then something like:
-
-    wget http://www.python.org/ftp/python/2.7.1/Python-2.7.1.tar.bz2
-    tar xjf Python-2.7.1.tar.bz2
-    cd Python-2.7.1/
-    ./configure --enable-shared
-    make 
-    make altinstall
-
-  Then install virtualenv
-
-    wget https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.9.1.tar.gz
-    tar xzf virtualenv-1.9.1.tar.gz
-    cd virtualenv-1.9.1
-    python2.7 setup.py  install --prefix=/usr/local/
-
-  and use virtualenv-2.7 to create a virtual environment for praktomat.
-
-  If you compiled Python 2.7 manually, you have to compile
-  and install mod_wsgi manually, as well. Get the source from
-    http://code.google.com/p/modwsgi/
-  and make sure to configure it similiarly to:
-
-    ./configure --with-python=/usr/local/bin/python2.7
-
- 
 Developer setup
 ===============
 
