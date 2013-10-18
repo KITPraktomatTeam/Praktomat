@@ -10,7 +10,6 @@ from utilities.file_operations import *
 from utilities.encoding import *
 from django.utils.html import escape
 from django.contrib import admin
-import zipfile
 
 
 class CheckerWithFile(Checker):
@@ -34,22 +33,7 @@ class CheckerWithFile(Checker):
 		if (self.unpack_zipfile):
 			lpath = string.lstrip(self.path,"/ ")
 			path = os.path.join(env.tmpdir(),lpath)
-			if not zipfile.is_zipfile(self.file.path):
-				raise ValidationError("File %s is not a zipfile." % self.file.path)
-			zip = zipfile.ZipFile(self.file.path, 'r')
-			
-			if zip.testzip():
-				raise ValidationError("File %s is invalid." % self.file.path)
-			# zip.extractall would not protect against ..-paths,
-			# it would do so from python 2.7.4 on.
-			for finfo in zip.infolist():
-				dest = os.path.join(path, finfo.filename)
-				# This check is from http://stackoverflow.com/a/10077309/946226
-				if not os.path.realpath(os.path.abspath(dest)).startswith(path):
-					raise ValidationError("File %s contains illegal path %s." % (self.file.path, finfo.filename))
-				if os.path.exists(dest):
-					clashes.append(os.path.join(lpath, finfo.filename))
-				zip.extract(finfo, path)
+                        unpack_zipfile_to(self.file.path, path, lambda n: clashes.append(os.path.join(lpath, n)))
 		else:
 			filename = self.filename if self.filename else self.file.path
 			path = os.path.join(os.path.join(env.tmpdir(),string.lstrip(self.path,"/ ")),os.path.basename(filename))

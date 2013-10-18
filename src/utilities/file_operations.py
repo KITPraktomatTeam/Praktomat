@@ -6,6 +6,7 @@ import tempfile
 from django.conf import settings
 from utilities import encoding
 import shutil
+import zipfile
 
 gid = None
 if (settings.USEPRAKTOMATTESTER):
@@ -63,5 +64,34 @@ def create_tempfolder(path):
 		os.chown(new_tmpdir, -1, gid)
 	os.chmod(new_tmpdir, 0770)	
 	return new_tmpdir
+
+class InvalidZipFile(Exception):
+	pass
+
+def unpack_zipfile_to(zipfilename, to_path, override_cb=None):
+	"""
+	Extracts a zipfile to the given location, trying to safeguard against wrong paths
+
+	The override_cb is called for every file that overwrites an existing file,
+	with the name of the file in the archive as the parameter.
+	"""	
+	if not zipfile.is_zipfile(zipfilename):
+		raise InvalidZipFile("File %s is not a zipfile." % zipfilename)
+	zip = zipfile.ZipFile(zipfilename, 'r')
+	
+	if zip.testzip():
+		raise InvalidZipFile("File %s is invalid." % zipfilename)
+
+	# zip.extractall would not protect against ..-paths,
+	# it would do so from python 2.7.4 on.
+	for finfo in zip.infolist():
+		dest = os.path.join(to_path, finfo.filename)
+
+		# This check is from http://stackoverflow.com/a/10077309/946226
+		if not os.path.realpath(os.path.abspath(dest)).startswith(to_path):
+			raise InvalidZipFile("File %s contains illegal path %s." % (zipfilename, finfo.filename))
+		if override_cb is not None and os.path.exists(dest):
+			override_cb(finfo.filename)
+		zip.extract(finfo, to_path)
 
 	

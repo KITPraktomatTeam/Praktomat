@@ -1,8 +1,7 @@
 from os.path import dirname, join
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from utilities.TestSuite import TestCase
-from utilities.file_operations import copy_file
+from utilities.file_operations import copy_file, InvalidZipFile
 
 from solutions.models import Solution
 from tasks.models import Task
@@ -97,7 +96,7 @@ class TestChecker(TestCase):
                                         unpack_zipfile = True,
 					file = dest
 					)
-                self.assertRaises(ValidationError, self.solution.check)
+                self.assertRaises(InvalidZipFile, self.solution.check)
 
 	def test_createfile_zip_override_checker(self):
 		src = join(dirname(dirname(dirname(__file__))), 'examples', 'simple_zip_file.zip')
