@@ -32,6 +32,10 @@ umask o+rwx
 # JfcDump als HTTP?
 #if /usr/bin/sudo -u praktomat \
 
+# Java needs more resourced...
+ulimit -v hard
+ulimit -u hard
+
 # -encoding UTF-8
 if $JAVAC \
  -classpath . \
