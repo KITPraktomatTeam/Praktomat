@@ -33,7 +33,7 @@ class ScriptChecker(Checker):
 		This runs the check in the environment ENV, returning a CheckerResult. """
 
 		# Setup
-		copy_file_to_directory(self.shell_script.path, env.tmpdir())
+		copy_file(self.shell_script.path, env.tmpdir(), to_is_directory=True)
 		os.chmod(env.tmpdir()+'/'+os.path.basename(self.shell_script.name),0750)
 		
 		# Run the tests -- execute dumped shell script 'script.sh'

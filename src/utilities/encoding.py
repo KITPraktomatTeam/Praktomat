@@ -7,6 +7,9 @@ def get_unicode(bytestring):
 	default_charsets = ["ISO-8859-1","utf-8"]
 	if bytestring:
 		""" Returns guessed unicode representation of file content. """
+		if isinstance(bytestring,unicode):
+			return bytestring
+
 
 		# Treat any 8-bit ASCII extension as latin1/western european
 		charset = chardet.detect(bytestring)["encoding"]

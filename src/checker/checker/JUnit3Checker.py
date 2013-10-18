@@ -31,7 +31,7 @@ class JUnit3Checker(Checker):
 	
 	def run(self, env):
 		""" Do whatever this checker is suposed to do. """
-		copy_file_to_directory_verbatim(self.test_case.path,env.tmpdir())
+		copy_file(self.test_case.path, env.tmpdir(), to_is_directory=True, binary=True)
 		junit_class = os.path.basename(self.test_case.path).rsplit('.',1).pop(0)
 
 		cmd = settings.JUNIT38 + " -text " + junit_class

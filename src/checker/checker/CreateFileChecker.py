@@ -54,7 +54,7 @@ class CheckerWithFile(Checker):
 			filename = self.filename if self.filename else self.file.path
 			path = os.path.join(os.path.join(env.tmpdir(),string.lstrip(self.path,"/ ")),os.path.basename(filename))
 			overridden = os.path.exists(path)
-			copy_file_to_directory_verbatim(self.file.path, path,to_is_directory=False)
+			copy_file(self.file.path, path, binary=True)
 			if overridden:
 				clashes.append(os.path.join(self.path, os.path.basename(filename)))
 			source_path = os.path.join(string.lstrip(self.path,"/ "), os.path.basename(filename))
