@@ -56,7 +56,7 @@ def execute_arglist(args, working_directory, environment_variables={}, use_defau
 	environment.update(environment_variables)
         if fileseeklimit is not None:
             environ['ULIMIT_FILESIZE'] = str(fileseeklimit)
-            fileseeklimitbytes = fileseeklimit * 1014
+            fileseeklimitbytes = fileseeklimit * 1024
 
 	wrapper_prefix = [join(join(dirname(__file__),'scripts'),'execute')]
 	sudo_prefix    = ["sudo", "-E", "-u", "tester"]
