@@ -55,17 +55,15 @@ def execute_arglist(args, working_directory, environment_variables={}, use_defau
 	environment = environ
 	environment.update(environment_variables)
         if fileseeklimit is not None:
-            environ['ULIMIT_FILESIZE'] = str(fileseeklimit)
             fileseeklimitbytes = fileseeklimit * 1024
 
-	wrapper_prefix = [join(join(dirname(__file__),'scripts'),'execute')]
 	sudo_prefix    = ["sudo", "-E", "-u", "tester"]
 
 	use_tester = settings.USEPRAKTOMATTESTER and use_default_user_configuration
 	if use_tester:
-		command = sudo_prefix + wrapper_prefix + command
+		command = sudo_prefix + command
 	else:
-		command =               wrapper_prefix + command
+		command =               command
 
 	stderr = subprocess32.STDOUT if join_stderr_stdout else subprocess32.PIPE
 
