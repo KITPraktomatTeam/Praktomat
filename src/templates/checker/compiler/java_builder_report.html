@@ -1,3 +1,4 @@
+{% if filenames %}
 <div>{{ filenames|length }} <tt>Java</tt> user-submitted files found for compilation: {% for javafile in filenames%} {{ javafile }} &nbsp; {% endfor %}</div>
 {% if output %}
 <div>Java compiler output:</div>
@@ -5,3 +6,7 @@
 {% else %}
 <div>The Java compiler produced no messages.</div>
 {% endif %}
+{% else %}
+<div>No Java input files found.</div>
+{% endif %}
+
