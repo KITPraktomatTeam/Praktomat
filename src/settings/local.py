@@ -69,6 +69,9 @@ PRIVATE_KEY = '/praktomatng/certificates/mailsign/signer_key.pem'
 SHIB_ENABLED = True
 REGISTRATION_POSSIBLE = False
 
+# Various extra files
+CHECKSTYLEALLJAR = '/praktomatng/checkstyle-all-4.4.jar'
+
 
 # Finally load defaults for missing setttings.
 import defaults
