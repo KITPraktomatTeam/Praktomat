@@ -45,6 +45,7 @@ class ScriptChecker(Checker):
 		environ['USER'] = str(env.user().id)
 		environ['HOME'] = env.tmpdir()
 		environ['JAVA'] = settings.JVM
+		environ['JAVA_SECURE'] = settings.JVM_SECURE
 		environ['PROGRAM'] = env.program() or ''
 
 		[output, error, exitcode,timed_out] = execute_arglist(args, working_directory=env.tmpdir(), environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE)
