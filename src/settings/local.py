@@ -69,9 +69,10 @@ PRIVATE_KEY = '/praktomatng/certificates/mailsign/signer_key.pem'
 SHIB_ENABLED = True
 REGISTRATION_POSSIBLE = False
 
-# Various extra files
-CHECKSTYLEALLJAR = '/praktomatng/checkstyle-all-4.4.jar'
-
+# Various extra files and versions
+CHECKSTYLEALLJAR = '/praktomatng/checkstyle-5.5-all.jar'
+JAVA_BINARY = 'javac-sun-1.7'
+JVM = 'java-sun-1.7'
 
 # Finally load defaults for missing setttings.
 import defaults
