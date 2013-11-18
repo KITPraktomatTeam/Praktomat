@@ -29,11 +29,9 @@ class Migration(SchemaMigration):
         'accounts.user': {
             'Meta': {'ordering': "['first_name', 'last_name']", 'object_name': 'User', '_ormbases': ['auth.User']},
             'activation_key': ('django.db.models.fields.CharField', [], {'max_length': '40'}),
-            'consent_form_submitted': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'final_grade': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'mat_number': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'programme': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'signed_up_for_exam': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'tutorial': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['accounts.Tutorial']", 'null': 'True', 'blank': 'True'}),
             'user_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True', 'primary_key': 'True'})
         },
