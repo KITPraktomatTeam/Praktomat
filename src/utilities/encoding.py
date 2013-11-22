@@ -16,7 +16,7 @@ def get_unicode(bytestring):
 		charset = re.sub(r"ISO-8859-[0-9]","ISO-8859-1",charset)
 		charset = re.sub(r"windows-125[01235]","ISO-8859-1",charset)
 
-		for chset in [charset] + default_charsets:
+		for chset in ["utf-8", charset, "ISO-8859-1"]:
 			try:
 				return bytestring.decode(chset)
 			except UnicodeDecodeError:
