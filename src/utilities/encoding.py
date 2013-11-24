@@ -13,8 +13,10 @@ def get_unicode(bytestring):
 
 		# Treat any 8-bit ASCII extension as latin1/western european
 		charset = chardet.detect(bytestring)["encoding"]
-		charset = re.sub(r"ISO-8859-[0-9]","ISO-8859-1",charset)
-		charset = re.sub(r"windows-125[01235]","ISO-8859-1",charset)
+		if charset:
+			charset = re.sub(r"ISO-8859-[0-9]","ISO-8859-1",charset)
+		if charset:
+			charset = re.sub(r"windows-125[01235]","ISO-8859-1",charset)
 
 		for chset in ["utf-8", charset, "ISO-8859-1"]:
 			try:
