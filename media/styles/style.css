@@ -682,8 +682,11 @@ input[type="submit"]{
 	color: #ff8a00;
 }
 
-#attestation_view div.changed {
+#attestation_view div.added {
 	background-color: #c4ff6f;
+}
+#attestation_view div.removed {
+	background-color: #ffc46f;
 }
 
 #attestation_view div.changed span.addedChar {
