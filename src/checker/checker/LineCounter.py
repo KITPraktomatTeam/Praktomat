@@ -113,12 +113,12 @@ class LineCounter(Checker):
 				log = log + "Line Width Checker (l 178): ZeroDivisionError " + \
 					  " (no comment / code / coco lines in file!)"
 			
-            lines = lines + lines_in_file
-            comment_lines = comment_lines + comment_lines_in_file
-            code_lines = code_lines + code_lines_in_file
-            coco_lines = coco_lines + coco_lines_in_file
+			lines = lines + lines_in_file
+			comment_lines = comment_lines + comment_lines_in_file
+			code_lines = code_lines + code_lines_in_file
+			coco_lines = coco_lines + coco_lines_in_file
 
-        # All files have been processed.
+		# All files have been processed.
 		try:
 			log = log + ("<br>" + `files` + " Dateien, "
 						 + `lines` + " Zeilen, davon "
