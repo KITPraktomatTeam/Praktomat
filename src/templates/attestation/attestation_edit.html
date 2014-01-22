@@ -84,7 +84,7 @@
 		</div>
 		
 		<div id="model_solution">
-				{% with model_solution.checkerresult_set.all as results %}
+				{% with model_solution.allCheckerResults as results %}
 					{% include "solutions/checker_results_inline.html" %}
 				{% endwith %}	
 				<br/>
@@ -96,7 +96,7 @@
 		
 		<div id="solution">
 			<h1 class="heading">Checker results</h1>
-			{% with solution.checkerresult_set.all as results %}
+			{% with solution.allCheckerResults as results %}
 				{% include "solutions/checker_results_inline.html" %}
 			{% endwith %}
 			<br/>
@@ -108,7 +108,7 @@
 		
 		<div id="annotated_solution_files">
 			<h1 class="heading">Checker results</h1>
-			{% with solution.checkerresult_set.all as results %}
+			{% with solution.allCheckerResults as results %}
 			{% include "solutions/checker_results_inline.html" %}
 			{% endwith %}
 			<h1 class="heading">Annotated solution files</h1>
