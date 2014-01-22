@@ -56,7 +56,7 @@ class ScriptChecker(Checker):
 
 		if self.remove:
 			output = re.sub(self.remove, "", output)
-		if not self.returns_html or truncated:
+		if not self.returns_html or truncated or timeout:
 			output = '<pre>' + escape(output) + '</pre>'
 
 		result.set_log(output,timed_out=timed_out,truncated=truncated)

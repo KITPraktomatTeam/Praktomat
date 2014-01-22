@@ -70,7 +70,7 @@
 {% if user|in_group:"Trainer" or user|in_group:"Tutor" %}
 	<div class="section private">
 		<h2>Checker results</h2>
-		{% with attest.solution.checkerresult_set.all as results %}
+		{% with attest.solution.allCheckerResults as results %}
 			{% include "solutions/checker_results_inline.html" %}
 		{% endwith %}
 	</div>
