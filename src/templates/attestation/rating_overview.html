@@ -37,13 +37,17 @@
 	
 	function calculate(){
 		var all_grades = new Array();
+		var all_plagiarism = new Array();
 		$('.user_row').each(function(index) {
 							var grades=new Array();
+							var plagiarism=new Array();
 							var result;
 							$(this).find('.grade_cell').each(function(index) {
-															 grades[index] = $(this).text()
+															 grades[index] = $(this).data('score');
+															 plagiarism[index] = $(this).data('plagiarism') == 'yes';
 															 });
 							all_grades[index] = grades
+							all_plagiarism[index] = plagiarism
 							});
 	
 		
@@ -51,6 +55,7 @@
 		
 		for (index in all_grades){
 			var grades = all_grades[index];
+			var plagiarism = all_plagiarism[index];
 			var result;
 			
 			try {
@@ -80,7 +85,7 @@
 	
 	{{script_form.script}}
 	<input type="button" id="calculate_button" value="calculate" onClick="calculate()" />
-	<p class="help">This JavaScript will be executed for every user listed below to calculate a proposed end note. This calculation is also shown to the tutors and users. <i><b>grades</b></i> is an Array containing all final grades for one user as Stings. <i><b>ratingScaleItems</b></i> is an array of arrays containing the names of the rating scale items of every task's final grade rating scale. Save the end note recommendation in <i><b>result</b></i> so it can be displayed in the row 'Calculated grade' and on the user index page.</p>
+	<p class="help">This JavaScript will be executed for every user listed below to calculate a proposed end note. This calculation is also shown to the tutors and users. <i><b>grades</b></i> is an Array containing all final grades for one user as Stings. <i><b>plagiarism</b></i> is an Array of booleans, indicating whether the solution was plagiarism. <i><b>ratingScaleItems</b></i> is an array of arrays containing the names of the rating scale items of every task's final grade rating scale. Save the end note recommendation in <i><b>result</b></i> so it can be displayed in the row 'Calculated grade' and on the user index page.</p>
 
 	<div id="email"><a href="mailto:?bcc={% for user, attestations in rating_list %}{{user.email}},{% endfor %}"><span class="icon ui-icon-mail-closed"></span>Email all users</a></div>  <div id="export"><a href="{% url rating_export %}"><span class="icon ui-icon-extlink"></span>Export as csv (utf-8)</a></div>
 
@@ -98,10 +103,16 @@
 			<tr class="{% cycle 'odd' 'even' %} user_row">
 				<td><a href="mailto:{{user.email}}">{{user.get_full_name}}</a></td>
 				{% for attestation in attestations %}
+				    {% if attestation.solution.plagiarism %}
+							<td class="grade_cell" data-plagiarism="yes"><span class="icon ui-icon-alert icon-red" title="Marked as plagiarism"></span></td>
+						{% else %}
 						{% if attestation.final_grade %}
-							<td class="grade_cell"><a href="{% url view_attestation attestation_id=attestation.id%}">{{attestation.final_grade}}</a></td>
+							<td class="grade_cell" data-score="{{attestation.final_grade}}">
+							  <a href="{% url view_attestation attestation_id=attestation.id%}">{{attestation.final_grade}}</a>
+							</td>
 						{% else %}
 							<td class="grade_cell">-</td>
+						{% endif %}
 						{% endif %}
 	
 				{% endfor %}

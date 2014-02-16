@@ -14,16 +14,22 @@
 		{% include "attestation/rating_scale_items_js_inline.html" %}
 				
 		var all_grades = new Array();
+		var all_plagiarism = new Array();
 		$('.user_row').each(function(index) {
 			var grades=new Array();
+			var plagiarism=new Array();
 			var result;
 			$(this).find('.grade_cell').each(function(index) {
-				grades[index] = $(this).text()
+				grades[index] = $(this).data('score');
+				plagiarism[index] = $(this).data('plagiarism') == 'yes';
+
 			});
-			all_grades[index] = grades
+			all_grades[index] = grades;
+			all_plagiarism[index] = plagiarism;
 			});
 		for (index in all_grades){
 			var grades = all_grades[index];
+			var plagiarism = all_plagiarism[index];
 			var result;
 			try{
 				{{script.script|safe}};
@@ -68,11 +74,22 @@
 			<tr class="{% cycle 'odd' 'even' %} user_row">
 				<td><a href="mailto:{{user.email}}">{{user.get_full_name}}</a></td>
 				{% for attestation in attestations %}
-				<td class="grade_cell">
+				<td class="grade_cell"
+				    {% if attestation.solution.plagiarism %}
+				        data-plagiarism="yes"
+				    {% endif %}
+				    {% if attestation.final_grade %}
+				        data-score="{{attestation.final_grade}}"
+				    {% endif %}
+				>
 					{% if attestation.id %}
 					<a href="{% url view_attestation attestation_id=attestation.id%}">
 					{% endif %}
-					
+
+				        {% if attestation.solution.plagiarism %}
+					  <span class="icon ui-icon-alert icon-red" title="Marked as plagiarism"></span>
+					{% endif %}
+
 					{% if attestation.final_grade %}
 						{{attestation.final_grade}}
 					{% else %}
