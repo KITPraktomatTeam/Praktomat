@@ -991,4 +991,9 @@ a.checkerinline:active  {color:black;}
 	display:block;
 	text-decoration:none;
 }
-	
+
+table.attestationprogress tr.all_final       { background-color: lightgreen  }
+table.attestationprogress tr.some_unattested { background-color: red  }
+table.attestationprogress tr.some_nonfinal   { background-color: yellow  }
+table.attestationprogress tr td              { text-align: right }
+table.attestationprogress tr td:nth-child(1) { text-align: left }

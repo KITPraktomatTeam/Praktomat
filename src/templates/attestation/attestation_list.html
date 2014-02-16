@@ -76,12 +76,25 @@
 			{% if user|in_group:'Trainer'%}
 				<h2>{% trans "Attestation Progress by Tutor" %}</h2>
 				<div class='attestation'>
-					<table>
-					{% for entry in attestation_stats %}
+					<table class="attestationprogress">
 						<tr>
+                                                      <th>Tutor</th>
+                                                      <th>Unrated</th>
+                                                      <th>Not final</th>
+                                                      <th>Final</th>
+                                                      <th>Total</th>
+                                                </tr>
+					{% for entry in attestation_stats %}
+						<tr class="{% if entry.unattested != 0 %}          some_unattested
+						           {% else %} {% if entry.nonfinal != 0 %} some_nonfinal
+							              {% else %}                     all_final
+								      {% endif %}
+							   {% endif %}">
                                                       <td>{{entry.tutor.first_name}} {{entry.tutor.last_name}}</td>
-                                                      <td align="right">{{entry.final}} final</td><td> + </td><td align="right">{{entry.nonfinal}} nonfinal</td><td>=</td> 
-                                                      <td align="right">{{entry.attested}}</td><td>of</td><td align="right">{{entry.total}}</td>
+                                                      <td>{{entry.unattested}}</td>
+                                                      <td>{{entry.nonfinal}}</td>
+                                                      <td>{{entry.final}}</td>
+                                                      <td>{{entry.total}}</td>
                                                 </tr>
 					{% endfor %}
 					</table>
