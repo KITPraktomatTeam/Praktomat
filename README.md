@@ -130,7 +130,6 @@ Create the upload directory, populate the database and create a super user:
 mkdir PraktomatSupport
 ./Praktomat/src/manage-local.py collectstatic --noinput --link
 ./Praktomat/src/manage-local.py syncdb --noinput --migrate
-./Praktomat/src/manage-local.py createsuperuser -
 ```
 
 It should now be possible to start the developmet server with:
@@ -139,6 +138,22 @@ It should now be possible to start the developmet server with:
 ```
 If you want to deploy the project using mod_wsgi in apache you could use `documentation/apache_praktomat_wsgi.conf` as a starting point. Don't forget to install `mod_xsendfile` to serve uploaded files. 
 
+Adding the first user
+---------------------
+
+If you use django for authentification, you might want to add a first user using
+
+```bash
+./Praktomat/src/manage-local.py createsuperuser -
+```
+
+If you use single-sign-on via Shibboleth, you can already log in. After you have logged in, you can assign super user rights to yourself using
+
+```bash
+./Praktomat/src/manage-local.py makesuperuser --username=<the_user_name>
+```
+
+The username is visible under “View Account”; by default it is the e-mail address submitted by the Shibboleth server.
 
 Update 
 ======
