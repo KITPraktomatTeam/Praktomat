@@ -77,9 +77,10 @@
 				<td class="grade_cell"
 				    {% if attestation.solution.plagiarism %}
 				        data-plagiarism="yes"
-				    {% endif %}
-				    {% if attestation.final_grade %}
+				    {% else %}
+				      {% if attestation.final_grade %}
 				        data-score="{{attestation.final_grade}}"
+				      {% endif %}
 				    {% endif %}
 				>
 					{% if attestation.id %}
