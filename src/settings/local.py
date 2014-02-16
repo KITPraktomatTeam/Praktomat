@@ -10,10 +10,9 @@ PRAKTOMAT_ID = basename(dirname(PRAKTOMAT_PATH))
 match = re.match('praktomat_(\d+)_(WS|SS)(_Abschluss)?(_Mirror)?', PRAKTOMAT_ID)
 if match:
 	year = int(match.group(1))
-	SITE_NAME = ''
+	SITE_NAME = 'Programmieren '
 	if match.group(3):
 		SITE_NAME += "Abschlussaufgaben "
-	SITE_NAME = 'Programmieren '
 	if match.group(2) == "WS":
 		SITE_NAME += "Wintersemester %d/%d" % (year, year+1)
 	else:

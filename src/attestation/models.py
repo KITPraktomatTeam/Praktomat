@@ -117,6 +117,6 @@ class RatingResult(models.Model):
 	
 class Script(models.Model):
 	""" save java script function of the rating overview page """
-	script = models.TextField(blank=True, help_text = _("This JavaScript will calculate a recommend end note for every user based on final grade of every task."), default="""var sum = 0;\nfor (x in grades) {\n\tsum += parseInt(grades[x]);\n}\nresult=Math.round(sum/grades.length);""")
+	script = models.TextField(blank=True, help_text = _("This JavaScript will calculate a recommend end note for every user based on final grade of every task."), default="""var sum = 0.0;\nfor (x = 0; x != grades.length; ++x) {\n    grade = parseFloat(grades[x]);\n    if (!isNaN(grade)) {\n        sum += grade;\n    }\n}\nresult=sum;""")
 	
 	
