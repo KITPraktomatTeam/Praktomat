@@ -87,15 +87,16 @@
 					<a href="{% url view_attestation attestation_id=attestation.id%}">
 					{% endif %}
 
-				        {% if attestation.solution.plagiarism %}
-					  <span class="icon ui-icon-alert icon-red" title="Marked as plagiarism"></span>
-					{% endif %}
-
 					{% if attestation.final_grade %}
 						{{attestation.final_grade}}
 					{% else %}
 						-
 					{% endif %}
+
+				        {% if attestation.solution.plagiarism %}
+					  <span class="icon ui-icon-alert icon-red" title="Marked as plagiarism"></span>
+					{% endif %}
+
 
 					{% if attestation.id %}
 					</a>
