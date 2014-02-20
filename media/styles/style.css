@@ -997,3 +997,5 @@ table.attestationprogress tr.some_unattested { background-color: red  }
 table.attestationprogress tr.some_nonfinal   { background-color: yellow  }
 table.attestationprogress tr td              { text-align: right }
 table.attestationprogress tr td:nth-child(1) { text-align: left }
+table.attestationprogress * > * > a.mail         { visibility:hidden }
+table.attestationprogress *:hover > * > a.mail   { visibility:visible }

@@ -90,7 +90,7 @@
 							              {% else %}                     all_final
 								      {% endif %}
 							   {% endif %}">
-                                                      <td>{{entry.tutor.first_name}} {{entry.tutor.last_name}}</td>
+                                                      <td>{{entry.tutor.first_name}} {{entry.tutor.last_name}} <a class="mail" href="mailto:{{entry.tutor.email}}"><span class="icon ui-icon-mail-open"></span></a></td>
                                                       <td>{{entry.unattested}}</td>
                                                       <td>{{entry.nonfinal}}</td>
                                                       <td>{{entry.final}}</td>
