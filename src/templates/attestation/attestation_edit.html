@@ -18,17 +18,17 @@
 			$(".heading").addClass("hidden");
 
 			$("#tabs").tabs({ // instanciate tabs
-				show: function(event, ui) { 	// call dimensionsChanged of bespin when the tab is opend
-	    			if (ui.panel.id == "annotated_solution_files") { env.editor.resize(); }
-				},
-				select:	function(event, ui) {
-				  	  if (ui.panel.id == "download") {
+				beforeActivate:
+					function(event, ui) {
+					  var id = ui.newPanel.attr('id');
+					  if (id == "download") {
 					    window.open("{% url solution_download solution_id=solution.id %}","Download");
 					    return false;
-					  } else if (ui.panel.id == "download_full") {
+					  } else if (id == "download_full") {
 					    window.open("{% url solution_download solution_id=solution.id full="full" %}","Download");
 					    return false;
-					  } else return true;
+					  } else
+					    return true;
 				}
 			})
 
