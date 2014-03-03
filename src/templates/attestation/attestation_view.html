@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load highlight %}{% load i18n  %}{% load in_group %} 
 {% block extrahead %}{{ block.super }}
+	<script type="text/javascript" src="{{STATIC_URL}}/frameworks/jquery.easy-confirm-dialog/jquery.easy-confirm-dialog.js"></script>
 	<script type="text/javascript" src="{{STATIC_URL}}script/solution_inlines.js"></script>
 	<link type="text/css" rel="stylesheet" href="{{STATIC_URL}}styles/pygments_friendly.css" />
 	<script type="text/javascript">	
@@ -13,8 +14,20 @@
 		}
 		$(document).ready(function(){
 			updatePublishButton();
-		  	$('#id_final').click(function(){updatePublishButton()});
-	  	});
+			$('#id_final').click(function(){updatePublishButton()});
+
+			$(".withdraw").easyconfirm({
+				locale: {
+					title: 'Are you sure?',
+					text: 'Really withdraw this attestion? The student and the trainers will be notified by e-mail.',
+					button: ['Cancel','Withdraw'],
+					closeText: 'Cancel',
+					},
+				eventType:
+					'submit'
+			});
+		});
+
 	</script>
 {% endblock %}
 {% block breadcrumbs %} {{block.super}} > <a href={% url task_detail task_id=attest.solution.task.id%}>{{attest.solution.task.title}}</a> 
@@ -102,4 +115,12 @@
 		<input type="button" value="Edit again" onClick="parent.location='{% url edit_attestation attest.id %}'">
 	</form>
 {% endif %}
+
+{% if withdrawable %}
+	<br/><br/>
+	<form method="post" class="withdraw" action="{% url withdraw_attestation attest.id %}">{% csrf_token %}
+		<input type="submit" name="withdraw" value="Withdraw published attestation" />
+	</form>
+{% endif %}
+
 {% endblock %}

@@ -3,7 +3,6 @@
 {% block extrahead %}{{ block.super }}
 <script type="text/javascript" src="{{STATIC_URL}}/frameworks/jquery/jquery.tools.min.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}/frameworks/dotdotdot/jquery.dotdotdot-packed.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}/frameworks/jquery.confirm/jquery.confirm.js"></script>
 {% endblock %}
 {% block breadcrumbs %} {{block.super}} > <a href={% url task_detail task_id=task.id%}>{{task.title}}</a> > Attestations{% endblock %}
 {% block content %}<div id='attestation_list'>

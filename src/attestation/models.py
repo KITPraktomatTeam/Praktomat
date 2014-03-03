@@ -49,6 +49,28 @@ class Attestation(models.Model):
 			email = EmailMessage(subject, body, None, recipients, bcc_recipients, headers = headers)
 			email.send()
 
+        def withdraw(self, request):
+		self.published = False
+                self.final = False
+		self.published_on = datetime.now()
+		self.save()
+		
+		# Send confirmation email
+		if (self.solution.author.email or self.author.email):
+			t = loader.get_template('attestation/attestation_withdraw_email.html')
+			c = {
+				'attest': self,
+				'protocol': request.is_secure() and "https" or "http",
+				'domain': RequestSite(request).domain,
+				'site_name': settings.SITE_NAME,
+				}
+			subject = _("Attestation for your solution of the task '%s' withdrawn") % self.solution.task
+			body = t.render(Context(c))
+			recipients = [self.solution.author.email or self.author.email]
+			bcc_recipients = ([self.author.email] if self.solution.author.email and self.author.email else []) + [trainer.email for trainer in  User.objects.filter(groups__name="Trainer") ]
+			email = EmailMessage(subject, body, None, recipients, bcc_recipients)
+			email.send()
+
 class AnnotatedSolutionFile(models.Model):
 	""""""
 	attestation = models.ForeignKey(Attestation)

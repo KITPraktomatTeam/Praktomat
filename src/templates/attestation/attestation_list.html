@@ -3,7 +3,8 @@
 {% block extrahead %}{{ block.super }}
 <script type="text/javascript" src="{{STATIC_URL}}/frameworks/jquery/jquery.tools.min.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}/frameworks/dotdotdot/jquery.dotdotdot-packed.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}/frameworks/jquery.confirm/jquery.confirm.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}/frameworks/jquery.easy-confirm-dialog/jquery.easy-confirm-dialog.js"></script>
+
 <script type="text/javascript">	
  $(document).ready(function(){
  	$("#help_icon").tooltip({
@@ -24,14 +25,15 @@
 			}
 		});
 	});
-	$(".confirm").confirm({
-		msg: 'Really publish all final attestations? ',
-		buttons: {
-			ok: 'Publish',
-			cancel: 'Cancel',
-			wrapper: '<button></button>',
-			separator: ' ',
-		},
+	$(".confirm").easyconfirm({
+		locale: {
+			title: 'Are you sure?',
+			text: 'Really publish all final attestations?',
+			button: ['Cancel','Publish'],
+			closeText: 'Cancel',
+			},
+		eventType:
+			'submit'
 	})
 })
 
@@ -182,8 +184,8 @@
 			
 			
 			{% if not user|in_group:'Trainer'%}
-				<form enctype="multipart/form-data" method="post" action="">{% csrf_token %}	
-					<input type="submit" class="confirm" value="Publish all final attestations" {% if published %} disabled {% endif %}/>
+				<form enctype="multipart/form-data" class="confirm" method="post" action="">{% csrf_token %}	
+					<input type="submit" value="Publish all final attestations" {% if published %} disabled {% endif %}/>
 					{% if published %}	
 						<span id='comment'>All attested Solutions are already published.</span> 
 					{% endif %}
