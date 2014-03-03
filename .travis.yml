@@ -7,7 +7,7 @@ install:
  - sudo apt-get update
  - sudo apt-get install python2.7-dev swig libsasl2-dev libssl-dev libpq-dev
  - sudo apt-get install openjdk-6-jdk dejagnu checkstyle gcj-jdk jclassinfo
- - pip install --allow-external subprocess32  -r requirements.txt
+ - pip install -r requirements.txt
 
 script:
  - ./src/manage-test.py test accounts attestation checker configuration sessionprofile solutions tasks
