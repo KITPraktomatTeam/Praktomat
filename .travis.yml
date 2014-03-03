@@ -7,6 +7,7 @@ install:
  - sudo apt-get update
  - sudo apt-get install python2.7-dev swig libsasl2-dev libssl-dev libpq-dev
  - sudo apt-get install openjdk-6-jdk dejagnu checkstyle gcj-jdk jclassinfo
+ - pip install http://python-subprocess32.googlecode.com/files/subprocess32-3.2.3.tar.gz
  - pip install -r requirements.txt
 
 script:
