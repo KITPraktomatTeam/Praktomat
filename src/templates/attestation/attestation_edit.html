@@ -31,23 +31,40 @@
 					    return true;
 				}
 			})
+			$("#tabs").tabs("option", "active", 3 );
 
 			// ACE setup
-			$("#tabs").tabs("option", "active", 3 );
-			$(".annfile").each(function(idx, elem){
+			// General plan:
+			//  * JQuery-UI Tab with one tab per file, but only one panel
+			//  * One session per file, stored via .data at the tab 
+			//  * Switching tabs changes the session
+			//  * Every change is directly reflected in the hidden textarea
+			var editor = ace.edit("editor");
+			$(".anntabs ul li a").each(function(idx, elem){
 				var content= $("#id_attestfiles-" + idx + "-content");
-				var name = $(elem).data('filename');
-				var editor = ace.edit(elem);
-				editor.getSession().setValue(content.val());
-				editor.getSession().setMode(guessMode(name));
-				editor.getSession().on('change', function(e) {
+				var name = $(elem).text();
+				var session = new ace.EditSession(content.val())
+				session.setMode(guessMode(name));
+				session.on('change', function(e) {
 					var content= $("#id_attestfiles-" + idx + "-content");
-					content.val(editor.getSession().getValue());
+					content.val(session.getValue());
 					somethingWasChanged = true;
 				});
+				$(elem).data('ace-session', session);
 			});
-
+			var switch_to = function(idx) {
+				var anntab = $(".anntabs ul li a").get(idx);
+				editor.setSession($(anntab).data('ace-session'));
+			}
+			$(".anntabs").tabs({
+				beforeActivate: function (e,ui) {
+					var idx = $(ui.newTab).index();
+					switch_to(idx);
+				}
+			});
+			switch_to($(".anntabs").tabs('option','active'));
 		});
+
 
 	</script>
 {% endblock %}
@@ -117,24 +134,17 @@
 				{% endwith %}
 			</div>
 			{% with solution.solutionfile_set.all as solutionfiles %}
-				<div class="filetabs">
+				<div class="anntabs">
 					<ul>
 						{% for solutionfile in solutionfiles %}
-							<li><a href="#annfile{{forloop.counter}}">{{solutionfile}}</a></li> 
-						{%endfor%} 
-					</ul> 	
-
-					{% for solutionfile in solutionfiles%}
-						<div class="file" id="annfile{{forloop.counter}}">
-						      <h3>{{solutionfile}}</h3>
-						      <div class="annfile" data-filename="{{solutionfile}}"></div>
-						</div>
-					{%endfor%}
+							<li><a href="#editor">{{solutionfile}}</a></li>
+						{%endfor%}
+					</ul>
+					<div id="editor"></div>
 				</div>
 			{% endwith %}
 		</div>
-	
-	
+
 		<div id="attestation">
 			<h1 class="heading">Attestation</h1>
 
