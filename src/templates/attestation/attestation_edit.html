@@ -3,19 +3,20 @@
 {% block extrahead %}{{ block.super }}
 	<script type="text/javascript" src="{{STATIC_URL}}frameworks/jquery/jquery.Storage.js"></script>
 	<script type="text/javascript" src="{{STATIC_URL}}script/solution_inlines.js"></script>
-	<script type="text/javascript" src="{{STATIC_URL}}frameworks/ace/demo/require.js"></script>
-{#	<script type="text/javascript" src="{{STATIC_URL}}frameworks/ace/support/cockpit/scripts/require.js"></script> #}
-	<script type="text/javascript" src="{{STATIC_URL}}script/boot_ace.js"></script>
-	<script typr="text/javascript" src="{{STATIC_URL}}script/confirm_close.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}script/confirm_close.js"></script>
 	<link type="text/css" rel="stylesheet" href="{{STATIC_URL}}styles/pygments_friendly.css" />
-	
-	<script type="text/javascript">		
-		var bespin_env
-		
+
+	<script src="{{STATIC_URL}}frameworks/ace/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
+	<script src="{{STATIC_URL}}frameworks/ace/src-min/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
+	<script src="{{STATIC_URL}}frameworks/ace/src-min/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}script/ace-utils.js"></script>
+
+	<script type="text/javascript">
 		$(document).ready(function(){
 			$("#file_form_set").addClass("hidden");
 			$("#file_form_set_replacement").removeClass("hidden");
 			$(".heading").addClass("hidden");
+
 			$("#tabs").tabs({ // instanciate tabs
 				show: function(event, ui) { 	// call dimensionsChanged of bespin when the tab is opend
 	    			if (ui.panel.id == "annotated_solution_files") { env.editor.resize(); }
@@ -30,26 +31,24 @@
 					  } else return true;
 				}
 			})
-			$( "#ace_settings" ).dialog({ autoOpen: false, resizable: false, title: "ACE Editor Settings" });
-			$( "#ace_settings_button" ).click( function(){
-											  $( "#ace_settings" ).dialog("open");
-			});
-			$("#tabs").tabs( "select" , 3);
-		});
-		
-		function fullscreen() {
-			$("#file_form_set_replacement").toggleClass("fullscreen");
-			$("body").toggleClass("fullscreen");
 
-			if ($("#file_form_set_replacement").hasClass("fullscreen")) {
-				$("#editor").css("height","");
-			} else {
-				$("#editor_height").change();
-			}
-			env.editor.resize();
-		}
-		
-		
+			// ACE setup
+			$("#tabs").tabs("option", "active", 3 );
+			$(".annfile").each(function(idx, elem){
+				var content= $("#id_attestfiles-" + idx + "-content");
+				var name = $(elem).data('filename');
+				var editor = ace.edit(elem);
+				editor.getSession().setValue(content.val());
+				editor.getSession().setMode(guessMode(name));
+				editor.getSession().on('change', function(e) {
+					var content= $("#id_attestfiles-" + idx + "-content");
+					content.val(editor.getSession().getValue());
+					somethingWasChanged = true;
+				});
+			});
+
+		});
+
 	</script>
 {% endblock %}
 {% block breadcrumbs %} {{block.super}} > <a href={% url task_detail task_id=solution.task.id%}>{{solution.task.title}}</a> > <a href={% url attestation_list solution.task_id %}>My attestations</a> > Attestation {% endblock %}
@@ -117,20 +116,22 @@
 					{% include "forms/formset_as_div.html" %}
 				{% endwith %}
 			</div>
-			<div id="file_form_set_replacement" class="hidden">
-				<div id="editor_controls">
-					<select id="doc" size="1">
-						{% for file in solution.textSolutionFiles %}
-							<option value="{{file.id}}">{{file}}</option>
-						{% endfor %}
-					</select>
-				
-					<a id="ace_settings_button"><span class="icon ui-icon-wrench"></span></a>
-					<a id="ace_fullscreen" onclick="fullscreen()"><span class="icon ui-icon-arrow-4-diag"></span></a>
-					<a href="https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts" target="_blank">Keyboard-Shortcuts</a>
+			{% with solution.solutionfile_set.all as solutionfiles %}
+				<div class="filetabs">
+					<ul>
+						{% for solutionfile in solutionfiles %}
+							<li><a href="#annfile{{forloop.counter}}">{{solutionfile}}</a></li> 
+						{%endfor%} 
+					</ul> 	
+
+					{% for solutionfile in solutionfiles%}
+						<div class="file" id="annfile{{forloop.counter}}">
+						      <h3>{{solutionfile}}</h3>
+						      <div class="annfile" data-filename="{{solutionfile}}"></div>
+						</div>
+					{%endfor%}
 				</div>
-				<div id="editor"></div>
-			</div>
+			{% endwith %}
 		</div>
 	
 	
@@ -146,150 +147,17 @@
 
 		</div>
 		<div id="download">
+		  <a href="{% url solution_download solution_id=solution.id %}">Download</a>
 		</div>
 		<div id="download_full">
+		  <a href="{% url solution_download solution_id=solution.id full="full" %}">Download</a>
 		</div>
 	</div>
 	<div>
 		<span><a href="#" onClick='$("#tabs").tabs("select",3); setTimeout(function() {$("#editor_controls")[0].scrollIntoView()},100);'>Annotate Solution Files</a></span>
 		<span><a href="#" onClick='$("#tabs").tabs("select",4);                                                                 '>Attest Solution</a></span>
 	</div>
-	
-</form>	
-</div>
-
-<div id="ace_settings">
-	<div class="form-row">
-		<label for="theme">Theme:</label>
-		<select id="theme" size="1">
-			<option value="ace/theme/textmate">TextMate</option>
-			<option value="ace/theme/eclipse">Eclipse</option>
-			<option value="ace/theme/dawn">Dawn</option>
-			<option value="ace/theme/idle_fingers">idleFingers</option>
-			<option value="ace/theme/pastel_on_dark">Pastel on dark</option>
-			<option value="ace/theme/twilight">Twilight</option>
-			<option value="ace/theme/clouds">Clouds</option>
-			<option value="ace/theme/clouds_midnight">Clouds Midnight</option>
-			<option value="ace/theme/kr_theme">krTheme</option>
-			<option value="ace/theme/mono_industrial">Mono Industrial</option>
-			<option value="ace/theme/monokai">Monokai</option>
-			<option value="ace/theme/merbivore">Merbivore</option>
-			<option value="ace/theme/merbivore_soft">Merbivore Soft</option>
-			<option value="ace/theme/vibrant_ink">Vibrant Ink</option>
-			<option value="ace/theme/solarized_dark" selected="selected">Solarized Dark</option>
-			<option value="ace/theme/solarized_light">Solarized Light</option>
-		</select>
-	</div>
-	
-	<div class="form-row">
-		<label for="fontsize">Font Size:</label>
-		<select id="fontsize" size="1">
-			<option value="10px">10px</option>
-			<option value="11px">11px</option>
-			<option value="12px" selected="selected">12px</option>
-			<option value="14px">14px</option>
-			<option value="16px">16px</option>
-			<option value="20px">20px</option>
-			<option value="24px">24px</option>
-		</select>
-	</div>
-	
-	<div class="form-row">
-		<label for="select_style">Full Line Selection</label>
-		<input type="checkbox" name="select_style" id="select_style" checked>
-			</div>
-	
-	<div class="form-row">
-		<label for="highlight_active">Highlight Active Line</label>
-		<input type="checkbox" name="highlight_active" id="highlight_active" checked>
-			</div>
-	
-	<div class="form-row">
-		<label for="show_hidden">Show Invisibles</label>
-		<input type="checkbox" name="show_hidden" id="show_hidden">
-			</div>
-	
-	<div class="form-row">
-		<label for="show_hscroll">Persistent HScroll</label>
-		<input type="checkbox" name="show_hscroll" id="show_hscroll">
-			</div>
-	
-	<div class="form-row">
-		<label for="mode">Mode:</label>
-		<select id="mode" size="1">
-			<option value="text">Plain Text</option>
-			<option value="javascript">JavaScript</option>
-			<option value="xml">XML</option>
-			<option value="html">HTML</option>
-			<option value="css">CSS</option>
-			<option value="python">Python</option>
-			<option value="php">PHP</option>
-			<option value="java">Java</option>
-			<option value="ruby">Ruby</option>
-			<option value="c_cpp">C/C++</option>
-			<option value="coffee">CoffeeScript</option>
-			<option value="perl">Perl</option>
-			<option value="ocaml">OCaml</option>
-			<option value="csharp">C-Sharp</option>
-			<option value="svg">SVG</option>
-			<option value="textile">Textile</option>
-		</select>
-	</div>
-	
-	<div class="form-row">
-		<label for="keybinding">Key Binding:</label>
-		<select id="keybinding" size="1">
-			<option value="ace">Ace</option>
-			<option value="vim">Vim</option>
-			<option value="emacs">Emacs</option>
-		</select>
-	</div>
-	
-	<div class="form-row">
-		<label for="soft_wrap">Soft Wrap:</label>
-		<select id="soft_wrap" size="1">
-			<option value="off">Off</option>
-			<option value="80">80 Chars</option>
-			<option value="120">120 Chars</option>
-			<option value="free">Free</option>
-		</select>
-	</div>
-	
-	<div class="form-row">
-		<label for="show_gutter">Show Gutter</label>
-		<input type="checkbox" id="show_gutter" checked>
-			</div>
-	
-	<div class="form-row">
-		<label for="show_print_margin">Show Print Margin</label>
-		<input type="checkbox" id="show_print_margin" checked>
-	</div>
-	
-	<div class="form-row">
-		<label for="soft_tab">Use Soft Tab:</label>
-		<input type="checkbox" id="soft_tab" checked>
-	</div>
-	
-	<div class="form-row">		
-		<label for="highlight_selected_word">Highlight selected word</label>
-		<input type="checkbox" id="highlight_selected_word" checked>
-	</div>
-{% comment %}
-	<div class="form-row">		
-		<label for="tabsize">Tab Size</label>
-		<select id="tabsize" size="1">
-			<option value="2">2</option>
-			<option value="4">4</option>
-			<option value="8">8</option>
-			<option value="12">12</option>
-
-		</select>
-	</div>
-{% endcomment %}
-	<div class="form-row">		
-		<label for="tabsize">Editor Window Height</label>
-		<input type="text" id="editor_height" value="500px" size="10">
-	</div>
+</form>
 </div>
 
 

@@ -566,7 +566,7 @@ a.add-row {
 	height: 16px;
 }
 
-#attestation_edit #editor {
+#attestation_edit .annfile {
 	margin: 0;
 	margin-top: 10px;
 	padding: 0;
