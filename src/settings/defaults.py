@@ -264,6 +264,9 @@ def load_defaults(settings):
     # "developer	ALL=(tester)NOPASSWD:ALL"
     d.USEPRAKTOMATTESTER = False
 
+    # Make sure uploaded solution are not work-readable
+    d.FILE_UPLOAD_PERMISSIONS = 0640
+
     # This enables Shibboleth-Support.
     # In order to actually get it working, you need to protec the location
     # .../accounts/shib_login in the apache configuration, e.g. with this
