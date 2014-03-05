@@ -244,6 +244,7 @@ def load_defaults(settings):
     d.JAVA_GCC_BINARY = 'gcj'
     d.JVM = 'java'
     d.JVM_SECURE = PRAKTOMAT_ROOT + '/src/checker/scripts/java'
+    d.JVM_POLICY = PRAKTOMAT_ROOT + '/src/checker/scripts/java.policy'
     d.FORTRAN_BINARY = 'g77'
     d.ISABELLE_BINARY = '/data1/praktomat/Isabelle2013/bin/isabelle'
     d.DEJAGNU_RUNTEST = '/usr/bin/runtest'

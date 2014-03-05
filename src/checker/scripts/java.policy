@@ -1,12 +1,6 @@
+// Default java policy for the praktomat
+// Set as $POLICY by ScriptChecker and used by ./src/checker/scripts/java
 grant {
-	permission java.util.PropertyPermission "user.dir","read";
-	permission java.io.FilePermission "tests/*","read";	
-	permission java.util.PropertyPermission "log4j.*","read";
-	permission java.lang.RuntimePermission "getClassLoader";
 	permission java.lang.RuntimePermission "shutdownHooks";
 	permission java.lang.RuntimePermission "setIO";
-	
-	// java.io.Console needs this
-	//permission java.lang.RuntimePermission "readFileDescriptor"
-	//permission java.lang.RuntimePermission "writeFileDescriptor"
 };
