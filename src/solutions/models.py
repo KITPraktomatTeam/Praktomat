@@ -38,12 +38,12 @@ class Solution(models.Model):
 		return unicode(self.task) + ":" + unicode(self.author) + ":" + unicode(self.number)
 
 	def allCheckerResults(self):
-		return sorted(self.checkerresult_set.all(), key=lambda result: result.checker.order)
+		return until_critical(sorted(self.checkerresult_set.all(), key=lambda result: result.checker.order))
 
 	def publicCheckerResults(self):
 		# return self.checkerresult_set.filter(checker__public=True) won't work, because checker is a genericForeignKey!
-		return sorted(filter(lambda x: x.public(), self.checkerresult_set.all()), key = lambda result: result.checker.order)
-		
+		return until_critical(sorted(filter(lambda x: x.public(), self.checkerresult_set.all()), key = lambda result: result.checker.order))
+
 	def copySolutionFiles(self, toTempDir):
 		for file in self.solutionfile_set.all():
 			file.copyTo(toTempDir)
@@ -87,6 +87,13 @@ class Solution(models.Model):
 	def textSolutionFiles(self):
 		return [file for file in self.solutionfile_set.all() if (not file.isBinary()) ]
 
+def until_critical(l):
+	res = []
+	for r in l:
+		res.append(r)
+		if r.is_critical():
+			break
+	return res
 
 def sign(file):
 	if not settings.PRIVATE_KEY:

@@ -139,6 +139,7 @@ It is *required* - it must be passed for submission
 	public = models.BooleanField(default=True, help_text = _('Test results are displayed to the submitter.'))
 	required = models.BooleanField(default=False, help_text = _('The test must be passed to submit the solution.'))
 	always = models.BooleanField(default=True, help_text = _('The test will run on submission time.'))
+	critical = models.BooleanField(default=False, help_text = _('If this test fails, do not display further test results.'))
 	
 	results = generic.GenericRelation("CheckerResult") # enables cascade on delete.
 	
@@ -157,6 +158,10 @@ It is *required* - it must be passed for submission
 	def show_publicly(self,passed):
 		""" Are results of this Checker to be shown publicly, given whether the result was passed? """
 		return self.public
+
+	def is_critical(self,passed):
+		""" Are results of this Checker to be shown publicly, given whether the result was passed? """
+		return self.critical and not passed
 
 	def run(self, env):
 		""" Runs tests in a special environment.
@@ -278,6 +283,10 @@ class CheckerResult(models.Model):
 	def public(self):
 		""" Checks if the results of the Checker are to be shown *publicly*, i.e.: even to the submitter """
 		return self.checker.show_publicly(self.passed)
+
+	def is_critical(self):
+		""" Checks if further results should not be shown """
+		return self.checker.is_critical(self.passed)
 
 	def set_log(self, log,timed_out=False,truncated=False):
 		""" Sets the log of the Checker run. timed_out and truncated indicated if appropriate error messages shall be appended  """
