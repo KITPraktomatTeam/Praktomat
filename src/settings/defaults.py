@@ -101,6 +101,7 @@ def load_defaults(settings):
         'django.middleware.common.CommonMiddleware',
         'sessionprofile.middleware.SessionProfileMiddleware', #phpBB integration
         'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'accounts.middleware.AuthenticationMiddleware',	
         'accounts.middleware.LogoutInactiveUserMiddleware',

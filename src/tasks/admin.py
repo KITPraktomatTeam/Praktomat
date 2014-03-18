@@ -54,7 +54,8 @@ class TaskAdmin(admin.ModelAdmin):
 		return response
 		
 	
-	@transaction.autocommit
+        # TODO 1.6
+	#@transaction.autocommit
 	def run_all_checkers(self, request, queryset):
 		""" Rerun all checker including "not always" action """
 		for task in queryset:
