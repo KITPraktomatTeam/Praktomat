@@ -104,7 +104,6 @@ def load_defaults(settings):
         'django.middleware.csrf.CsrfViewMiddleware',
         'accounts.middleware.AuthenticationMiddleware',	
         'accounts.middleware.LogoutInactiveUserMiddleware',
-        'django.middleware.transaction.TransactionMiddleware',
     )
 
     d.DEFAULT_FILE_STORAGE = 'utilities.storage.UploadStorage'

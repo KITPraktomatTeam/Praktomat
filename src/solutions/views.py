@@ -32,7 +32,8 @@ from checker.models import check
 from django.db import transaction
 
 @login_required
-@transaction.autocommit # allow access to saved solution files before view returns
+# TODO
+# @transaction.autocommit # allow access to saved solution files before view returns
 @cache_control(must_revalidate=True, no_cache=True, no_store=True, max_age=0) #reload the page from the server even if the user used the back button
 def solution_list(request, task_id, user_id=None):
 	if (user_id and not in_group(request.user,'Trainer')):

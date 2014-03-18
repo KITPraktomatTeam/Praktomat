@@ -27,7 +27,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DATABASES = {
     'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME':   UPLOAD_ROOT+'/Database'
+            'NAME':   UPLOAD_ROOT+'/Database',
+            # needed in django 1.6, replaces transaction middleware. any bad effects?
+            'ATOMIC_REQUESTS': True,
     }
 }
 
