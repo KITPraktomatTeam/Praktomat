@@ -34,7 +34,6 @@ class SolutionAdmin(admin.ModelAdmin):
 	inlines =  [CheckerResultInline, SolutionFileInline]
 	actions = ['run_checkers','run_checkers_all']
 
-	@transaction.autocommit
 	def run_checkers_all(self, request, queryset):
 		""" Run Checkers (including those not run at submission) for selected solution """
 		check_multiple(queryset,True)
@@ -43,7 +42,6 @@ class SolutionAdmin(admin.ModelAdmin):
 	run_checkers_all.short_description = "Run Checkers (including those not run at submission) for selected solution "
 
 
-	@transaction.autocommit
 	def run_checkers(self, request, queryset):
 		""" Run Checkers (only those also run at submission) for selected solutions"""
 		check_multiple(queryset,False)
