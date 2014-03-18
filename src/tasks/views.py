@@ -8,7 +8,6 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import Http404
 from django.http import HttpResponseRedirect, HttpResponse
-from django.views.generic.detail import DetailView
 from django.template.context import RequestContext
 from datetime import datetime
 from django import forms
@@ -24,11 +23,11 @@ from attestation.models import Attestation, Script
 from configuration import get_settings
 
 @login_required
-def taskList(Request):
+def taskList(request):
 	now = datetime.now()
 	tasks = Task.objects.filter(publication_date__lte = now).order_by('submission_date')
 	try:
-		tutors = Request.user.tutorial.tutors.all()
+		tutors = request.user.tutorial.tutors.all()
 	except:
 		tutors = None
 	trainers = User.objects.filter(groups__name="Trainer")
@@ -36,12 +35,23 @@ def taskList(Request):
 	attestations = []
 	expired_Tasks = Task.objects.filter(submission_date__lt = datetime.now).order_by('publication_date','submission_date')
 	for task in expired_Tasks:
-		attestation_qs =  Attestation.objects.filter(solution__task = task, published=True, solution__author=Request.user)
+		attestation_qs =  Attestation.objects.filter(solution__task = task, published=True, solution__author=request.user)
 		attestations.append((task, attestation_qs[0] if attestation_qs.exists() else None))
 
 	script = Script.objects.get_or_create(id=1)[0].script
 
-	return render_to_response('tasks/task_list.html',{'tasks':tasks, 'expired_tasks': expired_Tasks, 'attestations':attestations, 'show_final_grade': get_settings().final_grades_published, 'tutors':tutors, 'trainers':trainers, 'script':script}, context_instance=RequestContext(Request))
+	return render_to_response(
+                'tasks/task_list.html',
+                {
+                        'tasks':tasks,
+                        'expired_tasks': expired_Tasks,
+                        'attestations':attestations,
+                        'show_final_grade': get_settings().final_grades_published,
+                        'tutors':tutors,
+                        'trainers':trainers,
+                        'script':script
+                },
+                context_instance=RequestContext(request))
 
 @login_required
 def taskDetail(request,task_id):
@@ -51,7 +61,13 @@ def taskDetail(request,task_id):
 		raise Http404
 
 	my_solutions = Task.objects.get(pk=task_id).solution_set.filter(author = request.user)
-	return DetailView.as_view(request, Task.objects.all(), task_id, extra_context={'solutions': my_solutions}, template_object_name='task')
+        return render_to_response(
+                'tasks/task_detail.html',
+                {
+                        'task': task,
+                        'solutions': my_solutions,
+                },
+                context_instance=RequestContext(request))
 
 class ImportForm(forms.Form):
 	file = forms.FileField()
