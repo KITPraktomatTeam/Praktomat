@@ -43,10 +43,13 @@ def solution_list(request, task_id, user_id=None):
 	solutions = task.solution_set.filter(author = author).order_by('-id')
 	final_solution = task.final_solution(author)
 
-	if (task.publication_date >= datetime.now()) and (not  in_group(request.user,'Trainer')):
+	if (task.publication_date >= datetime.now()) and (not in_group(request.user,'Trainer')):
 		raise Http404
 	
-	if request.method == "POST":	
+	if request.method == "POST":
+                if task.expired() and not in_group(request.user,'Trainer'):
+                        return access_denied(request)
+
 		solution = Solution(task = task, author=author)
 		formset = SolutionFormSet(request.POST, request.FILES, instance=solution)
 		if formset.is_valid():
