@@ -8,7 +8,6 @@ from django.http import Http404
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template.context import RequestContext
 from django.core.urlresolvers import reverse
-from django.views.generic.detail import DetailView
 from django.views.decorators.cache import cache_control
 from django.template import Context, loader
 from django.conf import settings
@@ -82,7 +81,8 @@ def solution_list(request, task_id, user_id=None):
 	attestations = Attestation.objects.filter(solution__task=task, author__tutored_tutorials=request.user.tutorial)
 	attestationsPublished = attestations[0].published if attestations else False
 
-	return render_to_response("solutions/solution_list.html", {"formset": formset, "task":task, "solutions": solutions, "final_solution":final_solution, "attestationsPublished":attestationsPublished, "author":author},
+	return render_to_response("solutions/solution_list.html",
+                {"formset": formset, "task":task, "solutions": solutions, "final_solution":final_solution, "attestationsPublished":attestationsPublished, "author":author},
 		context_instance=RequestContext(request))
 
 @login_required
@@ -97,8 +97,16 @@ def solution_detail(request,solution_id,full):
 	else:	
 		attestations = Attestation.objects.filter(solution__task=solution.task, author__tutored_tutorials=request.user.tutorial)
 		attestationsPublished = attestations[0].published if attestations else False
-		return DetailView.as_view(request, Solution.objects.all(), solution_id, extra_context={"attestationsPublished":attestationsPublished, "accept_all_solutions":get_settings().accept_all_solutions, "full":full}, template_object_name='solution' )
 
+                return render_to_response(
+                    "solutions/solution_detail.html",
+                    {
+                        "solution": solution,
+                        "attestationsPublished": attestationsPublished,
+                        "accept_all_solutions": get_settings().accept_all_solutions,
+                        "full":full
+                    },
+                    context_instance=RequestContext(request))
 
 @login_required
 def solution_download(request,solution_id,full):
