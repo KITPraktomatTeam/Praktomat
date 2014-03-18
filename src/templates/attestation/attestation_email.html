@@ -3,7 +3,7 @@
 {% blocktrans %}your solution to the task "{{task}}" has been attested by {{attester}}.{% endblocktrans %}{% endwith%}{% endwith%}
 
 You can view your attest here:
-{{protocol}}://{{ domain }}{% url view_attestation attestation_id=attest.id %}
+{{protocol}}://{{ domain }}{% url "view_attestation" attestation_id=attest.id %}
 
 {% trans "Thanks for using our site!" %}
 

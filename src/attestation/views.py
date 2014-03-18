@@ -4,7 +4,6 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
 from django.core.urlresolvers import reverse
-from django.views.generic.list_detail import object_list, object_detail
 from django.db.models import Count
 from django.forms.models import modelformset_factory
 from django.db.models import Max, Sum

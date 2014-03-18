@@ -64,7 +64,7 @@ class TaskAdmin(admin.ModelAdmin):
 	def get_urls(self):
 		""" Add URL to task import """
 		urls = super(TaskAdmin, self).get_urls()
-		from django.conf.urls.defaults import url, patterns
+		from django.conf.urls import url, patterns
 		my_urls = patterns('', url(r'^import/$', 'tasks.views.import_tasks', name='task_import')) 
 		return my_urls + urls
 	

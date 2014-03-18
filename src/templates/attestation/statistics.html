@@ -329,7 +329,7 @@ var final_grade_chart_{{forloop.counter}} = grade_chart('final_grade_chart_{{for
             });
 </script>
 {% endblock %} 
-{% block breadcrumbs %} {{block.super}} > <a href={% url task_detail task_id=task.id%}>{{task.title}}  </a>
+{% block breadcrumbs %} {{block.super}} > <a href={% url "task_detail" task_id=task.id%}>{{task.title}}  </a>
 > Statistics {% endblock %}
 {% block content %}<h1>{{task.title}}</h1>
 <h2>{% trans "Statistics" %}</h2>

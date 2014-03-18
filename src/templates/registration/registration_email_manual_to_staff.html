@@ -8,7 +8,7 @@
 
 {% blocktrans %}If you want allow this user to activate his account, please visit the following page{% endblocktrans %}:
 
-{{ protocol }}://{{ domain }}{% url activation_allow user_id=user.id %}
+{{ protocol }}://{{ domain }}{% url "activation_allow" user_id=user.id %}
 
 {% blocktrans %}Upon visiting that page, the user will be sent his activation key {% endblocktrans %}.
 

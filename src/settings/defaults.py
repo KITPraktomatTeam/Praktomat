@@ -74,7 +74,6 @@ def load_defaults(settings):
         'django.contrib.sessions',
         'django.contrib.admin',
         'django.contrib.admindocs',
-        'django.contrib.markup',
         'django.contrib.staticfiles',
 
         # ./manage.py runserver_plus allows for debugging on werkzeug traceback page. invoke error with assert false
@@ -119,6 +118,8 @@ def load_defaults(settings):
     d.STATICFILES_DIRS = (
         join(PRAKTOMAT_ROOT, "media"),
     )
+
+    d.STATIC_ROOT = join(PRAKTOMAT_ROOT, "static")
 
     d.ROOT_URLCONF = 'urls'
 
@@ -165,8 +166,8 @@ def load_defaults(settings):
 
     # List of callables that know how to import templates from various sources.
     d.TEMPLATE_LOADERS = (
-        'django.template.loaders.filesystem.load_template_source',
-        'django.template.loaders.app_directories.load_template_source',
+        'django.template.loaders.filesystem.Loader',
+        'django.template.loaders.app_directories.Loader',
     )
 
     d.TEMPLATE_CONTEXT_PROCESSORS = (
@@ -183,13 +184,12 @@ def load_defaults(settings):
 
     # Database
 
-    d.DATABASE_ENGINE = 'sqlite3'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-    d.DATABASE_NAME = UPLOAD_ROOT+'/Database'   # Or path to database file if using sqlite3.
-    d.DATABASE_USER = ''             # Not used with sqlite3.
-    d.DATABASE_PASSWORD = ''         # Not used with sqlite3.
-    d.DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-    d.DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
-
+    d.DATABASES = {
+        'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME':   UPLOAD_ROOT+'/Database'
+        }
+    }
 
     # Email
     

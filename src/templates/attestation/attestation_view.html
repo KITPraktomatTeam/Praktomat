@@ -30,14 +30,14 @@
 
 	</script>
 {% endblock %}
-{% block breadcrumbs %} {{block.super}} > <a href={% url task_detail task_id=attest.solution.task.id%}>{{attest.solution.task.title}}</a> 
+{% block breadcrumbs %} {{block.super}} > <a href={% url "task_detail" task_id=attest.solution.task.id%}>{{attest.solution.task.title}}</a> 
 {% if user|in_group:"Tutor"%}
-	> <a href={% url attestation_list attest.solution.task_id %}>My attestations</a> 
-	> <a href={% url edit_attestation attest.id %}>Attestation</a>
+	> <a href={% url "attestation_list" attest.solution.task_id %}>My attestations</a> 
+	> <a href={% url "edit_attestation" attest.id %}>Attestation</a>
 	> Preview
 {% else %}
-	> <a href={% url solution_list task_id=attest.solution.task.id%}>My solutions</a> 
-	> <a href={% url solution_detail solution_id=attest.solution.id%}>Solution {{attest.solution.id}}</a> 
+	> <a href={% url "solution_list" task_id=attest.solution.task.id%}>My solutions</a> 
+	> <a href={% url "solution_detail" solution_id=attest.solution.id%}>Solution {{attest.solution.id}}</a> 
 	> Attestation {{attest.id}}
 {% endif %}
 {% endblock %}
@@ -89,7 +89,7 @@
 	</div>
 {% endif %}
 
-<a href={% url solution_download solution_id=attest.solution.id %} id='download'><span class="ui-icon ui-icon-disk"></span>Download Solution</a>
+<a href={% url "solution_download" solution_id=attest.solution.id %} id='download'><span class="ui-icon ui-icon-disk"></span>Download Solution</a>
 <h2>{% trans "Annotated Files" %}</h2>
 <div class="filetabs">
 	<ul>
@@ -112,13 +112,13 @@
 		{% include "forms/form_as_div.html" %}
 		<input type="submit" name="save" value="Save" />
 		<input id="publishButton" type="submit" name="publish" value="Save and publish" />
-		<input type="button" value="Edit again" onClick="parent.location='{% url edit_attestation attest.id %}'">
+		<input type="button" value="Edit again" onClick="parent.location='{% url "edit_attestation" attest.id %}'">
 	</form>
 {% endif %}
 
 {% if withdrawable %}
 	<br/><br/>
-	<form method="post" class="withdraw" action="{% url withdraw_attestation attest.id %}">{% csrf_token %}
+	<form method="post" class="withdraw" action="{% url "withdraw_attestation" attest.id %}">{% csrf_token %}
 		<input type="submit" name="withdraw" value="Withdraw published attestation" />
 	</form>
 {% endif %}

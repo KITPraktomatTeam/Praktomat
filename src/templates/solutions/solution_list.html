@@ -37,7 +37,7 @@ $(function(){
 
 </script>
 {% endblock %}
-{% block breadcrumbs %} {{block.super}} > <a href={% url task_detail task_id=task.id%}>{{task.title}}</a> > {% if user|in_group:"Tutor,Trainer"%} <a href={% url attestation_list task.id %}>My attestations</a> > {{author}}'s solutions{% else %}My solutions{% endif %}{% endblock %}
+{% block breadcrumbs %} {{block.super}} > <a href={% url "task_detail" task_id=task.id%}>{{task.title}}</a> > {% if user|in_group:"Tutor,Trainer"%} <a href={% url "attestation_list" task.id %}>My attestations</a> > {{author}}'s solutions{% else %}My solutions{% endif %}{% endblock %}
 
 {% block content %}<div id='soluion_upload'>
 

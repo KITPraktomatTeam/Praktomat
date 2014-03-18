@@ -58,14 +58,14 @@
     <div id="{% if group.grouper %}expired_tasks{% else %}upcoming_tasks{% endif %}" class="{% if group.grouper %}right{% else %}left{% endif %}" >
 		<h2>{% if group.grouper %}{% trans "Expired tasks" %}{% else %}{% trans "Upcoming tasks" %}{% endif %}</h2>
 		{% for task in group.list%}
-			<h3><a href={% url task_detail task_id=task.id%}>{{task.title}}</a></h3>
+			<h3><a href={% url "task_detail" task_id=task.id%}>{{task.title}}</a></h3>
 			{{ task.submission_date|date }} {{ task.submission_date|time }}
 			{% if user|in_group:"User" %}
-				<a href={% url solution_list task_id=task.id%}>{% trans "Solutions"%}</a>
+				<a href={% url "solution_list" task_id=task.id%}>{% trans "Solutions"%}</a>
 			{% endif %}
 			{% if user|in_group:"Tutor,Trainer"%}
-				<a href={% url attestation_list task_id=task.id%}>{% trans "Attestation"%}</a>
-				<a href={% url statistics task_id=task.id%}>{% trans "Statistics"%}</a>
+				<a href={% url "attestation_list" task_id=task.id%}>{% trans "Attestation"%}</a>
+				<a href={% url "statistics" task_id=task.id%}>{% trans "Statistics"%}</a>
 			{% endif %} <br/><br/>
 		{% endfor %}
 	</div>
@@ -83,7 +83,7 @@
 					<tr>
 						<td>{{task}}</td>
 						<td class="grade_cell">{% if attestation %}
-							<a href={% url view_attestation attestation_id=attestation.id%}>{{attestation.final_grade}} </a>
+							<a href={% url "view_attestation" attestation_id=attestation.id%}>{{attestation.final_grade}} </a>
 							{%else%}-{%endif%}</td>
 						<td>{{task.final_grade_rating_scale.name}}</td>
 					</tr>

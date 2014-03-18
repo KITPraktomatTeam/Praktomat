@@ -10,7 +10,7 @@
 <h1>{% trans "Change Account" %}</h1>
 
 {% if user.has_usable_password %}
-<a href="{% url auth_password_change %}">Change Password</a><br/><br/>
+<a href="{% url "auth_password_change" %}">Change Password</a><br/><br/>
 {% endif %}
 
 <form method="post" action="." autocomplete="off"> {% csrf_token %}

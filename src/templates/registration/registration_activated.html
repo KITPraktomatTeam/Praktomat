@@ -10,7 +10,7 @@
 	
 	{% if account %}
 		<p>{% blocktrans %} You have successfully activated your account. You can now login.{% endblocktrans %}</p>
-		<a href="{% url auth_login %}">Login ></a> 
+		<a href="{% url "auth_login" %}">Login ></a> 
 	{% else %}
 		<p>{% trans 'Your activation has failed due to one of the folloing reasons:' %}</p>
 		<ul>

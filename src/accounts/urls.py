@@ -1,5 +1,5 @@
-from django.conf.urls.defaults import *
-from django.views.generic.simple import direct_to_template
+from django.conf.urls import *
+from django.views.generic.base import TemplateView
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -22,7 +22,7 @@ urlpatterns = patterns('',
 	url(r'^password/reset/complete/$', auth_views.password_reset_complete, name='auth_password_reset_complete'),
 	url(r'^password/reset/done/$', auth_views.password_reset_done, name='auth_password_reset_done'),
 	url(r'^register/$', 'accounts.views.register', name='registration_register'),
-	url(r'^register/complete/$', direct_to_template, {'template': 'registration/registration_complete.html'}, name='registration_complete'),
+	url(r'^register/complete/$', TemplateView.as_view(template_name='registration/registration_complete.html'), name='registration_complete'),
 	url(r'^register/allow/(?P<user_id>\d+)/$', 'accounts.views.activation_allow', name='activation_allow'),
 	url(r'^activate/(?P<activation_key>.+)/$', 'accounts.views.activate', name='registration_activate'),
 )

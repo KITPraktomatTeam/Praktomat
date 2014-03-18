@@ -8,7 +8,7 @@ from django.http import Http404
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template.context import RequestContext
 from django.core.urlresolvers import reverse
-from django.views.generic.list_detail import object_detail
+from django.views.generic.detail import DetailView
 from django.views.decorators.cache import cache_control
 from django.template import Context, loader
 from django.conf import settings
@@ -96,7 +96,7 @@ def solution_detail(request,solution_id,full):
 	else:	
 		attestations = Attestation.objects.filter(solution__task=solution.task, author__tutored_tutorials=request.user.tutorial)
 		attestationsPublished = attestations[0].published if attestations else False
-		return object_detail(request, Solution.objects.all(), solution_id, extra_context={"attestationsPublished":attestationsPublished, "accept_all_solutions":get_settings().accept_all_solutions, "full":full}, template_object_name='solution' )
+		return DetailView.as_view(request, Solution.objects.all(), solution_id, extra_context={"attestationsPublished":attestationsPublished, "accept_all_solutions":get_settings().accept_all_solutions, "full":full}, template_object_name='solution' )
 
 
 @login_required

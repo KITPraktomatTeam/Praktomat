@@ -38,7 +38,7 @@
 
 </script>
 {% endblock %}
-{% block breadcrumbs %} {{block.super}} > <a href={% url task_detail task_id=task.id%}>{{task.title}}</a> > Attestations{% endblock %}
+{% block breadcrumbs %} {{block.super}} > <a href={% url "task_detail" task_id=task.id%}>{{task.title}}</a> > Attestations{% endblock %}
 {% block content %}<div id='attestation_list'>
 
 <h1>{{task.title}}</h1>
@@ -56,7 +56,7 @@
   <h2>Upload solutions in a students name</h2>
 	<select id="user_selector">
 		{% for user in tutored_users %}
-			<option value="{% url solution_list task_id=task.id user_id=user.id %}">{{user.last_name}}, {{user.first_name}}</option>
+			<option value="{% url "solution_list" task_id=task.id user_id=user.id %}">{{user.last_name}}, {{user.first_name}}</option>
 		{% endfor %}
 	</select>
 	<input id="edit_soluton_button" type="button" value="Edit Solutions"/></br></br>
@@ -71,8 +71,8 @@
 	{% else %}
 	
 		<div id="Solutions">
-			<a href={% url solution_download_for_task task_id=task.id %} id='download'><span class="ui-icon ui-icon-disk" title="Download all solutions"></span></a>
-			<a href={% url solution_download_for_task task_id=task.id full="full" %} id='download'><span class="ui-icon icon-red ui-icon-disk" title="Download all solutions, including checker files"></span></a>
+			<a href={% url "solution_download_for_task" task_id=task.id %} id='download'><span class="ui-icon ui-icon-disk" title="Download all solutions"></span></a>
+			<a href={% url "solution_download_for_task" task_id=task.id full="full" %} id='download'><span class="ui-icon icon-red ui-icon-disk" title="Download all solutions, including checker files"></span></a>
 			
 			{% if user|in_group:'Trainer'%}
 				<h2>{% trans "Attestation Progress by Tutor" %}</h2>
@@ -104,7 +104,7 @@
 				<h2>{% trans "Unattested solutions" %}</h2>
 				<div class='attestation'>
 					{% for solution in unattested_solutions %}
-						<span class="icon ui-icon-search" title="view only"></span> <a href="{% url solution_detail solution_id=solution.id %}">Solution by {{solution.author}}</a></br>
+						<span class="icon ui-icon-search" title="view only"></span> <a href="{% url "solution_detail" solution_id=solution.id %}">Solution by {{solution.author}}</a></br>
 					{% empty %}
 						<p>All solutions have been attested.</p>
 					{% endfor %}
@@ -116,14 +116,14 @@
 				<div>
 					<select id="solution_selector" {% if unattested_solutions|length == 0 %}disabled="disabled"{% endif %}>
 						{% for solution in unattested_solutions %}
-						<option value="{% url new_attestation_for_solution solution_id=solution.id %}">{{solution.author.last_name}}, {{solution.author.first_name}}</option>
+						<option value="{% url "new_attestation_for_solution" solution_id=solution.id %}">{{solution.author.last_name}}, {{solution.author.first_name}}</option>
 						{% endfor %}
 					</select>
 					<input id="attest_selected_user_button" type="button" value="Attest selected user" {% if unattested_solutions|length == 0 %}disabled="disabled"{% endif %}/>
 				</div>
 				{% endif %}
 				<div style="margin-top:50px">
-					<input id="next_attestation_button" type="button" value="Attest next solution" {% if unattested_solutions|length == 0 %}disabled="disabled"{% endif %} onclick="location.href ='{% url new_attestation_for_task task_id=task.id %}'"/> 
+					<input id="next_attestation_button" type="button" value="Attest next solution" {% if unattested_solutions|length == 0 %}disabled="disabled"{% endif %} onclick="location.href ='{% url "new_attestation_for_task" task_id=task.id %}'"/> 
 				</div>
 				{{ unattested_solutions|length }} solutions to attest.</br></br></br>
 			{% endif %}
@@ -149,7 +149,7 @@
 						{% else %}
 							<span class="icon ui-icon-radio-on icon-orange" title="not finished"></span>
 						{% endif %}
-						<a href={% url edit_attestation attestation_id=attestation.id%}>
+						<a href={% url "edit_attestation" attestation_id=attestation.id%}>
 							Attestation for {% if show_author %}{{attestation.solution.author}}{% else %}Solution {{forloop.counter}}{% endif %}
 						</a>
 						{% if attestation.solution.plagiarism %}
@@ -167,7 +167,7 @@
 				{% for attestation in attestations_by_others%}
 					<div class='attestation'>
 						<span class="icon ui-icon-search" title="view only"></span>
-						<a href={% url view_attestation attestation_id=attestation.id%}>Attestation for {% if show_author %}{{attestation.solution.author}}{% else %}Solution {{forloop.counter}}{% endif %}</a> by {{attestation.author}}
+						<a href={% url "view_attestation" attestation_id=attestation.id%}>Attestation for {% if show_author %}{{attestation.solution.author}}{% else %}Solution {{forloop.counter}}{% endif %}</a> by {{attestation.author}}
 						{% if attestation.solution.plagiarism %}
 							<span class='plagiarism error'><span class="icon ui-icon-alert icon-red"></span>{% trans "Marked as Plagiarism" %}</span>
 						{% endif %}

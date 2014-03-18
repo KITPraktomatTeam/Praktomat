@@ -5,7 +5,7 @@
   {% if has_add_permission %}
 	<ul class="object-tools">
 	  <li>
-		<a href="{% url generate_ratingscale %}" class="addlink">
+		<a href="{% url "generate_ratingscale" %}" class="addlink">
 		  {% blocktrans with cl.opts.verbose_name as name %}Generate {{ name }}{% endblocktrans %}
 		</a>
 	  </li>

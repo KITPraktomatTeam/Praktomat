@@ -48,7 +48,7 @@
 	<h2>Other Tutorials</h2>
 	<ul>
 	{% for tutorial in other_tutorials %}
-		<li><a href="{% url tutorial_overview tutorial_id=tutorial.id  %}">{{tutorial}}</a></li>
+		<li><a href="{% url "tutorial_overview" tutorial_id=tutorial.id  %}">{{tutorial}}</a></li>
 	{% endfor %}
 	</ul>
 {% endif %}
@@ -64,7 +64,7 @@
 		<tr>
 			<th>User</th>
 			{% for task in tasks %}
-				<th><div class="heading"><a href="{% url task_detail task_id=task.id  %}">{{task.title}}</a></div></th>
+				<th><div class="heading"><a href="{% url "task_detail" task_id=task.id  %}">{{task.title}}</a></div></th>
 				<th><div class="heading">Rating Aspects</div></th>
 			{% endfor %}
 			<th><div class="heading" id="calculated_grade_heading">Calculated grade</div></th>
@@ -84,7 +84,7 @@
 				    {% endif %}
 				>
 					{% if attestation.id %}
-					<a href="{% url view_attestation attestation_id=attestation.id%}">
+					<a href="{% url "view_attestation" attestation_id=attestation.id%}">
 					{% endif %}
 
 					{% if attestation.final_grade %}

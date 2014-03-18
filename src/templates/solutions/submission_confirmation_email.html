@@ -2,7 +2,7 @@
 
 your solution to the task "{{solution.task}}" has been successfully uploaded.
 
-You can view your solution here: {{protocol}}://{{ domain }}{% url solution_detail solution_id=solution.id %}
+You can view your solution here: {{protocol}}://{{ domain }}{% url "solution_detail" solution_id=solution.id %}
 
 Your upload included these files:
 {% for file in solution.solutionfile_set.all %}

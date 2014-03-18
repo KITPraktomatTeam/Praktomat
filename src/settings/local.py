@@ -58,8 +58,12 @@ else:
 
 DEBUG = MIRROR
 
-DATABASE_ENGINE = 'postgresql_psycopg2'
-DATABASE_NAME = PRAKTOMAT_ID
+DATABASES = {
+    'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME':   PRAKTOMAT_ID
+    }
+}
 
 # Private key used to sign uploded solution files in submission confirmation email
 PRIVATE_KEY = '/praktomatng/certificates/mailsign/signer_key.pem'
