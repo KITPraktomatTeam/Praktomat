@@ -21,7 +21,6 @@
 {% if user|in_group:"User"%}
 	<span class="icon ui-icon-triangle-1-e"></span><a href={% url "solution_list" task_id=task.id%}>{% trans "My Solutions" %}</a>
 {% endif %}<p>
-{# {task.description|markdown:"codehilite"} #}
-{{task.description}}
+{{task.description|safe}}
 
 <div>{% endblock %}

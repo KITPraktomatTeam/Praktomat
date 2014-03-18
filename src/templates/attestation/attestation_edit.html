@@ -98,8 +98,7 @@
 		
 		<div id="task">
 			<h1 class="heading">Task</h1>
-			{# {solution.task.description|markdown:"codehilite"} #}
-			{{solution.task.description}}
+			{{solution.task.description|safe}}
 		</div>
 		
 		{% if model_solution %}
