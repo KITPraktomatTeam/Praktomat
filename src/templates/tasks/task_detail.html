@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load markup  %} {% load i18n  %} {% load in_group %} 
+{% load i18n  %} {% load in_group %} 
 {% block extrahead %}{{ block.super }}
 <link type="text/css" rel="stylesheet" href="{{STATIC_URL}}styles/pygments_friendly.css" />
 {% endblock %}
@@ -21,6 +21,7 @@
 {% if user|in_group:"User"%}
 	<span class="icon ui-icon-triangle-1-e"></span><a href={% url "solution_list" task_id=task.id%}>{% trans "My Solutions" %}</a>
 {% endif %}<p>
-{{task.description|markdown:"codehilite"}}
+{# {task.description|markdown:"codehilite"} #}
+{{task.description}}
 
 <div>{% endblock %}

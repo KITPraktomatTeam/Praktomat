@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}{% load markup  %}
+{% load i18n %}
 {% block extrahead %}{{ block.super }}
 	<script type="text/javascript" src="{{STATIC_URL}}frameworks/jquery/jquery.Storage.js"></script>
 	<script type="text/javascript" src="{{STATIC_URL}}script/solution_inlines.js"></script>
@@ -98,7 +98,8 @@
 		
 		<div id="task">
 			<h1 class="heading">Task</h1>
-			{{solution.task.description|markdown:"codehilite"}}
+			{# {solution.task.description|markdown:"codehilite"} #}
+			{{solution.task.description}}
 		</div>
 		
 		{% if model_solution %}
