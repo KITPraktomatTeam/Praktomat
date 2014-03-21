@@ -11,4 +11,4 @@ install:
  - pip install -r requirements.txt
 
 script:
- - ./src/manage-test.py test accounts attestation checker configuration sessionprofile solutions tasks
+ - ./src/manage-test.py test accounts attestation checker configuration solutions tasks
