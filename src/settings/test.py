@@ -19,8 +19,14 @@ UPLOAD_ROOT = "/tmp/does-not-exist"
 
 SECRET_KEY = "not-so-secret"
 
-DATABASE_ENGINE = 'sqlite3'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = UPLOAD_ROOT+'/Database'   # Or path to database file if using sqlite3.
+DATABASES = {
+    'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME':   UPLOAD_ROOT+'/Database',
+    }
+}
+
+
 
 PRIVATE_KEY = join(dirname(dirname(dirname(__file__))), 'examples', 'certificates', 'privkey.pem')
 
