@@ -12,6 +12,7 @@ from django.template.context import RequestContext
 from datetime import datetime
 from django import forms
 from django.core import urlresolvers
+from django.contrib import messages
 
 from tasks.models import Task
 from solutions.forms import ModelSolutionFormSet
@@ -80,11 +81,11 @@ def import_tasks(request):
 		if form.is_valid(): 
 			try:
 				Task.import_Tasks(form.files['file'], request.user)
-				request.user.message_set.create(message="The import was successfull.")
+                                messages.success(request, "The import was successfull.")
 				return HttpResponseRedirect(urlresolvers.reverse('admin:tasks_task_changelist'))
-			except:
+			except Exception, e:
 				from django.forms.util import ErrorList
-				msg = "An Error occured. The import file was propably malformed."
+                                msg = "An Error occured. The import file was propably malformed.: %s" % str(e)
 				form._errors["file"] = ErrorList([msg]) 			
 	else:
 		form = ImportForm()

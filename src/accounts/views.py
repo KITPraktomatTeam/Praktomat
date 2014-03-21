@@ -12,6 +12,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.models import Site, RequestSite
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib import messages
 from django.core import urlresolvers
 from django.utils.http import int_to_base36
 from django.core.mail import send_mail
@@ -87,7 +88,7 @@ def import_user(request):
 		if form.is_valid(): 
 			try:
 				imported_user = User.import_user(form.files['file'])
-				request.user.message_set.create(message="The import was successfull. %i users imported." % imported_user.count())
+                                messages.success(request, "The import was successfull. %i users imported." % imported_user.count())
 				if form.cleaned_data['require_reactivation']:
 					for user in [user for user in imported_user if user.is_active]:
 						user.is_active = False
@@ -136,7 +137,7 @@ def import_tutorial_assignment(request):
 				except:
 					failed += 1
 			#assert False
-			request.user.message_set.create(message="%i assignments were imported successfully, %i failed." % (succeded, failed))
+                        messages.warning(request, "%i assignments were imported successfully, %i failed." % (succeded, failed))
 			return HttpResponseRedirect(urlresolvers.reverse('admin:accounts_user_changelist'))
 	else:
 		form = ImportTutorialAssignmentForm()
@@ -162,7 +163,7 @@ def import_matriculation_list(request, group_id):
                     u.groups.remove(group)
                     nr_not_in_group += 1
                 u.save()
-            request.user.message_set.create(message="%i users added to group %s, %i not." % (nr_in_group, group.name, nr_not_in_group))
+            messages.success(request, "%i users added to group %s, %i not." % (nr_in_group, group.name, nr_not_in_group))
             return HttpResponseRedirect(urlresolvers.reverse('admin:auth_group_change', args=[group_id]))
     else:
         form = ImportMatriculationListForm()
