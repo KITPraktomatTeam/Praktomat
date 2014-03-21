@@ -39,7 +39,7 @@ class TestStaffViews(TestCase):
 			f = open(path, 'r')
 			response = self.client.post(reverse('admin:task_import'), data={
 								u'file': f
-							})
+							}, follow=True)
 			self.assertRedirectsToView(response, 'changelist_view')
 
 		def test_get_model_solution(self):

@@ -40,7 +40,7 @@ class TestViews(TestCase):
 								u'attestfiles-INITIAL_FORMS': u'0',
 								u'ratingresult-TOTAL_FORMS': u'0',
 								u'ratingresult-INITIAL_FORMS': u'0',
-							})
+							}, follow=True)
 			self.assertRedirectsToView(response, 'view_attestation')
 		
 		def test_get_view_attestation(self):
@@ -50,7 +50,7 @@ class TestViews(TestCase):
 		def test_post_view_attestation(self):
 			response = self.client.post(reverse('view_attestation', args=[self.attestation.id]),  data={
 								u'final': True,
-							})
+							}, follow=True)
 			self.assertRedirectsToView(response, 'attestation_list')
 
 class TestTrainerViews(TestCase):

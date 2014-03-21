@@ -26,7 +26,7 @@ class TestViews(TestCase):
 								u'solutionfile_set-INITIAL_FORMS': u'0',
 								u'solutionfile_set-TOTAL_FORMS': u'3',
 								u'solutionfile_set-0-file': f
-							})
+							}, follow=True)
 			self.assertRedirectsToView(response, 'solution_detail')
 		
 		def test_get_solution(self):
