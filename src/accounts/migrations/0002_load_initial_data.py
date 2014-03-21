@@ -2,7 +2,8 @@
 import datetime
 from south.db import db
 from south.v2 import DataMigration
-from django.db import models
+from django.db import models, connection
+from django.db.transaction import set_autocommit
 
 class Migration(DataMigration):
 	""" Loading user roles programaticly in this migration avoids potential conflicts with permission ids in fixtures """
@@ -15,6 +16,8 @@ class Migration(DataMigration):
 	)
 	
 	def forwards(self, orm):
+                if connection.vendor == 'sqlite':
+                    set_autocommit(True)
 		
 		#send signal post_syncdb so that permissions will be created even if the corresponding model was created in this migration
 		db.send_pending_create_signals()
