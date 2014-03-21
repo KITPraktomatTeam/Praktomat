@@ -53,8 +53,7 @@ from tasks.models import Task
 from solutions.models import Solution, SolutionFile
 from attestation.models import Attestation
 
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django.core.files import File
 
@@ -82,7 +81,7 @@ def create_test_data():
 	task = Task.objects.create(
 			title = 'Test task',
 			description = 'Test description.',
-			publication_date = datetime.now(),
+			publication_date = datetime.now() - timedelta(hours=5),
 			submission_date =  datetime.now() + timedelta(hours=5)
 			#model_solution
 			#all_checker_finished = False

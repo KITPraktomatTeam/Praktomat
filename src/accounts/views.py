@@ -77,8 +77,13 @@ def view(request):
 	return render_to_response('registration/registration_view.html', {'user':request.user}, context_instance=RequestContext(request))
 
 def access_denied(request):
-	request_path = request.META['HTTP_HOST'] + request.get_full_path()
-	return render_to_response('access_denied.html', {'request_path': request_path}, context_instance=RequestContext(request))
+	request_path = request.META.get('HTTP_HOST', '') + request.get_full_path()
+	res = render_to_response(
+            'access_denied.html',
+            {'request_path': request_path},
+            context_instance=RequestContext(request))
+        res.status_code = 403
+        return res
 
 @staff_member_required
 def import_user(request):
