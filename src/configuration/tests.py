@@ -14,7 +14,6 @@ class TestConfiguratoin(TestCase):
     # These ought to be added by the initial migration
     def testWelcomeMessage(self):
         chunk = Chunk.objects.get(key="Welcome Message")
-        print chunk
         self.assertIsNotNone(chunk)
 
     def testLoginMessage(self):
