@@ -9,3 +9,5 @@ django-tinymce>=1.5.2
 docutils>=0.10
 subprocess32
 psycopg2
+selenium==2.40.0
+

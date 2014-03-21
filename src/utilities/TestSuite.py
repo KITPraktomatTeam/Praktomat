@@ -47,6 +47,29 @@ class TestCase(DjangoTestCase):
 		self.assertEquals(resolve(urlparse(url)[2])[0].__name__, view)
 
 
+from django.test import LiveServerTestCase
+from selenium.webdriver.phantomjs.webdriver import WebDriver
+
+class SeleniumTestCase(LiveServerTestCase):
+        def setUp(self):
+            super(SeleniumTestCase, self).setUp()
+            self.selenium = WebDriver()
+
+        def tearDown(self):
+            self.selenium.quit()
+            super(SeleniumTestCase, self).tearDown()
+
+        def loginAsUser(self):
+            self.selenium.get('%s%s' % (self.live_server_url, '/accounts/login/'))
+            username_input = self.selenium.find_element_by_name("username")
+            username_input.send_keys('user')
+            password_input = self.selenium.find_element_by_name("password")
+            password_input.send_keys('demo')
+            self.selenium.find_element_by_xpath('//input[@value="Login"]').click()
+
+
+
+
 from accounts.models import User, Tutorial
 from django.contrib.auth.models import Group
 from tasks.models import Task

@@ -124,7 +124,7 @@ def load_defaults(settings):
 
     d.ROOT_URLCONF = 'urls'
 
-    d.LOGIN_REDIRECT_URL = BASE_PATH + '/tasks/'
+    d.LOGIN_REDIRECT_URL = 'task_list'
 
     # URL to use when referring to static files located in STATIC_ROOT.
     # Example: "/static/" or "http://static.example.com/"
