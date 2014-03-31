@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import os, re
-from pipes import quote
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -38,7 +37,7 @@ class ScriptChecker(Checker):
 		
 		# Run the tests -- execute dumped shell script 'script.sh'
 
-		filenames = [quote(name) for (name,content) in env.sources()]
+		filenames = [name for (name,content) in env.sources()]
 		args = [env.tmpdir()+'/'+os.path.basename(self.shell_script.name)] + filenames
 
 		environ = {}
@@ -49,7 +48,12 @@ class ScriptChecker(Checker):
 		environ['POLICY'] = settings.JVM_POLICY
 		environ['PROGRAM'] = env.program() or ''
 
-		[output, error, exitcode,timed_out] = execute_arglist(args, working_directory=env.tmpdir(), environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE)
+		[output, error, exitcode,timed_out] = execute_arglist(
+                            args,
+                            working_directory=env.tmpdir(),
+                            environment_variables=environ,
+                            timeout=settings.TEST_TIMEOUT,
+                            fileseeklimit=settings.TEST_MAXFILESIZE)
 		output = force_unicode(output, errors='replace')
 
 		result = CheckerResult(checker=self)
