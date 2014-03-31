@@ -1,10 +1,10 @@
-from django.test.simple import DjangoTestSuiteRunner
+from django.test.runner import DiscoverRunner
 from django.test import TestCase as DjangoTestCase
 from django.conf import settings
 from os.path import dirname, join
 from shutil import rmtree
 
-class TestSuiteRunner(DjangoTestSuiteRunner):
+class TestSuiteRunner(DiscoverRunner):
 	testSuiteUploadRoot = join(settings.UPLOAD_ROOT, 'TestSuite')
 	
 	def setup_test_environment(self, **kwargs):
