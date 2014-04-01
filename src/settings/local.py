@@ -7,7 +7,7 @@ PRAKTOMAT_PATH = dirname(dirname(dirname(__file__)))
 
 PRAKTOMAT_ID = basename(dirname(PRAKTOMAT_PATH))
 
-match = re.match('praktomat_(\d+)_(WS|SS)(_Abschluss)?(_Mirror)?', PRAKTOMAT_ID)
+match = re.match('(?:praktomat_)?(\d+)_(WS|SS)(_Abschluss)?(_Mirror)?', PRAKTOMAT_ID)
 if match:
 	year = int(match.group(1))
 	SITE_NAME = 'Programmieren '
@@ -40,7 +40,7 @@ STATIC_ROOT = join(dirname(PRAKTOMAT_PATH), "static")
 # files created at runtime.
 
 # Example: "/home/media/media.lawrence.com/"
-UPLOAD_ROOT = "/praktomatng/installations/" + PRAKTOMAT_ID + "/PraktomatSupport/"
+UPLOAD_ROOT = join(dirname(PRAKTOMAT_PATH), "PraktomatSupport/")
 
 ADMINS = [
   ('Praktomat', 'praktomat@ipd.info.uni-karlsruhe.de')
@@ -56,7 +56,7 @@ if MIRROR:
 else:
 	EMAIL_PORT = 25
 
-DEBUG = MIRROR
+DEBUG = True
 
 DATABASES = {
     'default': {
