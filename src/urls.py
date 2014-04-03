@@ -11,7 +11,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
 	# Index page
-	url(r'^$', RedirectView.as_view(url= 'tasks/'), name="index"),
+	url(r'^$', RedirectView.as_view(pattern_name='task_list'), name="index"),
 	
 	# Admin
 	url(r'^admin/tasks/task/(?P<task_id>\d+)/model_solution', 'tasks.views.model_solution', name="model_solution"),
