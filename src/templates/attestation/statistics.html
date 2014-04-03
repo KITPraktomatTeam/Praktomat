@@ -1,11 +1,7 @@
 {% extends "base.html" %}
 {% load highlight %} {% load i18n  %}{% load in_group %}
 {% block extrahead %}{{ block.super }}
-<script src="{{STATIC_URL}}frameworks/highcharts/highcharts.src.js" type="text/javascript">
-</script>
-<!--[if IE]>
-    <script src="{{STATIC_URL}}frameworks/highcharts/excanvas.compiled.js" type="text/javascript"></script>
-<![endif]-->
+<script src="{{STATIC_URL}}frameworks/highcharts/highcharts.js" type="text/javascript"></script>
 <script type="text/javascript">
             $(document).ready(function(){
                 var submission_chart = new Highcharts.Chart({
@@ -153,12 +149,7 @@
           }
        },
        legend: {
-          layout: 'vertical',
-          style: {
-             left: '100px',
-             top: '70px',
-             bottom: 'auto'
-          },
+          layout: 'horizontal',
           backgroundColor: '#FFFFFF',
           borderWidth: 1
        },
@@ -216,18 +207,11 @@
    },
    yAxis: {
 	  max:{{attestations.all}},
-	  tickInterval:1,
 	  title: {
 	  	enabled:false,
 	  },
    },
    legend: {
-      style: {
-         left: 'auto',
-         bottom: 'auto',
-         right: '70px',
-         top: '35px'
-      },
       backgroundColor: '#FFFFFF',
       borderColor: '#CCC',
       borderWidth: 1,
@@ -311,8 +295,8 @@ function grade_chart(div_to_render_into, title, scale_items,ratings){
             rotation: -90,
             color: '#FFFFFF',
             align: 'right',
-            x: -3,
-            y: 10,
+            x: 4,
+            y: 2,
             formatter: function() {
                return this.y;
             },
@@ -329,12 +313,16 @@ var final_grade_chart_{{forloop.counter}} = grade_chart('final_grade_chart_{{for
             });
 </script>
 {% endblock %} 
-{% block breadcrumbs %} {{block.super}} > <a href={% url "task_detail" task_id=task.id%}>{{task.title}}  </a>
-> Statistics {% endblock %}
+
+{% block breadcrumbs %}
+{{block.super}} &gt; <a href={% url "task_detail" task_id=task.id%}>{{task.title}}  </a> &gt; Statistics
+{% endblock %}
+
 {% block content %}<h1>{{task.title}}</h1>
+
 <h2>{% trans "Statistics" %}</h2>
 <div id="submission_chart"></div>
-<p>Showes the dates on which solution submissions were made. Final submissions indicate when users uploaded their newest solution. Total submissions shows the percantage of active users who have submitted at least one solution.</p><br/><br/>
+<p>Shows the dates on which solution submissions were made. Final submissions indicate when users uploaded their newest solution. Total submissions shows the percantage of active users who have submitted at least one solution.</p><br/><br/>
 <div id="punchcard"></div>
 <p>This chart plots on which time of day the users were most active.</p><br/><br/>
 {% if task.expired %} 
