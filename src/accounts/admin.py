@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User as UserBase, Group
 from django.contrib.auth.admin import UserAdmin as UserBaseAdmin, GroupAdmin as GroupBaseAdmin
 from django.db.models import Count
+from django.db.transaction import atomic
 from accounts.models import User, Tutorial, ShowAllUser
 from accounts.templatetags.in_group import in_group
 from accounts.forms import AdminUserCreationForm, AdminUserChangeForm
@@ -54,6 +55,7 @@ class UserAdmin(UserBaseAdmin):
 		queryset.update(is_active=False)
 		self.message_user(request, "Users were successfully inactivated.")
 
+	@atomic
 	def set_tutor(self, request, queryset):
 		""" Change students to tutors """
 		tutor_group = Group.objects.get(name='Tutor')
@@ -64,6 +66,7 @@ class UserAdmin(UserBaseAdmin):
 			user.save()
 		self.message_user(request, "Users were successfully made to tutors.")
 
+	@atomic
 	def distribute_to_tutorials(self, request, queryset):
 		""" Distribute selectet users evenly to all tutorials """
 		users = list(queryset)

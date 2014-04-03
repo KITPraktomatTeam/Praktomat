@@ -4,7 +4,7 @@ import hashlib
 import re
 
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
 from django.template import Context, loader
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import Group
@@ -65,7 +65,8 @@ class MyRegistrationForm(UserBaseCreationForm):
 			return username
 		raise forms.ValidationError(_("A user with that username already exists."))
 
-		
+
+	@transaction.atomic
 	def save(self):
 		user = super(MyRegistrationForm, self).save()
 		

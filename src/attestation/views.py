@@ -4,9 +4,9 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
 from django.core.urlresolvers import reverse
-from django.db.models import Count
 from django.forms.models import modelformset_factory
-from django.db.models import Max, Sum
+from django.db.models import Count, Max, Sum
+from django.db import transaction
 from django.contrib.auth.models import Group
 from django.views.decorators.cache import cache_control
 from django.http import HttpResponse
@@ -191,6 +191,7 @@ def new_attestation_for_task(request, task_id):
 
 
 @login_required
+@transaction.atomic
 def new_attestation_for_solution(request, solution_id, force_create = False):
 	if not (in_group(request.user,'Tutor,Trainer') or request.user.is_superuser):
 		return access_denied(request)
@@ -212,6 +213,7 @@ def new_attestation_for_solution(request, solution_id, force_create = False):
 	return HttpResponseRedirect(reverse('edit_attestation', args=[attest.id]))
 
 @login_required
+@transaction.atomic
 def withdraw_attestation(request, attestation_id):
 	if not (in_group(request.user,'Tutor,Trainer') or request.user.is_superuser):
 		return access_denied(request)
@@ -240,16 +242,17 @@ def edit_attestation(request, attestation_id):
 	model_solution = solution.task.model_solution
 
 	if request.method == "POST":
-		attestForm = AttestationForm(request.POST, instance=attest, prefix='attest')
-		attestFileFormSet = AnnotatedFileFormSet(request.POST, instance=attest, prefix='attestfiles')
-		ratingResultFormSet = RatingResultFormSet(request.POST, instance=attest, prefix='ratingresult')
-		if attestForm.is_valid() and attestFileFormSet.is_valid() and ratingResultFormSet.is_valid():
-			attestForm.save()
-			attest.final = False
-			attest.save()
-			attestFileFormSet.save()
-			ratingResultFormSet.save()
-			return HttpResponseRedirect(reverse('view_attestation', args=[attestation_id]))
+            with transaction.atomic():
+                    attestForm = AttestationForm(request.POST, instance=attest, prefix='attest')
+                    attestFileFormSet = AnnotatedFileFormSet(request.POST, instance=attest, prefix='attestfiles')
+                    ratingResultFormSet = RatingResultFormSet(request.POST, instance=attest, prefix='ratingresult')
+                    if attestForm.is_valid() and attestFileFormSet.is_valid() and ratingResultFormSet.is_valid():
+                            attestForm.save()
+                            attest.final = False
+                            attest.save()
+                            attestFileFormSet.save()
+                            ratingResultFormSet.save()
+                            return HttpResponseRedirect(reverse('view_attestation', args=[attestation_id]))
 	else:
 		attestForm = AttestationForm(instance=attest, prefix='attest')
 		attestFileFormSet = AnnotatedFileFormSet(instance=attest, prefix='attestfiles')
@@ -265,12 +268,13 @@ def view_attestation(request, attestation_id):
 		return access_denied(request)
 
 	if request.method == "POST":
-		form = AttestationPreviewForm(request.POST, instance=attest)
-		if form.is_valid():
-			form.save()
-			if 'publish' in request.POST:
-				attest.publish(request)
-			return HttpResponseRedirect(reverse('attestation_list', args=[attest.solution.task.id]))
+		with transaction.atomic():
+			form = AttestationPreviewForm(request.POST, instance=attest)
+			if form.is_valid():
+				form.save()
+				if 'publish' in request.POST:
+					attest.publish(request)
+				return HttpResponseRedirect(reverse('attestation_list', args=[attest.solution.task.id]))
 	else:
 		form = AttestationPreviewForm(instance=attest)
 		submitable = attest.author == request.user and not attest.published

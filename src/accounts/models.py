@@ -10,7 +10,7 @@ from django.contrib.auth.models import User as BasicUser, UserManager
 from django.db.models import signals
 from django.core.validators import RegexValidator
 from django.core import serializers
-from django.db import transaction
+from django.db.transaction import atomic
 
 from accounts.templatetags.in_group import in_group
 from configuration import get_settings
@@ -122,7 +122,7 @@ class User(BasicUser):
 		return serializers.serialize("xml", django_users + users) # order does matter!
 	
 	@classmethod
-	@transaction.commit_on_success		# May not work with MySQL: see django docu
+	@atomic
 	def import_user(cls, xml_data):
 		basicUser_id_map = {}
 		imported_user_ids = []

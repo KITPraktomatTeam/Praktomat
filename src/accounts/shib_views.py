@@ -3,6 +3,7 @@ from django.template import loader, RequestContext
 from django.shortcuts import render_to_response
 from django.contrib.auth import login
 from django.conf import settings
+from django.db import transaction
 
 from accounts.models import User
 from django.contrib.auth.models import Group
@@ -40,6 +41,7 @@ def shib_hello(request):
 	return render_to_response('registration/shib_hello.html', {'title':"Login via shibboleth", 'provider': settings.SHIB_PROVIDER}, RequestContext(request))
 
 @shibboleth_support_required
+@transaction.atomic
 def shib_login(request):
 	attr, error = parse_attributes(request.META)
 
