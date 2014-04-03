@@ -108,6 +108,11 @@
                 });
                 
     			
+        function date_to_timestr(d) {
+        	var h = d.getHours();
+        	var m = d.getMinutes();
+        	return h + ":" + ((m < 10) ? "0" + m : m);
+        }
     			
     	var time_chart = new Highcharts.Chart({
        chart: {
@@ -145,7 +150,7 @@
        tooltip: {
           formatter: function() {
 		  		date = new Date(this.x);
-                return '<b>'+ this.series.name +'</b><br/>' + ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][this.y] + ' ' + date.getHours() +':'+ date.getMinutes();
+                return '<b>'+ this.series.name +'</b><br/>' + ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][this.y] + ' ' + date_to_timestr(date);
           }
        },
        legend: {
