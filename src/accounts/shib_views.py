@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.template import loader, RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, resolve_url
 from django.contrib.auth import login
 from django.conf import settings
 from django.db import transaction
@@ -48,7 +48,7 @@ def shib_login(request):
 	was_redirected = False
 	if "next" in request.REQUEST:
 		was_redirected = True
-	redirect_url = request.REQUEST.get('next', settings.LOGIN_REDIRECT_URL)
+	redirect_url = request.REQUEST.get('next', resolve_url(settings.LOGIN_REDIRECT_URL))
 	context = {'shib_attrs': attr,
 			   'was_redirected': was_redirected}
 	if error:
