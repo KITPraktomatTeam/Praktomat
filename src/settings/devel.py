@@ -34,7 +34,12 @@ DATABASES = {
 
 PRIVATE_KEY = join(dirname(dirname(dirname(__file__))), 'examples', 'certificates', 'privkey.pem')
 
-
 # Finally load defaults for missing setttings.
 import defaults
 defaults.load_defaults(globals())
+
+# To get exceptions logged as well:
+MIDDLEWARE_CLASSES += (
+        'utilities.exceptionlogger.ExceptionLoggingMiddleware',
+    )
+
