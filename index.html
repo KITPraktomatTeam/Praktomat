@@ -12,6 +12,16 @@
 			maxWidth = !maxWidth;
 			if (env.editor) { env.editor.resize(); }
                }
+	       $(function() {
+			$("#all-old").toggle();
+			$("#collapse").click(function() {
+				$("#all-old").toggle();
+				$(this).toggleClass("ui-icon-triangle-1-e");
+				$(this).toggleClass("ui-icon-triangle-1-s");
+			});
+	       });
+
+
         </script>
 
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -91,22 +101,31 @@
 <h2>Aktuelle Praktomaten</h2>
 
 <div class="all-current">
-<!--
-<a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2013_WS/" class="current">
+
+<a href="https://praktomat.cs.kit.edu/2014_SS/" class="current">
 <span class="lecture">Programmieren</span><br/>
-<span class="year">Wintersemester 2013/2014</span>
+<span class="year">Sommersemester 2014</span>
+</a>
+
+<!--
+<a href="https://praktomat.cs.kit.edu/2014_SS_Abschluss/" class="current">
+<span class="lecture">Programmieren<br/>Abschlussaufgaben</span><br/>
+<span class="year">Sommersemester 2014</span>
 </a>
 -->
 
-<a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2013_WS_Abschluss/" class="current">
-<span class="lecture">Programmieren<br/>Abschlussaufgaben</span><br/>
-<span class="year">Wintersemester 2013/2014</span>
-</a>
 </div>
 
-<h2>Alle Praktomaten</h2>
+<h2>Alle Praktomaten<span id="collapse" class="ui-icon ui-icon-triangle-1-e"></span></h2>
 
+<ul id="all-old">
+<li>Sommersemester 2014
 <ul>
+<li><a href="https://praktomat.cs.kit.edu/2014_SS/">Programmieren</a></li>
+<!-- <li><a href="https://praktomat.cs.kit.edu/2013_SS_Abschluss/">Programmieren Abschlussaufgaben</a></li> -->
+</ul>
+</li>
+
 <li>Wintersemester 2013/2014
 <ul>
 <li><a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2013_WS/">Programmieren</a></li>
@@ -182,7 +201,7 @@
 
 <h2>Über den Praktomaten</h2>
 
-<p>Hinweise zum <A HREF="http://pp.info.uni-karlsruhe.de/project.php?id=34&amp;lang=de">Praktomat-Projekt</A></p>
+<p>Hinweise zum <A HREF="http://pp.info.uni-karlsruhe.de/project.php?id=34&amp;lang=de">Praktomat-Projekt</A>.</p>
 
 		</div>
 	</div>
