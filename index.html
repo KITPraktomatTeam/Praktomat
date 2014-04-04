@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<script type="text/javascript" src="index-static/jquery.js"></script>
+	<script type="text/javascript" src="index-static/jquery-ui.js"></script>
+	<script type="text/javascript">
+		maxWidth = false;
+		function toggleMaxWidth() {
+			if (maxWidth) { $("#container").css("max-width","1000px"); }
+			else          { $("#container").css("max-width","none"); }
+			maxWidth = !maxWidth;
+			if (env.editor) { env.editor.resize(); }
+               }
+        </script>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link type="text/css" rel="stylesheet" href="index-static/jquery-ui.css" />
+	<link type="text/css" rel="stylesheet" href="index-static/style.css" />
+	<style type="text/css">
+.all-current {
+	text-align:center;
+}
+
+.current {
+	text-decoration:none;
+	width:40%;
+	background-color:rgb(81, 124, 161);
+	border-radius: 5px;
+	margin:1ex;
+	padding:5px;
+	text-align:center;
+	color:white;
+	display:inline-block;
+	vertical-align:top;
+	line-height: 1.3;
+}
+.current:hover {
+	background-color:rgb(128, 196, 255);
+}
+
+.lecture {
+	font-size:300%;
+	line-height:1.1;
+}
+.year {
+	font-size:150%;
+}
+
+	</style>
+	<title>Der Praktomat am KIT</title>
+</head>
+
+<body>
+	<div id="container">
+		<div id="header"><div class="inner">
+			<div id="title">
+				<h1>Der Praktomat am KIT</h1>
+			</div>
+			<div id="user-tools">
+				<!--
+				{% if user.is_authenticated %}
+					Welcome, {% firstof user.get_full_name user.username %} 
+					{% if user.is_shibboleth_user %}
+					/ <a href="{% url registration_view %}">View Account</a>
+					{% else %}
+					/ <a href="{% url registration_change %}">Change Account</a>
+                    {% endif %}
+					/ <a href="{% url auth_logout %}">Log-out</a><br/>
+					{% if user.is_staff %}<a href={% url rating_overview %}>{% trans "Rating overview"%}</a> / 
+					<a href="{% url admin:index %}">Admin Panel</a>	{%endif%}
+					{% if user|in_group:"Tutor" %} <a href={% url tutorial_overview %}>{% trans "My Tutorial"%}</a>{%endif%}
+				{% else %}
+					<a href="{{ LOGIN_URL }}">Login</a> 
+					{% if REGISTRATION_POSSIBLE %}
+						<a href="{% url registration_register %}">Register</a> 
+					{%endif%}
+				{%endif%}
+				-->
+			</div>
+		</div></div>
+		<div id="sub_header"><div class="inner">
+			<a href="http://kit.edu/"><span class="icon icon-white ui-icon-home"></span>Home</a> &gt;
+			<a href="http://pp.info.uni-karlsruhe.de/">Programmierparadigmen</a> &gt;
+			<a href="https://praktomat.info.uni-karlsruhe.de/">Praktomat</a>
+			<a href="#" onClick="toggleMaxWidth()"><span style="float:right" class="icon icon-white ui-icon-arrow-2-e-w"></span></a>
+		</div></div>
+		<div id="content">
+
+
+<h2>Aktuelle Praktomaten</h2>
+
+<div class="all-current">
+<!--
+<a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2013_WS/" class="current">
+<span class="lecture">Programmieren</span><br/>
+<span class="year">Wintersemester 2013/2014</span>
+</a>
+-->
+
+<a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2013_WS_Abschluss/" class="current">
+<span class="lecture">Programmieren<br/>Abschlussaufgaben</span><br/>
+<span class="year">Wintersemester 2013/2014</span>
+</a>
+</div>
+
+<h2>Alle Praktomaten</h2>
+
+<ul>
+<li>Wintersemester 2013/2014
+<ul>
+<li><a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2013_WS/">Programmieren</a></li>
+<li><a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2013_WS_Abschluss/">Programmieren Abschlussaufgaben</a></li>
+</ul>
+</li>
+
+
+<li>Sommersemester 2013
+<ul>
+<li><a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2013_SS/">Programmieren</a></li>
+<li><a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2013_SS_Abschluss/">Programmieren Abschlussaufgaben</a></li>
+<li><a href="https://praktomat.info.uni-karlsruhe.de/tba_2013_SS/">Theorembeweiserpraktikum</a></li>
+</ul>
+</li>
+
+<li>Wintersemester 2012/2013
+<ul>
+<li><a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2012_WS/">Programmieren</a></li>
+<li><a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2012_WS_Abschluss/">Programmieren Abschlussaufgaben</a></li>
+</ul>
+</li>
+
+<li>Sommersemester 2012
+<ul>
+<li><a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2012_SS/">Programmieren</a></li>
+<li><a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2012_SS_Abschluss/">Programmieren Abschlussaufgaben</a></li>
+</ul>
+</li>
+
+<li>Wintersemester 2011/2012
+<ul>
+<li><a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2011_WS/">Programmieren</a></li>
+</ul>
+</li>
+
+<li>Wintersemester 2010/2011
+<ul>
+<li><a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2010_WS/">Programmieren</a></li>
+<li><a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2010_WS_abschluss/">Programmieren Abschlussaufgaben</a></li>
+</ul>
+</li>
+
+<li>Sommersemester 2010
+<ul>
+<li><a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2010_SS/">Programmieren</a></li>
+<li><a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2010_SS_abschluss/">Programmieren Abschlussaufgaben</a></li>
+</ul>
+</li>
+
+<li>Wintersemester 2009/2010
+<ul>
+<li><a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2009_WS/">Programmieren</a></li>
+<li><a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2009_WS_abschluss/">Programmieren Abschlussaufgaben</a></li>
+</ul>
+</li>
+
+<li>Sommersemester 2009
+<ul>
+<li><a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2009_SS/">Programmieren</a></li>
+<li><a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2009_SS_abschluss/">Programmieren Abschlussaufgaben</a></li>
+</ul>
+</li>
+
+<li>Wintersemester 2008/2009
+<ul>
+<li><a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2008_WS/">Programmieren</a></li>
+<li><a href="https://praktomat.info.uni-karlsruhe.de/praktomat_2008_WS_abschluss/">Programmieren Abschlussaufgaben</a></li>
+</ul>
+</li>
+
+</ul>
+
+<h2>Über den Praktomaten</h2>
+
+<p>Hinweise zum <A HREF="http://pp.info.uni-karlsruhe.de/project.php?id=34&amp;lang=de">Praktomat-Projekt</A></p>
+
+		</div>
+	</div>
+</body>
+</html>

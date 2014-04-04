@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<script type="text/javascript" src="/index-static/jquery.js"></script>
+	<script type="text/javascript" src="/index-static/jquery-ui.js"></script>
+	<script type="text/javascript">
+		maxWidth = false;
+		function toggleMaxWidth() {
+			if (maxWidth) { $("#container").css("max-width","1000px"); }
+			else          { $("#container").css("max-width","none"); }
+			maxWidth = !maxWidth;
+			if (env.editor) { env.editor.resize(); }
+               }
+        </script>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link type="text/css" rel="stylesheet" href="/index-static/jquery-ui.css" />
+	<link type="text/css" rel="stylesheet" href="/index-static/style.css" />
+	<style type="text/css">
+.all-current {
+	text-align:center;
+}
+
+.current {
+	text-decoration:none;
+	width:40%;
+	background-color:rgb(81, 124, 161);
+	border-radius: 5px;
+	margin:1ex;
+	padding:5px;
+	text-align:center;
+	color:white;
+	display:inline-block;
+	vertical-align:top;
+	line-height: 1.3;
+}
+.current:hover {
+	background-color:rgb(128, 196, 255);
+}
+
+.lecture {
+	font-size:300%;
+	line-height:1.1;
+}
+.year {
+	font-size:150%;
+}
+
+	</style>
+	<title>Der Praktomat am KIT</title>
+</head>
+
+<body>
+	<div id="container">
+		<div id="header"><div class="inner">
+			<div id="title">
+				<h1>Der Praktomat am KIT</h1>
+			</div>
+			<div id="user-tools">
+				<!--
+				{% if user.is_authenticated %}
+					Welcome, {% firstof user.get_full_name user.username %} 
+					{% if user.is_shibboleth_user %}
+					/ <a href="{% url registration_view %}">View Account</a>
+					{% else %}
+					/ <a href="{% url registration_change %}">Change Account</a>
+                    {% endif %}
+					/ <a href="{% url auth_logout %}">Log-out</a><br/>
+					{% if user.is_staff %}<a href={% url rating_overview %}>{% trans "Rating overview"%}</a> / 
+					<a href="{% url admin:index %}">Admin Panel</a>	{%endif%}
+					{% if user|in_group:"Tutor" %} <a href={% url tutorial_overview %}>{% trans "My Tutorial"%}</a>{%endif%}
+				{% else %}
+					<a href="{{ LOGIN_URL }}">Login</a> 
+					{% if REGISTRATION_POSSIBLE %}
+						<a href="{% url registration_register %}">Register</a> 
+					{%endif%}
+				{%endif%}
+				-->
+			</div>
+		</div></div>
+		<div id="sub_header"><div class="inner">
+			<a href="http://kit.edu/"><span class="icon icon-white ui-icon-home"></span>Home</a> &gt;
+			<a href="http://pp.info.uni-karlsruhe.de/">Programmierparadigmen</a> &gt;
+			<a href="https://praktomat.info.uni-karlsruhe.de/">Praktomat</a>
+			<a href="#" onClick="toggleMaxWidth()"><span style="float:right" class="icon icon-white ui-icon-arrow-2-e-w"></span></a>
+		</div></div>
+		<div id="content">
+
+
+<h2>Zugriff verweigert</h2>
+
+Der Zugriff auf den Praktomaten ist nur aus dem Netz des KIT möglich. Möchten Sie von außerhalb des KIT-Netzes zugreifen, verwenden Sie bitte den <a href="http://www.scc.kit.edu/dienste/vpn.php">VPN-Client des SCC</a>.
+
+		</div>
+	</div>
+</body>
+</html>
