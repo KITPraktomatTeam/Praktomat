@@ -205,7 +205,7 @@ class SolutionFile(models.Model):
 @receiver(post_delete, sender=SolutionFile)
 def solution_file_delete(sender, instance, **kwargs):
     # Pass false so FileField doesn't save the model.
-    filename = instance.file.name
+    filename = os.path.join(settings.UPLOAD_ROOT, instance.file.name)
     instance.file.delete(False)
     # Remove left over empty directories
     dirname = os.path.dirname(filename)
