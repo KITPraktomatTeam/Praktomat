@@ -66,16 +66,19 @@ DATABASES = {
 }
 
 # Private key used to sign uploded solution files in submission confirmation email
-PRIVATE_KEY = '/praktomatng/certificates/mailsign/signer_key.pem'
+PRIVATE_KEY = '/srv/praktomat/mailsign/signer_key.pem'
 
 # Enable Shibboleth:
 SHIB_ENABLED = True
 REGISTRATION_POSSIBLE = False
 
+# Use a dedicated user to test submissions
+USEPRAKTOMATTESTER = True
+
 # Various extra files and versions
-CHECKSTYLEALLJAR = '/praktomatng/checkstyle-5.5-all.jar'
-JAVA_BINARY = 'javac-sun-1.7'
-JVM = 'java-sun-1.7'
+CHECKSTYLEALLJAR = '/srv/praktomat/contrib/checkstyle-5.5-all.jar'
+#JAVA_BINARY = 'javac-sun-1.7'
+#JVM = 'java-sun-1.7'
 
 # Finally load defaults for missing setttings.
 import defaults
