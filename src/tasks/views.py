@@ -13,6 +13,7 @@ from datetime import datetime
 from django import forms
 from django.core import urlresolvers
 from django.contrib import messages
+import django.utils.timezone
 
 from tasks.models import Task
 from solutions.forms import ModelSolutionFormSet
@@ -25,7 +26,7 @@ from configuration import get_settings
 
 @login_required
 def taskList(request):
-	now = datetime.now()
+	now = django.utils.timezone.now()
 	tasks = Task.objects.filter(publication_date__lte = now).order_by('submission_date')
 	try:
 		tutors = request.user.tutorial.tutors.all()
@@ -34,7 +35,7 @@ def taskList(request):
 	trainers = User.objects.filter(groups__name="Trainer")
 
 	attestations = []
-	expired_Tasks = Task.objects.filter(submission_date__lt = datetime.now).order_by('publication_date','submission_date')
+	expired_Tasks = Task.objects.filter(submission_date__lt = now).order_by('publication_date','submission_date')
 	for task in expired_Tasks:
 		attestation_qs =  Attestation.objects.filter(solution__task = task, published=True, solution__author=request.user)
 		attestations.append((task, attestation_qs[0] if attestation_qs.exists() else None))
