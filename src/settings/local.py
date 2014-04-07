@@ -28,8 +28,10 @@ else:
 
 # The URL where this site is reachable. 'http://localhost:8000/' in case of the
 # developmentserver.
-BASE_HOST = 'https://praktomat.info.uni-karlsruhe.de'
+BASE_HOST = 'https://praktomat.cs.kit.edu'
 BASE_PATH = '/' + PRAKTOMAT_ID + '/'
+
+ALLOWED_HOSTS = [ 'praktomat.cs.kit.edu', ]
 
 # URL to use when referring to static files.
 STATIC_URL = BASE_PATH + 'static/'
