@@ -13,8 +13,11 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.files import File
 from django.db.models import Max
+from django.db import transaction
 from django.conf import settings
 from django.template.loader import render_to_string
+from django.db.models.signals import post_delete
+from django.dispatch.dispatcher import receiver
 
 from accounts.models import User
 from utilities import encoding, file_operations
@@ -48,6 +51,7 @@ class Solution(models.Model):
 		for file in self.solutionfile_set.all():
 			file.copyTo(toTempDir)
 	
+        @transaction.atomic
 	def save(self, *args, **kwargs):
 		"""Override save calculate the number on first save"""
 		if self.number == None:
@@ -156,7 +160,7 @@ class SolutionFile(models.Model):
 		else:
 			self.mime_type = mimetypes.guess_type(self.file.name)[0]
 			models.Model.save(self, force_insert, force_update, using)
-	
+
 	def __unicode__(self):
 		return self.file.name.rpartition('/')[2]
 	
@@ -196,6 +200,23 @@ class SolutionFile(models.Model):
 			shutil.copy(self.file.file.name, new_file_path)
 		else:
 			file_operations.create_file(new_file_path, self.content())
+
+# from http://stackoverflow.com/questions/5372934
+@receiver(post_delete, sender=SolutionFile)
+def solution_file_delete(sender, instance, **kwargs):
+    # Pass false so FileField doesn't save the model.
+    filename = instance.file.file.name
+    instance.file.delete(False)
+    # Remove left over empty directories
+    dirname = os.path.dirname(filename)
+    try:
+        while os.path.basename(dirname) != "SolutionArchive":
+            os.rmdir(dirname)
+            dirname = os.path.dirname(dirname)
+    except OSError:
+        pass
+
+
 
 def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 	
