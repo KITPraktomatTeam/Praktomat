@@ -28,7 +28,7 @@ if match:
 	if match.group('semester') == "WS":
 		SITE_NAME += "Wintersemester %d/%d" % (year, year+1)
 	else:
-		SITE_NAME += "Sommeremster %d" % year
+		SITE_NAME += "Sommersemester %d" % year
 
 	if match.group('mirror') is not None:
 		SITE_NAME += " (Mirror)"
