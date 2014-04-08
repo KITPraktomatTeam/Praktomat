@@ -71,7 +71,7 @@ if MIRROR:
 else:
 	EMAIL_PORT = 25
 
-DEBUG = True
+DEBUG = MIRROR
 
 DATABASES = {
     'default': {
