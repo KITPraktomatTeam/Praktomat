@@ -7,17 +7,30 @@ PRAKTOMAT_PATH = dirname(dirname(dirname(__file__)))
 
 PRAKTOMAT_ID = basename(dirname(PRAKTOMAT_PATH))
 
-match = re.match('(?:praktomat_)?(\d+)_(WS|SS)(_Abschluss)?(_Mirror)?', PRAKTOMAT_ID)
+match = re.match(r'''
+	(?:praktomat_)?
+	(?P<algo1>algo1_)?
+	(?P<year>\d+)_
+	(?P<semester>WS|SS)
+	(?P<abschluss>_Abschluss)?
+	(?P<mirror>_Mirror)?
+	''', PRAKTOMAT_ID, flags=re.VERBOSE)
 if match:
-	year = int(match.group(1))
-	SITE_NAME = 'Programmieren '
-	if match.group(3):
+	if match.group('algo1') is not None:
+		SITE_NAME = 'Algorithmen I '
+	else:
+		SITE_NAME = 'Programmieren '
+
+	if match.group('abschluss'):
 		SITE_NAME += "Abschlussaufgaben "
-	if match.group(2) == "WS":
+
+	year = int(match.group('year'))
+	if match.group('semester') == "WS":
 		SITE_NAME += "Wintersemester %d/%d" % (year, year+1)
 	else:
 		SITE_NAME += "Sommeremster %d" % year
-	if match.group(4):
+
+	if match.group('mirror') is not None:
 		SITE_NAME += " (Mirror)"
 		MIRROR = True
 	else:
