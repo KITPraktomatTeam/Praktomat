@@ -75,7 +75,7 @@ class AnnotatedSolutionFile(models.Model):
 	""""""
 	attestation = models.ForeignKey(Attestation)
 	solution_file = models.ForeignKey(SolutionFile)
-	content = models.TextField(help_text = _('The content of the solution file annotated by the tutor.'))
+	content = models.TextField(help_text = _('The content of the solution file annotated by the tutor.'), blank = True)
 	
 	def has_anotations(self):
 		original = self.solution_file.content().replace("\r\n","\n").replace("\r","\n")
