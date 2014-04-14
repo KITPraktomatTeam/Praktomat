@@ -309,13 +309,15 @@ form .help {
 	color: #999999;
 }
 
-form .errors .errorlist{
+.errorlist {
 	color: red;
+}
+
+form .errors .errorlist{
 	display: inline;
 }
 
 form > .errorlist {
-	color: red;
 	margin-left:0px;
 }
 

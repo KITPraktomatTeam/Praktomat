@@ -38,6 +38,7 @@
 			//  * JQuery-UI Tab with one tab per file, but only one panel
 			//  * One session per file, stored via .data at the tab 
 			//  * Switching tabs changes the session
+			//  * Switching copies(!) the errorlist to a visible part
 			//  * Every change is directly reflected in the hidden textarea
 			var editor = ace.edit("editor");
 			$(".anntabs ul li a").each(function(idx, elem){
@@ -54,6 +55,15 @@
 			});
 			var switch_to = function(idx) {
 				var anntab = $(".anntabs ul li a").get(idx);
+
+				// Remove existing errorlist (if present)
+				$("#editor").prev(".errorlist").remove();
+				// Copy errorlist to visible part
+				$("#id_attestfiles-" + idx + "-content")
+					.next(".errorlist")
+					.clone()
+					.insertBefore("#editor");
+
 				editor.setSession($(anntab).data('ace-session'));
 			}
 			$(".anntabs").tabs({
