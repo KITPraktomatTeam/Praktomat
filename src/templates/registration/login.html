@@ -13,7 +13,7 @@
 	<span class="icon ui-icon-triangle-1-e"></span><a href="{% url "registration_register" %}">Registration</a>
 	/
 	{% endif %} 
-	<span class="icon ui-icon-triangle-1-e"></span><a href="{% url "auth_password_reset" %}">Retrieve password</a>
+	<span class="icon ui-icon-triangle-1-e"></span><a href="{% url "password_reset" %}">Retrieve password</a>
 	
 	<form method="post" action=".">{% csrf_token %}
 	    {% include "forms/form_as_div.html" %}
