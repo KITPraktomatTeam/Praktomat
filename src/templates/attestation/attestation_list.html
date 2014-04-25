@@ -182,9 +182,9 @@
 			
 			
 			
-			{% if not user|in_group:'Trainer'%}
+			{% if user|in_group:'Tutor'%}
 				<form enctype="multipart/form-data" class="confirm" method="post" action="">{% csrf_token %}	
-					<input type="submit" value="Publish all final attestations" {% if published %} disabled {% endif %}/>
+					<input type="submit" value="Publish all final attestations{% if user|in_group:'Trainer' %} from my Tutorial{% endif %}" {% if published %} disabled {% endif %}/>
 					{% if published %}	
 						<span id='comment'>All attested Solutions are already published.</span> 
 					{% endif %}
