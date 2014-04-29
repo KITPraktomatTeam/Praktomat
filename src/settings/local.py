@@ -91,7 +91,7 @@ REGISTRATION_POSSIBLE = False
 USEPRAKTOMATTESTER = True
 
 # Various extra files and versions
-CHECKSTYLEALLJAR = '/srv/praktomat/contrib/checkstyle-5.5-all.jar'
+CHECKSTYLEALLJAR = '/srv/praktomat/contrib/checkstyle-5.7-all.jar'
 #JAVA_BINARY = 'javac-sun-1.7'
 #JVM = 'java-sun-1.7'
 
