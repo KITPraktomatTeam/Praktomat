@@ -1,5 +1,10 @@
 # Settings for deployment
 
+# These settings are KIT-specific and derive some parts of the settings
+# from the directory name.
+#
+# If you are not deploying on praktomat.cs.kit.edu you need to rewrite this file.
+
 from os.path import join, dirname, basename
 import re
 
