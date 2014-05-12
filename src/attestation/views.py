@@ -287,10 +287,14 @@ def edit_attestation(request, attestation_id):
 @login_required	
 def view_attestation(request, attestation_id):
 	attest = get_object_or_404(Attestation, pk=attestation_id)
-	if not (attest.solution.author == request.user or in_group(request.user,'Trainer') or request.user.is_superuser):
+        may_modify = attest.author == request.user or in_group(request.user,'Trainer')
+        may_view = attest.solution.author == request.user or in_group(request.user,'Tutor') or may_modify
+        if not may_view:
 		return access_denied(request)
 
 	if request.method == "POST":
+                if not may_modify:
+                        return access_denied(request)
 		with transaction.atomic():
 			form = AttestationPreviewForm(request.POST, instance=attest)
 			if form.is_valid():
@@ -300,7 +304,6 @@ def view_attestation(request, attestation_id):
 				return HttpResponseRedirect(reverse('attestation_list', args=[attest.solution.task.id]))
 	else:
 		form = AttestationPreviewForm(instance=attest)
-                may_modify = attest.author == request.user or in_group(request.user,'Tutor')
 		submitable = may_modify and not attest.published
 		withdrawable = may_modify and attest.published
                 return render_to_response("attestation/attestation_view.html", {"attest": attest, 'submitable':submitable, 'withdrawable': withdrawable, 'form':form, 'show_author': not get_settings().anonymous_attestation},	context_instance=RequestContext(request))
