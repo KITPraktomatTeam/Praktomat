@@ -7,6 +7,7 @@ from django.core.mail import EmailMessage
 from django.template import Context, loader
 from django.contrib.sites.models import RequestSite
 from datetime import datetime
+from utilities.nub import nub
 import difflib
 
 from accounts.models import User
@@ -26,50 +27,70 @@ class Attestation(models.Model):
 	published = models.BooleanField(default = False, help_text = _('Indicates whether the user can see the attestation.'))
 	published_on = models.DateTimeField(blank=True,null=True,help_text = _('The Date/Time the attestation was published.'))
 	
-	def publish(self, request):
+	def publish(self, request, by):
 		""" Set attestation to published and send email to user """
 		self.published = True
 		self.published_on = datetime.now()
 		self.save()
-		
-		# Send confirmation email
-		if (self.solution.author.email or self.author.email):
-			t = loader.get_template('attestation/attestation_email.html')
-			c = {
-				'attest': self,
-				'protocol': request.is_secure() and "https" or "http",
-				'domain': RequestSite(request).domain,
-				'site_name': settings.SITE_NAME,
-				}
-			subject = _("New attestation for your solution of the task '%s'") % self.solution.task
-			body = t.render(Context(c))
-			recipients = [self.solution.author.email or self.author.email]
-			bcc_recipients = [self.author.email] if self.solution.author.email and self.author.email else None
-			headers = {'Reply-To': self.author.email} if bcc_recipients else None
-			email = EmailMessage(subject, body, None, recipients, bcc_recipients, headers = headers)
-			email.send()
 
-        def withdraw(self, request):
+                recps = nub([
+                    self.solution.author, # student
+                    self.author,          # attestation writer
+                    by,                   # usually attestation writer, may be trainer
+                    ])
+                emails = [u.email for u in recps if u.email]
+                if not emails:
+                    return
+
+		# Send confirmation email
+                t = loader.get_template('attestation/attestation_email.html')
+                c = {
+                        'attest': self,
+                        'protocol': request.is_secure() and "https" or "http",
+                        'domain': RequestSite(request).domain,
+                        'site_name': settings.SITE_NAME,
+                        'by': by,
+                        }
+                subject = _("New attestation for your solution of the task '%s'") % self.solution.task
+                body = t.render(Context(c))
+                recipients = emails[0:1]
+                bcc_recipients = emails[1:]
+                headers = {'Reply-To': self.author.email} if bcc_recipients else None
+                email = EmailMessage(subject, body, None, recipients, bcc_recipients, headers = headers)
+                email.send()
+
+        def withdraw(self, request, by):
 		self.published = False
                 self.final = False
 		self.published_on = datetime.now()
 		self.save()
-		
+
+                recps = nub([
+                    self.solution.author, # student
+                    self.author,          # attestation writer
+                    by,                   # usually attestation writer, may be trainer
+                    ] + list(User.objects.filter(groups__name="Trainer"))  # and, for withdrawals, all trainers
+                    )
+                emails = [u.email for u in recps if u.email]
+
+                if not emails:
+                    return
+
 		# Send confirmation email
-		if (self.solution.author.email or self.author.email):
-			t = loader.get_template('attestation/attestation_withdraw_email.html')
-			c = {
-				'attest': self,
-				'protocol': request.is_secure() and "https" or "http",
-				'domain': RequestSite(request).domain,
-				'site_name': settings.SITE_NAME,
-				}
-			subject = _("Attestation for your solution of the task '%s' withdrawn") % self.solution.task
-			body = t.render(Context(c))
-			recipients = [self.solution.author.email or self.author.email]
-			bcc_recipients = ([self.author.email] if self.solution.author.email and self.author.email else []) + [trainer.email for trainer in  User.objects.filter(groups__name="Trainer") ]
-			email = EmailMessage(subject, body, None, recipients, bcc_recipients)
-			email.send()
+                t = loader.get_template('attestation/attestation_withdraw_email.html')
+                c = {
+                        'attest': self,
+                        'protocol': request.is_secure() and "https" or "http",
+                        'domain': RequestSite(request).domain,
+                        'site_name': settings.SITE_NAME,
+                        'by': by,
+                        }
+                subject = _("Attestation for your solution of the task '%s' withdrawn") % self.solution.task
+                body = t.render(Context(c))
+                recipients = emails[0:1]
+                bcc_recipients = emails[1:]
+                email = EmailMessage(subject, body, None, recipients, bcc_recipients)
+                email.send()
 
 class AnnotatedSolutionFile(models.Model):
 	""""""

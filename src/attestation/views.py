@@ -236,14 +236,18 @@ def withdraw_attestation(request, attestation_id):
 		return access_denied(request)
 
 	attest = get_object_or_404(Attestation, pk=attestation_id)
-	if not attest.published or attest.author != request.user:
+	if not (attest.author == request.user or in_group(request.user,'Tutor,Trainer')):
+		return access_denied(request)
+
+	if not attest.published:
 		# If if this attestation is already final or not by this user redirect to view_attestation
 		return HttpResponseRedirect(reverse('view_attestation', args=[attestation_id]))
+
 	if request.method != "POST":
 		return HttpResponseRedirect(reverse('view_attestation', args=[attestation_id]))
 
-        attest.withdraw(request)
-        return HttpResponseRedirect(reverse('edit_attestation', args=[attestation_id]))
+	attest.withdraw(request, by=request.user)
+	return HttpResponseRedirect(reverse('edit_attestation', args=[attestation_id]))
 
 @login_required	
 def edit_attestation(request, attestation_id):
@@ -290,12 +294,13 @@ def view_attestation(request, attestation_id):
 			if form.is_valid():
 				form.save()
 				if 'publish' in request.POST:
-					attest.publish(request)
+					attest.publish(request, by = request.user)
 				return HttpResponseRedirect(reverse('attestation_list', args=[attest.solution.task.id]))
 	else:
 		form = AttestationPreviewForm(instance=attest)
-		submitable = attest.author == request.user and not attest.published
-		withdrawable = attest.author == request.user and attest.published
+                may_modify = attest.author == request.user or in_group(request.user,'Trainer,Tutor')
+		submitable = may_modify and not attest.published
+		withdrawable = may_modify and attest.published
                 return render_to_response("attestation/attestation_view.html", {"attest": attest, 'submitable':submitable, 'withdrawable': withdrawable, 'form':form, 'show_author': not get_settings().anonymous_attestation},	context_instance=RequestContext(request))
 
 
