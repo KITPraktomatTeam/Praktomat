@@ -9,6 +9,10 @@ from accounts.models import User, Tutorial, ShowAllUser
 from accounts.templatetags.in_group import in_group
 from accounts.forms import AdminUserCreationForm, AdminUserChangeForm
 
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+from django.core.urlresolvers import reverse
+
 
 class UserAdmin(UserBaseAdmin):
 	model = User
@@ -19,15 +23,16 @@ class UserAdmin(UserBaseAdmin):
 	search_fields = ['username', 'first_name', 'last_name', 'mat_number', 'email']
 	date_hierarchy = 'date_joined'
 	actions = ['set_active', 'set_inactive', 'set_tutor', 'distribute_to_tutorials', 'export_users']
-	readonly_fields = ('last_login','date_joined')
+	readonly_fields = ('last_login','date_joined','useful_links',)
 	# exclude user_permissions
 	fieldsets = (
-        (None, {'fields': ('username', 'password')}),
-        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'mat_number','programme')}),
-        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
-        (_('Groups'), {'fields': ('groups','tutorial')}),
-        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
-    )
+            (None, {'fields': ('username', 'password')}),
+            (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'mat_number','programme')}),
+            (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
+            (_('Groups'), {'fields': ('groups','tutorial')}),
+            (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+            (None, {'fields': ('useful_links',)}),
+        )
 	
 	form = AdminUserChangeForm
 	add_form = AdminUserCreationForm
@@ -96,6 +101,13 @@ class UserAdmin(UserBaseAdmin):
 		my_urls = patterns('', url(r'^import/$', 'accounts.views.import_user', name='user_import')) 
 		my_urls += patterns('', url(r'^import_tutorial_assignment/$', 'accounts.views.import_tutorial_assignment', name='import_tutorial_assignment')) 
 		return my_urls + urls
+
+        def useful_links(self, instance):
+                return format_html ('<a href="{0}">Solutions of {1}</a>',
+                    reverse('admin:solutions_solution_changelist') + ("?author__user_ptr__exact=%d" % instance.pk),
+                    instance
+                    )
+        useful_links.allow_tags = True
 
 # This should work in Django 1.4 :O
 # from django.contrib.admin import SimpleListFilter
