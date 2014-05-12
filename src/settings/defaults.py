@@ -325,6 +325,6 @@ def load_defaults(settings):
     if SHIB_ENABLED:
         d.LOGIN_URL = 'shib_hello'
     else:
-		d.LOGIN_URL = 'login'
+        d.LOGIN_URL = 'login'
 
 
