@@ -251,11 +251,11 @@ def withdraw_attestation(request, attestation_id):
 	if not (in_group(request.user,'Tutor,Trainer') or request.user.is_superuser):
 		return access_denied(request)
 
-        if task.only_trainers_publish and not in_group(request.user,'Trainer'):
-		return access_denied(request)
-
 	attest = get_object_or_404(Attestation, pk=attestation_id)
 	if not (attest.author == request.user or in_group(request.user,'Trainer')):
+		return access_denied(request)
+
+        if attest.solution.task.only_trainers_publish and not in_group(request.user,'Trainer'):
 		return access_denied(request)
 
 	if not attest.published:
