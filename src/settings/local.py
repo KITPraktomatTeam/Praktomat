@@ -62,14 +62,15 @@ ADMINS = [
 ]
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-DEFAULT_FROM_EMAIL = "praktomat@ipd.info.uni-karlsruhe.de"
-
-EMAIL_HOST = "localhost"
 if MIRROR:
-	EMAIL_PORT = 4096
+	EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+	EMAIL_FILE_PATH = join(UPLOAD_ROOT, "sent-mails")
 else:
+	EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+	EMAIL_HOST = "localhost"
 	EMAIL_PORT = 25
+
+DEFAULT_FROM_EMAIL = "praktomat@ipd.info.uni-karlsruhe.de"
 
 DEBUG = MIRROR
 
