@@ -143,29 +143,46 @@ def attestation_list(request, task_id):
 	unattested_solutions = Solution.objects.filter(task = task, final=True, plagiarism = False, attestation = None)		
 	if in_group(request.user,'Tutor'): # the trainer sees them all
 		unattested_solutions = unattested_solutions.filter(author__tutorial__in = request.user.tutored_tutorials.all())
-		
+
 	my_attestations = Attestation.objects.filter(solution__task = task, author = request.user).order_by('-created')
+
 	all_attestations_for_my_tutorials = Attestation.objects.filter(solution__task = task, solution__author__tutorial__in = request.user.tutored_tutorials.all()).order_by('-created')
+
+        attestations_by_others = all_attestations_for_my_tutorials.exclude(author = request.user)
+
+        # for the warning about solutions marked as plagiarism
 	if (in_group(request.user,'Trainer')):
 		# show all to trainer
-		attestations_by_others  = Attestation.objects.filter(solution__task = task).order_by('-created')
 		solutions_with_plagiarism = Solution.objects.filter(task = task, plagiarism = True)
 	else:
-		# show from my toturials
-		attestations_by_others = all_attestations_for_my_tutorials.exclude(author = request.user)
+		# show from my turials to tutors
 		solutions_with_plagiarism = Solution.objects.filter(task = task, plagiarism = True, author__tutorial__in = request.user.tutored_tutorials.all())
+
+        # the trainer sees all
+        all_attestations = None
+	if (in_group(request.user,'Trainer')):
+		all_attestations = Attestation.objects.filter(solution__task = task).order_by('-created')
 
 	if request.method == "POST":
 		for attestation in all_attestations_for_my_tutorials.filter(final = True, published = False):
 			attestation.publish(request)
 
 	all_attestations_published = all_attestations_for_my_tutorials.filter(published = False).count() == 0
-	
+
 	all_attestations_final = all_attestations_for_my_tutorials.filter(final = False).count() == 0
-	
+
 	show_author = not get_settings().anonymous_attestation or in_group(request.user,'Trainer') or published
 
-	data = {'task':task, 'tutored_users':tutored_users, 'solutions_with_plagiarism':solutions_with_plagiarism, 'my_attestations':my_attestations, 'attestations_by_others':attestations_by_others, 'unattested_solutions':unattested_solutions, 'published': all_attestations_published, 'show_author': show_author, 'attestation_stats' : attestation_stats}
+	data = {'task':task,
+		 'tutored_users':tutored_users,
+		 'solutions_with_plagiarism':solutions_with_plagiarism,
+		 'my_attestations':my_attestations,
+		 'attestations_by_others':attestations_by_others,
+		 'all_attestations':all_attestations,
+		 'unattested_solutions':unattested_solutions,
+		 'published': all_attestations_published,
+		 'show_author': show_author,
+		 'attestation_stats' : attestation_stats}
 	return render_to_response("attestation/attestation_list.html", data, context_instance=RequestContext(request))
 
 

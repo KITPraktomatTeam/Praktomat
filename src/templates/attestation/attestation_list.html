@@ -178,6 +178,22 @@
 				{% endfor %}
 			{% endif %}
 			
+			{% if all_attestations %}
+				<h2>{% trans "All attestations" %}</h2>
+				{% for attestation in all_attestations %}
+					<div class='attestation'>
+						<span class="icon ui-icon-search" title="view only"></span>
+						<a href={% url "view_attestation" attestation_id=attestation.id%}>Attestation for {% if show_author %}{{attestation.solution.author}}{% else %}Solution {{forloop.counter}}{% endif %}</a> by {{attestation.author}}
+						{% if attestation.solution.plagiarism %}
+							<span class='plagiarism error'><span class="icon ui-icon-alert icon-red"></span>{% trans "Marked as Plagiarism" %}</span>
+						{% endif %}
+						<span class='comment dotdotdot'>{{ attestation.private_comment}}</span>
+						<span style="float:right">Created: {{attestation.created|date:"Y-m-d H:i"}}</span>
+						<br/>
+					</div>
+				{% endfor %}
+			{% endif %}
+			
 			
 			
 			
