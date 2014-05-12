@@ -236,7 +236,7 @@ def withdraw_attestation(request, attestation_id):
 		return access_denied(request)
 
 	attest = get_object_or_404(Attestation, pk=attestation_id)
-	if not (attest.author == request.user or in_group(request.user,'Tutor,Trainer')):
+	if not (attest.author == request.user or in_group(request.user,'Trainer')):
 		return access_denied(request)
 
 	if not attest.published:
@@ -255,7 +255,9 @@ def edit_attestation(request, attestation_id):
 		return access_denied(request)
 	
 	attest = get_object_or_404(Attestation, pk=attestation_id)
-	if attest.published or attest.author != request.user:
+	if not (attest.author == request.user or in_group(request.user,'Trainer')):
+		return access_denied(request)
+        if attest.published:
 		# If if this attestation is already final or not by this user redirect to view_attestation
 		return HttpResponseRedirect(reverse('view_attestation', args=[attestation_id]))
 	
@@ -285,7 +287,7 @@ def edit_attestation(request, attestation_id):
 @login_required	
 def view_attestation(request, attestation_id):
 	attest = get_object_or_404(Attestation, pk=attestation_id)
-	if not (attest.solution.author == request.user or in_group(request.user,'Tutor,Trainer') or request.user.is_superuser):
+	if not (attest.solution.author == request.user or in_group(request.user,'Trainer') or request.user.is_superuser):
 		return access_denied(request)
 
 	if request.method == "POST":
@@ -298,7 +300,7 @@ def view_attestation(request, attestation_id):
 				return HttpResponseRedirect(reverse('attestation_list', args=[attest.solution.task.id]))
 	else:
 		form = AttestationPreviewForm(instance=attest)
-                may_modify = attest.author == request.user or in_group(request.user,'Trainer,Tutor')
+                may_modify = attest.author == request.user or in_group(request.user,'Tutor')
 		submitable = may_modify and not attest.published
 		withdrawable = may_modify and attest.published
                 return render_to_response("attestation/attestation_view.html", {"attest": attest, 'submitable':submitable, 'withdrawable': withdrawable, 'form':form, 'show_author': not get_settings().anonymous_attestation},	context_instance=RequestContext(request))
