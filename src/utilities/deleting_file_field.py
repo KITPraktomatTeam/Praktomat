@@ -20,4 +20,4 @@ class DeletingFileField(models.FileField):
             file.close()
         
 from south.modelsinspector import add_introspection_rules
-add_introspection_rules([], ["^utilities\.DeletingFileField"])
+add_introspection_rules([], ["^utilities\.deleting_file_field\.DeletingFileField"])

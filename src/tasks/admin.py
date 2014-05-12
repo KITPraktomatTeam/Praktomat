@@ -22,7 +22,14 @@ class TaskAdmin(admin.ModelAdmin):
 	model = Task
 	fieldsets = (
 		(None, {
-			'fields': ('title' , ('publication_date', 'submission_date'), 'description', ('supported_file_types', 'max_file_size'), 'final_grade_rating_scale')
+			'fields': (
+                            'title',
+                            ('publication_date', 'submission_date'),
+                            'description',
+                            ('supported_file_types', 'max_file_size'),
+                            'final_grade_rating_scale',
+                            'only_trainers_publish'
+                        )
 		}),
 	)
 	list_display = ('title','publication_date','submission_date','all_checker_finished')
