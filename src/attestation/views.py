@@ -139,8 +139,8 @@ def attestation_list(request, task_id):
 
 
 	tutored_users = User.objects.filter(groups__name="User", is_active=True).order_by('last_name') if in_group(request.user,'Trainer') or request.user.is_superuser else None
-	
-	unattested_solutions = Solution.objects.filter(task = task, final=True, plagiarism = False, attestation = None)		
+
+	unattested_solutions = Solution.objects.filter(task = task, final=True, plagiarism = False, attestation = None)	
 	if in_group(request.user,'Tutor'): # the trainer sees them all
 		unattested_solutions = unattested_solutions.filter(author__tutorial__in = request.user.tutored_tutorials.all())
 
@@ -163,13 +163,26 @@ def attestation_list(request, task_id):
 	if (in_group(request.user,'Trainer')):
 		all_attestations = Attestation.objects.filter(solution__task = task).order_by('-created')
 
+        publishable_tutorial = all_attestations_for_my_tutorials.filter(final = True, published = False)
+
+        publishable_all = None
+	if (in_group(request.user,'Trainer')):
+            publishable_all = all_attestations.filter(final = True, published = False)
+
 	if request.method == "POST":
-		for attestation in all_attestations_for_my_tutorials.filter(final = True, published = False):
-			attestation.publish(request)
+            if request.POST['what'] == 'tutorial':
+                if not (in_group(request.user,'Tutor')):
+                        return access_denied(request)
+                for attestation in publishable_tutorial:
+			attestation.publish(request, request.user)
+		return HttpResponseRedirect(reverse('attestation_list', args=[task_id]))
 
-	all_attestations_published = all_attestations_for_my_tutorials.filter(published = False).count() == 0
-
-	all_attestations_final = all_attestations_for_my_tutorials.filter(final = False).count() == 0
+            if request.POST['what'] == 'all':
+                if not (in_group(request.user,'Trainer')):
+                        return access_denied(request)
+                for attestation in publishable_all:
+			attestation.publish(request, request.user)
+		return HttpResponseRedirect(reverse('attestation_list', args=[task_id]))
 
 	show_author = not get_settings().anonymous_attestation or in_group(request.user,'Trainer') or published
 
@@ -180,7 +193,8 @@ def attestation_list(request, task_id):
 		 'attestations_by_others':attestations_by_others,
 		 'all_attestations':all_attestations,
 		 'unattested_solutions':unattested_solutions,
-		 'published': all_attestations_published,
+		 'publishable_tutorial': publishable_tutorial,
+		 'publishable_all': publishable_all,
 		 'show_author': show_author,
 		 'attestation_stats' : attestation_stats}
 	return render_to_response("attestation/attestation_list.html", data, context_instance=RequestContext(request))

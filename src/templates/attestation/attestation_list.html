@@ -166,7 +166,15 @@
 				<h2>{% trans "Attestations by other tutors" %}</h2>
 				{% for attestation in attestations_by_others%}
 					<div class='attestation'>
-						<span class="icon ui-icon-search" title="view only"></span>
+						{% if attestation.final %}
+							{% if attestation.published %}
+								<span class="icon ui-icon-circle-check icon-green" title="final published"></span>
+							{% else %}
+								<span class="icon ui-icon-check icon-green" title="final unpublished"></span>
+							{% endif %}
+						{% else %}
+							<span class="icon ui-icon-radio-on icon-orange" title="not finished"></span>
+						{% endif %}
 						<a href={% url "view_attestation" attestation_id=attestation.id%}>Attestation for {% if show_author %}{{attestation.solution.author}}{% else %}Solution {{forloop.counter}}{% endif %}</a> by {{attestation.author}}
 						{% if attestation.solution.plagiarism %}
 							<span class='plagiarism error'><span class="icon ui-icon-alert icon-red"></span>{% trans "Marked as Plagiarism" %}</span>
@@ -177,12 +185,30 @@
 					</div>
 				{% endfor %}
 			{% endif %}
-			
+
+			{% if user|in_group:'Tutor'%}
+				<form enctype="multipart/form-data" class="confirm" method="post" action="">{% csrf_token %}
+					<input type="hidden" name="what" value="tutorial"/>
+					<input type="submit"
+					       value="Publish {{ publishable_tutorial.count }} final attestation{{ publishable_tutorial.count|pluralize }} from my tutorial"
+					       {% if not publishable_tutorial %} disabled {% endif %}
+					/>
+				</form>
+			{% endif %}
+
 			{% if all_attestations %}
 				<h2>{% trans "All attestations" %}</h2>
 				{% for attestation in all_attestations %}
 					<div class='attestation'>
-						<span class="icon ui-icon-search" title="view only"></span>
+						{% if attestation.final %}
+							{% if attestation.published %}
+								<span class="icon ui-icon-circle-check icon-green" title="final published"></span>
+							{% else %}
+								<span class="icon ui-icon-check icon-green" title="final unpublished"></span>
+							{% endif %}
+						{% else %}
+							<span class="icon ui-icon-radio-on icon-orange" title="not finished"></span>
+						{% endif %}
 						<a href={% url "view_attestation" attestation_id=attestation.id%}>Attestation for {% if show_author %}{{attestation.solution.author}}{% else %}Solution {{forloop.counter}}{% endif %}</a> by {{attestation.author}}
 						{% if attestation.solution.plagiarism %}
 							<span class='plagiarism error'><span class="icon ui-icon-alert icon-red"></span>{% trans "Marked as Plagiarism" %}</span>
@@ -193,19 +219,17 @@
 					</div>
 				{% endfor %}
 			{% endif %}
-			
-			
-			
-			
-			
-			{% if user|in_group:'Tutor'%}
-				<form enctype="multipart/form-data" class="confirm" method="post" action="">{% csrf_token %}	
-					<input type="submit" value="Publish all final attestations{% if user|in_group:'Trainer' %} from my Tutorial{% endif %}" {% if published %} disabled {% endif %}/>
-					{% if published %}	
-						<span id='comment'>All attested Solutions are already published.</span> 
-					{% endif %}
+
+			{% if user|in_group:'Trainer'%}
+				<form enctype="multipart/form-data" class="confirm" method="post" action="">{% csrf_token %}
+					<input type="hidden" name="what" value="all"/>
+					<input type="submit"
+					       value="Publish {{ publishable_all.count }} final attestation{{ publishable_all.count|pluralize }} from this task"
+					       {% if not publishable_all %} disabled {% endif %}
+					/>
 				</form>
 			{% endif %}
+
 		</div>
 	{% endif %}
 {% endif %}
