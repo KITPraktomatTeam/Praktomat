@@ -149,7 +149,13 @@
 						{% else %}
 							<span class="icon ui-icon-radio-on icon-orange" title="not finished"></span>
 						{% endif %}
-						<a href={% url "edit_attestation" attestation_id=attestation.id%}>
+						<a
+							{% if attestation.final %}
+								href="{% url "view_attestation" attestation_id=attestation.id%}"
+							{% else %}
+								href="{% url "edit_attestation" attestation_id=attestation.id%}"
+							{% endif %}
+						>
 							Attestation for {% if show_author %}{{attestation.solution.author}}{% else %}Solution {{forloop.counter}}{% endif %}
 						</a>
 						{% if attestation.solution.plagiarism %}
@@ -186,7 +192,7 @@
 				{% endfor %}
 			{% endif %}
 
-			{% if user|in_group:'Tutor'%}
+			{% if user|in_group:'Tutor' and not task.only_trainers_publish %}
 				<form enctype="multipart/form-data" class="confirm" method="post" action="">{% csrf_token %}
 					<input type="hidden" name="what" value="tutorial"/>
 					<input type="submit"

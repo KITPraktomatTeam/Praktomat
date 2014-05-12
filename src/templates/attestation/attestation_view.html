@@ -111,16 +111,20 @@
 	<form method="post">{% csrf_token %}
 		{% include "forms/form_as_div.html" %}
 		<input type="submit" name="save" value="Save" />
+        {% if not attest.solution.task.only_trainers_publish %}
 		<input id="publishButton" type="submit" name="publish" value="Save and publish" />
+        {% endif %}
 		<input type="button" value="Edit again" onClick="parent.location='{% url "edit_attestation" attest.id %}'">
 	</form>
 {% endif %}
 
 {% if withdrawable %}
-	<br/><br/>
-	<form method="post" class="withdraw" action="{% url "withdraw_attestation" attest.id %}">{% csrf_token %}
-		<input type="submit" name="withdraw" value="Withdraw published attestation" />
-	</form>
+    {% if not attest.solution.task.only_trainers_publish %}
+        <br/><br/>
+        <form method="post" class="withdraw" action="{% url "withdraw_attestation" attest.id %}">{% csrf_token %}
+            <input type="submit" name="withdraw" value="Withdraw published attestation" />
+        </form>
+    {% endif %}
 {% endif %}
 
 {% endblock %}

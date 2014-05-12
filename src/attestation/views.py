@@ -173,6 +173,8 @@ def attestation_list(request, task_id):
             if request.POST['what'] == 'tutorial':
                 if not (in_group(request.user,'Tutor')):
                         return access_denied(request)
+                if task.only_trainers_publish:
+                        return access_denied(request)
                 for attestation in publishable_tutorial:
 			attestation.publish(request, request.user)
 		return HttpResponseRedirect(reverse('attestation_list', args=[task_id]))
@@ -249,6 +251,9 @@ def withdraw_attestation(request, attestation_id):
 	if not (in_group(request.user,'Tutor,Trainer') or request.user.is_superuser):
 		return access_denied(request)
 
+        if task.only_trainers_publish and not in_group(request.user,'Trainer'):
+		return access_denied(request)
+
 	attest = get_object_or_404(Attestation, pk=attestation_id)
 	if not (attest.author == request.user or in_group(request.user,'Trainer')):
 		return access_denied(request)
@@ -314,6 +319,9 @@ def view_attestation(request, attestation_id):
 			if form.is_valid():
 				form.save()
 				if 'publish' in request.POST:
+                                        if attest.solution.task.only_trainers_publish and not in_group(request.user,'Trainer'):
+                                                return access_denied(request)
+
 					attest.publish(request, by = request.user)
 				return HttpResponseRedirect(reverse('attestation_list', args=[attest.solution.task.id]))
 	else:
