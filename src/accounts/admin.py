@@ -5,7 +5,7 @@ from django.contrib.auth.models import User as UserBase, Group
 from django.contrib.auth.admin import UserAdmin as UserBaseAdmin, GroupAdmin as GroupBaseAdmin
 from django.db.models import Count
 from django.db.transaction import atomic
-from accounts.models import User, Tutorial, ShowAllUser
+from accounts.models import User, Tutorial 
 from accounts.templatetags.in_group import in_group
 from accounts.forms import AdminUserCreationForm, AdminUserChangeForm
 
@@ -139,17 +139,6 @@ class GroupAdmin(GroupBaseAdmin):
 
 admin.site.unregister(Group) 
 admin.site.register(Group, GroupAdmin)
-
-
-class ShowAllUserAdmin(UserAdmin):
-	model = User
-	
-	def __init__(self, model, admin_site):
-		UserAdmin.__init__(self,User,admin_site)	
-
-	def get_paginator(self, request, queryset, per_page, orphans=0, allow_empty_first_page=True):
-		return self.paginator(queryset, 10000, orphans, allow_empty_first_page)
-admin.site.register(ShowAllUser,ShowAllUserAdmin)
 
 class TutorialAdmin(admin.ModelAdmin):
 	model = Tutorial

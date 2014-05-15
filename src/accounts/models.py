@@ -179,17 +179,3 @@ class Tutorial(models.Model):
 
 	def __unicode__(self):
 		return("%s: %s" % (self.name, self.tutors_flat()))
-
-	
-
-
-	
-class ShowAllUser(User):
-	class Meta:
-		proxy=True
-		verbose_name_plural="Users (showing all, slow!)"
-		verbose_name="User"
-		
-
-
-	
