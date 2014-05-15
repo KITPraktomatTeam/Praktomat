@@ -25,7 +25,10 @@ class JUnitChecker(Checker):
 	
 	# Add fields to configure checker instances. You can use any of the Django fields. (See online documentation)
 	# The fields created, task, public, required and always will be inherited from the abstract base class Checker
-	class_name = models.CharField(max_length=100, help_text=_("The fully qualified name of the Testcase class"))
+	class_name = models.CharField(
+            max_length=100,
+            help_text=_("The fully qualified name of the test case class (without .class)")
+        )
 	test_description = models.TextField(help_text = _("Description of the Testcase. To be displayed on Checker Results page when checker is  unfolded."))
 	name = models.CharField(max_length=100, help_text=_("Name of the Testcase. To be displayed as title on Checker Results page"))
 	ignore = models.CharField(max_length=4096, help_text=_("space-seperated list of files to be ignored during compilation"),default="")
