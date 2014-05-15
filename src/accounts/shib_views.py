@@ -38,7 +38,12 @@ def render_forbidden(*args, **kwargs):
 
 @shibboleth_support_required
 def shib_hello(request):
-	return render_to_response('registration/shib_hello.html', {'title':"Login via shibboleth", 'provider': settings.SHIB_PROVIDER}, RequestContext(request))
+        context = {}
+        if 'next' in request.REQUEST:
+            context['next'] = request.REQUEST['next']
+        context['title'] = "Login via shibboleth"
+        context['provider'] = settings.SHIB_PROVIDER
+	return render_to_response('registration/shib_hello.html', context, RequestContext(request))
 
 @shibboleth_support_required
 @transaction.atomic

@@ -8,7 +8,7 @@
 {% block content %}<div id="login">
 {% chunk "Login Message" %}	
 
-<a class="shib_hello_shib" href="{% url "shib_login" %}">Log in via {{ provider }}</a>
+<a class="shib_hello_shib" href="{% url "shib_login" %}{% if next %}?next={{next|urlencode}}{% endif %}">Log in via {{ provider }}</a>
 
 <br/>
 
