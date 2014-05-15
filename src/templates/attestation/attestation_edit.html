@@ -42,24 +42,25 @@
 			//  * Every change is directly reflected in the hidden textarea
 			var editor = ace.edit("editor");
 			$(".anntabs ul li a").each(function(idx, elem){
-				var content= $("#id_attestfiles-" + idx + "-content");
+				var fileid = $(this).data('solutionfileid');
+				var hidden_input = $('input').filter(function() { return this.value == fileid});
+				var content = $(hidden_input).siblings('textarea');
 				var name = $(elem).text();
 				var session = new ace.EditSession(content.val())
 				session.setMode(guessMode(name));
 				session.on('change', function(e) {
-					var content= $("#id_attestfiles-" + idx + "-content");
+					//var content= $("#id_attestfiles-" + idx + "-content");
 					content.val(session.getValue());
 					somethingWasChanged = true;
 				});
+				$(elem).data('textarea', content);
 				$(elem).data('ace-session', session);
 			});
-			var switch_to = function(idx) {
-				var anntab = $(".anntabs ul li a").get(idx);
-
+			var switch_to = function(anntab) {
 				// Remove existing errorlist (if present)
 				$("#editor").prev(".errorlist").remove();
 				// Copy errorlist to visible part
-				$("#id_attestfiles-" + idx + "-content")
+				$(anntab).data('textarea')
 					.next(".errorlist")
 					.clone()
 					.insertBefore("#editor");
@@ -68,11 +69,10 @@
 			}
 			$(".anntabs").tabs({
 				beforeActivate: function (e,ui) {
-					var idx = $(ui.newTab).index();
-					switch_to(idx);
+					switch_to($(ui.newTab).find('a'));
 				}
 			});
-			switch_to($(".anntabs").tabs('option','active'));
+			switch_to($(".anntabs ul li a").get($(".anntabs").tabs('option','active')));
 		});
 
 
@@ -151,7 +151,7 @@
 				<div class="anntabs">
 					<ul>
 						{% for solutionfile in solutionfiles %}
-							<li><a href="#editor">{{solutionfile}}</a></li>
+							<li><a href="#editor" data-solutionfileid="{{solutionfile.pk}}">{{solutionfile}}</a></li>
 						{%endfor%}
 					</ul>
 					<div id="editor"></div>
