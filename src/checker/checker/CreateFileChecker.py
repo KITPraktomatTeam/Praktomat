@@ -88,9 +88,12 @@ class CopyForm(AlwaysChangedModelForm):
 
 	def clean_filename(self):
 		filename = self.cleaned_data['filename']
-		file = self.cleaned_data['file']
 		if (not filename.strip()):
-			return (os.path.basename(file.name))
+			if 'file' in self.cleaned_data:
+				file = self.cleaned_data['file']
+				return (os.path.basename(file.name))
+			else:
+				return None
 		else:
 			return filename
 			
