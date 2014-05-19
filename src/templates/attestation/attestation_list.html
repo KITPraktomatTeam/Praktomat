@@ -162,7 +162,6 @@
 							<span class='plagiarism error'><span class="icon ui-icon-alert icon-red"></span>{% trans "Marked as Plagiarism" %}</span>
 						{% endif %}
 						<span class="comment dotdotdot">{{ attestation.private_comment}}</span>
-						<br/>
 					</div>
 				{% endfor %}
 			{% endif %}
@@ -187,7 +186,6 @@
 						{% endif %}
 						<span class='comment dotdotdot'>{{ attestation.private_comment}}</span>
 						<span style="float:right">Created: {{attestation.created|date:"Y-m-d H:i"}}</span>
-						<br/>
 					</div>
 				{% endfor %}
 			{% endif %}
@@ -205,7 +203,7 @@
 			{% if all_attestations %}
 				<h2>{% trans "All attestations" %}</h2>
 				{% for attestation in all_attestations %}
-					<div class='attestation'>
+					<div class='attestation' style="clear:right">
 						{% if attestation.final %}
 							{% if attestation.published %}
 								<span class="icon ui-icon-circle-check icon-green" title="final published"></span>
@@ -221,7 +219,6 @@
 						{% endif %}
 						<span class='comment dotdotdot'>{{ attestation.private_comment}}</span>
 						<span style="float:right">Created: {{attestation.created|date:"Y-m-d H:i"}}</span>
-						<br/>
 					</div>
 				{% endfor %}
 			{% endif %}

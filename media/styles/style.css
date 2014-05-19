@@ -646,7 +646,7 @@ body.fullscreen{
 
 #attestation_list .comment {
 	color: #c0c0c0;
-	width: 40%;
+	max-width: 40%;
 	height: 1em;
 	vertical-align: bottom;
 	display: inline-block;
