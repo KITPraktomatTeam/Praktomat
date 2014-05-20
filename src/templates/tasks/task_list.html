@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %} {% load in_group %} {% load chunks %}
+{% load i18n %} {% load chunks %}
 {% block extrahead %}{{ block.super }}
 <script type="text/javascript">	
 	window.onload = function() {
@@ -33,7 +33,7 @@
 
 	{% chunk "Welcome Message" %}
 	
-	{% if not user|in_group:"Trainer" and not user.is_superuser %}
+	{% if not user.is_trainer and not user.is_superuser %}
 		{% if tutors or trainers %}
 			<div id="contact"><a> Got Problems? </a>
 			{% if tutors %}
@@ -61,14 +61,14 @@
 		{% for task, final_solution in group.list%}
 			<h3><a href="{% url "task_detail" task_id=task.id%}">{{task.title}}</a></h3>
 			Due: {{ task.submission_date|date }} {{ task.submission_date|time }}
-			{% if user|in_group:"User" %}
+			{% if user.is_user %}
 				<a href="{% url "solution_list" task_id=task.id%}">{% trans "Solutions"%}</a>
 				{% if final_solution %}
 				  <br/>
 				  Final solution submitted {{ final_solution.creation_date|timesince}} ago.
 				{% endif %}
 			{% endif %}
-			{% if user|in_group:"Tutor,Trainer"%}
+			{% if user.is_tutor or user.is_trainer%}
 				<a href="{% url "attestation_list" task_id=task.id%}">{% trans "Attestation"%}</a>
 				<a href="{% url "statistics" task_id=task.id%}">{% trans "Statistics"%}</a>
 			{% endif %} <br/><br/>
@@ -78,7 +78,7 @@
 	<a>{% trans "No tasks to be submitted at the moment." %}</a>
 {% endfor %}</div>
 
-{% if user|in_group:"User"%}	
+{% if user.is_user %}	
 	{% if attestations %}
 		<div id="attestation_overview">
 			<h2>Result Overview</h2>

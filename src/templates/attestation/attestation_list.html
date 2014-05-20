@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}{% load in_group %}
+{% load i18n %}
 {% block extrahead %}{{ block.super }}
 <script type="text/javascript" src="{{STATIC_URL}}/frameworks/dotdotdot/jquery.dotdotdot-packed.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}/frameworks/jquery.easy-confirm-dialog/jquery.easy-confirm-dialog.js"></script>
@@ -74,7 +74,7 @@
 			<a href={% url "solution_download_for_task" task_id=task.id %} id='download'><span class="ui-icon ui-icon-disk" title="Download all solutions"></span></a>
 			<a href={% url "solution_download_for_task" task_id=task.id full="full" %} id='download'><span class="ui-icon icon-red ui-icon-disk" title="Download all solutions, including checker files"></span></a>
 			
-			{% if user|in_group:'Trainer'%}
+			{% if user.is_trainer %}
 				<h2>{% trans "Attestation Progress by Tutor" %}</h2>
 				<div class='attestation'>
 					<table class="attestationprogress">
@@ -111,7 +111,7 @@
 				</div>
 			{% endif %}
 			
-			{% if user|in_group:'Tutor'%}
+			{% if user.is_tutor %}
 				{% if show_author %}
 				<div>
 					<select id="solution_selector" {% if unattested_solutions|length == 0 %}disabled="disabled"{% endif %}>
@@ -190,7 +190,7 @@
 				{% endfor %}
 			{% endif %}
 
-			{% if user|in_group:'Tutor' and not task.only_trainers_publish %}
+			{% if user.is_tutor and not task.only_trainers_publish %}
 				{% with c=publishable_tutorial.count %}
 				<form enctype="multipart/form-data" class="confirm" method="post" action="">{% csrf_token %}
 					<input type="hidden" name="what" value="tutorial"/>
@@ -225,7 +225,7 @@
 				{% endfor %}
 			{% endif %}
 
-			{% if user|in_group:'Trainer'%}
+			{% if user.is_trainer %}
 				{% with c=publishable_all.count %}
 				<form enctype="multipart/form-data" class="confirm" method="post" action="">{% csrf_token %}
 					<input type="hidden" name="what" value="all"/>

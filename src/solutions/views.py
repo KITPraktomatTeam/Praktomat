@@ -23,7 +23,6 @@ from attestation.models import Attestation
 from solutions.models import Solution, SolutionFile, get_solutions_zip
 from solutions.forms import SolutionFormSet
 from accounts.views import access_denied
-from accounts.templatetags.in_group import in_group
 from accounts.models import User
 from configuration import get_settings
 from checker.models import CheckerResult
@@ -33,7 +32,7 @@ from django.db import transaction
 @login_required
 @cache_control(must_revalidate=True, no_cache=True, no_store=True, max_age=0) #reload the page from the server even if the user used the back button
 def solution_list(request, task_id, user_id=None):
-	if (user_id and not in_group(request.user,'Trainer')):
+        if (user_id and not request.user.is_trainer):
 		return access_denied(request)
 
 	task = get_object_or_404(Task,pk=task_id)
@@ -41,11 +40,11 @@ def solution_list(request, task_id, user_id=None):
 	solutions = task.solution_set.filter(author = author).order_by('-id')
 	final_solution = task.final_solution(author)
 
-	if (task.publication_date >= datetime.now()) and (not in_group(request.user,'Trainer')):
+        if task.publication_date >= datetime.now() and not request.user.is_trainer:
 		raise Http404
 	
 	if request.method == "POST":
-                if task.expired() and not in_group(request.user,'Trainer'):
+                if task.expired() and not request.user.is_trainer:
                         return access_denied(request)
 
 		solution = Solution(task = task, author=author)
@@ -53,7 +52,7 @@ def solution_list(request, task_id, user_id=None):
 		if formset.is_valid():
 			solution.save()
 			formset.save()
-			run_all_checker = bool(User.objects.filter(id=user_id, tutorial__tutors__pk=request.user.id) or in_group(request.user,'Trainer'))
+                        run_all_checker = bool(User.objects.filter(id=user_id, tutorial__tutors__pk=request.user.id) or request.user.is_trainer)
 			solution.check(run_all_checker)
 			
 			if solution.accepted:  
@@ -86,7 +85,7 @@ def solution_list(request, task_id, user_id=None):
 @login_required
 def solution_detail(request,solution_id,full):
 	solution = get_object_or_404(Solution, pk=solution_id)	
-	if (not (solution.author == request.user or in_group(request.user,'Trainer') or (solution.author.tutorial and solution.author.tutorial.tutors.filter(id=request.user.id)) )):
+	if (not (solution.author == request.user or request.user.is_trainer or (solution.author.tutorial and solution.author.tutorial.tutors.filter(id=request.user.id)) )):
 		return access_denied(request)
 
 	if (request.method == "POST"):
@@ -109,21 +108,21 @@ def solution_detail(request,solution_id,full):
 @login_required
 def solution_download(request,solution_id,full):
 	solution = get_object_or_404(Solution, pk=solution_id)	
-	if (not (solution.author == request.user or in_group(request.user,'Trainer,Tutor'))):
+        if (not (solution.author == request.user or request.user.is_tutor or request.user.is_trainer)):
 		return access_denied(request)
-	zip_file = get_solutions_zip([solution], full and in_group(request.user,'Trainer,Tutor'))
+	zip_file = get_solutions_zip([solution], full and (request.user.is_tutor or request.user.is_trainer))
 	response = HttpResponse(zip_file.read(), mimetype="application/zip")
 	response['Content-Disposition'] = 'attachment; filename=Solution.zip'
 	return response
 
 @login_required
 def solution_download_for_task(request, task_id,full):
-	if (not in_group(request.user,'Trainer,Tutor')):
+	if not (request.user.is_tutor or request.user.is_trainer):
 		return access_denied(request)
 
 	task = get_object_or_404(Task, pk=task_id)
 	solutions = task.solution_set.filter(final=True)
-	if not in_group(request.user,'Trainer'):
+        if not request.user.is_trainer:
 		solutions = solutions.filter(author__tutorial__id__in=request.user.tutored_tutorials.values_list('id', flat=True))
 	zip_file = get_solutions_zip(solutions,full)
 	response = HttpResponse(zip_file.read(), mimetype="application/zip")
@@ -134,7 +133,7 @@ def solution_download_for_task(request, task_id,full):
 @login_required
 def checker_result_list(request,task_id):
 	task = get_object_or_404(Task, pk=task_id)	
-	if (not in_group(request.user,'Trainer')):
+        if not request.user.is_trainer:
 		return access_denied(request)
 	else:
 		users_with_checkerresults = [(user,dict(checkerresults),final_solution)              \

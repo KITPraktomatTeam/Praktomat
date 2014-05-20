@@ -1,5 +1,4 @@
 {% load i18n %}
-{% load in_group %} 
 {% load static %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -41,7 +40,7 @@
 					/ <a href="{% url "logout" %}">Log-out</a><br/>
 					{% if user.is_staff %}<a href={% url "rating_overview" %}>{% trans "Rating overview"%}</a> / 
 					<a href="{% url "admin:index" %}">Admin Panel</a>	{%endif%}
-					{% if user|in_group:"Tutor" %} <a href={% url "tutorial_overview" %}>{% trans "My Tutorial"%}</a>{%endif%}
+					{% if user.is_tutor %} <a href={% url "tutorial_overview" %}>{% trans "My Tutorial"%}</a>{%endif%}
 				{% else %}
 					<a href="{{ LOGIN_URL }}">Login</a> 
 					{% if REGISTRATION_POSSIBLE %}

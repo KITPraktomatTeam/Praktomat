@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load highlight %}{% load i18n  %}{% load in_group %} 
+{% load highlight %}{% load i18n  %}
 {% block extrahead %}{{ block.super }}
 	<script type="text/javascript" src="{{STATIC_URL}}/frameworks/jquery.easy-confirm-dialog/jquery.easy-confirm-dialog.js"></script>
 	<script type="text/javascript" src="{{STATIC_URL}}script/solution_inlines.js"></script>
@@ -31,7 +31,7 @@
 	</script>
 {% endblock %}
 {% block breadcrumbs %} {{block.super}} > <a href={% url "task_detail" task_id=attest.solution.task.id%}>{{attest.solution.task.title}}</a> 
-{% if user|in_group:"Tutor"%}
+{% if user.is_tutor %}
 	> <a href={% url "attestation_list" attest.solution.task_id %}>My attestations</a> 
 	> <a href={% url "edit_attestation" attest.id %}>Attestation</a>
 	> Preview
@@ -44,10 +44,10 @@
 {% block content %}<div id='attestation_view'>
 
 <h1>{% trans "Attestation"%}: {{attest.solution.task.title}}</h1>
-<p id='author'>by {{attest.author.get_full_name}} {% if show_author or user|in_group:"Trainer" or attest.published %} for {{attest.solution.author}} {% endif %}</p>
+<p id='author'>by {{attest.author.get_full_name}} {% if show_author or user.is_trainer or attest.published %} for {{attest.solution.author}} {% endif %}</p>
 
 {% if attest.private_comment %}
-	{% if user|in_group:"Trainer" or user|in_group:"Tutor"  %}
+	{% if user.is_trainer or user.is_tutor %}
 		<div class="section private">
 			<h2>Private Comment</h2>
 			<p>{{attest.private_comment}}</p>	
@@ -80,7 +80,7 @@
 {% endif %}
 
 
-{% if user|in_group:"Trainer" or user|in_group:"Tutor" %}
+{% if user.is_trainer or user.is_tutor %}
 	<div class="section private">
 		<h2>Checker results</h2>
 		{% with attest.solution.allCheckerResults as results %}

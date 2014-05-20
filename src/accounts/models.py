@@ -12,7 +12,6 @@ from django.core.validators import RegexValidator
 from django.core import serializers
 from django.db.transaction import atomic
 
-from accounts.templatetags.in_group import in_group
 from configuration import get_settings
 
 
@@ -31,10 +30,13 @@ class User(BasicUser):
 	
 	# Use UserManager to get the create_user method, etc.
 	objects = UserManager()
-	
+
 	class Meta:
 		ordering = ['first_name', 'last_name']
 
+        def __init__(self, *args, **kwargs):
+            super(User, self).__init__(*args, **kwargs)
+            self._cached_groups = None
 
 	def __unicode__(self):
 		return self.get_full_name() or self.username
@@ -114,6 +116,23 @@ class User(BasicUser):
 	def is_shibboleth_user(self):
 		return not self.has_usable_password()
 
+        # Cache group membership for users
+        def cached_groups(self):
+            if self._cached_groups is None:
+                self._cached_groups = set(x['name'] for x in self.groups.values('name'))
+            return self._cached_groups
+
+        @property
+        def is_user(self):
+            return 'User' in self.cached_groups()
+        @property
+        def is_tutor(self):
+            return 'Tutor' in self.cached_groups()
+        @property
+        def is_trainer(self):
+            return 'Trainer' in self.cached_groups()
+
+
 	@classmethod
 	def export_user(cls, queryset):
 		""" Serializes a user queryset and related objects to xml """
@@ -157,7 +176,7 @@ class User(BasicUser):
 #		# the the instance needs to have a primary key value before a many-to-many relationship groups can be used so save it twice
 #		super(User, self).save(force_insert=force_insert, force_update=force_update, *args, **kwargs)
 #		# Bug: groups are not saved at this point!
-#		self.is_staff = (self.is_superuser or in_group(self,'Trainer'))
+#		self.is_staff = (self.is_superuser or self.is_trainer)
 #		super(User, self).save(force_insert=False, force_update=force_update, *args, **kwargs)
 	
 def create_user_for_basicuser(sender, **kwargs):

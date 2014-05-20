@@ -19,7 +19,6 @@ from tasks.models import Task
 from solutions.forms import ModelSolutionFormSet
 from solutions.models import Solution, SolutionFile
 from accounts.models import User
-from accounts.templatetags.in_group import in_group
 from accounts.views import access_denied
 from attestation.models import Attestation, Script
 from configuration import get_settings
@@ -62,7 +61,7 @@ def taskList(request):
 def taskDetail(request,task_id):
 	task = get_object_or_404(Task,pk=task_id)
 
-	if (task.publication_date >= datetime.now()) and (not  in_group(request.user,'Trainer')):
+        if task.publication_date >= datetime.now() and not request.user.is_trainer:
 		raise Http404
 
 	my_solutions = Task.objects.get(pk=task_id).solution_set.filter(author = request.user)

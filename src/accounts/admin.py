@@ -6,7 +6,6 @@ from django.contrib.auth.admin import UserAdmin as UserBaseAdmin, GroupAdmin as 
 from django.db.models import Count
 from django.db.transaction import atomic
 from accounts.models import User, Tutorial 
-from accounts.templatetags.in_group import in_group
 from accounts.forms import AdminUserCreationForm, AdminUserChangeForm
 
 from django.utils.html import format_html
@@ -38,11 +37,11 @@ class UserAdmin(UserBaseAdmin):
 	add_form = AdminUserCreationForm
 	
 	def is_trainer(self, user):
-		return in_group(user,"Trainer")
+		return user.is_trainer
 	is_trainer.boolean = True
 		
 	def is_tutor(self, user):
-		return in_group(user,"Tutor")
+		return user.is_tutor
 	is_tutor.boolean = True
 
 	def is_failed_attempt(self,user):
