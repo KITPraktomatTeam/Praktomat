@@ -327,11 +327,12 @@ def load_defaults(settings):
     else:
         d.LOGIN_URL = 'login'
 
-    # Setup for the debug toolbar
-    settings['INSTALLED_APPS'] = ('debug_toolbar',) + settings['INSTALLED_APPS']
-    settings['MIDDLEWARE_CLASSES'] = (
-        'debug_toolbar.middleware.DebugToolbarMiddleware',
-    ) + settings['MIDDLEWARE_CLASSES']
+    if DEBUG:
+        # Setup for the debug toolbar
+        settings['INSTALLED_APPS'] = ('debug_toolbar',) + settings['INSTALLED_APPS']
+        settings['MIDDLEWARE_CLASSES'] = (
+            'debug_toolbar.middleware.DebugToolbarMiddleware',
+        ) + settings['MIDDLEWARE_CLASSES']
 
     d.DEBUG_TOOLBAR_PATCH_SETTINGS = False
     d.DEBUG_TOOLBAR_CONFIG = {
