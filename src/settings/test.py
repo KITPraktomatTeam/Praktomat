@@ -26,7 +26,7 @@ DATABASES = {
     }
 }
 
-
+DEBUG = False
 
 PRIVATE_KEY = join(dirname(dirname(dirname(__file__))), 'examples', 'certificates', 'privkey.pem')
 
