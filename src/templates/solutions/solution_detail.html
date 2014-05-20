@@ -13,7 +13,13 @@
 {% endblock %}
 {% block content %}<div id='solution_detail'>
 
-<h1>{{solution.task.title}} {% if (user.is_tutor or user.is_trainer) and not full %}(as seen by {{solution.author}}){% endif %}</h1>
+<h1>{{solution.task.title}}</h1>
+{% if user.is_tutor or user.is_trainer %}{% if not full %}
+   <p>
+	(as seen by {{solution.author}},
+	<a href="{% url "solution_detail" solution_id=solution.id full='full' %}">also show non-public checker</a>)
+   </p>
+{% endif %}{% endif %}
 
 {% if solution.accepted %}
 	{% if solution.warnings %}
@@ -49,7 +55,7 @@
 	{% endif %}
 {% endif %}
 
-{% if (user.is_tutor or user.is_trainer) and not full %}
+{% if full %}
 {% with solution.allCheckerResults as results %}
 	{% if results %}
 		<h2>{% trans "Results" %}</h2>

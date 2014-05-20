@@ -85,8 +85,12 @@ def solution_list(request, task_id, user_id=None):
 @login_required
 def solution_detail(request,solution_id,full):
 	solution = get_object_or_404(Solution, pk=solution_id)	
-	if (not (solution.author == request.user or request.user.is_trainer or (solution.author.tutorial and solution.author.tutorial.tutors.filter(id=request.user.id)) )):
+	if not (solution.author == request.user or request.user.is_trainer or (solution.author.tutorial and solution.author.tutorial.tutors.filter(id=request.user.id))):
 		return access_denied(request)
+
+        if full and not request.user.is_trainer or request.user.is_tutor:
+		return access_denied(request)
+
 
 	if (request.method == "POST"):
 		solution.copy()
