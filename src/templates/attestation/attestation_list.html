@@ -191,13 +191,15 @@
 			{% endif %}
 
 			{% if user|in_group:'Tutor' and not task.only_trainers_publish %}
+				{% with c=publishable_tutorial.count %}
 				<form enctype="multipart/form-data" class="confirm" method="post" action="">{% csrf_token %}
 					<input type="hidden" name="what" value="tutorial"/>
 					<input type="submit"
-					       value="Publish {{ publishable_tutorial.count }} final attestation{{ publishable_tutorial.count|pluralize }} from my tutorial"
-					       {% if not publishable_tutorial %} disabled {% endif %}
+					       value="Publish {{ c }} final attestation{{ c|pluralize }} from my tutorial"
+					       {% if not c %} disabled {% endif %}
 					/>
 				</form>
+				{% endwith %}
 			{% endif %}
 
 			{% if all_attestations %}
@@ -224,13 +226,15 @@
 			{% endif %}
 
 			{% if user|in_group:'Trainer'%}
+				{% with c=publishable_all.count %}
 				<form enctype="multipart/form-data" class="confirm" method="post" action="">{% csrf_token %}
 					<input type="hidden" name="what" value="all"/>
 					<input type="submit"
-					       value="Publish {{ publishable_all.count }} final attestation{{ publishable_all.count|pluralize }} from this task"
-					       {% if not publishable_all %} disabled {% endif %}
+					       value="Publish {{ c }} final attestation{{ c|pluralize }} from this task"
+					       {% if not c %} disabled {% endif %}
 					/>
 				</form>
+				{% endwith %}
 			{% endif %}
 
 		</div>

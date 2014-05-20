@@ -144,11 +144,22 @@ def attestation_list(request, task_id):
 	if in_group(request.user,'Tutor'): # the trainer sees them all
 		unattested_solutions = unattested_solutions.filter(author__tutorial__in = request.user.tutored_tutorials.all())
 
-	my_attestations = Attestation.objects.filter(solution__task = task, author = request.user).order_by('-created')
+        all_attestations = Attestation.objects \
+                .filter(solution__task = task) \
+                .order_by('-created') \
+                .select_related('solution', 'solution__author', 'author')
 
-	all_attestations_for_my_tutorials = Attestation.objects.filter(solution__task = task, solution__author__tutorial__in = request.user.tutored_tutorials.all()).order_by('-created')
+	my_attestations = \
+            all_attestations \
+            .filter(author = request.user) \
 
-        attestations_by_others = all_attestations_for_my_tutorials.exclude(author = request.user)
+	all_attestations_for_my_tutorials = \
+            all_attestations \
+            .filter(solution__author__tutorial__in = request.user.tutored_tutorials.all()) \
+
+        attestations_by_others = \
+            all_attestations_for_my_tutorials \
+            .exclude(author = request.user)
 
         # for the warning about solutions marked as plagiarism
 	if (in_group(request.user,'Trainer')):
@@ -159,9 +170,8 @@ def attestation_list(request, task_id):
 		solutions_with_plagiarism = Solution.objects.filter(task = task, plagiarism = True, author__tutorial__in = request.user.tutored_tutorials.all())
 
         # the trainer sees all
-        all_attestations = None
-	if (in_group(request.user,'Trainer')):
-		all_attestations = Attestation.objects.filter(solution__task = task).order_by('-created')
+	if not (in_group(request.user,'Trainer')):
+            all_attestations = None
 
         publishable_tutorial = all_attestations_for_my_tutorials.filter(final = True, published = False)
 

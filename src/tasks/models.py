@@ -37,8 +37,8 @@ class Task(models.Model):
 	def final_solution(self,user):
 		""" get FINAL solution of specified user """
 		solutions = self.solution_set.filter(author=user, final=True)
-		return solutions[0] if solutions else None
-		
+		return solutions.first()
+
 	def expired(self):
 		"""docstring for expired"""
 		return self.submission_date + timedelta(hours=1) < datetime.now()

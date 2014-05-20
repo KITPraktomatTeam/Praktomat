@@ -38,7 +38,7 @@ def taskList(request):
 	expired_Tasks = Task.objects.filter(submission_date__lt = now).order_by('publication_date','submission_date')
 	for task in expired_Tasks:
 		attestation_qs =  Attestation.objects.filter(solution__task = task, published=True, solution__author=request.user)
-		attestations.append((task, attestation_qs[0] if attestation_qs.exists() else None))
+		attestations.append((task, attestation_qs.first()))
 
 	script = Script.objects.get_or_create(id=1)[0].script
 
