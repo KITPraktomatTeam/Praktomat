@@ -17,7 +17,7 @@
 {% if user.is_tutor or user.is_trainer %}{% if not full %}
    <p>
 	(as seen by {{solution.author}},
-	<a href="{% url "solution_detail" solution_id=solution.id full='full' %}">also show non-public checker</a>)
+	<a href="{% url "solution_detail" solution_id=solution.id full='full' %}">also show non-public checker results</a>)
    </p>
 {% endif %}{% endif %}
 
