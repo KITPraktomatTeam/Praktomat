@@ -88,7 +88,7 @@ def solution_detail(request,solution_id,full):
 	if not (solution.author == request.user or request.user.is_trainer or (solution.author.tutorial and solution.author.tutorial.tutors.filter(id=request.user.id))):
 		return access_denied(request)
 
-        if full and not request.user.is_trainer or request.user.is_tutor:
+        if full and not (request.user.is_trainer or request.user.is_tutor):
 		return access_denied(request)
 
 
