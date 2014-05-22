@@ -10,11 +10,15 @@ then
    JAVA=java
 fi
 
+# This is a safeguard. Praktomat itself has a timeout (default 60s), but better
+# safe than sorry. However ,ulimit -t measures CPU time, so multi-core programs
+# can eat more than 60s in one minute. Therefore we use a much higher value
+# here.
+ulimit -t 600
+
 #
 # Setup und starten
 #
-
-ulimit -t 60
 
 $JAVA \
  -Djava.security.manager \
