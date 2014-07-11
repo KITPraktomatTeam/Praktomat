@@ -87,6 +87,7 @@ def create_test_data():
 	trainer = User.objects.create_user('trainer', 'trainer@praktomat.com', 'demo')
 	trainer.groups.add(Group.objects.get(name='Trainer'))
 	trainer.is_staff = True
+	trainer.is_superuser = True
 	trainer.save()
 	
 	tutor = User.objects.create_user('tutor', 'trainer@praktomat.com', 'demo')
@@ -98,6 +99,7 @@ def create_test_data():
 	user = User.objects.create_user('user', 'user@praktomat.com', 'demo')
 	user.groups.add(Group.objects.get(name='User'))
 	user.tutorial = tutorial
+        user.mat_number = 11111
 	user.save()
 
 	# Tasks

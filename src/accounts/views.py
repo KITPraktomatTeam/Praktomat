@@ -160,7 +160,7 @@ def import_matriculation_list(request, group_id):
             reader = csv.reader(file)
             mats = set(int(row[0]) for row in reader)
 
-            nr_in_group = nr_not_in_group = nr_added = 0
+            nr_already = nr_added = nr_removed = nr_new_users = 0
 
             # first create all users, if required
             if form.cleaned_data['create_users']:
@@ -170,18 +170,24 @@ def import_matriculation_list(request, group_id):
                     user.groups.add(Group.objects.get(name='User'))
                     user.mat_number = new
                     user.save()
-                    nr_added += 1
+                    nr_new_users += 1
 
             for u in User.objects.all():
                 if u.mat_number in mats:
-                    u.groups.add(group)
-                    nr_in_group += 1
+                    if u.groups.filter(id=group.pk).exists():
+                        nr_already += 1
+                    else:
+                        u.groups.add(group)
+                        nr_added += 1
                 else:
                     if form.cleaned_data['remove_others']:
-                        u.groups.remove(group)
-                        nr_not_in_group += 1
+                        if u.groups.filter(id=group.pk).exists():
+                            u.groups.remove(group)
+                            nr_removed += 1
                 u.save()
-            messages.success(request, "%i users added to group %s, %i removed. %i new users created." % (nr_in_group, group.name, nr_not_in_group, nr_added))
+            messages.success(request,
+                ("%i users added to group %s, %i removed, %i already in group. "+
+                "%i new users created.") % (nr_added, group.name, nr_removed, nr_already, nr_new_users))
             return HttpResponseRedirect(urlresolvers.reverse('admin:auth_group_change', args=[group_id]))
     else:
         form = ImportMatriculationListForm()
