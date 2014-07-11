@@ -4,7 +4,9 @@ from django.shortcuts import render_to_response
 from django.contrib.auth.admin import UserAdmin
 from django.db import models
 from django.db import transaction
+from django.core.urlresolvers import reverse
 from tinymce.widgets import TinyMCE
+from django.utils.html import format_html
 
 from tasks.models import Task, MediaFile
 from solutions.models import Solution, SolutionFile
@@ -20,6 +22,7 @@ class MediaInline(admin.StackedInline):
 
 class TaskAdmin(admin.ModelAdmin):
 	model = Task
+        readonly_fields = ('useful_links',)
 	fieldsets = (
 		(None, {
 			'fields': (
@@ -28,11 +31,12 @@ class TaskAdmin(admin.ModelAdmin):
                             'description',
                             ('supported_file_types', 'max_file_size'),
                             'final_grade_rating_scale',
-                            'only_trainers_publish'
+                            'only_trainers_publish',
+                            'useful_links',
                         )
 		}),
 	)
-	list_display = ('title','publication_date','submission_date','all_checker_finished')
+	list_display = ('title','attestations_url','publication_date','submission_date','all_checker_finished')
 	list_filter = ['publication_date']
 	search_fields = ['title']
 	date_hierarchy = 'publication_date'
@@ -73,7 +77,20 @@ class TaskAdmin(admin.ModelAdmin):
 		from django.conf.urls import url, patterns
 		my_urls = patterns('', url(r'^import/$', 'tasks.views.import_tasks', name='task_import')) 
 		return my_urls + urls
-	
+
+        def attestations_url(self,task):
+                return format_html ('<a href="{0}">Attestations (User site)</a>',
+                    reverse('attestation_list', kwargs={'task_id': task.id}))
+        attestations_url.allow_tags = True
+        attestations_url.short_description = 'Attestations'
+
+        def useful_links(self, instance):
+                return format_html ('<a href="{0}">Attestations (inkluding for-user-submission)</a>',
+                    reverse('attestation_list', kwargs={'task_id': instance.id})
+                    )
+        useful_links.allow_tags = True
+
+
 admin.site.register(Task, TaskAdmin)
 
 
