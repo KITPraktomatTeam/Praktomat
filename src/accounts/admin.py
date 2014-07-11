@@ -27,12 +27,11 @@ class UserAdmin(UserBaseAdmin):
 	readonly_fields = ('last_login','date_joined','useful_links',)
 	# exclude user_permissions
 	fieldsets = (
-            (None, {'fields': ('username', 'password')}),
+            (None, {'fields': ('username', 'password','useful_links')}),
             (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'mat_number','programme')}),
             (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
             (_('Groups'), {'fields': ('groups','tutorial')}),
             (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
-            (None, {'fields': ('useful_links',)}),
         )
 	
 	form = AdminUserChangeForm
