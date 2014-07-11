@@ -76,9 +76,15 @@ def shib_login(request):
 	try:
 		user = User.objects.get(username=attr[settings.SHIB_USERNAME])
 	except User.DoesNotExist:
+            if settings.SHIB_NEW_USER_ALLOWED:
 		user = User.objects.create_user(attr[settings.SHIB_USERNAME],'')
 		user_group = Group.objects.get(name='User')
 		user.groups.add(user_group)
+            else:
+		return render_forbidden('registration/shib_not_allowed.html',
+								  context,
+								  context_instance=RequestContext(request))
+
 
 	# This needs to be made more general smarter
 	user.first_name = attr['first_name']          if attr['first_name'] is not None else user.first_name

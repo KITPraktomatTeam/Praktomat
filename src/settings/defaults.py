@@ -292,6 +292,9 @@ def load_defaults(settings):
         "fieldOfStudyText" : (False, "programme"),
     }
 
+    # May unknown users log in via shibboleth?
+    d.SHIB_NEW_USER_ALLOWED = True
+
     d.SHIB_USERNAME = "email"
     d.SHIB_PROVIDER = "kit.edu"
 
