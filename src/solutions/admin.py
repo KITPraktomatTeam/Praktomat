@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.contrib import admin
 from solutions.models import Solution, SolutionFile
 from checker.models import CheckerResult
@@ -6,6 +8,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.db.models import Max
+from django.utils.html import format_html
 
 
 
@@ -25,12 +28,12 @@ class SolutionFileInline(admin.TabularInline):
 
 class SolutionAdmin(admin.ModelAdmin):
 	model = Solution
-	list_display = ["edit", "view_url", "download_url", "run_checker_url", "task", "author", "number", "creation_date", "final", "accepted", "warnings", "latest_of_only_failed", "plagiarism"]
+	list_display = ["edit", "view_url", "download_url", "run_checker_url", "task", "show_author", "number", "creation_date", "final", "accepted", "warnings", "latest_of_only_failed", "plagiarism"]
 	list_filter = ["task", "author", "creation_date", "final", "accepted", "warnings", "plagiarism"]
 	fieldsets = ((None, {
-		  			'fields': ( "task", "author", "creation_date", ("final", "accepted", "warnings"), "plagiarism")
+		  			'fields': ( "task", "show_author", "creation_date", ("final", "accepted", "warnings"), "plagiarism",'useful_links')
 			  	}),)
-	readonly_fields=["task", "author", "creation_date", "accepted", "final", "warnings"]
+	readonly_fields=["task", "show_author", "creation_date", "accepted", "final", "warnings",'useful_links']
 	inlines =  [CheckerResultInline, SolutionFileInline]
 	actions = ['run_checkers','run_checkers_all']
 
@@ -68,6 +71,22 @@ class SolutionAdmin(admin.ModelAdmin):
 		return '<a href="%s">Run Checkers</a>' % (reverse('solution_run_checker', args=[solution.id]))
 	run_checker_url.allow_tags = True
 	run_checker_url.short_description = 'Run Checker (incl. those run at submission)'
+
+	def show_author(self,instance):
+		return format_html('<a href="{0}">{1}</a>',
+                    reverse('admin:accounts_user_change', args=(instance.author.pk,)),
+                    instance.author)
+	show_author.allow_tags = True
+	show_author.short_description = 'Solution author'
+
+        def useful_links(self, instance):
+                return format_html ('<a href="{0}">Attestations of this solution</a> • <a href="{1}">User Site view of this solution</a>',
+                    reverse('admin:attestation_attestation_changelist') + ("?solution__exact=%d" % instance.pk),
+                    reverse('solution_detail', args=[instance.pk])
+                    )
+        useful_links.allow_tags = True
+
+
 
 	def latest_of_only_failed(self,solution):
 		successfull_solution_from_user_for_task_available = solution.final or  [ s for s in Solution.objects.all().filter(author=solution.author,task=solution.task) if s.final]

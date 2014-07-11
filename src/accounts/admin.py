@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from random import randint
 from django.utils.translation import ugettext_lazy as _
 from django.contrib import admin
@@ -102,9 +104,12 @@ class UserAdmin(UserBaseAdmin):
 		return my_urls + urls
 
         def useful_links(self, instance):
-                return format_html ('<a href="{0}">Solutions of {1}</a>',
+                return format_html (
+                    '<a href="{1}">Solutions by {0}</a> • <a href="{2}">Attestations for {0}</a> • <a href="{3}">Attestations by {0}</a>',
+                    instance,
                     reverse('admin:solutions_solution_changelist') + ("?author__user_ptr__exact=%d" % instance.pk),
-                    instance
+                    reverse('admin:attestation_attestation_changelist') + ("?solution__author__user_ptr__exact=%d" % instance.pk),
+                    reverse('admin:attestation_attestation_changelist') + ("?author__exact=%d" % instance.pk),
                     )
         useful_links.allow_tags = True
 
