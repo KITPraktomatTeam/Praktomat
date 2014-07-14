@@ -32,7 +32,7 @@ urlpatterns = patterns('',
 
 	# Solutions
 	url(r'^solutions/(?P<solution_id>\d+)/$', 'solutions.views.solution_detail', name='solution_detail',kwargs={'full' : False}),
-	url(r'^solutions/(?P<solution_id>\d+)/(?P<full>full)/$', 'solutions.views.solution_detail', name='solution_detail'),
+    url(r'^solutions/(?P<solution_id>\d+)/full/$', 'solutions.views.solution_detail', name='solution_detail_full', kwargs={'full': True}),
 	url(r'^solutions/(?P<solution_id>\d+)/download$', 'solutions.views.solution_download', name='solution_download',kwargs={'full' : False}),
    	url(r'^solutions/(?P<solution_id>\d+)/download/(?P<full>full)/$', 'solutions.views.solution_download', name='solution_download'),
 	url(r'^solutions/(?P<solution_id>\d+)/run_checker$', 'solutions.views.solution_run_checker', name='solution_run_checker'),

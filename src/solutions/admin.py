@@ -58,7 +58,7 @@ class SolutionAdmin(admin.ModelAdmin):
 	edit.short_description = 'Edit (Admin Site)'
 
 	def view_url(self,solution):
-		return '<a href="%s">View</a>' % (reverse('solution_detail', args=[solution.id])+'full/')
+		return '<a href="%s">View</a>' % (reverse('solution_detail_full', args=[solution.id]))
 	view_url.allow_tags = True
 	view_url.short_description = 'View (User Site)'
 

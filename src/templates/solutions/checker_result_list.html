@@ -40,7 +40,7 @@
 		</tr>
 		{% for user,results,solution in users_with_checkerresults %}
 		<tr>
-			<td nowrap><a href={% url "solution_detail" solution_id=solution.id full='full' %}>{{user}}</a></td>
+			<td nowrap><a href={% url "solution_detail_full" solution_id=solution.id %}>{{user}}</a></td>
 			<td nowrap>{{user.mat_number}}</td>
 			<td nowrap>{{user.username}}</td>
 			{% for result in results %}

@@ -96,7 +96,7 @@ def test_upload(request, task_id):
 			formset.save()
 			solution.check(run_secret = True)
 
-			return HttpResponseRedirect(reverse('solution_detail', args=[solution.id]))
+			return HttpResponseRedirect(reverse('solution_detail_full', args=[solution.id]))
 	else:
 		formset = SolutionFormSet()
 	
@@ -188,6 +188,4 @@ def checker_result_list(request,task_id):
 def solution_run_checker(request,solution_id):
 	solution = Solution.objects.get(pk=solution_id)
 	check(solution,True)
-	# Since Django suxx (see https://code.djangoproject.com/ticket/8764) and cant mix args with kwargs in reverse(),
-	# we suck too, and just mess around with the url
-	return HttpResponseRedirect(reverse('solution_detail', args=[solution_id]) + 'full')
+	return HttpResponseRedirect(reverse('solution_detail_full', args=[solution_id]))
