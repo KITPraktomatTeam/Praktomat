@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.contrib import admin
 from django.contrib.contenttypes import generic
 from django.shortcuts import render_to_response
@@ -36,7 +38,7 @@ class TaskAdmin(admin.ModelAdmin):
                         )
 		}),
 	)
-	list_display = ('title','attestations_url','publication_date','submission_date','all_checker_finished')
+	list_display = ('title','attestations_url','testupload_url','publication_date','submission_date','all_checker_finished')
 	list_filter = ['publication_date']
 	search_fields = ['title']
 	date_hierarchy = 'publication_date'
@@ -84,9 +86,18 @@ class TaskAdmin(admin.ModelAdmin):
         attestations_url.allow_tags = True
         attestations_url.short_description = 'Attestations'
 
+        def testupload_url(self,task):
+                return format_html ('<a href="{0}">Test Upload</a>',
+                    reverse('upload_test_solution', kwargs={'task_id': task.id}))
+        testupload_url.allow_tags = True
+        testupload_url.short_description = 'Test Upload'
+
         def useful_links(self, instance):
-                return format_html ('<a href="{0}">Attestations (inkluding for-user-submission)</a>',
-                    reverse('attestation_list', kwargs={'task_id': instance.id})
+                return format_html (
+                    '<a href="{0}">Attestations (inkluding for-user-submission)</a> • ' +
+                    '<a href="{1}">Test upload</a>',
+                    reverse('attestation_list', kwargs={'task_id': instance.id}),
+                    reverse('upload_test_solutions', kwargs={'task_id': instance.id})
                     )
         useful_links.allow_tags = True
 

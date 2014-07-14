@@ -81,6 +81,28 @@ def solution_list(request, task_id, user_id=None):
 	return render_to_response("solutions/solution_list.html",
                 {"formset": formset, "task":task, "solutions": solutions, "final_solution":final_solution, "attestationsPublished":attestationsPublished, "author":author},
 		context_instance=RequestContext(request))
+@login_required
+def test_upload(request, task_id):
+        if not request.user.is_trainer and not request.user.is_tutor:
+		return access_denied(request)
+
+	task = get_object_or_404(Task,pk=task_id)
+
+	if request.method == "POST":
+		solution = Solution(task = task, author=request.user, testupload = True)
+		formset = SolutionFormSet(request.POST, request.FILES, instance=solution)
+		if formset.is_valid():
+			solution.save()
+			formset.save()
+			solution.check(run_secret = True)
+
+			return HttpResponseRedirect(reverse('solution_detail', args=[solution.id]))
+	else:
+		formset = SolutionFormSet()
+	
+	return render_to_response("solutions/solution_test_upload.html",
+                {"formset": formset, "task":task},
+		context_instance=RequestContext(request))
 
 @login_required
 def solution_detail(request,solution_id,full):

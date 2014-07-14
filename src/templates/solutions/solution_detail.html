@@ -33,7 +33,10 @@
 	{% if not solution.task.expired %}{% trans "Please correct the errors below and try again!" %}{% endif %}</p>
 {% endif %}
 
-<p> {% if solution.final %}
+<p>
+	{% if solution.testupload %}
+		This is a test upload by a tutor or trainer, and otherwise ignored.
+	{% elif solution.final %}
 		This is your current final solution.
 	{% else %}
 		 This is NOT your current final solution.
@@ -44,7 +47,7 @@
 	<p class='error'><span class="icon ui-icon-alert icon-red"></span>{% trans "Marked as Plagiarism" %}</p>
 {% endif %}
 
-{% if not solution.final %}	
+{% if not solution.final and not solution.testupload %}
 	{% if not solution.task.expired %}
 		{% if accept_all_solutions or solution.accepted %}
 			<form method="post">{% csrf_token %}
