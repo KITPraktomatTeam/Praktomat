@@ -47,15 +47,13 @@
 	<p class='error'><span class="icon ui-icon-alert icon-red"></span>{% trans "Marked as Plagiarism" %}</p>
 {% endif %}
 
-{% if not solution.final and not solution.testupload %}
-	{% if not solution.task.expired %}
-		{% if accept_all_solutions or solution.accepted %}
-			<form method="post">{% csrf_token %}
-				<input type="submit" value="Resubmit" />
-				<p class="help">You can resubmit this solution to make this your final solution.</p>
-			</form>
-		{% endif %}
-	{% endif %}
+{% if not solution.final and not solution.testupload and not solution.task.expired %}
+    {% if accept_all_solutions or solution.accepted %}
+        <form method="post">{% csrf_token %}
+            <input type="submit" value="Resubmit" />
+            <p class="help">You can resubmit this solution to make this your final solution.</p>
+        </form>
+    {% endif %}
 {% endif %}
 
 {% if full %}

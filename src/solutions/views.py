@@ -113,11 +113,16 @@ def solution_detail(request,solution_id,full):
         if full and not (request.user.is_trainer or request.user.is_tutor):
 		return access_denied(request)
 
+        accept_all_solutions = get_settings().accept_all_solutions
 
 	if (request.method == "POST"):
+                if solution.final or solution.testupload or solution.task.expired:
+                    return access_denied(request)
+                if not (solution.accepted or accept_all_solutions):
+                    return access_denied(request)
 		solution.copy()
 		return HttpResponseRedirect(reverse('solution_list', args=[solution.task.id]))
-	else:	
+	else:
 		attestations = Attestation.objects.filter(solution__task=solution.task, author__tutored_tutorials=request.user.tutorial)
 		attestationsPublished = attestations[0].published if attestations else False
 
@@ -126,7 +131,7 @@ def solution_detail(request,solution_id,full):
                     {
                         "solution": solution,
                         "attestationsPublished": attestationsPublished,
-                        "accept_all_solutions": get_settings().accept_all_solutions,
+                        "accept_all_solutions": accept_all_solutions,
                         "full":full
                     },
                     context_instance=RequestContext(request))
