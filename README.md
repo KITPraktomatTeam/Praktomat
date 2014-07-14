@@ -124,7 +124,7 @@ sudo -u postgres createdb -O praktomat praktomat_default
 Configure Praktomat in `Praktomat/src/settings/local.py`, to set data base
 names and paths.
 
-Create the upload directory, populate the database and create a super user:
+Create the upload directory, populate the database:
 
 ```bash
 mkdir PraktomatSupport
