@@ -51,6 +51,12 @@
 	<span class="icon ui-icon-search" title="view only"></span> <a>view only</a><br/>
 </div> 
 
+{% if user.is_tutor or user.is_trainer %}
+<p>
+  <a href="{% url "upload_test_solution" task_id=task.id %}">Upload a test solution</a>
+</p>
+{% endif %}
+
 {% if tutored_users %}
   <p>
   <h2>Upload solutions in a students name</h2>
@@ -61,7 +67,7 @@
 	</select>
 	<input id="edit_soluton_button" type="button" value="Edit Solutions"/></br></br>
   </p>
-{% endif %}			
+{% endif %}
 
 {% if not task.expired %}
 	<p>{% trans "The task is not yet expired." %}</p>
