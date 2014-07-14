@@ -24,6 +24,12 @@ class Settings(models.Model):
                 help_text="Regular expression used to check the student number."
             )
 
+        new_users_via_sso = \
+            models.BooleanField(
+                default=True,
+                help_text="If enabled, users previously unknown to the Praktomat can register via sigle sign on (eg. Shibboleth)."
+            )
+
 	deny_registration_from = \
             models.DateTimeField(
                 default=date(2222, 01, 01),

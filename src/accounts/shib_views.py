@@ -10,6 +10,8 @@ from django.contrib.auth.models import Group
 from accounts.forms import MyRegistrationForm
 from accounts.decorators import *
 
+from configuration import get_settings
+
 def parse_attributes(META):
 	shib_attrs = {}
 	error = False
@@ -82,7 +84,7 @@ def shib_login(request):
                 else:
                     raise User.DoesNotExist
             except:
-                if settings.SHIB_NEW_USER_ALLOWED:
+                if get_settings().new_users_via_sso:
                     user = User.objects.create_user(attr[settings.SHIB_USERNAME],'')
                     user_group = Group.objects.get(name='User')
                     user.groups.add(user_group)
