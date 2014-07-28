@@ -93,12 +93,15 @@ class TaskAdmin(admin.ModelAdmin):
         testupload_url.short_description = 'Test Upload'
 
         def useful_links(self, instance):
-                return format_html (
-                    '<a href="{0}">Attestations (inkluding for-user-submission)</a> • ' +
-                    '<a href="{1}">Test upload</a>',
-                    reverse('attestation_list', kwargs={'task_id': instance.id}),
-                    reverse('upload_test_solutions', kwargs={'task_id': instance.id})
-                    )
+		if instance.id:
+			return format_html (
+			    '<a href="{0}">Attestations (inkluding for-user-submission)</a> • ' +
+			    '<a href="{1}">Test upload</a>',
+			    reverse('attestation_list', kwargs={'task_id': instance.id}),
+			    reverse('upload_test_solutions', kwargs={'task_id': instance.id})
+			    )
+		else:
+			return ""
         useful_links.allow_tags = True
 
 
