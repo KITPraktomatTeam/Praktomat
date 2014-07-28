@@ -80,10 +80,13 @@ class SolutionAdmin(admin.ModelAdmin):
 	show_author.short_description = 'Solution author'
 
         def useful_links(self, instance):
-                return format_html ('<a href="{0}">Attestations of this solution</a> • <a href="{1}">User Site view of this solution</a>',
-                    reverse('admin:attestation_attestation_changelist') + ("?solution__exact=%d" % instance.pk),
-                    reverse('solution_detail', args=[instance.pk])
-                    )
+		if instance.pk:
+			return format_html ('<a href="{0}">Attestations of this solution</a> • <a href="{1}">User Site view of this solution</a>',
+			    reverse('admin:attestation_attestation_changelist') + ("?solution__exact=%d" % instance.pk),
+			    reverse('solution_detail', args=[instance.pk])
+			    )
+		else:
+			return ""
         useful_links.allow_tags = True
 
 

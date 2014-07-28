@@ -103,13 +103,16 @@ class UserAdmin(UserBaseAdmin):
 		return my_urls + urls
 
         def useful_links(self, instance):
-                return format_html (
-                    '<a href="{1}">Solutions by {0}</a> • <a href="{2}">Attestations for {0}</a> • <a href="{3}">Attestations by {0}</a>',
-                    instance,
-                    reverse('admin:solutions_solution_changelist') + ("?author__user_ptr__exact=%d" % instance.pk),
-                    reverse('admin:attestation_attestation_changelist') + ("?solution__author__user_ptr__exact=%d" % instance.pk),
-                    reverse('admin:attestation_attestation_changelist') + ("?author__exact=%d" % instance.pk),
-                    )
+		if instance.pk:
+			return format_html (
+			    '<a href="{1}">Solutions by {0}</a> • <a href="{2}">Attestations for {0}</a> • <a href="{3}">Attestations by {0}</a>',
+			    instance,
+			    reverse('admin:solutions_solution_changelist') + ("?author__user_ptr__exact=%d" % instance.pk),
+			    reverse('admin:attestation_attestation_changelist') + ("?solution__author__user_ptr__exact=%d" % instance.pk),
+			    reverse('admin:attestation_attestation_changelist') + ("?author__exact=%d" % instance.pk),
+			    )
+		else:
+			return ""
         useful_links.allow_tags = True
 
 # This should work in Django 1.4 :O
