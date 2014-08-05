@@ -73,7 +73,7 @@ class SolutionAdmin(admin.ModelAdmin):
 	run_checker_url.short_description = 'Run Checker (incl. those run at submission)'
 
 	def show_author(self,instance):
-		return format_html('<a href="{0}">{1}</a>',
+		return format_html(u'<a href="{0}">{1}</a>',
                     reverse('admin:accounts_user_change', args=(instance.author.pk,)),
                     instance.author)
 	show_author.allow_tags = True
