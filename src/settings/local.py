@@ -97,7 +97,10 @@ SHIB_ENABLED = True
 REGISTRATION_POSSIBLE = False
 
 # Use a dedicated user to test submissions
-USEPRAKTOMATTESTER = True
+USEPRAKTOMATTESTER = False
+
+# Use docker to test submission
+USESAFEDOCKER = True
 
 # Various extra files and versions
 CHECKSTYLEALLJAR = '/srv/praktomat/contrib/checkstyle-5.7-all.jar'

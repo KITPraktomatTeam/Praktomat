@@ -28,7 +28,7 @@ from django import db
 
 import string
 	
-def execute(command, working_directory, environment_variables={}, use_default_user_configuration=True):
+def execute(command, working_directory, environment_variables={}):
 	""" Wrapper to execute Commands with the praktomat testuser. """
 	if isinstance(command, list):
 		command = ' '.join(command)
@@ -36,7 +36,7 @@ def execute(command, working_directory, environment_variables={}, use_default_us
 	command = script + ' ' + command
 	environment = environ
 	environment.update(environment_variables)
-	if (settings.USEPRAKTOMATTESTER and use_default_user_configuration):
+	if settings.USEPRAKTOMATTESTER:
 		environment['USEPRAKTOMATTESTER'] = 'TRUE'
 	else:
 		environment['USEPRAKTOMATTESTER'] = 'False'
@@ -45,7 +45,7 @@ def execute(command, working_directory, environment_variables={}, use_default_us
 	[output, error] = process.communicate()
 	return [output, error, process.returncode]
 
-def execute_arglist(args, working_directory, environment_variables={}, use_default_user_configuration=True, join_stderr_stdout=True, timeout=None,fileseeklimit=None):
+def execute_arglist(args, working_directory, environment_variables={}, join_stderr_stdout=True, timeout=None,fileseeklimit=None):
 	""" Wrapper to execute Commands with the praktomat testuser. Excpects Command as list of arguments, the first being the execeutable to run. """
 	assert isinstance(args, list)
 
@@ -59,7 +59,7 @@ def execute_arglist(args, working_directory, environment_variables={}, use_defau
 
 	sudo_prefix    = ["sudo", "-E", "-u", "tester"]
 
-	use_tester = settings.USEPRAKTOMATTESTER and use_default_user_configuration
+	use_tester = settings.USEPRAKTOMATTESTER
 	if use_tester:
 		command = sudo_prefix + command
 	else:
