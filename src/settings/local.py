@@ -15,6 +15,7 @@ PRAKTOMAT_ID = basename(dirname(PRAKTOMAT_PATH))
 match = re.match(r'''
 	(?:praktomat_)?
 	(?P<algo1>algo1_)?
+	(?P<cram>cram_)?
 	(?P<year>\d+)_
 	(?P<semester>WS|SS)
 	(?P<abschluss>_Abschluss)?
@@ -23,6 +24,8 @@ match = re.match(r'''
 if match:
 	if match.group('algo1') is not None:
 		SITE_NAME = 'Algorithmen I '
+	elif match.group('cram') is not None:
+		SITE_NAME = 'CRAM '
 	else:
 		SITE_NAME = 'Programmieren '
 
