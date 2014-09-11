@@ -5,8 +5,9 @@ import re
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.models import Checker, CheckerFileField, CheckerResult, execute_arglist, truncated_log
+from checker.models import Checker, CheckerFileField, CheckerResult, truncated_log
 from checker.admin import	CheckerInline, AlwaysChangedModelForm
+from utilities.safeexec import execute_arglist
 from utilities.file_operations import *
 
 from checker.compiler.JavaBuilder import JavaBuilder

@@ -6,7 +6,8 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.models import Checker, CheckerResult, CheckerFileField, execute_arglist
+from checker.models import Checker, CheckerResult, CheckerFileField
+from utilities.safeexec import execute_arglist
 from utilities.file_operations import *
 
 class CheckStyleChecker(Checker):

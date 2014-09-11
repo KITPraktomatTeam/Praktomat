@@ -12,7 +12,8 @@ from django.template.loader import get_template
 from django.template import Context
 from django.utils.html import escape
 
-from checker.models import CheckerResult, execute, execute_arglist
+from checker.models import CheckerResult
+from utilities.safeexec import execute_arglist
 
 class HaskellBuilder(Builder):
 	""" A Haskell Compiler """

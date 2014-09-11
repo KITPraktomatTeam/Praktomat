@@ -8,7 +8,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
 
 
-from checker.models import Checker, CheckerResult, execute, execute_arglist
+from checker.models import Checker, CheckerResult
+from utilities.safeexec import execute_arglist
 
 class Builder(Checker):
 	""" Build a program. This contains the general infrastructure to build a program with a compiler.  Specialized subclass are provided for different languages and compilers. """

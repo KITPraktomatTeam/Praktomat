@@ -11,7 +11,7 @@ from django.conf import settings
 from django.template.loader import get_template
 from django.template import Context
 
-from checker.models import execute_arglist
+from utilities.safeexec import execute_arglist
 
 class JavaBuilder(Builder):
 	"""	 A Java bytecode compiler for construction. """

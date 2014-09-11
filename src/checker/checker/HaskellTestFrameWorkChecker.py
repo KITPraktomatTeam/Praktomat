@@ -8,9 +8,10 @@ from django.utils.html import escape
 from django.contrib import admin
 from django.template.loader import get_template
 from django.template import Context
-from checker.models import Checker, CheckerFileField, CheckerResult, execute_arglist, truncated_log
+from checker.models import Checker, CheckerFileField, CheckerResult, truncated_log
 from checker.admin import	CheckerInline, AlwaysChangedModelForm
 from utilities.file_operations import *
+from utilities.safeexec import execute_arglist
 from utilities import encoding
 
 from checker.compiler.HaskellBuilder import HaskellBuilder

@@ -14,8 +14,9 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.models import Checker, CheckerFileField, CheckerResult, execute_arglist
+from checker.models import Checker, CheckerFileField, CheckerResult
 from checker.compiler.Builder import Builder
+from utilities.safeexec import execute_arglist
 from utilities import encoding
 from utilities.file_operations import *
 
