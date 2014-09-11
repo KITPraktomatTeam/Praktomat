@@ -70,10 +70,11 @@ class JUnitChecker(Checker):
 
 		environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
 		environ['JAVA'] = settings.JVM
-		environ['POLICY'] = os.path.join(os.path.join(os.path.dirname(os.path.dirname(__file__)),"scripts"),"junit.policy")
+                script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
+		environ['POLICY'] = os.path.join(script_dir,"junit.policy")
 
 		cmd = [settings.JVM_SECURE, "-cp", settings.JAVA_LIBS[self.junit_version]+":.", self.runner(), self.class_name]
-		[output, error, exitcode,timed_out] = execute_arglist(cmd, env.tmpdir(),environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE)
+		[output, error, exitcode,timed_out] = execute_arglist(cmd, env.tmpdir(),environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE, extradirs=[script_dir])
 
 		result = CheckerResult(checker=self)
 

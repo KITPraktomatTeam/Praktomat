@@ -49,13 +49,17 @@ class ScriptChecker(Checker):
 		environ['POLICY'] = settings.JVM_POLICY
 		environ['PROGRAM'] = env.program() or ''
 
+		script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
+
 		[output, error, exitcode,timed_out] = execute_arglist(
                             args,
                             working_directory=env.tmpdir(),
                             environment_variables=environ,
                             timeout=settings.TEST_TIMEOUT,
                             maxmem=settings.TEST_MAXMEM,
-                            fileseeklimit=settings.TEST_MAXFILESIZE)
+                            fileseeklimit=settings.TEST_MAXFILESIZE,
+                            extradirs = [script_dir],
+                            )
 		output = force_unicode(output, errors='replace')
 
 		result = CheckerResult(checker=self)

@@ -27,17 +27,15 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
 	if settings.USEPRAKTOMATTESTER:
 		command = sudo_prefix
 	elif settings.USESAFEDOCKER:
-		script_dir = join(dirname(__file__),'scripts')
 		command = ["sudo", "safe-docker"]
                 # for safe-docker, we cannot kill it ourselves, due to sudo, so
                 # rely on the timeout provided by safe-docker
                 if timeout is not None:
                     command += ["--timeout", "%d" % timeout]
                     # give the time out mechanism below some extra time
-                    timeout += 1
+                    timeout += 5
                 if maxmem is not None:
                     command += ["--memory", "%sm" % maxmem]
-		command += ["--dir", script_dir]
 		for d in extradirs:
 			command += ["--dir", d]
 		command += ["--"]

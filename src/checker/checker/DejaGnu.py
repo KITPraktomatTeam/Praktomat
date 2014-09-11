@@ -118,12 +118,21 @@ class DejaGnuTester(Checker, DejaGnu):
 
 		environ = {}
 		environ['JAVA'] = settings.JVM
-		environ['POLICY'] = join(join(dirname(dirname(__file__)),"scripts"),"praktomat.policy")
+		script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
+		environ['POLICY'] = join(script_dir,"praktomat.policy")
 		environ['USER'] = env.user().get_full_name().encode(sys.getdefaultencoding(), 'ignore')
 		environ['HOME'] = testsuite
 		environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
 
-		[output, error, exitcode,timed_out] = execute_arglist(cmd, testsuite, environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE, extradirs=[env.tmpdir()])
+		[output, error, exitcode,timed_out] = \
+                    execute_arglist(
+                        cmd,
+                        testsuite,
+                        environment_variables=environ,
+                        timeout=settings.TEST_TIMEOUT,
+                        fileseeklimit=settings.TEST_MAXFILESIZE,
+                        extradirs=[env.tmpdir(), script_dir]
+                        )
 		output = encoding.get_unicode(output)
 
 		try:
