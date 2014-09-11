@@ -45,7 +45,7 @@ def execute(command, working_directory, environment_variables={}):
 	[output, error] = process.communicate()
 	return [output, error, process.returncode]
 
-def execute_arglist(args, working_directory, environment_variables={}, join_stderr_stdout=True, timeout=None,fileseeklimit=None):
+def execute_arglist(args, working_directory, environment_variables={}, join_stderr_stdout=True, timeout=None,fileseeklimit=None, extradirs=[]):
 	""" Wrapper to execute Commands with the praktomat testuser. Excpects Command as list of arguments, the first being the execeutable to run. """
 	assert isinstance(args, list)
 
@@ -59,11 +59,23 @@ def execute_arglist(args, working_directory, environment_variables={}, join_stde
 
 	sudo_prefix    = ["sudo", "-E", "-u", "tester"]
 
-	use_tester = settings.USEPRAKTOMATTESTER
-	if use_tester:
-		command = sudo_prefix + command
+	if settings.USEPRAKTOMATTESTER:
+		command = sudo_prefix
+	elif settings.USESAFEDOCKER:
+		script_dir = join(dirname(__file__),'scripts')
+		command = ["sudo", "safe-docker"]
+		command += ["--dir", script_dir]
+		for d in extradirs:
+			command += ["--dir", d]
+		command += ["--"]
+		# add environment
+		command += ["env"]
+		for k, v in environment_variables.iteritems():
+			command += ["%s=%s" % (k, v)]
 	else:
-		command =               command
+		command = []
+	command += args[:]
+
 
 	stderr = subprocess32.STDOUT if join_stderr_stdout else subprocess32.PIPE
 
@@ -88,9 +100,9 @@ def execute_arglist(args, working_directory, environment_variables={}, join_stde
 		timed_out = True
 		term_cmd = ["pkill","-TERM","-s",str(process.pid)]
 		kill_cmd = ["pkill","-KILL","-s",str(process.pid)]
-		if use_tester:
-			term_cmd = sudo_prefix+term_cmd
-			kill_cmd = sudo_prefix+kill_cmd
+		if settings.USEPRAKTOMATTESTER:
+			term_cmd = sudo_prefix + term_cmd
+			kill_cmd = sudo_prefix + kill_cmd
 		subprocess32.call(term_cmd)
 		time.sleep(5)
 		subprocess32.call(kill_cmd)

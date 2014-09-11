@@ -122,7 +122,7 @@ class DejaGnuTester(Checker, DejaGnu):
 		environ['HOME'] = testsuite
 		environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
 
-		[output, error, exitcode,timed_out] = execute_arglist(cmd, testsuite, environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE)
+		[output, error, exitcode,timed_out] = execute_arglist(cmd, testsuite, environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE, extradirs=[env.tmpdir()])
 		output = encoding.get_unicode(output)
 
 		try:

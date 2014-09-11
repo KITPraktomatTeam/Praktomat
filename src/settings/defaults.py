@@ -265,6 +265,10 @@ def load_defaults(settings):
     # "_www    		ALL=(tester)NOPASSWD:ALL"
     # "developer	ALL=(tester)NOPASSWD:ALL"
     d.USEPRAKTOMATTESTER = False
+ 
+    # Alternatively: Run everything in a docker instance, to provide higher
+    # insulation. Should not be used together iwth USEPRAKTOMATTESTER.
+    d.USESAFEDOCKER = False
 
     # Make sure uploaded solution are not work-readable
     d.FILE_UPLOAD_PERMISSIONS = 0640

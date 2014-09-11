@@ -211,7 +211,9 @@ class TestChecker(TestCase):
 					order = 2,
 					test_case = test_case
 					)
+
 		self.solution.check()
+
 		# Check if they are all finished, or if one of the dependencies failed.
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.failUnless(checkerresult.passed, checkerresult.log)
