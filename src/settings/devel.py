@@ -42,3 +42,4 @@ defaults.load_defaults(globals())
 MIDDLEWARE_CLASSES += (
         'utilities.exceptionlogger.ExceptionLoggingMiddleware',
     )
+

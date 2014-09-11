@@ -27,7 +27,7 @@ from django.db import transaction
 from django import db
 
 import string
-	
+
 def execute(command, working_directory, environment_variables={}):
 	""" Wrapper to execute Commands with the praktomat testuser. """
 	if isinstance(command, list):
@@ -64,6 +64,12 @@ def execute_arglist(args, working_directory, environment_variables={}, join_stde
 	elif settings.USESAFEDOCKER:
 		script_dir = join(dirname(__file__),'scripts')
 		command = ["sudo", "safe-docker"]
+                # for safe-docker, we cannot kill it ourselves, due to sudo, so
+                # rely on the timeout provided by safe-docker
+                if timeout is not None:
+                    command += ["--timeout", "%d" % timeout]
+                    # give the time out mechanism below some extra time
+                    timeout += 1
 		command += ["--dir", script_dir]
 		for d in extradirs:
 			command += ["--dir", d]
@@ -108,6 +114,9 @@ def execute_arglist(args, working_directory, environment_variables={}, join_stde
 		subprocess32.call(kill_cmd)
 		[output, error] = process.communicate()
 		#killpg(process.pid, signal.SIGKILL)
+
+	if settings.USESAFEDOCKER and process.returncode == 23: #magic value
+		timed_out = True
 
 	return [output, error, process.returncode, timed_out]
 

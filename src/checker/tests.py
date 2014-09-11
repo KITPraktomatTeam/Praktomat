@@ -178,6 +178,8 @@ class TestChecker(TestCase):
                                             )
                     self.solution.check()
                     for checkerresult in self.solution.checkerresult_set.all():
+                            self.assertIn('1', checkerresult.log, "Test did not even start?")
+                            self.assertIn('Timeout occured!', checkerresult.log, "Test result does not mention timeout")
                             self.failIf(checkerresult.passed, "Test succeed (no timeout?)")
                             self.assertNotIn('done', checkerresult.log, "Test did finish (no timeout?)")
 
