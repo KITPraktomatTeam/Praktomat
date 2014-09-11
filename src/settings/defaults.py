@@ -308,6 +308,10 @@ def load_defaults(settings):
     # for example: JUnitChecker, DejaGnuChecker
     d.TEST_TIMEOUT=60
 
+    # Amount of memory available to the checker
+    # (this is currently only supported with USESAFEDOCKER=True)
+    d.TEST_MAXMEM=100
+
     # Maximal size (in kbyte) of files created whenever an external check that
     # runs a students submission is executed,
     # for example: JUnitChecker, DejaGnuChecker

@@ -10,7 +10,7 @@ import resource
 
 from django.conf import settings
 
-def execute_arglist(args, working_directory, environment_variables={}, timeout=None,fileseeklimit=None, extradirs=[]):
+def execute_arglist(args, working_directory, environment_variables={}, timeout=None, maxmem=None, fileseeklimit=None, extradirs=[]):
 	""" Wrapper to execute Commands with the praktomat testuser. Excpects Command as list of arguments, the first being the execeutable to run. """
 	assert isinstance(args, list)
 
@@ -35,6 +35,8 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
                     command += ["--timeout", "%d" % timeout]
                     # give the time out mechanism below some extra time
                     timeout += 1
+                if maxmem is not None:
+                    command += ["--memory", "%sm" % maxmem]
 		command += ["--dir", script_dir]
 		for d in extradirs:
 			command += ["--dir", d]

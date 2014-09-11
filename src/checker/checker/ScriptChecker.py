@@ -54,6 +54,7 @@ class ScriptChecker(Checker):
                             working_directory=env.tmpdir(),
                             environment_variables=environ,
                             timeout=settings.TEST_TIMEOUT,
+                            maxmem=settings.TEST_MAXMEM,
                             fileseeklimit=settings.TEST_MAXFILESIZE)
 		output = force_unicode(output, errors='replace')
 

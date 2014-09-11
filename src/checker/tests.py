@@ -2,6 +2,7 @@ from os.path import dirname, join
 from django.conf import settings
 from utilities.TestSuite import TestCase
 from utilities.file_operations import copy_file, InvalidZipFile
+import unittest
 
 from solutions.models import Solution
 from tasks.models import Task
@@ -182,6 +183,25 @@ class TestChecker(TestCase):
                             self.assertIn('Timeout occured!', checkerresult.log, "Test result does not mention timeout")
                             self.failIf(checkerresult.passed, "Test succeed (no timeout?)")
                             self.assertNotIn('done', checkerresult.log, "Test did finish (no timeout?)")
+
+        @unittest.skipIf(not settings.USESAFEDOCKER, "only supported with safe-docker")
+        def test_script_memorylimit(self):
+		src = join(dirname(dirname(dirname(__file__))), 'examples', 'allocate.pl')
+		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'allocate.pl')
+		# circumvent SuspiciousOperation exception
+		copy_file(src,dest)
+                with self.settings(TEST_MAXMEM=1):
+                    ScriptChecker.ScriptChecker.objects.create(
+                                            task = self.task,
+                                            order = 0,
+                                            shell_script = dest
+                                            )
+                    self.solution.check()
+                    for checkerresult in self.solution.checkerresult_set.all():
+                            self.assertIn('Begin', checkerresult.log, "Test did not even start?")
+                            self.assertNotIn('End', checkerresult.log, "Test did finish (no timeout?)")
+                            self.assertIn('Timeout occured!', checkerresult.log, "Test result does not mention timeout")
+                            self.failIf(checkerresult.passed, "Test succeed (no timeout?)")
 
 	def test_text_checker(self):
 		TextChecker.TextChecker.objects.create(
