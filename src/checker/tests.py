@@ -184,8 +184,29 @@ class TestChecker(TestCase):
                             self.failIf(checkerresult.passed, "Test succeed (no timeout?)")
                             self.assertNotIn('done', checkerresult.log, "Test did finish (no timeout?)")
 
+
+        @unittest.skipIf(settings.USESAFEDOCKER, "not yet supported with safe-docker")
+	def test_script_filesizelimit(self):
+		src = join(dirname(dirname(dirname(__file__))), 'examples', 'largefile.pl')
+		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'largefile.pl')
+		# circumvent SuspiciousOperation exception
+		copy_file(src,dest)
+                with self.settings(TEST_MAXFILESIZE=5):
+                    ScriptChecker.ScriptChecker.objects.create(
+                                            task = self.task,
+                                            order = 0,
+                                            shell_script = dest
+                                            )
+                    self.solution.check()
+                    for checkerresult in self.solution.checkerresult_set.all():
+                            self.assertIn('Begin', checkerresult.log, "Test did not even start? (%s)" % checkerresult.log)
+                            self.assertNotIn('End', checkerresult.log, "Test did finish (no timeout?) (%s)" % checkerresult.log)
+                            #self.assertIn('Timeout occured!', checkerresult.log, "Test result does not mention timeout")
+                            self.failIf(checkerresult.passed, "Test succeed (no timeout?)")
+
+
         @unittest.skipIf(not settings.USESAFEDOCKER, "only supported with safe-docker")
-        def test_script_memorylimit(self):
+	def test_script_memorylimit(self):
 		src = join(dirname(dirname(dirname(__file__))), 'examples', 'allocate.pl')
 		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'allocate.pl')
 		# circumvent SuspiciousOperation exception

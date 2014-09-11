@@ -39,6 +39,10 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
 		for d in extradirs:
 			command += ["--dir", d]
 		command += ["--"]
+                # ensure ulimit
+		if fileseeklimit:
+			# Doesn’t work yet: http://stackoverflow.com/questions/25789425
+			command += ["bash","-c", 'ulimit -f %d; exec \"$@\"' % fileseeklimit, "ulimit-helper"]
 		# add environment
 		command += ["env"]
 		for k, v in environment_variables.iteritems():
