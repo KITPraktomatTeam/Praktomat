@@ -185,7 +185,7 @@ class TestChecker(TestCase):
                             self.assertNotIn('done', checkerresult.log, "Test did finish (no timeout?)")
 
 
-        @unittest.skipIf(settings.USESAFEDOCKER, "not yet supported with safe-docker")
+	@unittest.skipIf(settings.USESAFEDOCKER, "not yet supported with safe-docker")
 	def test_script_filesizelimit(self):
 		src = join(dirname(dirname(dirname(__file__))), 'examples', 'largefile.pl')
 		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'largefile.pl')
@@ -205,7 +205,7 @@ class TestChecker(TestCase):
                             self.failIf(checkerresult.passed, "Test succeed (no timeout?)")
 
 
-        @unittest.skipIf(not settings.USESAFEDOCKER, "only supported with safe-docker")
+	@unittest.skipIf(not settings.USESAFEDOCKER, "only supported with safe-docker")
 	def test_script_memorylimit(self):
 		src = join(dirname(dirname(dirname(__file__))), 'examples', 'allocate.pl')
 		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'allocate.pl')
