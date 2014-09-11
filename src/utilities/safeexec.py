@@ -10,7 +10,7 @@ import resource
 
 from django.conf import settings
 
-def execute_arglist(args, working_directory, environment_variables={}, join_stderr_stdout=True, timeout=None,fileseeklimit=None, extradirs=[]):
+def execute_arglist(args, working_directory, environment_variables={}, timeout=None,fileseeklimit=None, extradirs=[]):
 	""" Wrapper to execute Commands with the praktomat testuser. Excpects Command as list of arguments, the first being the execeutable to run. """
 	assert isinstance(args, list)
 
@@ -48,8 +48,6 @@ def execute_arglist(args, working_directory, environment_variables={}, join_stde
 	command += args[:]
 
 
-	stderr = subprocess32.STDOUT if join_stderr_stdout else subprocess32.PIPE
-
 	# TODO: Dont even read in output longer than fileseeklimit. This might be most conveniently done by supplying a file like object instead of PIPE
 
 	def prepare_subprocess():
@@ -62,7 +60,7 @@ def execute_arglist(args, working_directory, environment_variables={}, join_stde
 			resource.setrlimit(resource.RLIMIT_FSIZE,(fileseeklimitbytes, fileseeklimitbytes))
 			if resource.getrlimit(resource.RLIMIT_FSIZE) != (fileseeklimitbytes, fileseeklimitbytes):
 				raise ValueError(resource.getrlimit(resource.RLIMIT_FSIZE))
-	process = subprocess32.Popen(command, stdout=subprocess32.PIPE, stderr=stderr, cwd=working_directory, env=environment,preexec_fn=prepare_subprocess)
+	process = subprocess32.Popen(command, stdout=subprocess32.PIPE, stderr=subprocess32.STDOUT, cwd=working_directory, env=environment,preexec_fn=prepare_subprocess)
 
 	timed_out = False
 	try:
