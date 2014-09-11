@@ -169,7 +169,43 @@ Update
 ./Praktomat/src/manage-local.py createsuperuser -
 ```
 
-PhpBB integration 
+Security
+========
+
+Besides the security provided by Java (via the Security Manager Profiles found
+in `src/checker/scripts/`), the praktomat supports two way to insulate student
+submissions from the system:
+
+ * With `USEPRAKTOMATTESTER = True` in the settings, external commands are
+   prefixed with `sudo -u tester --`. For this to work you need to add a user
+   `tester` which is also a member of the default group of the user that runs
+   the praktomat (usually `praktomat`).
+ * With `USESAFEDOCKER = True`, external commands are prefixed with
+   `safe-docker`, which you need to have installed. You can fetch it from
+   http://github.com/nomeata/safe-docker
+
+   For this to work you need to have a docker image named `safe-docker`
+   installed, which needs to have all required dependencies installed. A
+   suggested docker image is available in `docker-image`, so to get started simply run
+
+        sudo docker build -t safe-docker praktomat-docker
+
+We recommend `USESAFEDOCKER`, as that is what we test in practice.
+
+The Praktomat tries to limit the resources available to the student submissions:
+
+ * The runtime of the submission can be limited (setting `TEST_TIMEOUT`)
+ * The maximum amount of memory used can be limited (setting `TEST_MAXMEM`,
+   only supported with `USESAFEDOCKER`).
+ * The maximum size of a file produced by a user submission (setting
+   `TEST_MAXFILESIZE`, currently not supported with `USESAFEDOCKER`, until
+   http://stackoverflow.com/questions/25789425 is resolved)
+
+At the time of writing, the amount of diskspace available to the user is
+unlimited, which can probably be exploited easily.
+
+
+PhpBB integration
 =================
 
 To access the praktomat usersessions from an phpBB folow the instructions in `src/sessionprofile/phpbb/README.txt`.
