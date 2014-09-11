@@ -53,9 +53,6 @@ class HaskellBuilder(Builder):
 
 		output = escape(output)
 		output = self.enhance_output(env, output)
-		
-		# Allow server to delete created subfolders
-		execute('chmod -R 0777 *', env.tmpdir())		
 
 		# We mustn't have any warnings.
 		passed = not self.has_warnings(output)	

@@ -28,23 +28,6 @@ from django import db
 
 import string
 
-def execute(command, working_directory, environment_variables={}):
-	""" Wrapper to execute Commands with the praktomat testuser. """
-	if isinstance(command, list):
-		command = ' '.join(command)
-	script = join(join(dirname(__file__),'scripts'),'execute')
-	command = script + ' ' + command
-	environment = environ
-	environment.update(environment_variables)
-	if settings.USEPRAKTOMATTESTER:
-		environment['USEPRAKTOMATTESTER'] = 'TRUE'
-	else:
-		environment['USEPRAKTOMATTESTER'] = 'False'
-
-	process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=working_directory, env=environment, shell=True)
-	[output, error] = process.communicate()
-	return [output, error, process.returncode]
-
 def execute_arglist(args, working_directory, environment_variables={}, join_stderr_stdout=True, timeout=None,fileseeklimit=None, extradirs=[]):
 	""" Wrapper to execute Commands with the praktomat testuser. Excpects Command as list of arguments, the first being the execeutable to run. """
 	assert isinstance(args, list)
