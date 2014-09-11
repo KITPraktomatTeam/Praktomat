@@ -16,7 +16,7 @@ class TestChecker(TestCase):
 
 	def tearDown(self):
 		pass
-		
+
 	def test_anonymity_checker(self):
 		AnonymityChecker.AnonymityChecker.objects.create(
 				task = self.task,
@@ -164,6 +164,22 @@ class TestChecker(TestCase):
 		self.solution.check()
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.failUnless(checkerresult.passed, checkerresult.log)
+
+        def test_script_timeout(self):
+		src = join(dirname(dirname(dirname(__file__))), 'examples', 'loop.sh')
+		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'loop.sh')
+		# circumvent SuspiciousOperation exception
+		copy_file(src,dest)
+                with self.settings(TEST_TIMEOUT=1):
+                    ScriptChecker.ScriptChecker.objects.create(
+                                            task = self.task,
+                                            order = 0,
+                                            shell_script = dest
+                                            )
+                    self.solution.check()
+                    for checkerresult in self.solution.checkerresult_set.all():
+                            self.failIf(checkerresult.passed, "Test succeed (no timeout?)")
+                            self.assertNotIn('done', checkerresult.log, "Test did finish (no timeout?)")
 
 	def test_text_checker(self):
 		TextChecker.TextChecker.objects.create(
