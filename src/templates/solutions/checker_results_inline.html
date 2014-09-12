@@ -25,7 +25,10 @@
 		<h4>The following artefacts were produced:</h4>
 		<ul>
 		  {% for artefact in result.artefacts.all %}
-		    <li><a href="{{ artefact.file.url }}">{{ artefact }}</a></li>
+		    <li>
+		      <a href="{{ artefact.file.url }}?view" title="View">{{ artefact }}</a>
+		      <a href="{{ artefact.file.url }}" title="Download"><span class="ui-icon icon-red ui-icon-disk" title="Download all solutions, including checker files"></span></a>
+		    </li>
 		  {% endfor %}
 		</ul>
 		</div>
