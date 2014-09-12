@@ -95,7 +95,7 @@ class TaskAdmin(admin.ModelAdmin):
         def useful_links(self, instance):
 		if instance.id:
 			return format_html (
-			    '<a href="{0}">Attestations (inkluding for-user-submission)</a> • ' +
+			    '<a href="{0}">Attestations (including for-user-submission)</a> • ' +
 			    '<a href="{1}">Test upload</a>',
 			    reverse('attestation_list', kwargs={'task_id': instance.id}),
 			    reverse('upload_test_solution', kwargs={'task_id': instance.id})
