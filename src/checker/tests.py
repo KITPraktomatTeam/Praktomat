@@ -302,6 +302,8 @@ class TestChecker(TestCase):
 			self.assertIn('Rplots.pdf', checkerresult.log, "Test output does not mention Rplots.pdf (%s)" % checkerresult.log)
 			self.failUnless(checkerresult.passed, checkerresult.log)
 
+		solution_file.delete()
+
 	def test_r_checker_2(self):
 		solution_file = SolutionFile(solution = self.solution)
 		solution_file.file.save(
@@ -321,6 +323,7 @@ class TestChecker(TestCase):
 			self.assertIn('2', checkerresult.log, "Test did not calculate 1 + 2 (%s)" % checkerresult.log)
 			self.assertIn('Rplots.pdf', checkerresult.log, "Test output does not mention Rplots.pdf (%s)" % checkerresult.log)
 			self.failUnless(checkerresult.passed, checkerresult.log)
+		solution_file.delete()
 
 	def test_r_checker_3(self):
 		solution_file = SolutionFile(solution = self.solution)
@@ -340,6 +343,7 @@ class TestChecker(TestCase):
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.assertIn('Could not find expected R script', checkerresult.log, "Test did not complain (%s)" % checkerresult.log)
 			self.failIf(checkerresult.passed, checkerresult.log)
+		solution_file.delete()
 
 	def test_r_checker_4(self):
 		solution_file = SolutionFile(solution = self.solution)
@@ -347,8 +351,8 @@ class TestChecker(TestCase):
 			'example.R',
 			File(open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)))
 			)
-		solution_file = SolutionFile(solution = self.solution)
-		solution_file.file.save(
+		solution_file2 = SolutionFile(solution = self.solution)
+		solution_file2.file.save(
 			'example2.R',
 			File(open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)))
 			)
@@ -363,3 +367,4 @@ class TestChecker(TestCase):
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.assertIn('Multiple R scripts found', checkerresult.log, "Test did not complain (%s)" % checkerresult.log)
 			self.failIf(checkerresult.passed, checkerresult.log)
+		solution_file2.delete()
