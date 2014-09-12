@@ -368,3 +368,30 @@ class TestChecker(TestCase):
 			self.assertIn('Multiple R scripts found', checkerresult.log, "Test did not complain (%s)" % checkerresult.log)
 			self.failIf(checkerresult.passed, checkerresult.log)
 		solution_file2.delete()
+
+	def test_keep_file_checker(self):
+		KeepFileChecker.KeepFileChecker.objects.create(
+			task = self.task,
+			order = 0,
+			filename = "GgT.java",
+			)
+
+		self.solution.check()
+
+		for checkerresult in self.solution.checkerresult_set.all():
+			self.failUnless(checkerresult.passed, checkerresult.log)
+			self.assertTrue(checkerresult.artefacts.exists())
+			self.assertEqual(checkerresult.artefacts.get().path(), "GgT.java")
+
+	def test_keep_file_checker_2(self):
+		KeepFileChecker.KeepFileChecker.objects.create(
+			task = self.task,
+			order = 0,
+			filename = "does-not-exist",
+			)
+
+		self.solution.check()
+
+		for checkerresult in self.solution.checkerresult_set.all():
+			self.assertIn('Could not find file', checkerresult.log, "Test did not complain (%s)" % checkerresult.log)
+			self.failIf(checkerresult.passed, checkerresult.log)
