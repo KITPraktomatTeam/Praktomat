@@ -324,7 +324,9 @@ def load_defaults(settings):
 
     d.NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 1
 
-    d.MIMETYPE_ADDITIONAL_EXTENSIONS = [("text/plain",".properties")]
+    d.MIMETYPE_ADDITIONAL_EXTENSIONS = \
+        [("text/plain",".properties"),
+         ("text/x-r-script",".R")]
 
     # Subclassed TestSuitRunner to prepopulate unit test database.
     d.TEST_RUNNER = 'utilities.TestSuite.TestSuiteRunner'
