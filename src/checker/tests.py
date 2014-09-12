@@ -4,7 +4,8 @@ from utilities.TestSuite import TestCase
 from utilities.file_operations import copy_file, InvalidZipFile
 import unittest
 
-from solutions.models import Solution
+from solutions.models import Solution, SolutionFile
+from django.core.files import File
 from tasks.models import Task
 from compiler import *
 from checker import *
@@ -276,5 +277,24 @@ class TestChecker(TestCase):
 		# Check if they are all finished, or if one of the dependencies failed.
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.failUnless(checkerresult.passed, checkerresult.log)
-			
 
+
+
+	def test_r_checker(self):
+		solution_file = SolutionFile(solution = self.solution)
+		solution_file.file.save(
+			'example.R',
+			File(open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)))
+			)
+
+		RChecker.RChecker.objects.create(
+			task = self.task,
+			order = 0,
+			)
+
+		self.solution.check()
+
+		for checkerresult in self.solution.checkerresult_set.all():
+			self.assertIn('2', checkerresult.log, "Test did not calculate 1 + 2 (%s)" % checkerresult.log)
+			self.assertIn('Rplots.pdf', checkerresult.log, "Test output does not mention Rplots.pdf (%s)" % checkerresult.log)
+			self.failUnless(checkerresult.passed, checkerresult.log)

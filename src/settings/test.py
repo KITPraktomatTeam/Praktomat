@@ -33,6 +33,3 @@ PRIVATE_KEY = join(dirname(dirname(dirname(__file__))), 'examples', 'certificate
 # Finally load defaults for missing setttings.
 import defaults
 defaults.load_defaults(globals())
-
-
-

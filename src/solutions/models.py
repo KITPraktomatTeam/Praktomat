@@ -23,6 +23,11 @@ from accounts.models import User
 from utilities import encoding, file_operations
 from configuration import get_settings
 
+
+# TODO: This is duplicated from solutions/forms.py. Where should this go?
+for (mimetype,extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
+	mimetypes.add_type(mimetype,extension,strict=True)
+
 class Solution(models.Model):
 	""" """
 	

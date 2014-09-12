@@ -64,7 +64,13 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
 			resource.setrlimit(resource.RLIMIT_FSIZE,(fileseeklimitbytes, fileseeklimitbytes))
 			if resource.getrlimit(resource.RLIMIT_FSIZE) != (fileseeklimitbytes, fileseeklimitbytes):
 				raise ValueError(resource.getrlimit(resource.RLIMIT_FSIZE))
-	process = subprocess32.Popen(command, stdout=subprocess32.PIPE, stderr=subprocess32.STDOUT, cwd=working_directory, env=environment,preexec_fn=prepare_subprocess)
+	process = subprocess32.Popen(
+		command,
+		stdout=subprocess32.PIPE,
+		stderr=subprocess32.STDOUT,
+		cwd=working_directory,
+		env=environment,
+		preexec_fn=prepare_subprocess)
 
 	timed_out = False
 	try:
