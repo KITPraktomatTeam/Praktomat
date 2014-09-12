@@ -98,7 +98,7 @@ class TaskAdmin(admin.ModelAdmin):
 			    '<a href="{0}">Attestations (inkluding for-user-submission)</a> • ' +
 			    '<a href="{1}">Test upload</a>',
 			    reverse('attestation_list', kwargs={'task_id': instance.id}),
-			    reverse('upload_test_solutions', kwargs={'task_id': instance.id})
+			    reverse('upload_test_solution', kwargs={'task_id': instance.id})
 			    )
 		else:
 			return ""
