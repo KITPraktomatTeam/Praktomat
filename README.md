@@ -155,7 +155,7 @@ If you use single-sign-on via Shibboleth, you can already log in. After you have
 
 The username is visible under “View Account”; by default it is the e-mail address submitted by the Shibboleth server.
 
-Update 
+Update
 ======
 
 1. update the source with git from github
@@ -166,7 +166,7 @@ Update
 
 ```bash
 ./Praktomat/src/manage-local.py syncdb --noinput --migrate
-./Praktomat/src/manage-local.py createsuperuser -
+./Praktomat/src/manage-local.py collectstatic --noinput --link
 ```
 
 Security
