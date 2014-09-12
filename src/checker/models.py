@@ -237,7 +237,7 @@ class CheckerResult(models.Model):
 
 	def add_artefact(self, filename, path):
 		assert os.path.isfile(path)
-		artefact = CheckerResultArtefact(result = self)
+		artefact = CheckerResultArtefact(result = self, filename=filename)
 		artefact.file.save(filename, File(file(path)))
 
 
@@ -254,6 +254,7 @@ class CheckerResultArtefact(models.Model):
             filename)
 
     result = models.ForeignKey(CheckerResult, related_name='artefacts')
+    filename = models.CharField(max_length=128)
     file = models.FileField(
         upload_to = _get_upload_path,
         max_length=500,
@@ -261,11 +262,10 @@ class CheckerResultArtefact(models.Model):
         )
 
     def __unicode__(self):
-        return self.file.name.rpartition('/')[2]
+        return self.filename
 
     def path(self):
-        """ path of file relative to the zip file, which once contained it """
-        return self.file.name[len(self._get_upload_path('')):]
+        return self.filename
 
 # from http://stackoverflow.com/questions/5372934
 @receiver(post_delete, sender=CheckerResultArtefact)

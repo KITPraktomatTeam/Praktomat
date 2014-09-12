@@ -14,6 +14,15 @@ from utilities.file_operations import *
 
 class RChecker(Checker):
 	r_script = models.CharField(max_length=100, help_text=_("R script to execute. If left blank, it will run any *.R file, as long as there is only one."), blank=True)
+	require_plots = models.BooleanField(
+		default = False,
+		help_text = _("Require the script to create an Rplots.pdf file.")
+		)
+	keep_plots = models.BooleanField(
+		default = True,
+		help_text = _("If the R script creates a Rplots.pdf file, keep it.")
+		)
+
 
 
 	def title(self):
@@ -81,12 +90,21 @@ class RChecker(Checker):
 		if exitcode != 0:
 			output += "\n\n---- Rscript finished with exitcode %d ----\n" % exitcode
 
-		if os.path.isfile(os.path.join(env.tmpdir(), "Rplots.pdf")):
-			output += "\n\n---- Note: Rplots.pdf file has been created  ----\n"
+		rplots_path = os.path.join(env.tmpdir(), "Rplots.pdf")
+		rplots_exists = os.path.isfile(rplots_path)
 
 		result = self.create_result(env)
+
+		if rplots_exists:
+			if self.keep_plots:
+				result.add_artefact("Rplots.pdf", rplots_path)
+
+		if self.require_plots and not rplots_exists:
+			output += "\n\n---- No Rplots.pdf file was generated, this was required ----\n" % exitcode
 		result.set_log('<pre>' + escape(output) + '</pre>')
-		result.set_passed(exitcode == 0 and not timed_out)
+		result.set_passed(exitcode == 0
+			and not timed_out
+			and not (self.require_plots and not rplots_exists))
 
 		return result
 

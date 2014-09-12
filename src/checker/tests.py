@@ -299,7 +299,8 @@ class TestChecker(TestCase):
 
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.assertIn('2', checkerresult.log, "Test did not calculate 1 + 2 (%s)" % checkerresult.log)
-			self.assertIn('Rplots.pdf', checkerresult.log, "Test output does not mention Rplots.pdf (%s)" % checkerresult.log)
+			self.assertTrue(checkerresult.artefacts.exists())
+			self.assertEqual(checkerresult.artefacts.get().path(), "Rplots.pdf")
 			self.failUnless(checkerresult.passed, checkerresult.log)
 
 		solution_file.delete()
@@ -321,8 +322,9 @@ class TestChecker(TestCase):
 
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.assertIn('2', checkerresult.log, "Test did not calculate 1 + 2 (%s)" % checkerresult.log)
-			self.assertIn('Rplots.pdf', checkerresult.log, "Test output does not mention Rplots.pdf (%s)" % checkerresult.log)
 			self.failUnless(checkerresult.passed, checkerresult.log)
+			self.assertTrue(checkerresult.artefacts.exists())
+			self.assertEqual(checkerresult.artefacts.get().path(), "Rplots.pdf")
 		solution_file.delete()
 
 	def test_r_checker_3(self):
