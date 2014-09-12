@@ -11,10 +11,27 @@ class Migration(SchemaMigration):
         # Adding model 'CheckerResultArtefact'
         db.create_table(u'checker_checkerresultartefact', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('result', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['checker.CheckerResult'])),
+            ('result', self.gf('django.db.models.fields.related.ForeignKey')(related_name='artefacts', to=orm['checker.CheckerResult'])),
+            ('filename', self.gf('django.db.models.fields.CharField')(max_length=128)),
             ('file', self.gf('django.db.models.fields.files.FileField')(max_length=500)),
         ))
         db.send_create_signal(u'checker', ['CheckerResultArtefact'])
+
+        # Adding model 'RChecker'
+        db.create_table(u'checker_rchecker', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('order', self.gf('django.db.models.fields.IntegerField')()),
+            ('task', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['tasks.Task'])),
+            ('public', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('required', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('always', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('critical', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('r_script', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
+            ('require_plots', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('keep_plots', self.gf('django.db.models.fields.BooleanField')(default=True)),
+        ))
+        db.send_create_signal('checker', ['RChecker'])
 
         # Adding model 'KeepFileChecker'
         db.create_table(u'checker_keepfilechecker', (
@@ -34,6 +51,9 @@ class Migration(SchemaMigration):
     def backwards(self, orm):
         # Deleting model 'CheckerResultArtefact'
         db.delete_table(u'checker_checkerresultartefact')
+
+        # Deleting model 'RChecker'
+        db.delete_table(u'checker_rchecker')
 
         # Deleting model 'KeepFileChecker'
         db.delete_table(u'checker_keepfilechecker')
@@ -129,8 +149,9 @@ class Migration(SchemaMigration):
         u'checker.checkerresultartefact': {
             'Meta': {'object_name': 'CheckerResultArtefact'},
             'file': ('django.db.models.fields.files.FileField', [], {'max_length': '500'}),
+            'filename': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'result': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['checker.CheckerResult']"})
+            'result': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'artefacts'", 'to': u"orm['checker.CheckerResult']"})
         },
         'checker.checkstylechecker': {
             'Meta': {'object_name': 'CheckStyleChecker'},
@@ -383,9 +404,11 @@ class Migration(SchemaMigration):
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'critical': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'keep_plots': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'order': ('django.db.models.fields.IntegerField', [], {}),
             'public': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'r_script': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
+            'require_plots': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'required': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'task': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['tasks.Task']"})
         },
