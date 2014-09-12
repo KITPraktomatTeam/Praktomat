@@ -7,17 +7,29 @@
 
 {% for result in results %} 
 	<div class="result">
-		<h3 class="{{result.log|yesno:'clickable,'}} result">
-			{% if result.log %}<a class="checkerinline" href="#{{result.title}}" title="{{result.title}}" >{% endif %}
-			<span class="ui-icon {{result.log|yesno:'ui-icon-triangle-1-s,icon-none'}}"></span> 
+		<h3 class="{{result.only_title|yesno:',clickable'}} result">
+			{% if not result.only_title %}<a class="checkerinline" href="#{{result.title}}" title="{{result.title}}" >{% endif %}
+			<span class="ui-icon {{result.only_title|yesno:'icon-none,ui-icon-triangle-1-s'}}"></span> 
 			{{result.title}} <span class="{{result.public|yesno:',ui-icon ui-icon-locked icon-orange'}}"></span>: 
 			<span class="{% if result.passed %} passed {% else %}{% if result.required %} error {% else %} warning {% endif %}{% endif %}">
 				{{result.passed|yesno:_("passed, failed")}} {% if result.passed %} {% else %} {% if result.required %} {% else %} (but not required) {% endif %} {% endif %}
 			</span>
-			{% if result.log %}</a>{% endif %}
+			{% if not result.only_title %}</a>{% endif %}
 		</h3>
+		<div> <!-- for toggling -->
 		<div class="log">
 			{{result.log|safe}}
 		</div>
+		{% if result.artefacts.count %}
+		<div class="artefacts">
+		<h4>The following artefacts were produced:</h4>
+		<ul>
+		  {% for artefact in result.artefacts.all %}
+		    <li><a href="{{ artefact.file.url }}">{{ artefact }}</a></li>
+		  {% endfor %}
+		</ul>
+		</div>
+		</div>
+		{% endif %}
 	</div>
 {%endfor%}

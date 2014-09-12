@@ -813,6 +813,11 @@ div.result div.log {
 	overflow-x: auto;
 	overflow-y: hidden;
 }
+div.result div.artefacts {
+	margin-left: 40px;
+	overflow-x: auto;
+	overflow-y: hidden;
+}
 
 /* @end */
 

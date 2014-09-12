@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from os import *
-from os.path import *
+
+import os.path
 import shutil
 import sys
 
@@ -13,6 +14,8 @@ from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
 from django.core.exceptions import ValidationError
+from django.db.models.signals import post_delete
+from django.dispatch.dispatcher import receiver
 from utilities import encoding, file_operations
 from utilities.deleting_file_field import DeletingFileField
 
@@ -75,8 +78,10 @@ It is *required* - it must be passed for submission
 		""" Creates a new result.
 		May be overloaded by subclasses."""
 		assert isinstance(env.solution(), Solution)
-		return CheckerResult(checker=self, solution=env.solution())
-		
+		result = CheckerResult(checker=self, solution=env.solution())
+		result.save() # otherwise we cannot attach artefacts to it
+		return result
+
 	def show_publicly(self,passed):
 		""" Are results of this Checker to be shown publicly, given whether the result was passed? """
 		return self.public
@@ -115,7 +120,7 @@ class CheckerEnvironment:
 	def __init__(self, solution):
 		""" Constructor: Creates a standard environment. """
 		# Temporary build directory
-		sandbox = join(settings.UPLOAD_ROOT, "SolutionSandbox")
+		sandbox = os.path.join(settings.UPLOAD_ROOT, "SolutionSandbox")
 		self._tmpdir = file_operations.create_tempfolder(sandbox)
 		# Sources as [(name, content)...]
 		self._sources = []   
@@ -198,6 +203,10 @@ class CheckerResult(models.Model):
 		""" Returns the title of the Checker that did run. """
 		return self.checker.title()
 
+	def only_title(self):
+		""" Whether there is additional information (log or artefacts) """
+		return not self.log and not self.artefacts.exists()
+
 	def required(self):
 		""" Checks if the Checker is *required* to be passed. """
 		return self.checker.required
@@ -224,6 +233,47 @@ class CheckerResult(models.Model):
 		assert isinstance(passed, int)
 		self.passed = passed
 
+
+class CheckerResultArtefact(models.Model):
+    def _get_upload_path(instance, filename):
+        result = instance.result
+        solution = result.solution
+        return os.path.join(
+            'SolutionArchive',
+            'Task_' + unicode(solution.task.id),
+            'User_' + solution.author.username,
+            'Solution_' + unicode(solution.id),
+            'Result_' + unicode(result.id),
+            filename)
+
+    result = models.ForeignKey(CheckerResult, related_name='artefacts')
+    file = models.FileField(
+        upload_to = _get_upload_path,
+        max_length=500,
+        help_text = _('Artefact produced by a checker')
+        )
+
+    def __unicode__(self):
+        return self.file.name.rpartition('/')[2]
+
+    def path(self):
+        """ path of file relative to the zip file, which once contained it """
+        return self.file.name[len(self._get_upload_path('')):]
+
+# from http://stackoverflow.com/questions/5372934
+@receiver(post_delete, sender=CheckerResultArtefact)
+def solution_file_delete(sender, instance, **kwargs):
+    # Pass false so FileField doesn't save the model.
+    filename = os.path.join(settings.UPLOAD_ROOT, instance.file.name)
+    instance.file.delete(False)
+    # Remove left over empty directories
+    dirname = os.path.dirname(filename)
+    try:
+        while os.path.basename(dirname) != "SolutionArchive":
+            os.rmdir(dirname)
+            dirname = os.path.dirname(dirname)
+    except OSError:
+        pass
 
 def check(solution, run_all = 0): 
 	"""Builds and tests this solution."""
@@ -309,10 +359,9 @@ def run_checks(solution, env, run_all):
 				result.set_log(u"Checker konnte nicht ausgeführt werden, da benötigte Checker nicht bestanden wurden.")
 				result.set_passed(False)
 				
-			result.solution = solution
 			result.save()
 
-                        if not result.passed and checker.show_publicly(result.passed):
+			if not result.passed and checker.show_publicly(result.passed):
 				if checker.required:
 					solution_accepted = False
 				else:
