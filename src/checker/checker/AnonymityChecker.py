@@ -12,7 +12,7 @@ import fnmatch
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from checker.models import Checker, CheckerResult
+from checker.models import Checker
 
 from django.template.defaultfilters import escape
 
@@ -71,8 +71,7 @@ class AnonymityChecker(Checker):
 		return u"Diese Prüfung ist bestanden, wenn alle eingereichten Dateien weder Ihren Vor- noch Ihre Nachnamen enthalten."
 	
 	def run(self, env):
-		result = CheckerResult(checker=self)
-		
+		result = self.create_result(env)
 		log = ""
 		passed = 1
 		

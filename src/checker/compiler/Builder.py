@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
 
 
-from checker.models import Checker, CheckerResult
+from checker.models import Checker
 from utilities.safeexec import execute_arglist
 
 class Builder(Checker):
@@ -107,7 +107,7 @@ class Builder(Checker):
 
 	def run(self, env):
 		""" Build it. """
-		result = CheckerResult(checker=self)
+		result = self.create_result(env)
 
 		# Try to find out the main modules name with only the source files present
 		try:

@@ -5,7 +5,7 @@ import os, string
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
-from checker.models import Checker, CheckerResult, CheckerFileField
+from checker.models import Checker, CheckerFileField
 from utilities.file_operations import *
 from utilities.encoding import *
 from django.utils.html import escape
@@ -32,7 +32,7 @@ class CheckerWithFile(Checker):
 			env.add_source(path, file(os.path.join(env.tmpdir(),path)).read())
 	
 	def run_file(self, env):
-		result = CheckerResult(checker=self)
+		result = self.create_result(env)
 		clashes = []
 		cleanpath = string.lstrip(self.path,"/ ")
 		if (self.unpack_zipfile):

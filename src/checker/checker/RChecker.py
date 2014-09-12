@@ -7,7 +7,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.models import Checker, CheckerResult, CheckerFileField
+from checker.models import Checker, CheckerFileField
 from utilities.safeexec import execute_arglist
 from utilities.file_operations import *
 
@@ -39,7 +39,7 @@ class RChecker(Checker):
 		scriptname = None
 		if len(R_files) == 0:
 			output = "<p>No R scripts found in submission</p>"
-			result = CheckerResult(checker=self)
+			result = self.create_result(env)
 			result.set_log(output)
 			result.set_passed(False)
 			return result
@@ -48,7 +48,7 @@ class RChecker(Checker):
 			if self.r_script not in R_files:
 				output = "<p>Could not find expected R script %s.</p>" % self.r_script
 				output += "<p>R scripts found: %s</p>" % ", ".join(map(escape, R_files))
-				result = CheckerResult(checker=self)
+				result = self.create_result(env)
 				result.set_log(output)
 				result.set_passed(False)
 				return result
@@ -59,7 +59,7 @@ class RChecker(Checker):
 				output = "<p>Multiple R scripts found in submission.</p>"
 				output += "<p>R scripts found: %s</p>" % ", ".join(map(escape, R_files))
 				output +=" <p>Please submit exactly one file ending in <tt>.R</tt></p>"
-				result = CheckerResult(checker=self)
+				result = self.create_result(env)
 				result.set_log(output)
 				result.set_passed(False)
 				return result
@@ -84,7 +84,7 @@ class RChecker(Checker):
 		if os.path.isfile(os.path.join(env.tmpdir(), "Rplots.pdf")):
 			output += "\n\n---- Note: Rplots.pdf file has been created  ----\n"
 
-		result = CheckerResult(checker=self)
+		result = self.create_result(env)
 		result.set_log('<pre>' + escape(output) + '</pre>')
 		result.set_passed(exitcode == 0 and not timed_out)
 

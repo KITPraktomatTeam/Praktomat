@@ -7,7 +7,7 @@ TextChecker.
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.models import Checker, CheckerResult
+from checker.models import Checker
 
 class TextChecker(Checker):
 	""" Checks if the specified text is included in a submitted file """
@@ -26,7 +26,7 @@ class TextChecker(Checker):
 	
 	def run(self, env):
 		""" Checks if the specified text is included in a submitted file """
-		result = CheckerResult(checker=self)
+		result = self.create_result(env)
 		
 		lines = []
 		occurances = []

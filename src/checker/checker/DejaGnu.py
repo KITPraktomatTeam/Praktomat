@@ -14,7 +14,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.models import Checker, CheckerFileField, CheckerResult
+from checker.models import Checker, CheckerFileField
 from checker.compiler.Builder import Builder
 from utilities.safeexec import execute_arglist
 from utilities import encoding
@@ -109,7 +109,7 @@ class DejaGnuTester(Checker, DejaGnu):
 		program_name = env.program()
 
 		if " " in program_name:
-			result = self.result()
+			result = self.create_result(env)
 			result.set_log("<pre><b class=\"fail\">Error</b>: Path to the main() - source file contains spaces.\n\nFor Java .zip submittions, the directory hierarchy of the .zip file must excactly match the package structure.\nThe default package must correspond to the .zip root directory.</pre>")
 			result.set_passed(False)
 			return result
@@ -144,7 +144,7 @@ class DejaGnuTester(Checker, DejaGnu):
 
 		complete_output = self.htmlize_output(output + log)
 
-		result = self.result()
+		result = self.create_result(env)
 		result.set_log(complete_output,timed_out=timed_out)
 		result.set_passed(not exitcode and not timed_out and self.output_ok(complete_output))
 		return result
@@ -179,7 +179,7 @@ class DejaGnuSetup(Checker, DejaGnu):
 		defs = string.replace(defs, "JAVA", settings.JVM_SECURE)
 		create_file(os.path.join(self.config_dir(env), "default.exp"), defs)
 
-		return self.result()
+		return self.create_result(env)
 
 from checker.admin import	CheckerInline, AlwaysChangedModelForm
 

@@ -5,7 +5,7 @@ import re
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.models import Checker, CheckerFileField, CheckerResult, truncated_log
+from checker.models import Checker, CheckerFileField, truncated_log
 from checker.admin import	CheckerInline, AlwaysChangedModelForm
 from utilities.safeexec import execute_arglist
 from utilities.file_operations import *
@@ -61,7 +61,7 @@ class JUnitChecker(Checker):
 		build_result = java_builder.run(env)
 
 		if not build_result.passed:
-			result = CheckerResult(checker=self)
+			result = self.create_result(env)
 			result.set_passed(False)
 			result.set_log('<pre>' + escape(self.test_description) + '\n\n======== Test Results ======\n\n</pre><br/>\n'+build_result.log)
 			return result
@@ -76,7 +76,7 @@ class JUnitChecker(Checker):
 		cmd = [settings.JVM_SECURE, "-cp", settings.JAVA_LIBS[self.junit_version]+":.", self.runner(), self.class_name]
 		[output, error, exitcode,timed_out] = execute_arglist(cmd, env.tmpdir(),environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE, extradirs=[script_dir])
 
-		result = CheckerResult(checker=self)
+		result = self.create_result(env)
 
 		(output,truncated) = truncated_log(output)
 		output = '<pre>' + escape(self.test_description) + '\n\n======== Test Results ======\n\n</pre><br/><pre>' + escape(output) + '</pre>'

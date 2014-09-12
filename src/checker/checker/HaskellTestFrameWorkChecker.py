@@ -8,7 +8,7 @@ from django.utils.html import escape
 from django.contrib import admin
 from django.template.loader import get_template
 from django.template import Context
-from checker.models import Checker, CheckerFileField, CheckerResult, truncated_log
+from checker.models import Checker, CheckerFileField, truncated_log
 from checker.admin import	CheckerInline, AlwaysChangedModelForm
 from utilities.file_operations import *
 from utilities.safeexec import execute_arglist
@@ -78,7 +78,7 @@ class HaskellTestFrameWorkChecker(CheckerWithFile):
                         safe_builder._ignore=self.ignore.split(" ") + [self.path_relative_to_sandbox()]
                         safe_build_result = safe_builder.run(env)
                         if not safe_build_result.passed:
-                                result = CheckerResult(checker=self)
+                                result = self.create_result(env)
                                 result.set_passed(False)
                                 result.set_log('<pre>' + escape(self.test_description) + '\n\n======== Test Results  (Safe) ======\n\n</pre><br/>\n'+safe_build_result.log)
                                 return result
@@ -88,7 +88,7 @@ class HaskellTestFrameWorkChecker(CheckerWithFile):
                 test_build_result = test_builder.run(env)
 
                 if not test_build_result.passed:
-                        result = CheckerResult(checker=self)
+                        result = self.create_result(env)
 			result.set_passed(False)
 			result.set_log('<pre>' + escape(self.test_description) + '\n\n======== Test Results (Building all) ======\n\n</pre><br/>\n'+test_build_result.log)
 			return result
@@ -100,7 +100,7 @@ class HaskellTestFrameWorkChecker(CheckerWithFile):
 		cmd = ["./"+self.module_binary_name(), "--maximum-generated-tests=5000"]
 		[output, error, exitcode,timed_out] = execute_arglist(cmd, env.tmpdir(),environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE)
 
-		result = CheckerResult(checker=self)
+		result = self.create_result(env)
 
 		(output,truncated) = truncated_log(output)
 		output = '<pre>' + escape(self.test_description) + '\n\n======== Test Results ======\n\n</pre><br/><pre>' + escape(output) + '</pre>'

@@ -7,7 +7,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.models import Checker, CheckerResult, CheckerFileField
+from checker.models import Checker, CheckerFileField
 from utilities.safeexec import execute_arglist
 from utilities.file_operations import *
 
@@ -49,7 +49,7 @@ class IsabelleChecker(Checker):
 		if timed_out:
 			output += "\n\n---- check aborted after %d seconds ----\n" % settings.TEST_TIMEOUT
 
-		result = CheckerResult(checker=self)			
+		result = self.create_result(env)
 		result.set_log('<pre>' + escape(output) + '</pre>')
 		result.set_passed(not timed_out and self.output_ok(output))
 		

@@ -6,7 +6,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.models import Checker, CheckerResult, CheckerFileField
+from checker.models import Checker, CheckerFileField
 from utilities.safeexec import execute_arglist
 from utilities.file_operations import *
 
@@ -38,7 +38,8 @@ class CheckStyleChecker(Checker):
 		# Remove Praktomat-Path-Prefixes from result:
 		output = re.sub(r"^"+re.escape(env.tmpdir())+"/+","",output,flags=re.MULTILINE)
 
-		result = CheckerResult(checker=self)
+		result = self.create_result(env)
+
 		log = '<pre>' + escape(output) + '</pre>'
 		if timed_out:
 			log = log + '<div class="error">Timeout occured!</div>'

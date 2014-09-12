@@ -7,6 +7,7 @@ import sys
 from django.conf import settings
 from django.db import models
 from tasks.models import Task
+from solutions.models import Solution
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
@@ -70,10 +71,11 @@ It is *required* - it must be passed for submission
 	def __unicode__(self):
 		return self.title()
 
-	def result(self):
+	def create_result(self, env):
 		""" Creates a new result.
 		May be overloaded by subclasses."""
-		return CheckerResult(checker=self)
+		assert isinstance(env.solution(), Solution)
+		return CheckerResult(checker=self, solution=env.solution())
 		
 	def show_publicly(self,passed):
 		""" Are results of this Checker to be shown publicly, given whether the result was passed? """
@@ -87,7 +89,7 @@ It is *required* - it must be passed for submission
 		""" Runs tests in a special environment.
 		Returns a CheckerResult. """
 		assert isinstance(env, CheckerEnvironment)
-		return self.result()
+		return self.create_result(env)
 
 	def title(self):
 		""" Returns the title for this checker category. To be overloaded in subclasses. """
@@ -275,12 +277,11 @@ def run_checks(solution, env, run_all):
 	checker_classes = filter(lambda x:issubclass(x,Checker), models.get_models())
 	unsorted_checker = sum(map(lambda x: list(x.objects.filter(task=solution.task)), checker_classes),[])
 	checkers = sorted(unsorted_checker, key=lambda checker: checker.order)
-	
+
 	solution_accepted = True
 	solution.warnings = False
 	for checker in checkers:
 		if (checker.always or run_all):
-		
 			# Check dependencies -> This requires the right order of the checkers			
 			can_run_checker = True
 			for requirement in checker.requires():
@@ -297,14 +298,14 @@ def run_checks(solution, env, run_all):
 					try:
 						result = checker.run(env)
 					except:
-						result = checker.result()
+						result = checker.create_result(env)
 						result.set_log(u"The Checker caused an unexpected internal error.")
 						result.set_passed(False)
 						#TODO: Email Admins
 			else:
 				# make non passed result
 				# this as well as the dependency check should propably go into checker class
-				result = checker.result()
+				result = checker.create_result(env)
 				result.set_log(u"Checker konnte nicht ausgeführt werden, da benötigte Checker nicht bestanden wurden.")
 				result.set_passed(False)
 				

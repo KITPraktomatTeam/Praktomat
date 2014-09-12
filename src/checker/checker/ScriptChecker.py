@@ -6,7 +6,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
 from django.utils.encoding import force_unicode
-from checker.models import Checker, CheckerFileField, CheckerResult, truncated_log
+from checker.models import Checker, CheckerFileField, truncated_log
 from utilities.safeexec import execute_arglist
 from utilities.file_operations import *
 
@@ -62,7 +62,7 @@ class ScriptChecker(Checker):
                             )
 		output = force_unicode(output, errors='replace')
 
-		result = CheckerResult(checker=self)
+		result = self.create_result(env)
 		(output,truncated) = truncated_log(output)
 
 		if self.remove:

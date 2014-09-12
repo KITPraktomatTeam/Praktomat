@@ -12,7 +12,6 @@ from django.template.loader import get_template
 from django.template import Context
 from django.utils.html import escape
 
-from checker.models import CheckerResult
 from utilities.safeexec import execute_arglist
 
 class HaskellBuilder(Builder):
@@ -43,7 +42,7 @@ class HaskellBuilder(Builder):
 
 	def run(self, env):
 		""" Build it. """
-		result = CheckerResult(checker=self)
+		result = self.create_result(env)
 
 		filenames = [name for name in self.get_file_names(env)]
 		args = [self.compiler()] + self.flags(env) + filenames + self.libs()
