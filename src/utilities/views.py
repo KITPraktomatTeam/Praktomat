@@ -45,7 +45,8 @@ def sendfile(request, path):
 		content_type = 'application/octet-stream' 
 	response['Content-Type'] = content_type
 	response['Content-Length'] = os.path.getsize(filename)
-	response['Content-Disposition'] = 'attachment; filename="%s"' % smart_str(os.path.basename(path))
+	if 'view' not in request.GET:
+		response['Content-Disposition'] = 'attachment; filename="%s"' % smart_str(os.path.basename(path))
 	return response 
 
 def forbidden(request, path):
