@@ -1,3 +1,6 @@
+# -*- encoding: utf8
+
+import os
 from os.path import dirname, join
 from django.conf import settings
 from utilities.TestSuite import TestCase
@@ -186,6 +189,7 @@ class TestChecker(TestCase):
                             self.assertNotIn('done', checkerresult.log, "Test did finish (no timeout?)")
 
 
+	@unittest.skipIf('TRAVIS' in os.environ, "ulimit doesn’t seem to work on travis")
 	@unittest.skipIf(settings.USESAFEDOCKER, "not yet supported with safe-docker")
 	def test_script_filesizelimit(self):
 		src = join(dirname(dirname(dirname(__file__))), 'examples', 'largefile.pl')
