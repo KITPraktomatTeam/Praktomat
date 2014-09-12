@@ -14,10 +14,12 @@ from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
 from django.core.exceptions import ValidationError
+from django.core.files import File
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
 from utilities import encoding, file_operations
 from utilities.deleting_file_field import DeletingFileField
+
 
 from functools import partial
 from multiprocessing import Pool
@@ -232,6 +234,11 @@ class CheckerResult(models.Model):
 		""" Sets the passing state of the Checker. """
 		assert isinstance(passed, int)
 		self.passed = passed
+
+	def add_artefact(self, filename, path):
+		assert os.path.isfile(path)
+		artefact = CheckerResultArtefact(result = self)
+		artefact.file.save(filename, File(file(path)))
 
 
 class CheckerResultArtefact(models.Model):

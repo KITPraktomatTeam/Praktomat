@@ -6,12 +6,11 @@ import os
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
-from checker.models import Checker, CheckerResult, CheckerResultArtefact, CheckerFileField
+from checker.models import Checker
 from utilities.file_operations import *
 from utilities.encoding import *
 from django.utils.html import escape
 from django.contrib import admin
-from django.core.files import File
 
 
 class KeepFileChecker(Checker):
@@ -25,8 +24,7 @@ class KeepFileChecker(Checker):
 
 		result = self.create_result(env)
 		if os.path.isfile(path):
-			artefact = CheckerResultArtefact(result = result)
-			artefact.file.save(self.filename, File(open(path)))
+			result.add_artefact(self.filename, path)
 			result.set_passed(True)
 		else:
 			result.set_log("<p>Could not find file <tt>%s</tt>.</p>" % escape(self.filename))
