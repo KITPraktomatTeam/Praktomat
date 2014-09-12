@@ -47,10 +47,12 @@ class Solution(models.Model):
 		return unicode(self.task) + ":" + unicode(self.author) + ":" + unicode(self.number)
 
 	def allCheckerResults(self):
-		return until_critical(sorted(self.checkerresult_set.all(), key=lambda result: result.checker.order))
+		results = self.checkerresult_set.all().prefetch_related('artefacts')
+		return until_critical(sorted(results, key=lambda result: result.checker.order))
 
 	def publicCheckerResults(self):
 		# return self.checkerresult_set.filter(checker__public=True) won't work, because checker is a genericForeignKey!
+		results = self.checkerresult_set.all().prefetch_related('artefacts')
 		return until_critical(sorted(filter(lambda x: x.public(), self.checkerresult_set.all()), key = lambda result: result.checker.order))
 
 	def copySolutionFiles(self, toTempDir):
