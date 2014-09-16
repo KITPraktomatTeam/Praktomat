@@ -28,6 +28,8 @@ function guessMode(filename) {
 	mode = "ocaml";
    } else if (/^.*\.(hs|lhs)$/i.test(filename)) {
 	mode = "haskell";
+   } else if (/^.*\.R$/.test(filename)) {
+	mode = "r";
    } else  {
 	mode = "plain_text";
    }
