@@ -17,22 +17,23 @@
 			{% if not result.only_title %}</a>{% endif %}
 		</h3>
 		<div> <!-- for toggling -->
-		<div class="log">
-			{{result.log|safe}}
+			<div class="log">
+				{{result.log|safe}}
+			</div>
+
+			{% if result.artefacts.count %}
+				<div class="artefacts">
+					<h4>The following artefacts were produced:</h4>
+					<ul>
+						{% for artefact in result.artefacts.all %}
+							<li>
+							  <a href="{{ artefact.file.url }}?view" title="View">{{ artefact }}</a>
+							  <a href="{{ artefact.file.url }}" title="Download"><span class="ui-icon icon-red ui-icon-disk" title="Download all solutions, including checker files"></span></a>
+							</li>
+						{% endfor %}
+					</ul>
+				</div>
+			{% endif %}
 		</div>
-		{% if result.artefacts.count %}
-		<div class="artefacts">
-		<h4>The following artefacts were produced:</h4>
-		<ul>
-		  {% for artefact in result.artefacts.all %}
-		    <li>
-		      <a href="{{ artefact.file.url }}?view" title="View">{{ artefact }}</a>
-		      <a href="{{ artefact.file.url }}" title="Download"><span class="ui-icon icon-red ui-icon-disk" title="Download all solutions, including checker files"></span></a>
-		    </li>
-		  {% endfor %}
-		</ul>
-		</div>
-		</div>
-		{% endif %}
 	</div>
 {%endfor%}
