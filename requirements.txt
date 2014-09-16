@@ -1,4 +1,4 @@
-Django==1.6.2
+Django==1.6.7
 M2Crypto>=0.21.1
 Markdown>=2.2.1
 Pygments>=1.6rc1
@@ -6,7 +6,7 @@ South>=0.7.6
 chardet>=2.1.1
 django-extensions>=1.0.3,<1.3.0
 django-tinymce>=1.5.2
-django-debug-toolbar==1.2
+django-debug-toolbar==1.2.1
 docutils>=0.10
 subprocess32
 psycopg2
