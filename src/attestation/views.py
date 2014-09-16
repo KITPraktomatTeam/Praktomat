@@ -470,7 +470,7 @@ def rating_export(request):
 			rating_for_user_list.append(rating)
 		rating_list.append(rating_for_user_list)
 	
-	response = HttpResponse(mimetype='text/csv')
+	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; rating_export.csv'
 
 	t = loader.get_template('attestation/rating_export.csv')

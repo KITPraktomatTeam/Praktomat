@@ -62,7 +62,7 @@ class TaskAdmin(admin.ModelAdmin):
 	def export_tasks(self, request, queryset):
 		""" Export Task action """
 		from django.http import HttpResponse
-		response = HttpResponse(Task.export_Tasks(queryset).read(), mimetype="application/zip")
+		response = HttpResponse(Task.export_Tasks(queryset).read(), content_type="application/zip")
 		response['Content-Disposition'] = 'attachment; filename=TaskExport.zip'
 		return response
 		

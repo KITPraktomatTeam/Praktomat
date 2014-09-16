@@ -142,7 +142,7 @@ def solution_download(request,solution_id,full):
         if (not (solution.author == request.user or request.user.is_tutor or request.user.is_trainer)):
 		return access_denied(request)
 	zip_file = get_solutions_zip([solution], full and (request.user.is_tutor or request.user.is_trainer))
-	response = HttpResponse(zip_file.read(), mimetype="application/zip")
+	response = HttpResponse(zip_file.read(), content_type="application/zip")
 	response['Content-Disposition'] = 'attachment; filename=Solution.zip'
 	return response
 
@@ -156,7 +156,7 @@ def solution_download_for_task(request, task_id,full):
         if not request.user.is_trainer:
 		solutions = solutions.filter(author__tutorial__id__in=request.user.tutored_tutorials.values_list('id', flat=True))
 	zip_file = get_solutions_zip(solutions,full)
-	response = HttpResponse(zip_file.read(), mimetype="application/zip")
+	response = HttpResponse(zip_file.read(), content_type="application/zip")
 	response['Content-Disposition'] = 'attachment; filename=Solutions.zip'
 	return response
 

@@ -104,7 +104,7 @@ def download_final_solutions(request, task_id):
 			zip.write(solution_file.file.path, solution_file.file.name)
 	zip.close()
 	zip_file.seek(0)
-	response = HttpResponse(zip_file.read(), mimetype="application/zip")
+	response = HttpResponse(zip_file.read(), content_type="application/zip")
 	response['Content-Disposition'] = 'attachment; filename=FinalSolutions.zip'
 	return response
 	

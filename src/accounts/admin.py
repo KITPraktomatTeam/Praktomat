@@ -90,7 +90,7 @@ class UserAdmin(UserBaseAdmin):
 	def export_users(self, request, queryset):
 		from django.http import HttpResponse
 		data = User.export_user(queryset)		
-		response = HttpResponse(data, mimetype="application/xml")
+		response = HttpResponse(data, content_type="application/xml")
 		response['Content-Disposition'] = 'attachment; filename=user_export.xml'
 		return response
 
