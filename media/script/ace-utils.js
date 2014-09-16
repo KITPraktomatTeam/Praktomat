@@ -1,5 +1,5 @@
 function guessMode(filename) {
-   var mode = "text";
+   var mode;
    if (/^.*\.js$/i.test(filename)) {
 	mode = "javascript";
    } else if (/^.*\.xml$/i.test(filename)) {
@@ -29,7 +29,7 @@ function guessMode(filename) {
    } else if (/^.*\.(hs|lhs)$/i.test(filename)) {
 	mode = "haskell";
    } else  {
-	mode = "plain";
+	mode = "plain_text";
    }
 
    return "ace/mode/" + mode;
