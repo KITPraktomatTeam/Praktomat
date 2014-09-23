@@ -187,6 +187,9 @@ class SolutionFile(models.Model):
 	def isImage(self):
 		return self.mime_type[:5] == "image"
 	
+	def isEmbeddable(self):
+		return self.mime_type in ("application/pdf",)
+
 	def path(self):
 		""" path of file relative to the zip file, which once contained it """
 		return self.file.name[len(self._get_upload_path('')):]

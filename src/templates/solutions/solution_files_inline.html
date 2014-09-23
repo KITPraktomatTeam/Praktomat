@@ -22,6 +22,8 @@
       <div class="content">
         {% if solutionfile.isImage %}
           <img src="{{solutionfile.file.url}}"/>
+        {% elif solutionfile.isEmbeddable %}
+	   <iframe src="{{solutionfile.file.url}}?view" width="100%" height="500"/>
         {% else %}
           {{solutionfile.content|highlight_table:solutionfile.file.name}}
         {% endif %}
