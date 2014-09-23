@@ -147,7 +147,7 @@
 					{% include "forms/formset_as_div.html" %}
 				{% endwith %}
 			</div>
-			{% with solution.solutionfile_set.all as solutionfiles %}
+			{% with attestFileFormSet.get_queryset.all as solutionfiles %}
 				<div class="anntabs">
 					<ul>
 						{% for solutionfile in solutionfiles %}
