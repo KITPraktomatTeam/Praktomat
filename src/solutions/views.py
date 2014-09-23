@@ -116,7 +116,7 @@ def solution_detail(request,solution_id,full):
         accept_all_solutions = get_settings().accept_all_solutions
 
 	if (request.method == "POST"):
-                if solution.final or solution.testupload or solution.task.expired:
+                if solution.final or solution.testupload or solution.task.expired():
                     return access_denied(request)
                 if not (solution.accepted or accept_all_solutions):
                     return access_denied(request)
