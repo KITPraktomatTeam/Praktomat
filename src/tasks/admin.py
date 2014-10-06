@@ -87,10 +87,10 @@ class TaskAdmin(admin.ModelAdmin):
         attestations_url.short_description = 'Attestations'
 
         def testupload_url(self,task):
-                return format_html ('<a href="{0}">Test Upload</a>',
+                return format_html ('<a href="{0}">Test Submission</a>',
                     reverse('upload_test_solution', kwargs={'task_id': task.id}))
         testupload_url.allow_tags = True
-        testupload_url.short_description = 'Test Upload'
+        testupload_url.short_description = 'Test Submission'
 
         def useful_links(self, instance):
 		if instance.id:

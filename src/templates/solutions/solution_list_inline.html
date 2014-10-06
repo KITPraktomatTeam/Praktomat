@@ -12,7 +12,7 @@
 		<a href="{% url "solution_detail" solution_id=solution.id %}">
 			Solution {{solution.number}}
 		</a>
-		<span> ({{solution.creation_date|timesince}} ago{% if solution.testupload %}, test upload{% endif %})</span>
+		<span> ({{solution.creation_date|timesince}} ago{% if solution.testupload %}, test submission{% endif %})</span>
 		<br/>
 	{% endspaceless %}
 </div>
