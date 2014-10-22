@@ -188,7 +188,7 @@ submissions from the system:
    installed, which needs to have all required dependencies installed. A
    suggested docker image is available in `docker-image`, so to get started simply run
 
-        sudo docker build -t safe-docker praktomat-docker
+        sudo docker build -t safe-docker docker-image
 
 We recommend `USESAFEDOCKER`, as that is what we test in practice.
 
