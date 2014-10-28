@@ -308,7 +308,7 @@ def load_defaults(settings):
     # for example: JUnitChecker, DejaGnuChecker
     d.TEST_TIMEOUT=60
 
-    # Amount of memory available to the checker
+    # Amount of memory available to the checker, in megabytes
     # (this is currently only supported with USESAFEDOCKER=True)
     d.TEST_MAXMEM=100
 
