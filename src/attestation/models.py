@@ -33,13 +33,8 @@ class Attestation(models.Model):
 		self.published_on = datetime.now()
 		self.save()
 
-                recps = nub([
-                    self.solution.author, # student
-                    self.author,          # attestation writer
-                    by,                   # usually attestation writer, may be trainer
-                    ])
-                emails = [u.email for u in recps if u.email]
-                if not emails:
+                email = self.solution.author.email
+                if not email:
                     return
 
 		# Send confirmation email
@@ -53,10 +48,8 @@ class Attestation(models.Model):
                         }
                 subject = _("New attestation for your solution of the task '%s'") % self.solution.task
                 body = t.render(Context(c))
-                recipients = emails[0:1]
-                bcc_recipients = emails[1:]
-                headers = {'Reply-To': self.author.email} if bcc_recipients else None
-                email = EmailMessage(subject, body, None, recipients, bcc_recipients, headers = headers)
+                headers = {'Reply-To': self.author.email} if self.author.email else None
+                email = EmailMessage(subject, body, None, (email,), headers = headers)
                 email.send()
 
         def withdraw(self, request, by):
