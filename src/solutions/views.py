@@ -32,7 +32,7 @@ from django.db import transaction
 @login_required
 @cache_control(must_revalidate=True, no_cache=True, no_store=True, max_age=0) #reload the page from the server even if the user used the back button
 def solution_list(request, task_id, user_id=None):
-        if (user_id and not request.user.is_trainer):
+        if (user_id and not request.user.is_trainer and not request.user.is_superuser):
 		return access_denied(request)
 
 	task = get_object_or_404(Task,pk=task_id)
@@ -83,7 +83,7 @@ def solution_list(request, task_id, user_id=None):
 		context_instance=RequestContext(request))
 @login_required
 def test_upload(request, task_id):
-        if not request.user.is_trainer and not request.user.is_tutor:
+        if not request.user.is_trainer and not request.user.is_tutor and not request.user.is_superuser:
 		return access_denied(request)
 
 	task = get_object_or_404(Task,pk=task_id)
@@ -107,10 +107,10 @@ def test_upload(request, task_id):
 @login_required
 def solution_detail(request,solution_id,full):
 	solution = get_object_or_404(Solution, pk=solution_id)	
-	if not (solution.author == request.user or request.user.is_trainer or (solution.author.tutorial and solution.author.tutorial.tutors.filter(id=request.user.id))):
+	if not (solution.author == request.user or request.user.is_trainer or request.user.is_superuser or (solution.author.tutorial and solution.author.tutorial.tutors.filter(id=request.user.id))):
 		return access_denied(request)
 
-        if full and not (request.user.is_trainer or request.user.is_tutor):
+        if full and not (request.user.is_trainer or request.user.is_tutor or request.user.is_superuser):
 		return access_denied(request)
 
         accept_all_solutions = get_settings().accept_all_solutions
@@ -164,7 +164,7 @@ def solution_download_for_task(request, task_id,full):
 @login_required
 def checker_result_list(request,task_id):
 	task = get_object_or_404(Task, pk=task_id)	
-        if not request.user.is_trainer:
+        if not request.user.is_trainer and not request.user.is_superuser:
 		return access_denied(request)
 	else:
 		users_with_checkerresults = [(user,dict(checkerresults),final_solution)              \
