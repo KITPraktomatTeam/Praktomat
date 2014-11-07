@@ -3,109 +3,168 @@
 {% block extrahead %}{{ block.super }}
 <script src="{{STATIC_URL}}frameworks/highcharts/highcharts.js" type="text/javascript"></script>
 <script type="text/javascript">
-            $(document).ready(function(){
-                var submission_chart = new Highcharts.Chart({
-                    chart: {
-                        renderTo: 'submission_chart',
-                        defaultSeriesType: 'line',
-        				alignTicks: false,
-                        margin: [80, 100, 60, 100],
-                    },
-                    title: {
-                        text: 'Solution Submission Rate',
-        
-                    },
-                    xAxis: {
-                        type: 'datetime',
-                        title: {
-                            text: 'Date'
-                        },
-        				max: Date.parse('{{task.submission_date|date:"SHORT_DATE_FORMAT"}}'),
-                    },
-                    yAxis: [{
-                        title: {
-                            text: '(Final) Submissions',
-        					style: {
-                    			color: '#AA4643'
-                 			},
-                        },
-        				labels: {
-        			         style: {
-        			            color: '#AA4643'
-        			         }
-        			      },
-        				min: 0,
-                    }, {
-                        title: {
-                            text: 'Submissions Total',
-        					style: {
-                    			color: '#4572A7'
-                 			},
-                        },
-        				labels: {
-        			         formatter: function() {
-        			            return this.value * 100 +' %';
-        			         },
-        			         style: {
-        			            color: '#4572A7'
-        			         }
-        			      },
-                        opposite: true,
-        				max: 1,
-        				min: 0,
-        				gridLineWidth: 0
-                    }],
-        			legend: {
-        				enabled:false
-        			},
-        			credits: {
-        				enabled: false
-        			},
-                    tooltip: {
-                        formatter: function(){
-                            date = new Date(this.x);
-							// getMonth() is zero-based
-        					date_str = date.getDate() + '.' + (date.getMonth()+1) +'.'+ date.getFullYear();
-        					if (this.series.name == 'Submissions Total') {
-        						return '<b>' + this.series.name + '</b><br/>' + date_str + ': ' + Math.round(this.y*100) + '%' ;
-        					} else {
-        						return '<b>' + this.series.name + '</b><br/>' + date_str + ': ' + this.y ;
-        					}
-        					
-                        }
-                    },
-        			plotOptions: {
-        				area: {
-        					fillOpacity:0.75,
-        				},
-        				line: {
-        					lineWidth:3,
-        				},
-        			},
-                    series: [{
-                        type: 'area',
-                        name: 'Submissions Total',
-        				color: '#4572A7',
-        				yAxis: 1,
-                        pointInterval: 24 * 3600 * 1000,
-                        pointStart: Date.parse('{{task.publication_date|date:"SHORT_DATE_FORMAT"}}'),
-                        data: {{acc_submissions}}
-                    }, {
-                        type: 'line',
-                        name: 'Final Submissions',
-        				color: '#AA4643',
-                        pointInterval: 24 * 3600 * 1000,
-                        pointStart: Date.parse('{{task.publication_date|date:"SHORT_DATE_FORMAT"}}'),
-                        data: {{submissions_final}}
-                    }, {
-                        type: 'line',
-                        name: 'Submissions',
-        				color: '#89A54E',
-                        pointInterval: 24 * 3600 * 1000,
-                        pointStart: Date.parse('{{task.publication_date|date:"SHORT_DATE_FORMAT"}}'),
-                        data: {{submissions}}
-                    }]
-                });
+	$(document).ready(function(){
+		var submission_chart = new Highcharts.Chart({
+			chart: {
+				renderTo: 'submission_chart',
+				defaultSeriesType: 'line',
+				alignTicks: false,
+				margin: [80, 100, 60, 100],
+			},
+			title: {
+				text: 'Solution Submission Rate',
+
+			},
+			xAxis: {
+				type: 'datetime',
+				title: {
+					text: 'Date'
+				},
+				max: Date.parse('{{task.submission_date|date:"SHORT_DATE_FORMAT"}}'),
+			},
+			yAxis: [{
+				title: {
+					text: '(Final) Submissions',
+					style: {
+						color: '#AA4643'
+					},
+				},
+				labels: {
+					 style: {
+						color: '#AA4643'
+					 }
+				  },
+				min: 0,
+			}, {
+				title: {
+					text: 'Submissions Total',
+					style: {
+						color: '#4572A7'
+					},
+				},
+				labels: {
+					 formatter: function() {
+						return this.value * 100 +' %';
+					 },
+					 style: {
+						color: '#4572A7'
+					 }
+				  },
+				opposite: true,
+				max: 1,
+				min: 0,
+				gridLineWidth: 0
+			}],
+			legend: {
+				enabled:false
+			},
+			credits: {
+				enabled: false
+			},
+			tooltip: {
+				formatter: function(){
+					date = new Date(this.x);
+					// getMonth() is zero-based
+					date_str = date.getDate() + '.' + (date.getMonth()+1) +'.'+ date.getFullYear();
+					if (this.series.name == 'Submissions Total') {
+						return '<b>' + this.series.name + '</b><br/>' + date_str + ': ' + Math.round(this.y*100) + '%' ;
+					} else {
+						return '<b>' + this.series.name + '</b><br/>' + date_str + ': ' + this.y ;
+					}
+				}
+			},
+			plotOptions: {
+				area: {
+					fillOpacity:0.75,
+				},
+				line: {
+					lineWidth:3,
+				},
+			},
+			series: [{
+				type: 'area',
+				name: 'Submissions Total',
+				color: '#4572A7',
+				yAxis: 1,
+				pointInterval: 24 * 3600 * 1000,
+				pointStart: Date.parse('{{task.publication_date|date:"SHORT_DATE_FORMAT"}}'),
+				data: {{acc_submissions}}
+			}, {
+				type: 'line',
+				name: 'Final Submissions',
+				color: '#AA4643',
+				pointInterval: 24 * 3600 * 1000,
+				pointStart: Date.parse('{{task.publication_date|date:"SHORT_DATE_FORMAT"}}'),
+				data: {{submissions_final}}
+			}, {
+				type: 'line',
+				name: 'Submissions',
+				color: '#89A54E',
+				pointInterval: 24 * 3600 * 1000,
+				pointStart: Date.parse('{{task.publication_date|date:"SHORT_DATE_FORMAT"}}'),
+				data: {{submissions}}
+			}]
+		});
+
+		var runtime_chart = new Highcharts.Chart({
+			chart: {
+				renderTo: 'runtime_chart',
+				defaultSeriesType: 'line',
+				alignTicks: false,
+				margin: [80, 100, 60, 100],
+			},
+			title: {
+				text: 'Solution runtimes',
+
+			},
+			xAxis: {
+				type: 'datetime',
+				title: {
+					text: 'Date'
+				},
+			},
+			yAxis: {
+				title: {
+					text: 'Runtime (ms)',
+					style: {
+						color: '#AA4643'
+					},
+				},
+				labels: {
+					 style: {
+						color: '#AA4643'
+					 }
+				},
+				min: 0,
+			},
+			legend: {
+				enabled:false
+			},
+			credits: {
+				enabled: false
+			},
+			plotOptions: {
+				area: {
+					fillOpacity:0.75,
+				},
+				line: {
+					lineWidth:3,
+				},
+			},
+			series: [
+			{% for runtime_series in runtimes %}
+				{ type: 'scatter',
+				  name: '{{ runtime_series.checker }}',
+				  color: '#4572A7',
+				  data: [
+					{% for point in runtime_series.runtimes %}
+					[ Date.parse('{{point.date|date:"c"}}'), {{point.value}} ],
+					{% endfor %}
+				  ],
+				},
+			{% endfor %}
+			]
+		});
                 
     			
         function date_to_timestr(d) {
@@ -315,7 +374,8 @@ function grade_chart(div_to_render_into, title, scale_items,ratings){
 {% for ratings in all_ratings %}
 var final_grade_chart_{{forloop.counter}} = grade_chart('final_grade_chart_{{forloop.counter}}','{{ratings.title}}',{{ final_grade_rating_scale_items|safe }},{{ratings.ratings}});
 {% endfor %}
-            });
+
+});
 </script>
 {% endblock %} 
 
@@ -338,4 +398,9 @@ var final_grade_chart_{{forloop.counter}} = grade_chart('final_grade_chart_{{for
 	<p>{{ratings.desc}}</p><br/><br/>
 {% endfor %}
 {% endif %}
+<div id="runtime_chart"></div>
+<p>Shows the time it took to process each of the checkers.</p><br/><br/>
+<pre>
+{{runtimes}}
+</pre>
 {% endblock %}

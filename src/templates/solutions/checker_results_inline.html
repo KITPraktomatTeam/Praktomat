@@ -14,6 +14,7 @@
 			<span class="{% if result.passed %} passed {% else %}{% if result.required %} error {% else %} warning {% endif %}{% endif %}">
 				{{result.passed|yesno:_("passed, failed")}} {% if result.passed %} {% else %} {% if result.required %} {% else %} (but not required) {% endif %} {% endif %}
 			</span>
+			<!-- <span class="checkertime">{{ result.runtime }} ms</span> -->
 			{% if not result.only_title %}</a>{% endif %}
 		</h3>
 		<div> <!-- for toggling -->

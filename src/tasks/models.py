@@ -51,10 +51,18 @@ class Task(models.Model):
 				self.all_checker_finished = True
 				self.save()
 
+        def get_checkers(self):
+            from checker.models import Checker
+
+            checker_classes = filter(lambda x:issubclass(x,Checker), models.get_models())
+            unsorted_checker = sum(map(lambda x: list(x.objects.filter(task=self)), checker_classes),[])
+            checkers = sorted(unsorted_checker, key=lambda checker: checker.order)
+            return checkers
+
+
 	@classmethod
 	def export_Tasks(cls, qureyset):
 		""" Serializes a task queryset and related checkers to xml and bundels it with all files into a zipfile  """
-		from checker.models import Checker
 		from solutions.models import Solution, SolutionFile
 
 		# fetch tasks, media objects, checker and serialize

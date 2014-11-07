@@ -4,6 +4,7 @@ from os import *
 import os.path
 import shutil
 import sys
+import time
 
 from django.conf import settings
 from django.db import models
@@ -200,6 +201,7 @@ class CheckerResult(models.Model):
 	passed = models.BooleanField(default=True,  help_text=_('Indicates whether the test has been passed'))
 	log = models.TextField(help_text=_('Text result of the checker'))
 	creation_date = models.DateTimeField(auto_now_add=True)
+	runtime = models.IntegerField(default=0, help_text=_('Runtime in milliseconds'))
 	
 	def title(self):
 		""" Returns the title of the Checker that did run. """
@@ -329,11 +331,7 @@ def run_checks(solution, env, run_all):
 	"""  """
 
 	passed_checkers = set()
-	
-	# Run all checkers of task
-	checker_classes = filter(lambda x:issubclass(x,Checker), models.get_models())
-	unsorted_checker = sum(map(lambda x: list(x.objects.filter(task=solution.task)), checker_classes),[])
-	checkers = sorted(unsorted_checker, key=lambda checker: checker.order)
+	checkers = solution.task.get_checkers()
 
 	solution_accepted = True
 	solution.warnings = False
@@ -346,6 +344,8 @@ def run_checks(solution, env, run_all):
 				for passed_checker in passed_checkers:
 					passed_requirement = passed_requirement or issubclass(passed_checker, requirement)
 				can_run_checker = can_run_checker and passed_requirement
+
+			start_time = time.time()
 								
 			if can_run_checker: 
 				# Invoke Checker 
@@ -366,6 +366,8 @@ def run_checks(solution, env, run_all):
 				result.set_log(u"Checker konnte nicht ausgeführt werden, da benötigte Checker nicht bestanden wurden.")
 				result.set_passed(False)
 				
+			elapsed_time = time.time() - start_time
+			result.runtime = int(elapsed_time*1000)
 			result.save()
 
 			if not result.passed and checker.show_publicly(result.passed):

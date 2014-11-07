@@ -19,6 +19,7 @@ import codecs
 from tasks.models import Task
 from solutions.models import Solution, SolutionFile
 from solutions.forms import SolutionFormSet
+from checker.models import CheckerResult
 from attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, Script, RatingScale, RatingScaleItem
 from attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm, ScriptForm, PublishFinalGradeForm, GenerateRatingScaleForm
 from accounts.models import User, Tutorial
@@ -104,13 +105,31 @@ def statistics(request,task_id):
 	for i,r in enumerate(all_ratings):
 		all_ratings[i]['ratings'] = [list(rating) for rating in r['ratings'].annotate(Count('id')).values_list('position','id__count')]
 
+        runtimes = []
+        for checker in task.get_checkers():
+            checker_runtimes = []
+            for result in checker.results.filter(runtime__gt = 0):
+                checker_runtimes.append({ 'date': result.creation_date, 'value': result.runtime})
+
+        runtimes.append({
+            'checker': checker.title(),
+            'runtimes': checker_runtimes
+            })
 	
-	return render_to_response("attestation/statistics.html", {'task':task, \
-															'user_count': user_count, 'solution_count': final_solution_count,\
-															'submissions':submissions, 'submissions_final':submissions_final, 'creation_times':creation_times, 'creation_times_final':creation_times_final, 'acc_submissions':acc_submissions, \
-															'attestations':attestations, \
-															'final_grade_rating_scale_items' :final_grade_rating_scale_items, 'all_ratings':all_ratings, \
-															}, context_instance=RequestContext(request))
+	return render_to_response("attestation/statistics.html",
+            {'task':                           task,
+            'user_count':                      user_count,
+            'solution_count':                  final_solution_count,
+            'submissions':                     submissions,
+            'submissions_final':               submissions_final,
+            'creation_times':                  creation_times,
+            'creation_times_final':            creation_times_final,
+            'acc_submissions':                 acc_submissions,
+            'attestations':                    attestations,
+            'final_grade_rating_scale_items':  final_grade_rating_scale_items,
+            'all_ratings':                     all_ratings,
+            'runtimes':                        runtimes,
+            }, context_instance=RequestContext(request))
 
 def daterange(start_date, end_date):
     for n in range((end_date - start_date).days + 1):
