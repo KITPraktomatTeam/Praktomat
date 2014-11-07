@@ -106,15 +106,15 @@ def statistics(request,task_id):
 		all_ratings[i]['ratings'] = [list(rating) for rating in r['ratings'].annotate(Count('id')).values_list('position','id__count')]
 
         runtimes = []
-        for checker in task.get_checkers():
+        for i, checker in enumerate(task.get_checkers()):
             checker_runtimes = []
             for result in checker.results.filter(runtime__gt = 0):
                 checker_runtimes.append({ 'date': result.creation_date, 'value': result.runtime})
 
-        runtimes.append({
-            'checker': checker.title(),
-            'runtimes': checker_runtimes
-            })
+            runtimes.append({
+                'checker': "%d: %s" % (i, checker.title()),
+                'runtimes': checker_runtimes
+                })
 	
 	return render_to_response("attestation/statistics.html",
             {'task':                           task,
