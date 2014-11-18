@@ -106,6 +106,7 @@
 			}]
 		});
 
+{% if has_runtime_chart %}
 		var runtime_chart = new Highcharts.Chart({
 			chart: {
 				renderTo: 'runtime_chart',
@@ -165,7 +166,7 @@
 			{% endfor %}
 			]
 		});
-                
+{% endif %}
     			
         function date_to_timestr(d) {
         	var h = d.getHours();
@@ -398,6 +399,10 @@ var final_grade_chart_{{forloop.counter}} = grade_chart('final_grade_chart_{{for
 	<p>{{ratings.desc}}</p><br/><br/>
 {% endfor %}
 {% endif %}
+
+{% if has_runtime_chart %}
 <div id="runtime_chart"></div>
 <p>Shows the time it took to process each of the checkers.</p>
+{% endif %}
+
 {% endblock %}

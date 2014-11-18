@@ -105,10 +105,12 @@ def statistics(request,task_id):
 	for i,r in enumerate(all_ratings):
 		all_ratings[i]['ratings'] = [list(rating) for rating in r['ratings'].annotate(Count('id')).values_list('position','id__count')]
 
+	has_runtimes = False
         runtimes = []
         for i, checker in enumerate(task.get_checkers()):
             checker_runtimes = []
             for result in checker.results.filter(runtime__gt = 0):
+		has_runtimes = True
                 checker_runtimes.append({ 'date': result.creation_date, 'value': result.runtime})
 
             runtimes.append({
@@ -129,6 +131,7 @@ def statistics(request,task_id):
             'final_grade_rating_scale_items':  final_grade_rating_scale_items,
             'all_ratings':                     all_ratings,
             'runtimes':                        runtimes,
+            'has_runtime_chart':               has_runtimes,
             }, context_instance=RequestContext(request))
 
 def daterange(start_date, end_date):
