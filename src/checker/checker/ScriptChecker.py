@@ -51,7 +51,7 @@ class ScriptChecker(Checker):
 
 		script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
 
-		[output, error, exitcode,timed_out] = execute_arglist(
+		[output, error, exitcode,timed_out, oom_ed] = execute_arglist(
                             args,
                             working_directory=env.tmpdir(),
                             environment_variables=environ,
@@ -67,11 +67,11 @@ class ScriptChecker(Checker):
 
 		if self.remove:
 			output = re.sub(self.remove, "", output)
-		if not self.returns_html or truncated or timed_out:
+		if not self.returns_html or truncated or timed_out or oom_ed:
 			output = '<pre>' + escape(output) + '</pre>'
 
 		result.set_log(output,timed_out=timed_out,truncated=truncated)
-		result.set_passed(not exitcode and not timed_out and not truncated)
+		result.set_passed(not exitcode and not timed_out and not oom_ed and not truncated)
 		
 		return result
 	

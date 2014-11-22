@@ -98,7 +98,7 @@ class HaskellTestFrameWorkChecker(CheckerWithFile):
 		environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
 
 		cmd = ["./"+self.module_binary_name(), "--maximum-generated-tests=5000"]
-		[output, error, exitcode,timed_out] = execute_arglist(cmd, env.tmpdir(),environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE)
+		[output, error, exitcode,timed_out, oom_ed] = execute_arglist(cmd, env.tmpdir(),environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE)
 
 		result = self.create_result(env)
 
@@ -110,8 +110,8 @@ class HaskellTestFrameWorkChecker(CheckerWithFile):
                         output += testsuit_template.render(Context({'showSource' : (self.include_testcase_in_report=="FULL"), 'testfile' : self.file, 'testfilename' : self.path_relative_to_sandbox(), 'testfileContent': encoding.get_unicode(self.file.read())}))
 
 
-		result.set_log(output,timed_out=timed_out,truncated=truncated)
-		result.set_passed(not exitcode and not timed_out and self.output_ok(output) and not truncated)
+		result.set_log(output,timed_out=timed_out or oom_ed,truncated=truncated)
+		result.set_passed(not exitcode and not timed_out and not oom_ed and self.output_ok(output) and not truncated)
 		return result
 
 class HaskellTestFrameWorkCheckerInline(CheckerInline):

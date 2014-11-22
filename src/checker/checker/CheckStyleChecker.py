@@ -33,7 +33,7 @@ class CheckStyleChecker(Checker):
 		
 		# Run the tests
 		args = [settings.JVM, "-cp", settings.CHECKSTYLEALLJAR, "-Dbasedir=.", "com.puppycrawl.tools.checkstyle.Main", "-c", "checks.xml"] + [name for (name,content) in env.sources()]
-		[output, error, exitcode,timed_out] = execute_arglist(args, env.tmpdir())
+		[output, error, exitcode,timed_out, oom_ed] = execute_arglist(args, env.tmpdir())
 		
 		# Remove Praktomat-Path-Prefixes from result:
 		output = re.sub(r"^"+re.escape(env.tmpdir())+"/+","",output,flags=re.MULTILINE)
@@ -43,10 +43,12 @@ class CheckStyleChecker(Checker):
 		log = '<pre>' + escape(output) + '</pre>'
 		if timed_out:
 			log = log + '<div class="error">Timeout occured!</div>'
+		if oom_ed:
+			log = log + '<div class="error">Out of memory!</div>'
 		result.set_log(log)
 
 		
-		result.set_passed(not timed_out and not exitcode and (not re.match('Starting audit...\nAudit done.', output) == None))
+		result.set_passed(not timed_out and not oom_ed and not exitcode and (not re.match('Starting audit...\nAudit done.', output) == None))
 		
 		return result
 	

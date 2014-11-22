@@ -74,7 +74,7 @@ class JUnitChecker(Checker):
 		environ['POLICY'] = os.path.join(script_dir,"junit.policy")
 
 		cmd = [settings.JVM_SECURE, "-cp", settings.JAVA_LIBS[self.junit_version]+":.", self.runner(), self.class_name]
-		[output, error, exitcode,timed_out] = execute_arglist(cmd, env.tmpdir(),environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE, extradirs=[script_dir])
+		[output, error, exitcode,timed_out, oom_ed] = execute_arglist(cmd, env.tmpdir(),environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE, extradirs=[script_dir])
 
 		result = self.create_result(env)
 
@@ -82,8 +82,8 @@ class JUnitChecker(Checker):
 		output = '<pre>' + escape(self.test_description) + '\n\n======== Test Results ======\n\n</pre><br/><pre>' + escape(output) + '</pre>'
 
 
-		result.set_log(output,timed_out=timed_out,truncated=truncated)
-		result.set_passed(not exitcode and not timed_out and self.output_ok(output) and not truncated)
+		result.set_log(output,timed_out=timed_out or oom_ed,truncated=truncated)
+		result.set_passed(not exitcode and not timed_out and not oom_ed and self.output_ok(output) and not truncated)
 		return result
 
 #class JUnitCheckerForm(AlwaysChangedModelForm):

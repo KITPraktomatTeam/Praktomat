@@ -118,7 +118,7 @@ class Builder(Checker):
 		filenames = [name for name in self.get_file_names(env)]
 		args = [self.compiler()] + self.output_flags(env) + self.flags(env) + filenames + self.libs()
 		script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
-		[output,_,_,_]  = execute_arglist(args, env.tmpdir(),self.environment(), extradirs=[script_dir])
+		[output,_,_,_,_]  = execute_arglist(args, env.tmpdir(),self.environment(), extradirs=[script_dir])
 
 		output = escape(output)
 		output = self.enhance_output(env, output)

@@ -76,7 +76,7 @@ class RChecker(Checker):
 				scriptname = R_files[0]
 
 		args = ["Rscript", scriptname]
-		(output, error, exitcode, timed_out) = execute_arglist(
+		(output, error, exitcode, timed_out, oom_ed) = execute_arglist(
 			args,
 			env.tmpdir(),
 			timeout=settings.TEST_TIMEOUT,
@@ -86,6 +86,9 @@ class RChecker(Checker):
 
 		if timed_out:
 			output += "\n\n---- script execution aborted, took too long ----\n"
+
+		if oom_ed:
+			output += "\n\n---- script execution aborted, out of memory ----\n"
 
 		if exitcode != 0:
 			output += "\n\n---- Rscript finished with exitcode %d ----\n" % exitcode
@@ -104,6 +107,7 @@ class RChecker(Checker):
 		result.set_log('<pre>' + escape(output) + '</pre>')
 		result.set_passed(exitcode == 0
 			and not timed_out
+			and not oom_ed
 			and not (self.require_plots and not rplots_exists))
 
 		return result

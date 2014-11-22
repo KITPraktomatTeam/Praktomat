@@ -124,7 +124,7 @@ class DejaGnuTester(Checker, DejaGnu):
 		environ['HOME'] = testsuite
 		environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
 
-		[output, error, exitcode,timed_out] = \
+		[output, error, exitcode, timed_out, oom_ed] = \
                     execute_arglist(
                         cmd,
                         testsuite,
@@ -145,8 +145,8 @@ class DejaGnuTester(Checker, DejaGnu):
 		complete_output = self.htmlize_output(output + log)
 
 		result = self.create_result(env)
-		result.set_log(complete_output,timed_out=timed_out)
-		result.set_passed(not exitcode and not timed_out and self.output_ok(complete_output))
+		result.set_log(complete_output,timed_out=timed_out or oom_ed)
+		result.set_passed(not exitcode and not timed_out and not oom_ed and self.output_ok(complete_output))
 		return result
 
 

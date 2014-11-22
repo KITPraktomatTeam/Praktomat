@@ -33,7 +33,7 @@ class JavaBuilder(Builder):
 			for filename in files:
 				if filename.endswith(".class"):
 					class_files.append(filename)
-					[classinfo,_,_,_]  = execute_arglist([settings.JCLASSINFO, "--methods", "--general-info", os.path.join(dirpath,filename)], env.tmpdir(), self.environment())
+					[classinfo,_,_,_,_]  = execute_arglist([settings.JCLASSINFO, "--methods", "--general-info", os.path.join(dirpath,filename)], env.tmpdir(), self.environment())
 					if string.find(classinfo,main_method) >= 0:
 						main_class_name = class_name.search(classinfo, re.MULTILINE).group(4)
 						return main_class_name

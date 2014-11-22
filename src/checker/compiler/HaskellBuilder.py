@@ -46,7 +46,7 @@ class HaskellBuilder(Builder):
 
 		filenames = [name for name in self.get_file_names(env)]
 		args = [self.compiler()] + self.flags(env) + filenames + self.libs()
-		[output,_,_,_]  = execute_arglist(args, env.tmpdir(),self.environment())
+		[output,_,_,_,_]  = execute_arglist(args, env.tmpdir(),self.environment())
 
                 has_main = re.search(r"^Linking ([^ ]*) ...$",output,re.MULTILINE)
                 if has_main: self._detected_main = has_main.group(1)

@@ -91,7 +91,10 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
 	if settings.USESAFEDOCKER and process.returncode == 23: #magic value
 		timed_out = True
 
-	return [output, error, process.returncode, timed_out]
+	if settings.USESAFEDOCKER and process.returncode == 24: #magic value
+		oom_ed = True
+
+	return [output, error, process.returncode, timed_out, oom_ed]
 
 
 
