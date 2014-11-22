@@ -73,6 +73,7 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
 		preexec_fn=prepare_subprocess)
 
 	timed_out = False
+	oom_ed = False
 	try:
 		[output, error] = process.communicate(timeout=timeout)
 	except subprocess32.TimeoutExpired:
