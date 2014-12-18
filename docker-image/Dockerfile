@@ -25,6 +25,7 @@ RUN Rscript -e 'install.packages("evir", dependencies=TRUE)'
 RUN Rscript -e 'install.packages("xts", dependencies=TRUE)'
 RUN Rscript -e 'install.packages("fGarch", dependencies=TRUE)'
 RUN Rscript -e 'install.packages("vars", dependencies=TRUE)'
+RUN Rscript -e 'install.packages("moments", dependencies=TRUE)'
 
 
 RUN echo "praktomat:x:1001:1001:,,,:/home/praktomat:/bin/bash" >> /etc/passwd
