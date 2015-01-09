@@ -35,7 +35,7 @@ class SolutionAdmin(admin.ModelAdmin):
 			  	}),)
 	readonly_fields=["task", "show_author", "creation_date", "accepted", "final", "warnings",'useful_links']
 	inlines =  [CheckerResultInline, SolutionFileInline]
-	actions = ['run_checkers','run_checkers_all']
+	actions = ['run_checkers','run_checkers_all', 'mark_plagiarism', 'mark_no_plagiarism']
 
 	def run_checkers_all(self, request, queryset):
 		""" Run Checkers (including those not run at submission) for selected solution """
@@ -44,13 +44,31 @@ class SolutionAdmin(admin.ModelAdmin):
 
 	run_checkers_all.short_description = "Run Checkers (including those not run at submission) for selected solution "
 
-
 	def run_checkers(self, request, queryset):
 		""" Run Checkers (only those also run at submission) for selected solutions"""
 		check_multiple(queryset,False)
 		self.message_user(request, "Checkers (only those also run at submission) for selected solutions were successfully run.")
 
-	run_checkers.short_description = " Run Checkers (only those also run at submission) for selected solutions"
+	run_checkers.short_description = "Run Checkers (only those also run at submission) for selected solutions"
+		
+	def mod_plagiarism(self, queryset, value):
+		count = 0
+		for s in queryset:
+			if s.plagiarism != value:
+				s.plagiarism = value
+				s.save()
+				count += 1
+ 		return count
+
+	def mark_plagiarism(self, request, queryset):
+		count = self.mod_plagiarism(queryset, True)
+		self.message_user(request, "%d solutions marked as plagiated" % count)
+	mark_plagiarism.short_description = "Mark as plagiated"
+
+	def mark_no_plagiarism(self, request, queryset):
+		count = self.mod_plagiarism(queryset, False)
+		self.message_user(request, "%d solutions marked as not plagiated" % count)
+	mark_no_plagiarism.short_description = "Mark as not plagiated"
 		
 
 	def edit(self,solution):
