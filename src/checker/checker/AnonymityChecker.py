@@ -11,6 +11,7 @@ import tempfile
 import fnmatch
 
 from django.db import models
+from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
 from checker.models import Checker
 
@@ -63,12 +64,14 @@ class AnonymityChecker(Checker):
 	
 	def title(self):
 		"""Returns the title for this checker category."""
-		return "Anonymitaet sicherstellen"
+		# _de("Anonymitaet sicherstellen")
+		return ugettext("Ensure anonymous submission")
 	
 	@staticmethod
 	def description():
 		""" Returns a description for this Checker. """
-		return u"Diese Prüfung ist bestanden, wenn alle eingereichten Dateien weder Ihren Vor- noch Ihre Nachnamen enthalten."
+		#_de(u"Diese Prüfung ist bestanden, wenn alle eingereichten Dateien weder Ihren Vor- noch Ihre Nachnamen enthalten.")
+		return ugettext("This check fails if a submitted file contains your first or last name.")
 	
 	def run(self, env):
 		result = self.create_result(env)
