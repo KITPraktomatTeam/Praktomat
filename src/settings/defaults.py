@@ -7,6 +7,7 @@ no_defaults = [ "SITE_NAME", "PRAKTOMAT_ID", "BASE_HOST", "BASE_PATH", "UPLOAD_R
 
 import os
 from os.path import dirname, join
+import utilities.log_filter
 
 def load_defaults(settings):
     missing = [ v for v in no_defaults if v not in settings]
@@ -347,6 +348,24 @@ def load_defaults(settings):
     d.DEBUG_TOOLBAR_PATCH_SETTINGS = False
     d.DEBUG_TOOLBAR_CONFIG = {
         'SHOW_TOOLBAR_CALLBACK': 'settings.defaults.show_toolbar',
+    }
+
+    d.LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'filters': {
+            'skip_unreadable_posts': {
+                '()': 'django.utils.log.CallbackFilter',
+                'callback': utilities.log_filter.skip_unreadable_post,
+            }
+        },
+        'handlers': {
+            'mail_admins': {
+                'level': 'ERROR',
+                'filters': ['skip_unreadable_posts'],
+                'class': 'django.utils.log.AdminEmailHandler'
+            }
+        },
     }
 
 # Always show toolbar (if DEBUG is true)
