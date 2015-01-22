@@ -29,7 +29,7 @@ class SolutionFileInline(admin.TabularInline):
 class SolutionAdmin(admin.ModelAdmin):
 	model = Solution
 	list_display = ["edit", "view_url", "download_url", "run_checker_url", "task", "show_author", "number", "creation_date", "final", "accepted", "warnings", "latest_of_only_failed", "plagiarism"]
-	list_filter = ["task", "author", "creation_date", "final", "accepted", "warnings", "plagiarism"]
+	list_filter = ["task", "author", "author__groups", "creation_date", "final", "accepted", "warnings", "plagiarism"]
 	fieldsets = ((None, {
 		  			'fields': ( "task", "show_author", "creation_date", ("final", "accepted", "warnings"), "plagiarism",'useful_links')
 			  	}),)
