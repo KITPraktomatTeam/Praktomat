@@ -11,8 +11,7 @@ import tempfile
 import fnmatch
 
 from django.db import models
-from django.utils.translation import ugettext
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from checker.models import Checker
 
 from django.template.defaultfilters import escape
@@ -65,13 +64,13 @@ class AnonymityChecker(Checker):
 	def title(self):
 		"""Returns the title for this checker category."""
 		# _de("Anonymitaet sicherstellen")
-		return ugettext("Ensure anonymous submission")
+		return _("Ensure anonymous submission")
 	
 	@staticmethod
 	def description():
 		""" Returns a description for this Checker. """
 		#_de(u"Diese Prüfung ist bestanden, wenn alle eingereichten Dateien weder Ihren Vor- noch Ihre Nachnamen enthalten.")
-		return ugettext("This check fails if a submitted file contains your first or last name.")
+		return _("This check fails if a submitted file contains your first or last name.")
 	
 	def run(self, env):
 		result = self.create_result(env)
@@ -99,8 +98,8 @@ class AnonymityChecker(Checker):
 
 				if firstrun:
 					log += "<H4>" + escape(fullfname) + "</H4>"
-					log += "Die Datei enth&auml;lt Ihren Namen "
-					log += "oder Ihre Benutzerkennung:<p>"
+                    #_de("Die Datei enth&auml;lt Ihren Namen oder Ihre Benutzerkennung:")
+					log += _("The file contains your name or user id:") + "<p>"
 					firstrun = 0
 					passed = 0
 				
@@ -108,12 +107,16 @@ class AnonymityChecker(Checker):
 				
 
 		if not passed:
-			log += u"""<p>Praktomat unterstützt 
-			<em>anonymes Bewerten</em> - der Bewerter kennt nur Ihr
-			Programm, nicht aber Ihren Namen.  Um anonymes Bewerten zu
-			ermöglichen, darf Ihr Name nicht im Programmtext auftreten.<p>
-			Bitte ändern Sie den Programmtext 
-			und versuchen Sie es noch einmal."""
+			# _de("""<p>Praktomat unterstützt 
+			# <em>anonymes Bewerten</em> - der Bewerter kennt nur Ihr
+			# Programm, nicht aber Ihren Namen.  Um anonymes Bewerten zu
+			# ermöglichen, darf Ihr Name nicht im Programmtext auftreten.<p>
+			# Bitte ändern Sie den Programmtext 
+			# und versuchen Sie es noch einmal.""")
+			log += _("""<p>Praktomat supports <em>anonymous marking</em>,
+i.e. the person who marks only sees your submission, but not your name or identity.
+To allow anonymous marking, your name and user id is not allowed to appear in your submission.<p>
+Please remove your name and user id and submit again.""")
 			
 		result.set_log(log)
 		result.set_passed(passed) 
