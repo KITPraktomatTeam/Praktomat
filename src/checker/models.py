@@ -123,7 +123,7 @@ class CheckerEnvironment:
 	def __init__(self, solution):
 		""" Constructor: Creates a standard environment. """
 		# Temporary build directory
-		sandbox = os.path.join(settings.UPLOAD_ROOT, "SolutionSandbox")
+		sandbox = settings.SANDBOX_DIR
 		self._tmpdir = file_operations.create_tempfolder(sandbox)
 		# Sources as [(name, content)...]
 		self._sources = []   

@@ -123,6 +123,12 @@ def load_defaults(settings):
 
     d.STATIC_ROOT = join(PRAKTOMAT_ROOT, "static")
 
+
+    # This directory is used to compiling and running the users code.
+    # As such it is temporary, and might be put on a tmpfs mount, to speed
+    # up the processing
+    d.SANDBOX_DIR = join(UPLOAD_ROOT, 'SolutionSandbox')
+
     d.ROOT_URLCONF = 'urls'
 
     d.LOGIN_REDIRECT_URL = 'task_list'
