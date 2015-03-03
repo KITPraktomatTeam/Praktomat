@@ -10,7 +10,7 @@ import resource
 
 from django.conf import settings
 
-def execute_arglist(args, working_directory, environment_variables={}, timeout=None, maxmem=None, fileseeklimit=None, extradirs=[]):
+def execute_arglist(args, working_directory, environment_variables={}, timeout=None, maxmem=None, fileseeklimit=None, extradirs=[], unsafe=False):
 	""" Wrapper to execute Commands with the praktomat testuser. Excpects Command as list of arguments, the first being the execeutable to run. """
 	assert isinstance(args, list)
 
@@ -24,7 +24,9 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
 
 	sudo_prefix = ["sudo", "-E", "-u", "tester"]
 
-	if settings.USEPRAKTOMATTESTER:
+        if unsafe:
+                command = []
+	elif settings.USEPRAKTOMATTESTER:
 		command = sudo_prefix
 	elif settings.USESAFEDOCKER:
 		command = ["sudo", "safe-docker"]
@@ -80,7 +82,7 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
 		timed_out = True
 		term_cmd = ["pkill","-TERM","-s",str(process.pid)]
 		kill_cmd = ["pkill","-KILL","-s",str(process.pid)]
-		if settings.USEPRAKTOMATTESTER:
+		if not unsafe and settings.USEPRAKTOMATTESTER:
 			term_cmd = sudo_prefix + term_cmd
 			kill_cmd = sudo_prefix + kill_cmd
 		subprocess32.call(term_cmd)
