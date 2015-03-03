@@ -45,11 +45,13 @@ class Task(models.Model):
 	
 	def check_all_final_solutions(self):
 		from checker.models import check_multiple
-		check_multiple(self.solution_set.filter(final=True), True)
+		final_solutions = self.solution_set.filter(final=True)
+		count = check_multiple(final_solutions, True)
 
 		if self.expired():
 				self.all_checker_finished = True
 				self.save()
+                return final_solutions.count()
 
         def get_checkers(self):
             from checker.models import Checker

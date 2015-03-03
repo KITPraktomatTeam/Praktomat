@@ -15,6 +15,7 @@ from solutions.models import Solution, SolutionFile
 from attestation.admin import RatingAdminInline
 
 from checker.admin import CheckerInline
+from timeit import default_timer as timer
 
 admin.autodiscover()
 
@@ -69,9 +70,12 @@ class TaskAdmin(admin.ModelAdmin):
 	
 	def run_all_checkers(self, request, queryset):
 		""" Rerun all checker including "not always" action """
+		start = timer()
+		count = 0
 		for task in queryset:
-			task.check_all_final_solutions()
-		self.message_user(request, "All final solutions were successfully checked.")
+			count += task.check_all_final_solutions()
+		end = timer()
+		self.message_user(request, "%d final solutions were successfully checked (%d seconds elapsed)." % (count, end-start))
 
 	def get_urls(self):
 		""" Add URL to task import """
