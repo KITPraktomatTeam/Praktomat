@@ -109,6 +109,9 @@ CHECKSTYLEALLJAR = '/srv/praktomat/contrib/checkstyle-5.7-all.jar'
 #JAVA_BINARY = 'javac-sun-1.7'
 #JVM = 'java-sun-1.7'
 
+# Our VM has 4 cores, so lets try to use them
+NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 6
+
 # Finally load defaults for missing setttings.
 import defaults
 defaults.load_defaults(globals())
