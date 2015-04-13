@@ -359,7 +359,7 @@ def view_attestation(request, attestation_id):
 		form = AttestationPreviewForm(instance=attest)
 		submitable = may_modify and not attest.published
 		withdrawable = may_modify and attest.published
-                return render_to_response("attestation/attestation_view.html", {"attest": attest, 'submitable':submitable, 'withdrawable': withdrawable, 'form':form, 'show_author': not get_settings().anonymous_attestation},	context_instance=RequestContext(request))
+                return render_to_response("attestation/attestation_view.html", {"attest": attest, 'submitable':submitable, 'withdrawable': withdrawable, 'form':form, 'show_author': not get_settings().anonymous_attestation, 'show_attestor': not get_settings().invisible_attestor},	context_instance=RequestContext(request))
 
 
 def user_task_attestation_map(users,tasks,only_published=True):
