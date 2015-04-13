@@ -11,6 +11,8 @@ from utilities.nub import nub
 import difflib
 
 from accounts.models import User
+from configuration import get_settings
+
 
 class Attestation(models.Model):
 	""""""
@@ -45,10 +47,13 @@ class Attestation(models.Model):
                         'domain': RequestSite(request).domain,
                         'site_name': settings.SITE_NAME,
                         'by': by,
+                        'invisible_attestor' : get_settings().invisible_attestor,
                         }
                 subject = _("New attestation for your solution of the task '%s'") % self.solution.task
                 body = t.render(Context(c))
-                headers = {'Reply-To': self.author.email} if self.author.email else None
+                reply_to = ([self.author.email]                    if self.author.email and (not get_settings().invisible_attestor) else []) \
+                         + ([get_settings().attestation_reply_to]  if get_settings().attestation_reply_to else [])
+                headers = {'Reply-To': ', '.join(reply_to)} if reply_to else None
                 email = EmailMessage(subject, body, None, (email,), headers = headers)
                 email.send()
 

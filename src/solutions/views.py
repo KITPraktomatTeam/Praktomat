@@ -79,7 +79,7 @@ def solution_list(request, task_id, user_id=None):
 	attestationsPublished = attestations[0].published if attestations else False
 
 	return render_to_response("solutions/solution_list.html",
-                {"formset": formset, "task":task, "solutions": solutions, "final_solution":final_solution, "attestationsPublished":attestationsPublished, "author":author},
+                {"formset": formset, "task":task, "solutions": solutions, "final_solution":final_solution, "attestationsPublished":attestationsPublished, "author":author, "invisible_attestor":get_settings().invisible_attestor},
 		context_instance=RequestContext(request))
 @login_required
 def test_upload(request, task_id):

@@ -32,7 +32,13 @@ class SettingsAdmin(admin.ModelAdmin):
                     'accept_all_solutions',
                     'anonymous_attestation',
                 )
-            })
+            }),
+            ('Attestation Publishing/Viewing', {
+             	'fields': (
+             		'invisible_attestor',
+             		'attestation_reply_to',
+             	)
+			})
         )
 	inlines = [ChunkInline]
 

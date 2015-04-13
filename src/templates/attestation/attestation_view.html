@@ -44,7 +44,7 @@
 {% block content %}<div id='attestation_view'>
 
 <h1>{% trans "Attestation"%}: {{attest.solution.task.title}}</h1>
-<p id='author'>by {{attest.author.get_full_name}} {% if show_author or user.is_trainer or attest.published %} for {{attest.solution.author}} {% endif %}</p>
+<p id='author'>{% if invisible_attestor %}by {{attest.author.get_full_name}}{% endif %} {% if show_author or user.is_trainer or attest.published %} for {{attest.solution.author}} {% endif %}</p>
 
 {% if attest.private_comment %}
 	{% if user.is_trainer or user.is_tutor %}

@@ -1,6 +1,10 @@
 {% load i18n %}{% autoescape off %}{% trans "Hello " %}{{attest.solution.author}},
 {% with attest.solution.task as task %}
+{% if invisible_attestor %}
+{% blocktrans %}your solution to the task "{{task}}" has been attested.{% endblocktrans %}{% endwith%}
+{% else %}
 {% blocktrans %}your solution to the task "{{task}}" has been attested by {{by}}.{% endblocktrans %}{% endwith%}
+{% endif %}
 
 You can view your attest here:
 {{protocol}}://{{ domain }}{% url "view_attestation" attestation_id=attest.id %}

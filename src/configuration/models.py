@@ -65,6 +65,19 @@ class Settings(models.Model):
                 help_text="If enabeld, all users can see their final grades."
             )
 
+	
+	invisible_attestor = \
+            models.BooleanField(
+                default=False,
+                help_text="If enabeld, users will not learn which tutor wrote attestations to his solutions. In particular, tutors will not ne named in Attestation-Emails."
+            )
+
+	attestation_reply_to = \
+			models.EmailField(
+				blank=True,
+				help_text="Addiotional Reply-To: Address to be set for Attestation emails."
+			)
+
 class Chunk(models.Model):
 	""" A Chunk is a piece of content associated with a unique key that can be inserted into any template with the use of a special template tag """
 	settings = models.ForeignKey(
