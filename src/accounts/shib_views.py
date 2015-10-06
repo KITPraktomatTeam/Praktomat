@@ -34,9 +34,7 @@ def parse_attributes(META):
 
 
 def render_forbidden(*args, **kwargs):
-	httpresponse_kwargs = {'mimetype': kwargs.pop('mimetype', None)}
-	return HttpResponseForbidden(loader.render_to_string(*args, **kwargs),
-									 **httpresponse_kwargs)
+	return HttpResponseForbidden(loader.render_to_string(*args, **kwargs))
 
 @shibboleth_support_required
 def shib_hello(request):
