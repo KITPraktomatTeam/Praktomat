@@ -13,7 +13,7 @@ from django.template import Context, loader
 from django.conf import settings
 from django.core.mail import send_mail
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.sites.models import RequestSite
+from django.contrib.sites.requests import RequestSite
 
 
 from datetime import datetime

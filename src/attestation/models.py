@@ -5,7 +5,7 @@ from solutions.models import Solution, SolutionFile
 from django.utils.translation import ugettext_lazy as _
 from django.core.mail import EmailMessage
 from django.template import Context, loader
-from django.contrib.sites.models import RequestSite
+from django.contrib.sites.requests import RequestSite
 from datetime import datetime
 from utilities.nub import nub
 import difflib
