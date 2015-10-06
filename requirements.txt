@@ -1,4 +1,4 @@
-Django==1.6.7
+Django==1.7.10
 M2Crypto>=0.21.1
 Markdown>=2.2.1
 Pygments>=1.6rc1
