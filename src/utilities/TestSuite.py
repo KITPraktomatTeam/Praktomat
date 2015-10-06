@@ -11,7 +11,6 @@ class TestSuiteRunner(DiscoverRunner):
 		""" Change the upload root to not mess up the production folder """
 		super(TestSuiteRunner, self).setup_test_environment(**kwargs)
 		settings.UPLOAD_ROOT = self.testSuiteUploadRoot	
-		settings.MEDA_ROOT = self.testSuiteUploadRoot # just in case
 		# storage object is lazy and is not updated by simply updating the settings
 		from django.core.files.storage import default_storage
 		default_storage.location = self.testSuiteUploadRoot
