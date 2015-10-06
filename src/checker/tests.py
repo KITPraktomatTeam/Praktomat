@@ -52,7 +52,7 @@ class TestChecker(TestCase):
 					file = dest
 					)
 		self.solution.check_solution()
-		for checkerresult in self.solution.check_solution.all():
+		for checkerresult in self.solution.checkerresult_set.all():
 			self.failUnless(checkerresult.passed, checkerresult.log)
 
 	def test_createfile_override_checker(self):
@@ -240,10 +240,11 @@ class TestChecker(TestCase):
 			self.failUnless(checkerresult.passed, checkerresult.log)
 
 	def test_dejagnu_checker(self):
-		src = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'GGT', 'solutions', 'javagently', 'Stream.java')	
+		src = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'GGT', 'solutions', 'javagently', 'Stream.java')
 		dest = join(settings.UPLOAD_ROOT, 'directdeposit',  'javagently', 'Stream.java')
 		# circumvent SuspiciousOperation exception
 		copy_file(src,dest)
+                print dest
 		CreateFileChecker.CreateFileChecker.objects.create(
 					task = self.task,
 					order = 0,

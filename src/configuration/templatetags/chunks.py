@@ -1,10 +1,10 @@
 from django import template
-from django.db import models
+from django.db.models.loading import get_model
 from django.core.cache import cache
 
 register = template.Library()
 
-Chunk = models.get_model('configuration', 'chunk')
+Chunk = get_model('configuration', 'chunk')
 CACHE_PREFIX = "chunk_"
 
 def do_get_chunk(parser, token):
