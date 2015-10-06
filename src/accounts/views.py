@@ -116,7 +116,7 @@ def import_user(request):
 				return HttpResponseRedirect(urlresolvers.reverse('admin:accounts_user_changelist'))
 			except:
 				raise
-				from django.forms.util import ErrorList
+				from django.forms.utils import ErrorList
 				msg = "An Error occured. The import file was propably malformed."
 				form._errors["file"] = ErrorList([msg]) 			
 	else:

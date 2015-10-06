@@ -87,7 +87,7 @@ def import_tasks(request):
                                 messages.success(request, "The import was successfull.")
 				return HttpResponseRedirect(urlresolvers.reverse('admin:tasks_task_changelist'))
 			except Exception, e:
-				from django.forms.util import ErrorList
+				from django.forms.utils import ErrorList
                                 msg = "An Error occured. The import file was propably malformed.: %s" % str(e)
 				form._errors["file"] = ErrorList([msg]) 			
 	else:
