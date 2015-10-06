@@ -29,28 +29,32 @@ RXRUN_BY   = re.compile(r"Run By .* on ")
 # Stuff to remove from output
 RXREMOVE   = re.compile(r"(Schedule of variations:.*interface file.)|(Running \./[ -z]*/[a-z]*\.exp \.\.\.)", re.DOTALL)
 
-class DejaGnu:
+class DejaGnu(object):
 	""" Common superclass for all DejaGnu-related stuff. """
-	
+
 	# Directories
+	@staticmethod
 	def testsuite_dir(self, env):
 		return os.path.join(env.tmpdir(), "testsuite")
 
+	@staticmethod
 	def config_dir(self, env):
 		return os.path.join(self.testsuite_dir(env), "config")
 
+	@staticmethod
 	def lib_dir(self, env):
 		return os.path.join(self.testsuite_dir(env), "lib")
 
+	@staticmethod
 	def tests_dir(self, env):
 		return os.path.join(self.testsuite_dir(env), env.program() + ".tests")
 
+	@staticmethod
 	def setup_dirs(self, env):
 		makedirs(self.testsuite_dir(env))
 		makedirs(self.config_dir(env))
 		makedirs(self.lib_dir(env))
 		makedirs(self.tests_dir(env))
-	
 
 
 class DejaGnuTester(Checker, DejaGnu):
