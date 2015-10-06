@@ -5,7 +5,7 @@ Pygments>=1.6rc1
 chardet>=2.1.1
 django-extensions>=1.0.3,<1.3.0
 django-tinymce>=1.5.2
-django-debug-toolbar==1.2.1
+django-debug-toolbar==1.4
 docutils>=0.10
 subprocess32
 psycopg2
