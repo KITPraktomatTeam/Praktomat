@@ -27,7 +27,7 @@ class TestChecker(TestCase):
 				task = self.task,
 				order = 0
 				)
-		self.solution.check()
+		self.solution.check_solution()
 
 	def test_checkstyle_checker(self):
 		src = join(dirname(dirname(dirname(__file__))), 'examples', 'check style', 'check_ws.xml')	
@@ -39,7 +39,7 @@ class TestChecker(TestCase):
 					order = 0,
 					configuration = dest
 					)
-		self.solution.check()
+		self.solution.check_solution()
 
 	def test_createfile_checker(self):
 		src = join(dirname(dirname(dirname(__file__))), 'examples', 'check style', 'check_ws.xml')	
@@ -51,8 +51,8 @@ class TestChecker(TestCase):
 					order = 0,
 					file = dest
 					)
-		self.solution.check()
-		for checkerresult in self.solution.checkerresult_set.all():
+		self.solution.check_solution()
+		for checkerresult in self.solution.check_solution.all():
 			self.failUnless(checkerresult.passed, checkerresult.log)
 
 	def test_createfile_override_checker(self):
@@ -70,7 +70,7 @@ class TestChecker(TestCase):
 					order = 1,
 					file = dest
 					)
-		self.solution.check()
+		self.solution.check_solution()
 		for checkerresult in self.solution.checkerresult_set.all():
                         if checkerresult.checker.order == 1:
                             self.failIf(checkerresult.passed, checkerresult.log)
@@ -86,7 +86,7 @@ class TestChecker(TestCase):
                                         unpack_zipfile = True,
 					file = dest
 					)
-		self.solution.check()
+		self.solution.check_solution()
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.failUnless(checkerresult.passed, checkerresult.log)
 
@@ -101,7 +101,7 @@ class TestChecker(TestCase):
                                         unpack_zipfile = True,
 					file = dest
 					)
-                self.assertRaises(InvalidZipFile, self.solution.check)
+                self.assertRaises(InvalidZipFile, self.solution.check_solution)
 
 	def test_createfile_zip_override_checker(self):
 		src = join(dirname(dirname(dirname(__file__))), 'examples', 'simple_zip_file.zip')
@@ -120,7 +120,7 @@ class TestChecker(TestCase):
                                         unpack_zipfile = True,
 					file = dest
 					)
-		self.solution.check()
+		self.solution.check_solution()
 		for checkerresult in self.solution.checkerresult_set.all():
                         if checkerresult.checker.order == 1:
                             self.failIf(checkerresult.passed, checkerresult.log)
@@ -133,7 +133,7 @@ class TestChecker(TestCase):
 					order = 0,
 					interface1 = 'Test'
 					)
-		self.solution.check()
+		self.solution.check_solution()
                 # This fails (no good test data)
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.failIf(checkerresult.passed, checkerresult.log)
@@ -143,7 +143,7 @@ class TestChecker(TestCase):
 					task = self.task,
 					order = 0,
 					)
-		self.solution.check()
+		self.solution.check_solution()
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.failUnless(checkerresult.passed, checkerresult.log)
 
@@ -152,7 +152,7 @@ class TestChecker(TestCase):
 					task = self.task,
 					order = 0,
 					)
-		self.solution.check()
+		self.solution.check_solution()
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.failUnless(checkerresult.passed, checkerresult.log)
 
@@ -166,7 +166,7 @@ class TestChecker(TestCase):
 					order = 0,
 					shell_script = dest
 					)
-		self.solution.check()
+		self.solution.check_solution()
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.failUnless(checkerresult.passed, checkerresult.log)
 
@@ -181,7 +181,7 @@ class TestChecker(TestCase):
                                             order = 0,
                                             shell_script = dest
                                             )
-                    self.solution.check()
+                    self.solution.check_solution()
                     for checkerresult in self.solution.checkerresult_set.all():
                             self.assertIn('1', checkerresult.log, "Test did not even start?")
                             self.assertIn('Timeout occured!', checkerresult.log, "Test result does not mention timeout")
@@ -202,7 +202,7 @@ class TestChecker(TestCase):
                                             order = 0,
                                             shell_script = dest
                                             )
-                    self.solution.check()
+                    self.solution.check_solution()
                     for checkerresult in self.solution.checkerresult_set.all():
                             self.assertIn('Begin', checkerresult.log, "Test did not even start? (%s)" % checkerresult.log)
                             self.assertNotIn('End', checkerresult.log, "Test did finish (no timeout?) (%s)" % checkerresult.log)
@@ -222,7 +222,7 @@ class TestChecker(TestCase):
                                             order = 0,
                                             shell_script = dest
                                             )
-                    self.solution.check()
+                    self.solution.check_solution()
                     for checkerresult in self.solution.checkerresult_set.all():
                             self.assertIn('Begin', checkerresult.log, "Test did not even start?")
                             self.assertNotIn('End', checkerresult.log, "Test did finish (no timeout?)")
@@ -235,7 +235,7 @@ class TestChecker(TestCase):
 					order = 0,
 					text = 'System.out'
 					)
-		self.solution.check()
+		self.solution.check_solution()
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.failUnless(checkerresult.passed, checkerresult.log)
 
@@ -276,7 +276,7 @@ class TestChecker(TestCase):
 					test_case = test_case
 					)
 
-		self.solution.check()
+		self.solution.check_solution()
 
 		# Check if they are all finished, or if one of the dependencies failed.
 		for checkerresult in self.solution.checkerresult_set.all():
@@ -295,7 +295,7 @@ class TestChecker(TestCase):
 			order = 0,
 			)
 
-		self.solution.check()
+		self.solution.check_solution()
 
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.assertIn('2', checkerresult.log, "Test did not calculate 1 + 2 (%s)" % checkerresult.log)
@@ -318,7 +318,7 @@ class TestChecker(TestCase):
 			r_script = 'example.R',
 			)
 
-		self.solution.check()
+		self.solution.check_solution()
 
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.assertIn('2', checkerresult.log, "Test did not calculate 1 + 2 (%s)" % checkerresult.log)
@@ -340,7 +340,7 @@ class TestChecker(TestCase):
 			r_script = 'not-example.R',
 			)
 
-		self.solution.check()
+		self.solution.check_solution()
 
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.assertIn('Could not find expected R script', checkerresult.log, "Test did not complain (%s)" % checkerresult.log)
@@ -364,7 +364,7 @@ class TestChecker(TestCase):
 			order = 0,
 			)
 
-		self.solution.check()
+		self.solution.check_solution()
 
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.assertIn('Multiple R scripts found', checkerresult.log, "Test did not complain (%s)" % checkerresult.log)
@@ -378,7 +378,7 @@ class TestChecker(TestCase):
 			filename = "GgT.java",
 			)
 
-		self.solution.check()
+		self.solution.check_solution()
 
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.failUnless(checkerresult.passed, checkerresult.log)
@@ -392,7 +392,7 @@ class TestChecker(TestCase):
 			filename = "does-not-exist",
 			)
 
-		self.solution.check()
+		self.solution.check_solution()
 
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.assertIn('Could not find file', checkerresult.log, "Test did not complain (%s)" % checkerresult.log)

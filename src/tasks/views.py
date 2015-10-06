@@ -124,7 +124,7 @@ def model_solution(request, task_id):
 				# delete will cascade on db level deleting checker results and checker 
 				# as this isn't easily prevented just keep the old solution around until the task is deleted
 				formset.save()		
-				solution.check(request.session)
+				solution.check_solution(request.session)
 				task.model_solution = solution;
 				task.save()
 			except:

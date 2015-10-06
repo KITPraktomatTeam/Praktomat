@@ -69,10 +69,10 @@ class Solution(models.Model):
 			self.task.solutions(self.author).update(final=False)
 		super(Solution, self).save(*args, **kwargs) # Call the "real" save() method.	
 	
-	def check(self, run_secret = 0): 
+	def check_solution(self, run_secret = 0): 
 		"""Builds and tests this solution."""
-		from checker.models import check
-		check(self, run_secret)
+		from checker.models import check_solution
+		check_solution(self, run_secret)
 
 	def attestations_by(self, user):
 		return self.attestation_set.filter(author=user)
@@ -123,15 +123,15 @@ def verify(file, signature):
 	return sign(file) == signature
 
 
+def get_solutionfile_upload_path(instance, filename):
+    solution = instance.solution
+    return 'SolutionArchive/Task_' + unicode(solution.task.id) + '/User_' + solution.author.username + '/Solution_' + unicode(solution.id) + '/' + filename
+
 class SolutionFile(models.Model):
 	"""docstring for SolutionFile"""
 	
-	def _get_upload_path(instance, filename):
-		solution = instance.solution
-		return 'SolutionArchive/Task_' + unicode(solution.task.id) + '/User_' + solution.author.username + '/Solution_' + unicode(solution.id) + '/' + filename
-	
 	solution = models.ForeignKey(Solution)
-	file = models.FileField(upload_to = _get_upload_path, max_length=500, help_text = _('Source code file as part of a solution an archive file (.zip, .tar or .tar.gz) containing multiple solution files.')) 
+	file = models.FileField(upload_to = get_solutionfile_upload_path, max_length=500, help_text = _('Source code file as part of a solution an archive file (.zip, .tar or .tar.gz) containing multiple solution files.')) 
 	mime_type = models.CharField(max_length=100, help_text = _("Guessed file type. Automatically  set on save()."))
 	
 	# ignore hidden or os-specific files, etc. in zipfiles 
@@ -192,7 +192,7 @@ class SolutionFile(models.Model):
 
 	def path(self):
 		""" path of file relative to the zip file, which once contained it """
-		return self.file.name[len(self._get_upload_path('')):]
+		return self.file.name[len(get_solutionfile_upload_path(self, '')):]
 		
 	def content(self):
 		"""docstring for content"""

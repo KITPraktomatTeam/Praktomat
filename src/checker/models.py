@@ -11,7 +11,7 @@ from django.db import models
 from tasks.models import Task
 from solutions.models import Solution
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import fields
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
 from django.core.exceptions import ValidationError
@@ -28,22 +28,22 @@ from multiprocessing import Pool
 from django.db import transaction
 from django import db
 
+def get_checkerfile_storage_path(instance, filename):
+    """ Use this function as upload_to parameter for filefields. """
+    return 'CheckerFiles/Task_%s/%s/%s' % (instance.task.pk, instance.__class__.__name__, filename)
+
 
 class CheckerFileField(DeletingFileField):
     """ Custom filefield with with greater path length and default upload location. Use this in all checker subclasses!"""
-    
-    def get_storage_path(instance, filename):
-        """ Use this function as upload_to parameter for filefields. """
-        return 'CheckerFiles/Task_%s/%s/%s' % (instance.task.pk, instance.__class__.__name__, filename)
-
-    def __init__(self, verbose_name=None, name=None, upload_to=get_storage_path, storage=None, **kwargs):
+ 
+    def __init__(self, verbose_name=None, name=None, upload_to=get_checkerfile_storage_path, storage=None, **kwargs):
         # increment filename legth from 100 to 500
         kwargs['max_length'] = kwargs.get('max_length', 500)
         super(CheckerFileField, self).__init__(verbose_name, name, upload_to, storage, **kwargs)
 
 # Tell South how to handle this field
 from south.modelsinspector import add_introspection_rules
-add_introspection_rules([], ["^checker\.models\.CheckerFileField"])    
+add_introspection_rules([], ["^checker\.models\.CheckerFileField"])
 
 
 
@@ -68,7 +68,7 @@ It is *required* - it must be passed for submission
 	always = models.BooleanField(default=True, help_text = _('The test will run on submission time.'))
 	critical = models.BooleanField(default=False, help_text = _('If this test fails, do not display further test results.'))
 	
-	results = generic.GenericRelation("CheckerResult") # enables cascade on delete.
+	results = GenericRelation("CheckerResult") # enables cascade on delete.
 	
 	class Meta:
 		abstract = True
@@ -196,7 +196,7 @@ class CheckerResult(models.Model):
 	solution = models.ForeignKey(Solution)
 	content_type = models.ForeignKey(ContentType) 
 	object_id = models.PositiveIntegerField() 
-	checker = generic.GenericForeignKey('content_type','object_id') 
+	checker = GenericForeignKey('content_type','object_id') 
 	
 	passed = models.BooleanField(default=True,  help_text=_('Indicates whether the test has been passed'))
 	log = models.TextField(help_text=_('Text result of the checker'))
@@ -242,23 +242,23 @@ class CheckerResult(models.Model):
 		artefact = CheckerResultArtefact(result = self, filename=filename)
 		artefact.file.save(filename, File(file(path)))
 
+def get_checkerresultartefact_upload_path(instance, filename):
+    result = instance.result
+    solution = result.solution
+    return os.path.join(
+        'SolutionArchive',
+        'Task_' + unicode(solution.task.id),
+        'User_' + solution.author.username,
+        'Solution_' + unicode(solution.id),
+        'Result_' + unicode(result.id),
+        filename)
 
 class CheckerResultArtefact(models.Model):
-    def _get_upload_path(instance, filename):
-        result = instance.result
-        solution = result.solution
-        return os.path.join(
-            'SolutionArchive',
-            'Task_' + unicode(solution.task.id),
-            'User_' + solution.author.username,
-            'Solution_' + unicode(solution.id),
-            'Result_' + unicode(result.id),
-            filename)
 
     result = models.ForeignKey(CheckerResult, related_name='artefacts')
     filename = models.CharField(max_length=128)
     file = models.FileField(
-        upload_to = _get_upload_path,
+        upload_to = get_checkerresultartefact_upload_path,
         max_length=500,
         help_text = _('Artefact produced by a checker')
         )
@@ -284,7 +284,7 @@ def solution_file_delete(sender, instance, **kwargs):
     except OSError:
         pass
 
-def check(solution, run_all = 0): 
+def check_solution(solution, run_all = 0): 
 	"""Builds and tests this solution."""
 	
 	# Delete previous results if the checker have already been run
@@ -307,7 +307,7 @@ def check_with_own_connection(solution,run_all = True):
 	# Close the current db connection - will cause Django to create a new connection (not shared with other processes)
 	# when one is needed, see https://groups.google.com/forum/#!msg/django-users/eCAIY9DAfG0/6DMyz3YuQDgJ
 	db.close_connection()
-	solution.check(run_all)
+	solution.check_solution(run_all)
 
 	# Don't leave idle connections behind
 	db.close_connection()
@@ -315,7 +315,7 @@ def check_with_own_connection(solution,run_all = True):
 def check_multiple(solutions, run_secret = False):
 	if settings.NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL <= 1:
 		for solution in solutions:
-			solution.check(run_secret)
+			solution.check_solution(run_secret)
 	else:
 		check_it = partial(check_with_own_connection,run_all=run_secret)
 

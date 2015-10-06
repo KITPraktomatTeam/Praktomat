@@ -95,9 +95,9 @@ class Task(models.Model):
 		zip.close()	
 		zip_file.seek(0)		# rewind
 		return zip_file			# return unclosed file-like object!?
-		
+
 	@classmethod
-	@transaction.commit_on_success		# May not work with MySQL: see django docu
+        @transaction.atomic
 	def import_Tasks(cls, zip_file, solution_author):
 		from solutions.models import Solution, SolutionFile
 		zip = zipfile.ZipFile(zip_file,'r')
@@ -145,13 +145,13 @@ class Task(models.Model):
 					object.save()
 
 		for solution in solution_list:
-			solution.check(run_secret=True)
+			solution.check_solution(run_secret=True)
 
-								
+def get_mediafile_storage_path(instance, filename):
+    return 'TaskMediaFiles/Task_%s/%s' % (instance.task.pk, filename)
+
+
 class MediaFile(models.Model):
 
-	def get_storage_path(instance, filename):
-		return 'TaskMediaFiles/Task_%s/%s' % (instance.task.pk, filename)
-
 	task = models.ForeignKey(Task)
-	media_file = DeletingFileField(upload_to=get_storage_path, max_length=500)
+	media_file = DeletingFileField(upload_to=get_mediafile_storage_path, max_length=500)

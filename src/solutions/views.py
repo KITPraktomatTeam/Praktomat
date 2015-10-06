@@ -26,7 +26,7 @@ from accounts.views import access_denied
 from accounts.models import User
 from configuration import get_settings
 from checker.models import CheckerResult
-from checker.models import check
+from checker.models import check_solution
 from django.db import transaction
 
 @login_required
@@ -53,7 +53,7 @@ def solution_list(request, task_id, user_id=None):
 			solution.save()
 			formset.save()
                         run_all_checker = bool(User.objects.filter(id=user_id, tutorial__tutors__pk=request.user.id) or request.user.is_trainer)
-			solution.check(run_all_checker)
+			solution.check_solution(run_all_checker)
 			
 			if solution.accepted:  
 				# Send submission confirmation email
@@ -94,7 +94,7 @@ def test_upload(request, task_id):
 		if formset.is_valid():
 			solution.save()
 			formset.save()
-			solution.check(run_secret = True)
+			solution.check_solution(run_secret = True)
 
 			return HttpResponseRedirect(reverse('solution_detail_full', args=[solution.id]))
 	else:
@@ -187,5 +187,5 @@ def checker_result_list(request,task_id):
 @staff_member_required
 def solution_run_checker(request,solution_id):
 	solution = Solution.objects.get(pk=solution_id)
-	check(solution,True)
+	check_solution(solution,True)
 	return HttpResponseRedirect(reverse('solution_detail_full', args=[solution_id]))

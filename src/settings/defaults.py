@@ -82,9 +82,6 @@ def load_defaults(settings):
         # not needed for production
         'django_extensions',
 
-        # intelligent schema and data migrations
-        'south', 
-
         # contains a widget to render a form field as a TinyMCE editor
         'tinymce',
 
@@ -112,9 +109,9 @@ def load_defaults(settings):
     d.DEFAULT_FILE_STORAGE = 'utilities.storage.UploadStorage'
 
     # URL and file paths
-    
+
     d.TEMPLATE_DIRS = (
-        join(PRAKTOMAT_ROOT, "src", "templates") 
+        join(PRAKTOMAT_ROOT, "src", "templates"),
     )
 
     d.STATICFILES_DIRS = (

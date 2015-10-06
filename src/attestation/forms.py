@@ -70,6 +70,7 @@ RatingResultFormSet = inlineformset_factory(Attestation, RatingResult, form=Rati
 class ScriptForm(ModelForm):
 	class Meta:
 		model = Script
+                fields = '__all__'
 
 class PublishFinalGradeForm(ModelForm):
 	class Meta:
