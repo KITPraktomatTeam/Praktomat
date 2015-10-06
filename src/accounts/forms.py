@@ -118,10 +118,10 @@ class UserChangeForm(forms.ModelForm):
 		fields = ("first_name","last_name")
 
 
-	
 class AdminUserCreationForm(UserBaseCreationForm):
 	class Meta:
 		model = User
+                fields = "__all__"
 
 	def clean_username(self):
 		username = super(AdminUserCreationForm,self).clean_username()
@@ -130,11 +130,12 @@ class AdminUserCreationForm(UserBaseCreationForm):
 		except User.DoesNotExist:
 			return username
 		raise forms.ValidationError(_("A user with that username already exists."))
-		
+
 class AdminUserChangeForm(UserBaseChangeForm):
 	class Meta:
 		model = User
-	
+                fields = "__all__"
+
 	def clean(self):
 		# Only if user is in group "User" require a mat number.
 		cleaned_data = super(AdminUserChangeForm, self).clean()
