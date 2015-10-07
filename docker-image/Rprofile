@@ -1,1 +1,1 @@
-options(repos=structure(c(CRAN="http://cran.r-mirror.de/")))
+options(repos=structure(c(CRAN="http://cran.uni-muenster.de/")))
