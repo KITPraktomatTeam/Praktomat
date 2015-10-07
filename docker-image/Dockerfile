@@ -34,8 +34,14 @@ RUN Rscript -e 'install.packages("Ecdat", dependencies=TRUE)'
 # Python-Stuff
 RUN apt-get install --yes python3 python && apt-get clean
 RUN apt-get install --yes python3-requests python-requests && apt-get clean
-RUN apt-get install --yes python3-responses python-responses && apt-get clean
-RUN apt-get install --yes python3-json python-json && apt-get clean
+# RUN apt-get install --yes python3-json python-json && apt-get clean
+RUN apt-get install --yes python3-pip python-pip && apt-get clean
+#RUN apt-get install --yes python3-responses python-responses && apt-get clean
+RUN pip install --upgrade setuptools==18.3.1
+RUN pip install responses
+RUN pip-3.2 install --upgrade pip
+RUN /usr/local/bin/pip3.2 install --upgrade setuptools==18.3.1
+RUN /usr/local/bin/pip3.2 install responses
 
 
 
