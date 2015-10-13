@@ -10,7 +10,6 @@ from accounts.models import User, Tutorial
 from accounts.decorators import local_user_required
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
-from django.contrib.sites.models import Site
 from django.contrib.sites.requests import RequestSite
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
