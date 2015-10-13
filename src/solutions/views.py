@@ -25,8 +25,8 @@ from solutions.forms import SolutionFormSet
 from accounts.views import access_denied
 from accounts.models import User
 from configuration import get_settings
-from checker.models import CheckerResult
-from checker.models import check_solution
+from checker.basemodels import CheckerResult
+from checker.basemodels import check_solution
 from django.db import transaction
 
 @login_required

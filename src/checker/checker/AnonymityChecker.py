@@ -12,7 +12,7 @@ import fnmatch
 
 from django.db import models
 from django.utils.translation import ugettext as _
-from checker.models import Checker
+from checker.basemodels import Checker
 
 from django.template.defaultfilters import escape
 

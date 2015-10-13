@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import checker.checker.DejaGnu
-import checker.models
+import checker.basemodels
 
 
 class Migration(migrations.Migration):
@@ -63,7 +63,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('filename', models.CharField(max_length=128)),
-                ('file', models.FileField(help_text='Artefact produced by a checker', max_length=500, upload_to=checker.models.get_checkerresultartefact_upload_path)),
+                ('file', models.FileField(help_text='Artefact produced by a checker', max_length=500, upload_to=checker.basemodels.get_checkerresultartefact_upload_path)),
             ],
         ),
         migrations.CreateModel(
@@ -77,7 +77,7 @@ class Migration(migrations.Migration):
                 ('always', models.BooleanField(default=True, help_text='The test will run on submission time.')),
                 ('critical', models.BooleanField(default=False, help_text='If this test fails, do not display further test results.')),
                 ('name', models.CharField(default=b'CheckStyle', help_text='Name to be displayed on the solution detail page.', max_length=100)),
-                ('configuration', checker.models.CheckerFileField(help_text='XML configuration of CheckStyle. See http://checkstyle.sourceforge.net/', max_length=500, upload_to=checker.models.get_checkerfile_storage_path)),
+                ('configuration', checker.basemodels.CheckerFileField(help_text='XML configuration of CheckStyle. See http://checkstyle.sourceforge.net/', max_length=500, upload_to=checker.basemodels.get_checkerfile_storage_path)),
             ],
             options={
                 'abstract': False,
@@ -93,7 +93,7 @@ class Migration(migrations.Migration):
                 ('required', models.BooleanField(default=False, help_text='The test must be passed to submit the solution.')),
                 ('always', models.BooleanField(default=True, help_text='The test will run on submission time.')),
                 ('critical', models.BooleanField(default=False, help_text='If this test fails, do not display further test results.')),
-                ('file', checker.models.CheckerFileField(help_text='The file that is copied into the sandbox', max_length=500, upload_to=checker.models.get_checkerfile_storage_path)),
+                ('file', checker.basemodels.CheckerFileField(help_text='The file that is copied into the sandbox', max_length=500, upload_to=checker.basemodels.get_checkerfile_storage_path)),
                 ('filename', models.CharField(help_text='What the file will be named in the sandbox. If empty, we try to guess the right filename!', max_length=500, blank=True)),
                 ('path', models.CharField(help_text='Subfolder in the sandbox which shall contain the file.', max_length=500, blank=True)),
                 ('unpack_zipfile', models.BooleanField(default=False, help_text='Unpack the zip file into the given subfolder. (It will be an error if the file is not a zip file; the filename is ignored.)')),
@@ -132,7 +132,7 @@ class Migration(migrations.Migration):
                 ('required', models.BooleanField(default=False, help_text='The test must be passed to submit the solution.')),
                 ('always', models.BooleanField(default=True, help_text='The test will run on submission time.')),
                 ('critical', models.BooleanField(default=False, help_text='If this test fails, do not display further test results.')),
-                ('test_defs', checker.models.CheckerFileField(help_text='Das Setup benutzt den <A HREF="http://www.gnu.org/software/dejagnu/dejagnu.html">DejaGnu-Testrahmen</A>, um die Programme zu testen. Die in dieser Datei enthaltenen Definitionen gelten f\xfcr alle Testf\xe4lle dieser Aufgabe. Sie werden beim Testen in die DejaGnu-Datei <TT>default.exp</TT> geschrieben. (Vergl. hierzuden Abschnitt <EM>Target dependent procedures</EM> im\t<A HREF="http://www.gnu.org/manual/dejagnu/" TARGET="_blank">DejaGnu-Handbuch</A>.) Die Variablen PROGRAM und JAVA werden mit dem Programmnamen bzw. dem Pfad zur Java-Runtime ersetzt.', max_length=500, upload_to=checker.models.get_checkerfile_storage_path)),
+                ('test_defs', checker.basemodels.CheckerFileField(help_text='Das Setup benutzt den <A HREF="http://www.gnu.org/software/dejagnu/dejagnu.html">DejaGnu-Testrahmen</A>, um die Programme zu testen. Die in dieser Datei enthaltenen Definitionen gelten f\xfcr alle Testf\xe4lle dieser Aufgabe. Sie werden beim Testen in die DejaGnu-Datei <TT>default.exp</TT> geschrieben. (Vergl. hierzuden Abschnitt <EM>Target dependent procedures</EM> im\t<A HREF="http://www.gnu.org/manual/dejagnu/" TARGET="_blank">DejaGnu-Handbuch</A>.) Die Variablen PROGRAM und JAVA werden mit dem Programmnamen bzw. dem Pfad zur Java-Runtime ersetzt.', max_length=500, upload_to=checker.basemodels.get_checkerfile_storage_path)),
             ],
             options={
                 'abstract': False,
@@ -150,7 +150,7 @@ class Migration(migrations.Migration):
                 ('always', models.BooleanField(default=True, help_text='The test will run on submission time.')),
                 ('critical', models.BooleanField(default=False, help_text='If this test fails, do not display further test results.')),
                 ('name', models.CharField(help_text='The name of the Test', max_length=100)),
-                ('test_case', checker.models.CheckerFileField(help_text='In den folgenden DejaGnu-Testf\xe4llen werden typischerweise Funktionen aufgerufen, die beim vorherigen Schritt <EM>Tests einrichten</EM> definiert wurden.\t Siehe\tauch den Abschnitt <EM>How to write a test case</EM> im <A TARGET="_blank" HREF="http://www.gnu.org/manual/dejagnu/">DejaGnu-Handbuch</A>.', max_length=500, upload_to=checker.models.get_checkerfile_storage_path)),
+                ('test_case', checker.basemodels.CheckerFileField(help_text='In den folgenden DejaGnu-Testf\xe4llen werden typischerweise Funktionen aufgerufen, die beim vorherigen Schritt <EM>Tests einrichten</EM> definiert wurden.\t Siehe\tauch den Abschnitt <EM>How to write a test case</EM> im <A TARGET="_blank" HREF="http://www.gnu.org/manual/dejagnu/">DejaGnu-Handbuch</A>.', max_length=500, upload_to=checker.basemodels.get_checkerfile_storage_path)),
             ],
             options={
                 'abstract': False,
@@ -207,7 +207,7 @@ class Migration(migrations.Migration):
                 ('required', models.BooleanField(default=False, help_text='The test must be passed to submit the solution.')),
                 ('always', models.BooleanField(default=True, help_text='The test will run on submission time.')),
                 ('critical', models.BooleanField(default=False, help_text='If this test fails, do not display further test results.')),
-                ('file', checker.models.CheckerFileField(help_text='The file that is copied into the sandbox', max_length=500, upload_to=checker.models.get_checkerfile_storage_path)),
+                ('file', checker.basemodels.CheckerFileField(help_text='The file that is copied into the sandbox', max_length=500, upload_to=checker.basemodels.get_checkerfile_storage_path)),
                 ('filename', models.CharField(help_text='What the file will be named in the sandbox. If empty, we try to guess the right filename!', max_length=500, blank=True)),
                 ('path', models.CharField(help_text='Subfolder in the sandbox which shall contain the file.', max_length=500, blank=True)),
                 ('unpack_zipfile', models.BooleanField(default=False, help_text='Unpack the zip file into the given subfolder. (It will be an error if the file is not a zip file; the filename is ignored.)')),
@@ -398,7 +398,7 @@ class Migration(migrations.Migration):
                 ('always', models.BooleanField(default=True, help_text='The test will run on submission time.')),
                 ('critical', models.BooleanField(default=False, help_text='If this test fails, do not display further test results.')),
                 ('name', models.CharField(default=b'Externen Tutor ausf\xc3\xbchren', help_text='Name to be displayed on the solution detail page.', max_length=100)),
-                ('shell_script', checker.models.CheckerFileField(help_text='A script (e.g. a shell script) to run. Its output will be displayed to the user (if public), the checker will succeed if it returns an exit code of 0. The environment will contain the variables JAVA and PROGRAM.', max_length=500, upload_to=checker.models.get_checkerfile_storage_path)),
+                ('shell_script', checker.basemodels.CheckerFileField(help_text='A script (e.g. a shell script) to run. Its output will be displayed to the user (if public), the checker will succeed if it returns an exit code of 0. The environment will contain the variables JAVA and PROGRAM.', max_length=500, upload_to=checker.basemodels.get_checkerfile_storage_path)),
                 ('remove', models.CharField(help_text='Regular expression describing passages to be removed from the output.', max_length=5000, blank=True)),
                 ('returns_html', models.BooleanField(default=False, help_text="If the script doesn't return HTML it will be enclosed in &lt; pre &gt; tags.")),
             ],

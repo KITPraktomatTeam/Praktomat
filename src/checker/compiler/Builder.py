@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
 
 
-from checker.models import Checker
+from checker.basemodels import Checker
 from utilities.safeexec import execute_arglist
 
 class Builder(Checker):

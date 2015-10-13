@@ -6,7 +6,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
 from django.utils.encoding import force_unicode
-from checker.models import Checker, CheckerFileField, truncated_log
+from checker.basemodels import Checker, CheckerFileField, truncated_log
 from utilities.safeexec import execute_arglist
 from utilities.file_operations import *
 

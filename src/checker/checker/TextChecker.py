@@ -7,7 +7,7 @@ TextChecker.
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.models import Checker
+from checker.basemodels import Checker
 
 class TextChecker(Checker):
 	""" Checks if the specified text is included in a submitted file """

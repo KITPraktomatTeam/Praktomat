@@ -252,7 +252,7 @@ class TestChecker(TestCase):
 					)
 		JavaBuilder.JavaBuilder.objects.create(
 					task = self.task,
-					order = 0,
+					order = 1,
 					_flags = "",
 					_output_flags = "",
 					_file_pattern = r"^[a-zA-Z0-9_/\\]*\.[jJ][aA][vV][aA]$"

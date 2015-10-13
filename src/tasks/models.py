@@ -45,7 +45,7 @@ class Task(models.Model):
 		return self.submission_date + timedelta(hours=1) < datetime.now()
 	
 	def check_all_final_solutions(self):
-		from checker.models import check_multiple
+		from checker.basemodels import check_multiple
 		final_solutions = self.solution_set.filter(final=True)
 		count = check_multiple(final_solutions, True)
 
@@ -55,7 +55,7 @@ class Task(models.Model):
                 return final_solutions.count()
 
         def get_checkers(self):
-            from checker.models import Checker
+            from checker.basemodels import Checker
 
             checker_classes = filter(lambda x:issubclass(x,Checker), get_models())
             unsorted_checker = sum(map(lambda x: list(x.objects.filter(task=self)), checker_classes),[])

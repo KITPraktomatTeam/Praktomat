@@ -71,7 +71,7 @@ class Solution(models.Model):
 	
 	def check_solution(self, run_secret = 0): 
 		"""Builds and tests this solution."""
-		from checker.models import check_solution
+		from checker.basemodels import check_solution
 		check_solution(self, run_secret)
 
 	def attestations_by(self, user):

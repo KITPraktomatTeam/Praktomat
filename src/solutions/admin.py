@@ -2,8 +2,8 @@
 
 from django.contrib import admin
 from solutions.models import Solution, SolutionFile
-from checker.models import CheckerResult
-from checker.models import check_multiple
+from checker.basemodels import CheckerResult
+from checker.basemodels import check_multiple
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import transaction

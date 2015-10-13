@@ -19,7 +19,7 @@ import codecs
 from tasks.models import Task
 from solutions.models import Solution, SolutionFile
 from solutions.forms import SolutionFormSet
-from checker.models import CheckerResult
+from checker.basemodels import CheckerResult
 from attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, Script, RatingScale, RatingScaleItem
 from attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm, ScriptForm, PublishFinalGradeForm, GenerateRatingScaleForm
 from accounts.models import User, Tutorial
