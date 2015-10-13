@@ -1,3 +1,5 @@
+import datetime
+
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.template import loader, RequestContext
 from django.shortcuts import render_to_response, resolve_url
@@ -83,7 +85,9 @@ def shib_login(request):
                     raise User.DoesNotExist
             except:
                 if get_settings().new_users_via_sso:
-                    user = User.objects.create_user(attr[settings.SHIB_USERNAME],'')
+                    user = User.objects.create_user(
+			attr[settings.SHIB_USERNAME], '',
+			last_login=datetime.datetime.now())
                     user_group = Group.objects.get(name='User')
                     user.groups.add(user_group)
                 else:
