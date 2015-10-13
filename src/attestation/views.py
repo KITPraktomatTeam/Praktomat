@@ -394,7 +394,7 @@ def rating_overview(request):
 	if not (request.user.is_trainer or request.user.is_superuser):
 		return access_denied(request)
 	
-	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now).order_by('publication_date','submission_date')
+	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date')
 	users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name')
 	rating_list = user_task_attestation_map(users, tasks)
 		
@@ -441,7 +441,7 @@ def tutorial_overview(request, tutorial_id=None):
 		other_tutorials = Tutorial.objects.all()
 	other_tutorials = other_tutorials.exclude(id=tutorial.id)
 	
-	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now).order_by('publication_date','submission_date')
+	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date')
 	users = User.objects.filter(groups__name='User').filter(is_active=True, tutorial=tutorial).order_by('last_name','first_name')
 	rating_list = user_task_attestation_map(users, tasks,False)
 	
@@ -476,7 +476,7 @@ def rating_export(request):
 	for attestation in attestations:
 			attestation_dict[attestation.solution.task_id, attestation.solution.author_id] = attestation
 	
-	task_id_list = Task.objects.filter(submission_date__lt = datetime.datetime.now).order_by('publication_date','submission_date').values_list('id', flat=True)
+	task_id_list = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date').values_list('id', flat=True)
 	user_id_list = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name').values_list('id', flat=True)
 	
 	task_list = map(lambda task_id:Task.objects.get(id=task_id), task_id_list)	
