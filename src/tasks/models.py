@@ -2,8 +2,8 @@ from datetime import date, datetime, timedelta
 import tempfile
 import zipfile
 
+from django.apps import apps
 from django.db import models
-from django.db.models.loading import get_models
 from django.db import transaction
 from django import db
 from django.core import serializers
@@ -56,8 +56,9 @@ class Task(models.Model):
 
         def get_checkers(self):
             from checker.basemodels import Checker
+            checker_app = apps.get_app_config('checker')
 
-            checker_classes = filter(lambda x:issubclass(x,Checker), get_models())
+            checker_classes = filter(lambda x:issubclass(x,Checker), checker_app.get_models())
             unsorted_checker = sum(map(lambda x: list(x.objects.filter(task=self)), checker_classes),[])
             checkers = sorted(unsorted_checker, key=lambda checker: checker.order)
             return checkers
@@ -73,7 +74,9 @@ class Task(models.Model):
 		media_objects = list( MediaFile.objects.filter(task__in=task_objects) )
 		model_solution_objects = list( Solution.objects.filter(model_solution_task__in=task_objects) )
 		model_solution_file_objects = list( SolutionFile.objects.filter(solution__in=model_solution_objects) )
-		checker_classes = filter(lambda x:issubclass(x,Checker), get_models())
+                from checker.basemodels import Checker
+                checker_app = apps.get_app_config('checker')
+		checker_classes = filter(lambda x:issubclass(x,Checker), checker_app.get_models())
 		checker_objects = sum(map(lambda x: list(x.objects.filter(task__in=task_objects)), checker_classes),[])
 		data = serializers.serialize("xml", task_objects + media_objects + checker_objects + model_solution_objects + model_solution_file_objects)
 		
