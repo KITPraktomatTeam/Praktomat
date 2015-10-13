@@ -41,8 +41,8 @@ def render_forbidden(*args, **kwargs):
 @shibboleth_support_required
 def shib_hello(request):
         context = {}
-        if 'next' in request.REQUEST:
-            context['next'] = request.REQUEST['next']
+        if 'next' in request.GET:
+            context['next'] = request.GET['next']
         context['title'] = "Login via shibboleth"
         context['provider'] = settings.SHIB_PROVIDER
 	return render_to_response('registration/shib_hello.html', context, RequestContext(request))
@@ -53,9 +53,9 @@ def shib_login(request):
 	attr, error = parse_attributes(request.META)
 
 	was_redirected = False
-	if "next" in request.REQUEST:
+	if "next" in request.GET:
 		was_redirected = True
-	redirect_url = request.REQUEST.get('next', resolve_url(settings.LOGIN_REDIRECT_URL))
+	redirect_url = request.GET.get('next', resolve_url(settings.LOGIN_REDIRECT_URL))
 	context = {'shib_attrs': attr,
 			   'was_redirected': was_redirected}
 	if error:
