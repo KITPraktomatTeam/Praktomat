@@ -244,7 +244,6 @@ class TestChecker(TestCase):
 		dest = join(settings.UPLOAD_ROOT, 'directdeposit',  'javagently', 'Stream.java')
 		# circumvent SuspiciousOperation exception
 		copy_file(src,dest)
-                print dest
 		CreateFileChecker.CreateFileChecker.objects.create(
 					task = self.task,
 					order = 0,
