@@ -8,7 +8,8 @@ RUN apt-get install --yes jclassinfo && apt-get clean
 RUN apt-get --purge remove --yes openjdk-6-jre-headless && apt-get clean
 
 # R-Stuff
-RUN bash -c 'echo "deb http://cran.r-mirror.de/bin/linux/debian wheezy-cran3/" > /etc/apt/sources.list.d/r.list'
+#RUN bash -c 'echo "deb http://cran.r-mirror.de/bin/linux/debian wheezy-cran3/" > /etc/apt/sources.list.d/r.list'
+RUN bash -c 'echo "deb http://cran.uni-muenster.de/bin/linux/debian/ wheezy-cran3/" > /etc/apt/sources.list.d/r.list'
 RUN apt-key adv --keyserver keys.gnupg.net --recv-key 381BA480
 RUN apt-get --yes update
 RUN apt-get install --yes r-base littler && apt-get clean
@@ -29,6 +30,19 @@ RUN Rscript -e 'install.packages("fGarch", dependencies=TRUE)'
 RUN Rscript -e 'install.packages("vars", dependencies=TRUE)'
 RUN Rscript -e 'install.packages("moments", dependencies=TRUE)'
 RUN Rscript -e 'install.packages("Ecdat", dependencies=TRUE)'
+
+# Python-Stuff
+RUN apt-get install --yes python3 python && apt-get clean
+RUN apt-get install --yes python3-requests python-requests && apt-get clean
+# RUN apt-get install --yes python3-json python-json && apt-get clean
+RUN apt-get install --yes python3-pip python-pip && apt-get clean
+#RUN apt-get install --yes python3-responses python-responses && apt-get clean
+RUN pip install --upgrade setuptools==18.3.1
+RUN pip install responses
+RUN pip-3.2 install --upgrade pip
+RUN /usr/local/bin/pip3.2 install --upgrade setuptools==18.3.1
+RUN /usr/local/bin/pip3.2 install responses
+
 
 
 RUN echo "praktomat:x:1001:1001:,,,:/home/praktomat:/bin/bash" >> /etc/passwd
