@@ -26,6 +26,7 @@ from multiprocessing import Pool
 
 from django.db import transaction
 from django import db
+from django.db import connection
 
 def get_checkerfile_storage_path(instance, filename):
     """ Use this function as upload_to parameter for filefields. """
@@ -299,11 +300,11 @@ def check_solution(solution, run_all = 0):
 def check_with_own_connection(solution,run_all = True):
 	# Close the current db connection - will cause Django to create a new connection (not shared with other processes)
 	# when one is needed, see https://groups.google.com/forum/#!msg/django-users/eCAIY9DAfG0/6DMyz3YuQDgJ
-	db.close_connection()
+	connection.close()
 	solution.check_solution(run_all)
 
 	# Don't leave idle connections behind
-	db.close_connection()
+	connection.close()
 
 def check_multiple(solutions, run_secret = False):
 	if settings.NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL <= 1:
@@ -314,7 +315,7 @@ def check_multiple(solutions, run_secret = False):
 
 		pool = Pool(processes=settings.NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL)  # Check n solutions at once 
 		pool.map(check_it, solutions,1)
-		db.close_connection()
+		connection.close()
 	
 
 	
