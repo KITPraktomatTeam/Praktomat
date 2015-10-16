@@ -38,10 +38,20 @@ RUN apt-get install --yes python3 python && apt-get clean
 RUN apt-get install --yes python3-requests python-requests && apt-get clean
 RUN apt-get install --yes python3-pip python-pip && apt-get clean
 RUN apt-get install --yes -t wheezy-backports python-six python3-six && apt-get clean
+RUN apt-get install --yes -t wheezy-backports ipython ipython3 && apt-get clean
+RUN apt-get install --yes python-numpy && apt-get clean
+RUN apt-get install --yes python-scipy && apt-get clean
+RUN apt-get install --yes python-pandas && apt-get clean
+RUN apt-get install --yes python-matplotlib && apt-get clean
 RUN pip install --upgrade setuptools==18.3.1
 RUN pip install responses
 RUN pip-3.2 install --upgrade pip
 RUN /usr/local/bin/pip3.2 install --upgrade setuptools==18.3.1
+RUN /usr/local/bin/pip3.2 install numpy
+RUN /usr/local/bin/pip3.2 install scipy
+RUN /usr/local/bin/pip3.2 install pandas
+RUN apt-get install --yes libfreetype6-dev && apt-get clean
+RUN /usr/local/bin/pip3.2 install matplotlib
 RUN /usr/local/bin/pip3.2 install responses
 
 
