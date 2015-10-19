@@ -53,6 +53,8 @@ RUN /usr/local/bin/pip3.2 install pandas
 RUN apt-get install --yes libfreetype6-dev && apt-get clean
 RUN /usr/local/bin/pip3.2 install matplotlib
 RUN /usr/local/bin/pip3.2 install responses
+RUN /usr/local/bin/pip3.2 install statsmodels
+RUN /usr/local/bin/pip3.2 install scikit-learn
 
 
 
