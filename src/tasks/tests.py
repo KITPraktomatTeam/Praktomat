@@ -55,18 +55,17 @@ class TestStaffViews(TestCase):
 							})
 			self.assertNotContains(response, 'error_list')
 
-			def test_task_export(self):
-				response = self.client.post(reverse('admin:tasks_task_changelist'), data={
-								u'_selected_action': 1,
-								u'action': u'export_tasks'
-							})
-				self.failUnlessEqual(response.status_code, 200)
-		
-			def test_task_run_all_checker(self):
-				# TODO: Create checker for test task!
-				response = self.client.post(reverse('admin:tasks_task_changelist'), data={
-								u'_selected_action': 1,
-								u'action': u'run_all_checkers'
-							})
-				self.failUnlessEqual(response.status_code, 200)
+                def test_task_export(self):
+                        response = self.client.post(reverse('admin:tasks_task_changelist'), data={
+                                                        u'_selected_action': 1,
+                                                        u'action': u'export_tasks'
+                                                })
+                        self.failUnlessEqual(response.status_code, 200)
 
+                def test_task_run_all_checker(self):
+                        # TODO: Create checker for test task!
+                        response = self.client.post(reverse('admin:tasks_task_changelist'), data={
+                                                        u'_selected_action': 1,
+                                                        u'action': u'run_all_checkers'
+                                                })
+                        self.failUnlessEqual(response.status_code, 200)
