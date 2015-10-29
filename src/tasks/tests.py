@@ -76,3 +76,7 @@ class TestStaffViews(TestCase):
                         self.task.refresh_from_db()
                         self.failUnlessEqual(response.status_code, 200)
                         self.failUnless(self.task.all_checker_finished)
+
+                def test_task_run_all_checker_parallel(self):
+                    with self.settings(NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL=4):
+                        self.test_task_run_all_checker()
