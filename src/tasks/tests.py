@@ -1,4 +1,5 @@
 from os.path import dirname, join
+from datetime import datetime, timedelta
 
 from utilities.TestSuite import TestCase
 from django.core.urlresolvers import reverse
@@ -63,9 +64,15 @@ class TestStaffViews(TestCase):
                         self.failUnlessEqual(response.status_code, 200)
 
                 def test_task_run_all_checker(self):
+                        # needs to be expired first
+                        self.task.submission_date = datetime.now() - timedelta(hours=2)
+                        self.task.save()
+
                         # TODO: Create checker for test task!
                         response = self.client.post(reverse('admin:tasks_task_changelist'), data={
-                                                        u'_selected_action': 1,
+                                                        u'_selected_action': self.task.pk,
                                                         u'action': u'run_all_checkers'
-                                                })
+                                                }, follow=True)
+                        self.task.refresh_from_db()
                         self.failUnlessEqual(response.status_code, 200)
+                        self.failUnless(self.task.all_checker_finished)
