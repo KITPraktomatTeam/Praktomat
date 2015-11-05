@@ -55,7 +55,8 @@ RUN /usr/local/bin/pip3.2 install matplotlib
 RUN /usr/local/bin/pip3.2 install responses
 RUN /usr/local/bin/pip3.2 install statsmodels
 RUN /usr/local/bin/pip3.2 install scikit-learn
-
+# latest version depends on numpydocs, which needs python-3.3
+RUN /usr/local/bin/pip3.2 install numdifftools==0.7.7
 
 
 RUN echo "praktomat:x:1001:1001:,,,:/home/praktomat:/bin/bash" >> /etc/passwd
