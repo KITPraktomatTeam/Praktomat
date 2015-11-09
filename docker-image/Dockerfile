@@ -1,21 +1,23 @@
-FROM debian:wheezy
+FROM debian:jessie
 
 MAINTAINER Joachim Breitner <breitner@kit.edu>
 
+RUN echo "deb http://http.debian.net/debian jessie-backports main" > /etc/apt/sources.list.d/jessie-backports.list
 RUN apt-get --yes update
-RUN apt-get install --yes openjdk-7-jdk junit junit4 dejagnu gcj-jdk && apt-get clean
+RUN apt-get install --yes openjdk-8-jdk junit junit4 dejagnu gcj-jdk && apt-get clean
 RUN apt-get install --yes jclassinfo && apt-get clean
-RUN apt-get --purge remove --yes openjdk-6-jre-headless && apt-get clean
+RUN update-java-alternatives -s java-1.8.0-openjdk
+
 
 # R-Stuff
-#RUN bash -c 'echo "deb http://cran.r-mirror.de/bin/linux/debian wheezy-cran3/" > /etc/apt/sources.list.d/r.list'
-RUN bash -c 'echo "deb http://cran.uni-muenster.de/bin/linux/debian/ wheezy-cran3/" > /etc/apt/sources.list.d/r.list'
+RUN bash -c 'echo "deb http://cran.uni-muenster.de/bin/linux/debian/ jessie-cran3/" > /etc/apt/sources.list.d/r.list'
 RUN apt-key adv --keyserver keys.gnupg.net --recv-key 381BA480
 RUN apt-get --yes update
 RUN apt-get install --yes r-base littler && apt-get clean
 RUN apt-get install --yes libmysqlclient-dev && apt-get clean
 RUN apt-get install --yes libxml2-dev && apt-get clean
 RUN apt-get install --yes libcurl4-openssl-dev && apt-get clean
+RUN apt-get install --yes ed && apt-get clean
 COPY Rprofile /.Rprofile
 RUN Rscript -e 'install.packages("zoo", dependencies=TRUE)'
 RUN Rscript -e 'install.packages("TTR", dependencies=TRUE)'
@@ -32,32 +34,24 @@ RUN Rscript -e 'install.packages("moments", dependencies=TRUE)'
 RUN Rscript -e 'install.packages("Ecdat", dependencies=TRUE)'
 
 # Python-Stuff
-RUN echo deb http://http.debian.net/debian wheezy-backports main > /etc/apt/sources.list.d/wheezy-backports.list
 RUN apt-get update -y
-RUN apt-get install --yes python3 python && apt-get clean
-RUN apt-get install --yes python3-requests python-requests && apt-get clean
-RUN apt-get install --yes python3-pip python-pip && apt-get clean
-RUN apt-get install --yes -t wheezy-backports python-six python3-six && apt-get clean
-RUN apt-get install --yes -t wheezy-backports ipython ipython3 && apt-get clean
-RUN apt-get install --yes python-numpy && apt-get clean
-RUN apt-get install --yes python-scipy && apt-get clean
-RUN apt-get install --yes python-pandas && apt-get clean
-RUN apt-get install --yes python-matplotlib && apt-get clean
-RUN pip install --upgrade setuptools==18.3.1
-RUN pip install responses
-RUN pip-3.2 install --upgrade pip
-RUN /usr/local/bin/pip3.2 install --upgrade setuptools==18.3.1
-RUN /usr/local/bin/pip3.2 install numpy
-RUN /usr/local/bin/pip3.2 install scipy
-RUN /usr/local/bin/pip3.2 install pandas
-RUN apt-get install --yes libfreetype6-dev && apt-get clean
-RUN /usr/local/bin/pip3.2 install matplotlib
-RUN /usr/local/bin/pip3.2 install responses
-RUN /usr/local/bin/pip3.2 install statsmodels
-RUN /usr/local/bin/pip3.2 install scikit-learn
-# latest version depends on numpydocs, which needs python-3.3
-RUN /usr/local/bin/pip3.2 install numdifftools==0.7.7
-
+RUN apt-get install --yes python3            python               && apt-get clean
+RUN apt-get install --yes ipython3           ipython              && apt-get clean
+RUN apt-get install --yes python3-requests   python-requests      && apt-get clean
+RUN apt-get install --yes python3-pip        python-pip           && apt-get clean
+RUN apt-get install --yes python3-six        python-six           && apt-get clean
+RUN apt-get install --yes python3-numpy      python-numpy         && apt-get clean
+RUN apt-get install --yes python3-scipy      python-scipy         && apt-get clean
+RUN apt-get install --yes python3-pandas     python-pandas        && apt-get clean
+RUN apt-get install --yes python3-matplotlib python-matplotlib    && apt-get clean
+RUN apt-get install --yes python3-responses  python-responses     && apt-get clean
+RUN apt-get install --yes                    python-scikits.statsmodels \
+                                             python-statsmodels   && apt-get clean
+RUN apt-get install --yes                    python-scikits-learn \
+                                             python-sklearn       && apt-get clean
+RUN pip3 install statsmodels
+RUN pip3 install scikit-learn
+RUN pip3 install numdifftools
 
 RUN echo "praktomat:x:1001:1001:,,,:/home/praktomat:/bin/bash" >> /etc/passwd
 RUN echo "praktomat:x:1001:tester" >> /etc/group
