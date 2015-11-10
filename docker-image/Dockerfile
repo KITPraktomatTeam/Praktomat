@@ -49,9 +49,15 @@ RUN apt-get install --yes                    python-scikits.statsmodels \
                                              python-statsmodels   && apt-get clean
 RUN apt-get install --yes                    python-scikits-learn \
                                              python-sklearn       && apt-get clean
+
+# Requirements for statsmodels
+RUN apt-get install --yes python3-patsy      python-patsy         && apt-get clean
+
 RUN pip3 install statsmodels
 RUN pip3 install scikit-learn
-RUN pip3 install numdifftools
+
+# more recent versions of numdifftools pull a whole lot of newer versions of other packages than those already installed from the debian packages (numpy, scipy), we don't want that
+RUN pip3 install numdifftools==0.7.7
 
 RUN echo "praktomat:x:1001:1001:,,,:/home/praktomat:/bin/bash" >> /etc/passwd
 RUN echo "praktomat:x:1001:tester" >> /etc/group
