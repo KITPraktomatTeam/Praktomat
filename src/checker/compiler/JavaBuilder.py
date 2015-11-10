@@ -25,15 +25,14 @@ class JavaBuilder(Builder):
 
 	def main_module(self, env):
 		""" find the first class file containing a main method """
-		main_method = re.compile(r"^public static void main\(java.lang.String\[\]\)$", re.MULTILINE)
 		main_method = "public static void main(java.lang.String[])"
-		class_name  = re.compile(r"^(public )?(abstract )?(final )?class ([^ ]*) extends .*$", re.MULTILINE)
+		class_name  = re.compile(r"^(public )?(abstract )?(final )?class ([^ ]*)( extends .*)? \{$", re.MULTILINE)
 		class_files = []
 		for dirpath, dirs, files in os.walk(env.tmpdir()):
 			for filename in files:
 				if filename.endswith(".class"):
 					class_files.append(filename)
-					[classinfo,_,_,_,_]  = execute_arglist([settings.JCLASSINFO, "--methods", "--general-info", os.path.join(dirpath,filename)], env.tmpdir(), self.environment(), unsafe=True)
+					[classinfo,_,_,_,_]  = execute_arglist([settings.JAVAP, os.path.join(dirpath,filename)], env.tmpdir(), self.environment(), unsafe=True)
 					if string.find(classinfo,main_method) >= 0:
 						main_class_name = class_name.search(classinfo, re.MULTILINE).group(4)
 						return main_class_name

@@ -5,7 +5,6 @@ MAINTAINER Joachim Breitner <breitner@kit.edu>
 RUN echo "deb http://http.debian.net/debian jessie-backports main" > /etc/apt/sources.list.d/jessie-backports.list
 RUN apt-get --yes update
 RUN apt-get install --yes openjdk-8-jdk junit junit4 dejagnu gcj-jdk && apt-get clean
-RUN apt-get install --yes jclassinfo && apt-get clean
 RUN update-java-alternatives -s java-1.8.0-openjdk
 
 
