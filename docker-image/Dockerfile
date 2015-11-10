@@ -37,21 +37,17 @@ RUN update-java-alternatives -s java-1.8.0-openjdk
 RUN apt-get update -y
 RUN apt-get install --yes python3            python               && apt-get clean
 RUN apt-get install --yes ipython3           ipython              && apt-get clean
-RUN apt-get install --yes python3-requests   python-requests      && apt-get clean
-RUN apt-get install --yes python3-pip        python-pip           && apt-get clean
+RUN apt-get install --yes python3-requests                        && apt-get clean
+RUN apt-get install --yes python3-pip                             && apt-get clean
 RUN apt-get install --yes python3-six        python-six           && apt-get clean
-RUN apt-get install --yes python3-numpy      python-numpy         && apt-get clean
-RUN apt-get install --yes python3-scipy      python-scipy         && apt-get clean
-RUN apt-get install --yes python3-pandas     python-pandas        && apt-get clean
-RUN apt-get install --yes python3-matplotlib python-matplotlib    && apt-get clean
-RUN apt-get install --yes python3-responses  python-responses     && apt-get clean
-RUN apt-get install --yes                    python-scikits.statsmodels \
-                                             python-statsmodels   && apt-get clean
-RUN apt-get install --yes                    python-scikits-learn \
-                                             python-sklearn       && apt-get clean
+RUN apt-get install --yes python3-numpy                           && apt-get clean
+RUN apt-get install --yes python3-scipy                           && apt-get clean
+RUN apt-get install --yes python3-pandas                          && apt-get clean
+RUN apt-get install --yes python3-matplotlib                      && apt-get clean
+RUN apt-get install --yes python3-responses                       && apt-get clean
 
 # Requirements for statsmodels
-RUN apt-get install --yes python3-patsy      python-patsy         && apt-get clean
+RUN apt-get install --yes python3-patsy                           && apt-get clean
 
 RUN pip3 install statsmodels
 RUN pip3 install scikit-learn
