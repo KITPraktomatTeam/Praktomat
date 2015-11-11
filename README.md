@@ -89,7 +89,7 @@ The initial database setup follows.
 ```bash
 cd Praktomat
 mkdir data
-./src/manage-devel.py syncdb --noinput --migrate
+./src/manage-devel.py migrate --noinput
 ./src/manage-devel.py createsuperuser
 ```
 
@@ -128,8 +128,8 @@ Create the upload directory, populate the database:
 ```bash
 mkdir PraktomatSupport
 ./Praktomat/src/manage-local.py collectstatic --noinput --link
-./Praktomat/src/manage-local.py syncdb --noinput --migrate
-```
+./Praktomat/src/manage-local.py migrate --noinput
+.```
 
 It should now be possible to start the developmet server with:
 ```bash
@@ -164,8 +164,8 @@ Update
 3. update the static files and the database:
 
 ```bash
-./Praktomat/src/manage-local.py syncdb --noinput --migrate
-./Praktomat/src/manage-local.py collectstatic --noinput --link
+./Praktomat/src/manage-local.py migrate --noinput
+../Praktomat/src/manage-local.py collectstatic --noinput --link
 ```
 
 Security
