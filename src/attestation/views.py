@@ -109,15 +109,35 @@ def statistics(request,task_id):
         runtimes = []
         for i, checker in enumerate(task.get_checkers()):
             checker_runtimes = []
-            for result in checker.results.filter(runtime__gt = 0):
+            for result in checker.results.order_by('creation_date').filter(runtime__gt = 0):
 		has_runtimes = True
                 checker_runtimes.append({ 'date': result.creation_date, 'value': result.runtime})
 
-            runtimes.append({
-                'checker': "%d: %s" % (i, checker.title()),
-                'runtimes': checker_runtimes
-                })
-	
+            if checker_runtimes:
+                first = checker_runtimes[0]
+                last = checker_runtimes[-1]
+                n = 20 # number of buckets
+                buckets = [[] for x in range(n)]
+                span = last['date'] - first['date'] + datetime.timedelta(seconds=1)
+                for r in checker_runtimes:
+                    i = timedelta_diff((r['date'] - first['date'])*n, span)
+                    buckets[i].append(r['value'])
+                medians = []
+                for i in range(n):
+                    date = first['date'] + ((span//2)*(2*i+1) // n);
+                    if buckets[i]:
+                        buckets[i].sort()
+                        value = buckets[i][((len(buckets[i])+1)/2)-1]
+                    else:
+                        value = None
+                    medians.append({'date': date, 'value': value});
+
+                runtimes.append({
+                    'checker': "%d: %s" % (i, checker.title()),
+                    'runtimes': checker_runtimes,
+                    'medians': medians
+                    })
+
 	return render_to_response("attestation/statistics.html",
             {'task':                           task,
             'user_count':                      user_count,
@@ -533,3 +553,7 @@ def generate_ratingscale(request):
 	else:
 		form = GenerateRatingScaleForm()
 	return render_to_response('admin/attestation/ratingscale/generate.html', {'form': form, 'title':"Generate RatingScale"  }, RequestContext(request))
+
+# Can be replaced by // in python 3.2
+def timedelta_diff(td1,td2):
+    return int(td1.total_seconds() / td2.total_seconds())

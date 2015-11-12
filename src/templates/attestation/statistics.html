@@ -159,7 +159,17 @@
 				  color: '#4572A7',
 				  data: [
 					{% for point in runtime_series.runtimes %}
-					[ Date.parse('{{point.date|date:"c"}}'), {{point.value}} ],
+					[ Date.parse('{{point.date|date:"c"}}'), {{point.value|default_if_none:'null'}} ],
+					{% endfor %}
+				  ],
+				},
+				{ type: 'spline',
+				  name: '{{ runtime_series.checker }} (median)',
+				  color: '#DA7D44',
+				  marker: {enabled: false},
+				  data: [
+					{% for point in runtime_series.medians %}
+					[ Date.parse('{{point.date|date:"c"}}'), {{point.value|default_if_none:'null'}} ],
 					{% endfor %}
 				  ],
 				},
