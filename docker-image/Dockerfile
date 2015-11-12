@@ -42,7 +42,10 @@ RUN apt-get install --yes python3-six        python-six           && apt-get cle
 RUN apt-get install --yes python3-numpy                           && apt-get clean
 RUN apt-get install --yes python3-scipy                           && apt-get clean
 RUN apt-get install --yes python3-pandas                          && apt-get clean
+
 RUN apt-get install --yes python3-matplotlib                      && apt-get clean
+RUN sed -i -e 's/^backend      : TkAgg$/backend      : Agg/g' /etc/matplotlibrc
+
 RUN apt-get install --yes python3-responses                       && apt-get clean
 RUN apt-get install --yes python3-xlrd                            && apt-get clean
 
