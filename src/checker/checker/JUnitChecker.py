@@ -5,10 +5,11 @@ import re
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.basemodels import Checker, CheckerFileField, truncated_log
+from checker.basemodels import Checker, CheckerResult, CheckerFileField, truncated_log
 from checker.admin import	CheckerInline, AlwaysChangedModelForm
 from utilities.safeexec import execute_arglist
 from utilities.file_operations import *
+from solutions.models import Solution
 
 from checker.compiler.JavaBuilder import JavaBuilder
 
@@ -20,6 +21,11 @@ class IgnoringJavaBuilder(JavaBuilder):
 	def get_file_names(self,env):
 		rxarg = re.compile(self.rxarg())
 		return [name for (name,content) in env.sources() if rxarg.match(name) and (not name in self._ignore)]
+
+	# Since this checkers instances  will not be saved(), we don't save their results, either
+	def create_result(self, env):
+		assert isinstance(env.solution(), Solution)
+		return CheckerResult(checker=self, solution=env.solution())
 
 class JUnitChecker(Checker):
 	""" New Checker for JUnit3 Unittests. """
