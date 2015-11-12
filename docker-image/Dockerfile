@@ -44,6 +44,7 @@ RUN apt-get install --yes python3-scipy                           && apt-get cle
 RUN apt-get install --yes python3-pandas                          && apt-get clean
 RUN apt-get install --yes python3-matplotlib                      && apt-get clean
 RUN apt-get install --yes python3-responses                       && apt-get clean
+RUN apt-get install --yes python3-xlrd                            && apt-get clean
 
 # Requirements for statsmodels
 RUN apt-get install --yes python3-patsy                           && apt-get clean
