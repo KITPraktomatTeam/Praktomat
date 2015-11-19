@@ -66,11 +66,15 @@
 					.insertBefore("#editor");
 
 				editor.setSession($(anntab).data('ace-session'));
+				$('#wordwrap').prop('checked', editor.getSession().getUseWrapMode());
 			}
 			$(".anntabs").tabs({
 				beforeActivate: function (e,ui) {
 					switch_to($(ui.newTab).find('a'));
 				}
+			});
+			$('#wordwrap').change(function() {
+					editor.getSession().setUseWrapMode($(this).is(':checked'));
 			});
 			switch_to($(".anntabs ul li a").get($(".anntabs").tabs('option','active')));
 		});
@@ -157,6 +161,10 @@
 					<div id="editor"></div>
 				</div>
 			{% endwith %}
+					<div id="editorOptions" style="margin-bottom:25px">
+						<h2>Editor Options</h2>
+						<input id="wordwrap" type="checkbox" name="wordwrap" style="float: left;" value="check1"/><label for="wordwrap">word wrap</label>
+					</div>
 		</div>
 
 		<div id="attestation">
