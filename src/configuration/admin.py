@@ -31,6 +31,7 @@ class SettingsAdmin(admin.ModelAdmin):
                 'fields': (
                     'accept_all_solutions',
                     'anonymous_attestation',
+                    'attestation_allow_run_checkers',
                 )
             }),
             ('Attestation Publishing/Viewing', {

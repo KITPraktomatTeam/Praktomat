@@ -130,6 +130,12 @@
 		
 		<div id="solution">
 			<h1 class="heading">Checker results</h1>
+			{% if show_run_checkers %}
+			<div style="text-align:right">
+				<span class="ui-icon ui-icon-play"></span>
+				<a href="{% url "attestation_run_checker" attestation_id=attestForm.instance.id %}">re-run all checkers</a>
+			</div>
+			{% endif %}
 			{% with solution.allCheckerResults as results %}
 				{% include "solutions/checker_results_inline.html" %}
 			{% endwith %}
@@ -142,6 +148,12 @@
 		
 		<div id="annotated_solution_files">
 			<h1 class="heading">Checker results</h1>
+			{% if show_run_checkers %}
+			<div style="text-align:right">
+				<span class="ui-icon ui-icon-play"></span>
+				<a href="{% url "attestation_run_checker" attestation_id=attestForm.instance.id %}">re-run all checkers</a>
+			</div>
+			{% endif %}
 			{% with solution.allCheckerResults as results %}
 			{% include "solutions/checker_results_inline.html" %}
 			{% endwith %}

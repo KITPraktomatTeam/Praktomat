@@ -19,7 +19,7 @@ import codecs
 from tasks.models import Task
 from solutions.models import Solution, SolutionFile
 from solutions.forms import SolutionFormSet
-from checker.basemodels import CheckerResult
+from checker.basemodels import CheckerResult, check_solution
 from attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, Script, RatingScale, RatingScaleItem
 from attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm, ScriptForm, PublishFinalGradeForm, GenerateRatingScaleForm
 from accounts.models import User, Tutorial
@@ -352,7 +352,9 @@ def edit_attestation(request, attestation_id):
 		ratingResultFormSet = RatingResultFormSet(instance=attest, prefix='ratingresult')
 	
 	show_author = not get_settings().anonymous_attestation 
-	return render_to_response("attestation/attestation_edit.html", {"attestForm": attestForm, "attestFileFormSet": attestFileFormSet, "ratingResultFormSet":ratingResultFormSet, "solution": solution, "model_solution":model_solution, "show_author":show_author},	context_instance=RequestContext(request))
+	show_run_checkers = get_settings().attestation_allow_run_checkers
+	
+	return render_to_response("attestation/attestation_edit.html", {"attestForm": attestForm, "attestFileFormSet": attestFileFormSet, "ratingResultFormSet":ratingResultFormSet, "solution": solution, "model_solution":model_solution, "show_author":show_author, "show_run_checkers":show_run_checkers},	context_instance=RequestContext(request))
 
 @login_required	
 def view_attestation(request, attestation_id):
@@ -554,6 +556,29 @@ def generate_ratingscale(request):
 		form = GenerateRatingScaleForm()
 	return render_to_response('admin/attestation/ratingscale/generate.html', {'form': form, 'title':"Generate RatingScale"  }, RequestContext(request))
 
+
+
+@login_required
+def attestation_run_checker(request,attestation_id):
+	if not (request.user.is_tutor or request.user.is_trainer or request.user.is_superuser):
+		return access_denied(request)
+
+	attestation = get_object_or_404(Attestation, pk=attestation_id)
+	if not (attestation.author == request.user or request.user.is_trainer or request.user.is_superuser):
+		return access_denied(request)
+
+	if attestation.published:
+		return access_denied(request)
+
+	if not get_settings().attestation_allow_run_checkers:
+		return access_denied(request)
+ 
+
+
+	solution = attestation.solution
+	check_solution(solution,True)
+	return HttpResponseRedirect(reverse('edit_attestation', args=[attestation_id]))
+	
 # Can be replaced by // in python 3.2
 def timedelta_diff(td1,td2):
     return int(td1.total_seconds() / td2.total_seconds())
