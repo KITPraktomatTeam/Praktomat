@@ -35,8 +35,9 @@
 
 <p>
 	{% if solution.testupload %}
-		This is a test submission by a tutor or trainer, and otherwise ignored.
-	{% elif solution.final %}
+		This is a test submission, and otherwise ignored.
+	{% endif %}
+	{% if solution.final %}
 		This is your current final solution.
 	{% else %}
 		 This is NOT your current final solution.

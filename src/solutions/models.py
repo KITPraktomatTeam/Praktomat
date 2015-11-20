@@ -37,7 +37,7 @@ class Solution(models.Model):
 	author = models.ForeignKey(User, verbose_name="solution author")
 	creation_date = models.DateTimeField(auto_now_add=True)
 	
-        testupload = models.BooleanField( default = False, help_text = _('Indicates whether this solution is a test upload by a trainer or tutor.'))
+        testupload = models.BooleanField( default = False, help_text = _('Indicates whether this solution is a test upload.'))
 	accepted = models.BooleanField( default = False, help_text = _('Indicates whether the solution has passed all public and required tests.'))
 	warnings = models.BooleanField( default = False, help_text = _('Indicates whether the solution has at least failed one public and not required tests.'))
 	plagiarism = models.BooleanField( default = False, help_text = _('Indicates whether the solution is a rip-off of another one.'))

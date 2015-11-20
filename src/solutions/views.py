@@ -105,6 +105,29 @@ def test_upload(request, task_id):
 		context_instance=RequestContext(request))
 
 @login_required
+def test_upload_student(request, task_id):
+
+	task = get_object_or_404(Task,pk=task_id)
+	if task.publication_date >= datetime.now():
+		raise Http404
+
+	if request.method == "POST":
+		solution = Solution(task = task, author=request.user, testupload = True)
+		formset = SolutionFormSet(request.POST, request.FILES, instance=solution)
+		if formset.is_valid():
+			solution.save()
+			formset.save()
+			solution.check_solution(run_secret = False)
+
+			return HttpResponseRedirect(reverse('solution_detail', args=[solution.id]))
+	else:
+		formset = SolutionFormSet()
+	
+	return render_to_response("solutions/solution_test_upload.html",
+                {"formset": formset, "task":task},
+		context_instance=RequestContext(request))
+
+@login_required
 def solution_detail(request,solution_id,full):
 	solution = get_object_or_404(Solution, pk=solution_id)	
 	if not (solution.author == request.user or request.user.is_trainer or request.user.is_superuser or (solution.author.tutorial and solution.author.tutorial.tutors.filter(id=request.user.id))):

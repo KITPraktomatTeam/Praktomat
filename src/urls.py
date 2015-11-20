@@ -42,6 +42,7 @@ urlpatterns = patterns('',
 	url(r'^tasks/(?P<task_id>\d+)/solutionupload/$', 'solutions.views.solution_list', name='solution_list'),
 	url(r'^tasks/(?P<task_id>\d+)/solutionupload/user/(?P<user_id>\d+)$', 'solutions.views.solution_list', name='solution_list'),
 	url(r'^tasks/(?P<task_id>\d+)/solutionupload/test/$', 'solutions.views.test_upload', name='upload_test_solution'),
+	url(r'^tasks/(?P<task_id>\d+)/solutionupload/test/student/$', 'solutions.views.test_upload_student', name='upload_test_solution_student'),
 
 	#Attestation
 	url(r'^tasks/(?P<task_id>\d+)/attestation/statistics$', 'attestation.views.statistics', name='statistics'),
