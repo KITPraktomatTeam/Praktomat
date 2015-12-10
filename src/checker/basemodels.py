@@ -217,12 +217,14 @@ class CheckerResult(models.Model):
 		""" Checks if further results should not be shown """
 		return self.checker.is_critical(self.passed)
 
-	def set_log(self, log,timed_out=False,truncated=False):
+	def set_log(self, log,timed_out=False,truncated=False,oom_ed=False):
 		""" Sets the log of the Checker run. timed_out and truncated indicated if appropriate error messages shall be appended  """
 		if timed_out:
 			log = '<div class="error">Timeout occured!</div>' + log
 		if truncated:
 			log = '<div class="error">Output too long, truncated</div>' + log
+		if oom_ed:
+			log = '<div class="error">Memory limit exceeded, execution cancelled.</div>' + log
 
 		self.log = log
 

@@ -70,7 +70,7 @@ class ScriptChecker(Checker):
 		if not self.returns_html or truncated or timed_out or oom_ed:
 			output = '<pre>' + escape(output) + '</pre>'
 
-		result.set_log(output,timed_out=timed_out,truncated=truncated)
+		result.set_log(output,timed_out=timed_out,truncated=truncated,oom_ed=oom_ed)
 		result.set_passed(not exitcode and not timed_out and not oom_ed and not truncated)
 		
 		return result

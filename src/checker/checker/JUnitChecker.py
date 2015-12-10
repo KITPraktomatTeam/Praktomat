@@ -88,7 +88,7 @@ class JUnitChecker(Checker):
 		output = '<pre>' + escape(self.test_description) + '\n\n======== Test Results ======\n\n</pre><br/><pre>' + escape(output) + '</pre>'
 
 
-		result.set_log(output,timed_out=timed_out or oom_ed,truncated=truncated)
+		result.set_log(output,timed_out=timed_out or oom_ed,truncated=truncated,oom_ed=oom_ed)
 		result.set_passed(not exitcode and not timed_out and not oom_ed and self.output_ok(output) and not truncated)
 		return result
 
