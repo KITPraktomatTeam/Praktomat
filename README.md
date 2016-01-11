@@ -129,9 +129,9 @@ Create the upload directory, populate the database:
 mkdir PraktomatSupport
 ./Praktomat/src/manage-local.py collectstatic --noinput --link
 ./Praktomat/src/manage-local.py migrate --noinput
-.```
+```
 
-It should now be possible to start the developmet server with:
+It should now be possible to start the deployment server with:
 ```bash
 ./Praktomat/src/manage-local.py runserver
 ```
@@ -165,7 +165,7 @@ Update
 
 ```bash
 ./Praktomat/src/manage-local.py migrate --noinput
-../Praktomat/src/manage-local.py collectstatic --noinput --link
+./Praktomat/src/manage-local.py collectstatic --noinput --link
 ```
 
 Security
