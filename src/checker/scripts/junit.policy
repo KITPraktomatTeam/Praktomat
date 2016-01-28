@@ -5,4 +5,5 @@ grant {
 	permission java.io.FilePermission "${user.dir}${/}data${/}-", "read";
 	permission java.lang.RuntimePermission "accessDeclaredMembers";
 	permission java.lang.RuntimePermission "getStackTrace";
+	permission java.lang.RuntimePermission "setIO";
 };

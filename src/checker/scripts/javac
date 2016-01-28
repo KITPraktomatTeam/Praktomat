@@ -35,7 +35,7 @@ umask o+rwx
 # -encoding UTF-8
 if $JAVAC \
  -classpath . \
- -source 1.6 \
+ -source 1.8 \
  -nowarn \
  -d . \
  "$@" 
