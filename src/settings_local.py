@@ -26,7 +26,8 @@ SITE_NAME = 'Praktomat'
 PRAKTOMAT_ID = 'default' 
 
 # The URL where this site is reachable. 'http://localhost:8000/' in case of the developmentserver.
-BASE_URL = 'http://localhost:8000/'  + PRAKTOMAT_ID + '/' 
+#BASE_URL = 'http://localhost:8000/'  + PRAKTOMAT_ID + '/' 
+BASE_URL = 'http://localhost:8000/'
 
 # URL that serves the static media files (CSS, JavaScript and images) of praktomat contained in 'media/'.
 # Make sure to use a trailing slash if there is a path component (optional in other cases).
@@ -39,7 +40,7 @@ MEDIA_URL = BASE_URL + 'media/'
 ADMIN_MEDIA_PREFIX = BASE_URL + 'media/admin/'
 
 
-SESSION_COOKIE_PATH = '/' + PRAKTOMAT_ID + '/'
+SESSION_COOKIE_PATH = '/' ######  + PRAKTOMAT_ID + '/'
 CSRF_COOKIE_NAME = 'csrftoken_' + PRAKTOMAT_ID
 
 # Absolute path to the directory that shall hold all uploaded files as well as files created at runtime.
@@ -49,15 +50,15 @@ UPLOAD_ROOT = "/home/praktomat/installations/" + PRAKTOMAT_ID + "/PraktomatSuppo
 
 ADMINS = [
 		  # ('Your Name', 'your_email@domain.com'),
-		  ('Daniel Kleinert', 'herr.kleinert@googlemail.com')
+		  ('Mister Praktomat', 'praktomat@localhost')
 		  ]
 
-#DATABASE_ENGINE = 'postgresql_psycopg2'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-#DATABASE_NAME ='praktomat'   # Or path to database file if using sqlite3.
-#DATABASE_USER = 'postgres'             # Not used with sqlite3.
-#DATABASE_PASSWORD = 'demo'         # Not used with sqlite3.
-#DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-#DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+DATABASE_ENGINE = 'postgresql_psycopg2'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+DATABASE_NAME ='praktomat_default'   # Or path to database file if using sqlite3.
+DATABASE_USER = 'praktomat'             # Not used with sqlite3.
+DATABASE_PASSWORD = 'praktomat'         # Not used with sqlite3.
+DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
+DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
 
 #DATABASE_ENGINE = 'postgresql_psycopg2'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -67,19 +68,19 @@ ADMINS = [
 #DATABASE_HOST = 'localhost'             # Set to empty string for localhost. Not used with sqlite3.
 #DATABASE_PORT = '5432'             # Set to empty string for default. Not used with sqlite3.
 
-DATABASE_ENGINE = 'sqlite3'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = UPLOAD_ROOT+'/Database'   # Or path to database file if using sqlite3.
-DATABASE_USER = ''             # Not used with sqlite3.
-DATABASE_PASSWORD = ''         # Not used with sqlite3.
-DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+#DATABASE_ENGINE = 'sqlite3'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+#DATABASE_NAME = UPLOAD_ROOT+'/Database'   # Or path to database file if using sqlite3.
+#DATABASE_USER = ''             # Not used with sqlite3.
+#DATABASE_PASSWORD = ''         # Not used with sqlite3.
+#DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
+#DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
-DEFAULT_FROM_EMAIL = ""
-EMAIL_HOST = "smtp.googlemail.com"
-EMAIL_PORT = 587
-EMAIL_HOST_USER = "praktomat@googlemail.com"
+DEFAULT_FROM_EMAIL = "praktomat@localhost"
+EMAIL_HOST = "localhost"
+EMAIL_PORT = 25
+EMAIL_HOST_USER = "praktomat@localhost"
 EMAIL_HOST_PASSWORD = ""
-EMAIL_USE_TLS = True
+EMAIL_USE_TLS = False
 
 # Private key used to sign uploded solution files in submission confirmation email
 PRIVATE_KEY = '/home/praktomat/certificates/privkey.pem'
@@ -108,7 +109,7 @@ JCFDUMP='jcf-dump'
 # commands with the user 'tester' without requiring a password:
 # "_www    		ALL=(tester)NOPASSWD:ALL"
 # "developer	ALL=(tester)NOPASSWD:ALL"
-USEPRAKTOMATTESTER = False
+USEPRAKTOMATTESTER = True
 
 
 # This enables Shibboleth-Support.
@@ -124,7 +125,7 @@ USEPRAKTOMATTESTER = False
 # You probably want to disable REGISTRATION_POSSIBLE if you enable Shibboleth
 # support
 
-SHIB_ENABLED = True
+SHIB_ENABLED = False
 
 SHIB_ATTRIBUTE_MAP = {
 	"mail": (True, "email"),
@@ -152,3 +153,4 @@ TEST_MAXFILESIZE=64
 # Maximal size (in kbyte) of checker logs accepted. This setting is respected currently only by:
 # JUnitChecker, ScriptChecker, 
 TEST_MAXLOGSIZE=64
+
