@@ -37,7 +37,7 @@ class JavaBuilder(Builder):
 					chopped = string.join((head, result), ".")
 					(head, result) = os.path.split(chopped)			
 				return result
-		raise self.NotFoundError("The class containing the main method('public static void main(String[] args)') could not be found.")
+		raise self.NotFoundError("The class containing the main method (<tt> public static void main(<b>String[] args</b>) </tt>) could not be found.")
 
 
 	def libs(self):
