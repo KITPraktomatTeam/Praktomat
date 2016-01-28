@@ -32,7 +32,7 @@
 <div id="welcome">
 
 	{% chunk "Welcome Message" %}
-	
+{% if False %}	
 	{% if not user|in_group:"Trainer" and not user.is_superuser %}
 		{% if tutors or trainers %}
 			<div id="contact"><a> Got Problems? </a>
@@ -50,6 +50,7 @@
 			{% endif %}</div>
 		{% endif %}
 	{% endif %}
+{% endif %}
 </div>
 
 {% regroup tasks by expired as grouped_tasks %}
