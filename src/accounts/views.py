@@ -1,11 +1,11 @@
 #from accounts.forms import MyRegistrationForm
 from datetime import datetime
 from django.shortcuts import render_to_response, get_object_or_404
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.template import RequestContext, Template, Context, loader
 from django.conf import settings
-from accounts.forms import MyRegistrationForm, UserChangeForm, ImportForm, ImportTutorialAssignmentForm
+from accounts.forms import MyRegistrationForm, UserChangeForm, ImportForm, ImportTutorialAssignmentForm, ImportLDAPForm
 from accounts.models import User, Tutorial
 from accounts.decorators import local_user_required
 from django.contrib.auth.models import Group
@@ -17,6 +17,8 @@ from django.utils.http import int_to_base36
 from django.core.mail import send_mail
 from django.utils.translation import ugettext_lazy as _
 from configuration import get_settings
+from ldap_auth import create_localuser_from_ldapuser, fetch_ldapuser_dict
+from django.contrib import messages
 
 import csv
 
@@ -78,6 +80,34 @@ def view(request):
 def access_denied(request):
 	request_path = request.META['HTTP_HOST'] + request.get_full_path()
 	return render_to_response('access_denied.html', {'request_path': request_path}, context_instance=RequestContext(request))
+
+@staff_member_required
+def import_ldap_users(request):
+	""" View in the admin """
+	if request.method == 'POST': 
+		form = ImportLDAPForm(request.POST)
+		if form.is_valid():
+			tutorial = form.cleaned_data['tutorial']
+			uids = form.cleaned_data['uids'].split()
+			g = Group.objects.get(name='User')
+			udict = {}
+			unknown_uids = []
+			for uid in uids:
+				udict[uid] = fetch_ldapuser_dict(uid=uid)
+				if udict[uid] is None:
+					unknown_uids.append(uid)
+			if unknown_uids:
+				messages.add_message(request, messages.ERROR, "ERROR! Import cancelled. Unknown UIDs: %s" % (", ".join(unknown_uids)))
+				return render_to_response('admin/accounts/user/import_ldap.html', {'form':form, 'title':"Import LDAP Users"  }, RequestContext(request))
+			for uid in udict:
+				u = create_localuser_from_ldapuser(username=uid, ldapUser=udict[uid])
+				u.groups.add(g)
+				u.tutorial = tutorial
+				u.save()
+		return HttpResponseRedirect(urlresolvers.reverse('admin:accounts_user_changelist'))
+	else:
+		form = ImportLDAPForm()
+	return render_to_response('admin/accounts/user/import_ldap.html', {'form':form, 'title':"Import LDAP Users"  }, RequestContext(request))
 
 @staff_member_required
 def import_user(request):
