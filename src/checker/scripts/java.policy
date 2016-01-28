@@ -6,6 +6,7 @@ grant {
 	permission java.lang.RuntimePermission "shutdownHooks";
 	
 	// java.io.Console needs this
-	//permission java.lang.RuntimePermission "readFileDescriptor"
+	permission java.lang.RuntimePermission "readFileDescriptor"
 	//permission java.lang.RuntimePermission "writeFileDescriptor"
+	permission java.lang.RuntimePermission "createSecurityManager";
 };

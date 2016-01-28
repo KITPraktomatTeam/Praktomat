@@ -90,8 +90,9 @@ class UserAdmin(UserBaseAdmin):
 		""" Add URL to user import """
 		urls = super(UserAdmin, self).get_urls()
 		from django.conf.urls.defaults import url, patterns
-		my_urls = patterns('', url(r'^import/$', 'accounts.views.import_user', name='user_import')) 
-		my_urls += patterns('', url(r'^import_tutorial_assignment/$', 'accounts.views.import_tutorial_assignment', name='import_tutorial_assignment')) 
+		#my_urls = patterns('', url(r'^import/$', 'accounts.views.import_user', name='user_import'))
+		my_urls = patterns('', url(r'^import_ldap_users/$', 'accounts.views.import_ldap_users', name='ldap_user_import')) 
+		#my_urls += patterns('', url(r'^import_tutorial_assignment/$', 'accounts.views.import_tutorial_assignment', name='import_tutorial_assignment')) 
 		return my_urls + urls
 
 # This should work in Django 1.4 :O
@@ -132,6 +133,6 @@ class TutorialAdmin(admin.ModelAdmin):
 		css = {
 			"all": ("styles/admin_style.css",)
 		}
-admin.site.register(ShowAllUser,ShowAllUserAdmin)
+# admin.site.register(ShowAllUser,ShowAllUserAdmin)
 		
 admin.site.register(Tutorial, TutorialAdmin)
