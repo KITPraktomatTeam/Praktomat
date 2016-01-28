@@ -21,7 +21,7 @@ SITE_ID = 1
 USE_I18N = True
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'db(@293vg@52-2mgn2zjypq=pc@28t@==$@@vt^yf78l$429yn'
+SECRET_KEY = 'db(@294vg@52-2mgn2zjypq=pc@28t@==$@@vt^yf78l$428yn'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -136,4 +136,12 @@ TINYMCE_DEFAULT_CONFIG = {
 }
 TINYMCE_SPELLCHECKER = False
 TINYMCE_COMPRESSOR = False
+
+# LDAP
+AUTHENTICATION_BACKENDS = (
+    'ldap_auth.LDAPBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+LDAP_URI="ldap://ldap.inf.fh-brs.de"
+LDAP_BASE="dc=fh-bonn-rhein-sieg,dc=de"
 
