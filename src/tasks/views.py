@@ -27,7 +27,7 @@ from configuration import get_settings
 @login_required
 def taskList(Request):
 	now = datetime.now()
-	tasks = Task.objects.filter(publication_date__lte = now).order_by('submission_date')
+	tasks = Task.objects.filter(publication_date__lte = now).order_by('submission_date', 'title')
 	try:
 		tutors = Request.user.tutorial.tutors.all()
 	except:
