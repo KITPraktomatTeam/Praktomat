@@ -30,11 +30,6 @@
 			<div id="user-tools">
 				{% if user.is_authenticated %}
 					Welcome, {% firstof user.get_full_name user.username %} 
-					{% if user.is_shibboleth_user %}
-					/ <a href="{% url registration_view %}">View Account</a>
-					{% else %}
-					/ <a href="{% url registration_change %}">Change Account</a>
-                    {% endif %}
 					/ <a href="{% url auth_logout %}">Log-out</a><br/>
 					{% if user.is_staff %}<a href={% url rating_overview %}>{% trans "Rating overview"%}</a> / 
 					<a href="{% url admin:index %}">Admin Panel</a>	{%endif%}

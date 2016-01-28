@@ -90,7 +90,7 @@ ISABELLE_BINARY = '/data1/praktomat/Isabelle2013/bin/isabelle'
 DEJAGNU_RUNTEST = '/usr/bin/runtest'
 CHECKSTYLEALLJAR = '/home/praktomat/contrib/checkstyle-all-4.4.jar'
 JUNIT38='junit'
-JAVA_LIBS = { 'junit3' : '/usr/share/java/junit.jar', 'junit4' : '/opt/praktomat-addons/*' }
+JAVA_LIBS = { 'junit3' : '/usr/share/java/junit.jar', 'junit4' : '/usr/share/java/junit4.jar' }
 JCFDUMP='jcf-dump'
 
 

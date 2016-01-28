@@ -48,12 +48,11 @@ def execute(command, working_directory, environment_variables={}, use_default_us
 def execute_arglist(args, working_directory, environment_variables={}, use_default_user_configuration=True, join_stderr_stdout=True, timeout=None,fileseeklimit=None):
 	""" Wrapper to execute Commands with the praktomat testuser. Excpects Command as list of arguments, the first being the execeutable to run. """
 	assert isinstance(args, list)
-
-
 	command = args[:]
 
 	environment = environ
 	environment.update(environment_variables)
+	
 	environ['ULIMIT_FILESIZE'] = str(fileseeklimit)
 
 	wrapper_prefix = [join(join(dirname(__file__),'scripts'),'execute')]
@@ -76,9 +75,10 @@ def execute_arglist(args, working_directory, environment_variables={}, use_defau
 		# Limit the size of files created during execution
 		resource.setrlimit(resource.RLIMIT_NOFILE,(128,128))
 		if fileseeklimit is not None:
-			resource.setrlimit(resource.RLIMIT_FSIZE,(fileseeklimit,fileseeklimit))
-			if resource.getrlimit(resource.RLIMIT_FSIZE) != (fileseeklimit,fileseeklimit):
+			resource.setrlimit(resource.RLIMIT_FSIZE,(fileseeklimit*1024,fileseeklimit*1024))
+			if resource.getrlimit(resource.RLIMIT_FSIZE) != (fileseeklimit*1024,fileseeklimit*1024):
 				raise ValueError(resource.getrlimit(resource.RLIMIT_FSIZE))
+
 	process = subprocess32.Popen(command, stdout=subprocess32.PIPE, stderr=stderr, cwd=working_directory, env=environment,preexec_fn=prepare_subprocess)
 
 	timed_out = False

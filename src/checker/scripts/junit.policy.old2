@@ -22,8 +22,4 @@ grant {
 	permission java.util.PropertyPermission "suppressRawWhenUnchecked","read";
 	permission java.util.PropertyPermission "java.class.path","read";
 	permission java.util.PropertyPermission "sun.boot.class.path","read";
-	permission java.lang.RuntimePermission "setIO";
-	permission java.lang.RuntimePermission "writeFileDescriptor";
-	permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
-	permission java.util.PropertyPermission "JUnitParams.flat","read";
 };
