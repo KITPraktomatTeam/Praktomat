@@ -8,7 +8,7 @@ from os.path import dirname, join
 # are inappropriate for public consumption. File paths, configuration options, 
 # and the like all give attackers extra information about your server.
 # Never deploy a site into production with DEBUG turned on.
-DEBUG = True
+DEBUG = False
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -22,14 +22,20 @@ TIME_ZONE = 'Europe/Berlin'
 LANGUAGE_CODE = 'en-us'
 
 # The name that will be displayed on top of the page and in emails.
-SITE_NAME = 'Praktomat'
+SITE_NAME = 'Praktomat Wintersemester 2013'
 
 # Identifie this Praktomat among multiple installation on one webserver
-PRAKTOMAT_ID = 'default' 
+PRAKTOMAT_ID = '2013w' 
 
 # The URL where this site is reachable. 'http://localhost:8000/' in case of the developmentserver.
+
+#for testversions on localhost
 #BASE_URL = 'http://localhost:8000/'  + PRAKTOMAT_ID + '/' 
-BASE_URL = 'http://localhost:8000/'
+BASE_URL = 'http://localhost:8000/' + PRAKTOMAT_ID + '/' 
+
+#for testversions on server
+#BASE_URL = 'https://praktomat.inf.h-brs.de/'  + PRAKTOMAT_ID + '/' 
+
 
 # URL that serves the static media files (CSS, JavaScript and images) of praktomat contained in 'media/'.
 # Make sure to use a trailing slash if there is a path component (optional in other cases).
@@ -47,7 +53,7 @@ CSRF_COOKIE_NAME = 'csrftoken_' + PRAKTOMAT_ID
 
 # Absolute path to the directory that shall hold all uploaded files as well as files created at runtime.
 # Example: "/home/media/media.lawrence.com/"
-UPLOAD_ROOT = "/home/praktomat/installations/" + PRAKTOMAT_ID + "/PraktomatSupport/"
+UPLOAD_ROOT = "/home/praktomat/inst/" + PRAKTOMAT_ID + "/work/"
 
 
 # Absolute path to the praktomat source
@@ -65,7 +71,6 @@ DATABASE_USER = 'praktomat'             # Not used with sqlite3.
 DATABASE_PASSWORD = 'praktomat'         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
-
 
 #DATABASE_ENGINE = 'postgresql_psycopg2'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 #DATABASE_NAME = 'Praktomat'   # Or path to database file if using sqlite3.
@@ -89,7 +94,7 @@ EMAIL_HOST_PASSWORD = ""
 EMAIL_USE_TLS = False
 
 # Private key used to sign uploded solution files in submission confirmation email
-PRIVATE_KEY = '/home/praktomat/certificates/privkey.pem'
+PRIVATE_KEY = None # '/home/praktomat/certificates/privkey.pem'
 
 MANAGERS = ADMINS
 

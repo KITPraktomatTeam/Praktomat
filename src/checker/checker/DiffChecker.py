@@ -44,16 +44,19 @@ class DiffChecker(Checker):
             environ['OUTPUTFILE'] = os.path.basename(self.output_file.path)
             copy_file(self.output_file.path, output_path)
         replace = [(u'PROGRAM',env.program())] if env.program() else []
+        replace +=[("JAVA",settings.JVM_SECURE)]
         copy_file_to_directory(self.shell_script.path, test_dir, replace=replace)
         args = ["sh",  os.path.basename(self.shell_script.name)]
-        environ['USER'] = env.user().get_full_name()
+        #environ['USER'] = unicode(env.user().get_full_name()).encode('utf-8')
+        environ['USER'] = env.user().username # gets overwritten with praktomat-test-user's name, therefore:
+        environ['AUTHOR'] = env.solution().author.username # will not be overwritten!
         environ['HOME'] = test_dir
         
         [output, error, exitcode,_] = execute_arglist(args, working_directory=test_dir, environment_variables=environ)
         
         result = CheckerResult(checker=self)
-    
-        result.set_log(escape(output))
+        result.set_log('<pre>' + escape(output) + '</pre>')
+
         result.set_passed(not exitcode)
         
         return result
