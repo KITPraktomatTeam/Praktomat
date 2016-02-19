@@ -102,7 +102,7 @@ def import_ldap_users(request):
 				return render_to_response('admin/accounts/user/import_ldap.html', {'form':form, 'title':"Import LDAP Users"  }, RequestContext(request))
 			for uid in udict:
 				u = create_localuser_from_ldapuser(username=uid, ldapUser=udict[uid])
-				
+
 				u.groups.add(g)
 				u.tutorial = tutorial
 				u.save()
