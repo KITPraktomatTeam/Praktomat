@@ -57,6 +57,7 @@ class AutoAttestChecker(Checker):
         for a in Attestation.objects.filter(solution=env.solution(), author=self.author):
             a.delete()
 
+
         # reset final/published attestations
         for a in Attestation.objects.filter(solution__task=env.solution().task, solution__author=env.solution().author):
             a.final = False
