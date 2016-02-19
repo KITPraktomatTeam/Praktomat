@@ -55,6 +55,7 @@ class DiffChecker(Checker):
         [output, error, exitcode,_] = execute_arglist(args, working_directory=test_dir, environment_variables=environ)
         
         result = CheckerResult(checker=self)
+
         result.set_log('<pre>' + escape(output) + '</pre>')
 
         result.set_passed(not exitcode)

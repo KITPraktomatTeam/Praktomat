@@ -18,6 +18,7 @@ from django.core.mail import send_mail
 from django.utils.translation import ugettext_lazy as _
 from configuration import get_settings
 from ldap_auth import create_localuser_from_ldapuser, fetch_ldapuser_dict
+from django.contrib import messages
 
 import csv
 
@@ -89,9 +90,19 @@ def import_ldap_users(request):
 			tutorial = form.cleaned_data['tutorial']
 			uids = form.cleaned_data['uids'].split()
 			g = Group.objects.get(name='User')
+
+			udict = {}
+			unknown_uids = []
 			for uid in uids:
-				lu = fetch_ldapuser_dict(uid=uid)
-				u = create_localuser_from_ldapuser(username=uid, ldapUser=lu)
+				udict[uid] = fetch_ldapuser_dict(uid=uid)
+				if udict[uid] is None:
+					unknown_uids.append(uid)
+			if unknown_uids:
+				messages.add_message(request, messages.ERROR, "ERROR! Import cancelled. Unknown UIDs: %s" % (", ".join(unknown_uids)))
+				return render_to_response('admin/accounts/user/import_ldap.html', {'form':form, 'title':"Import LDAP Users"  }, RequestContext(request))
+			for uid in udict:
+				u = create_localuser_from_ldapuser(username=uid, ldapUser=udict[uid])
+
 				u.groups.add(g)
 				u.tutorial = tutorial
 				u.save()

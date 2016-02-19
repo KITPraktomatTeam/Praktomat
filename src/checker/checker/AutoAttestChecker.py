@@ -56,6 +56,19 @@ class AutoAttestChecker(Checker):
         grades = list(self.task.final_grade_rating_scale.ratingscaleitem_set.all())
         for a in Attestation.objects.filter(solution=env.solution(), author=self.author):
             a.delete()
+
+        # reset final/published attestations
+        for a in Attestation.objects.filter(solution__task=env.solution().task, solution__author=env.solution().author):
+            a.final = False
+            a.published = False
+            a.save()
+        # reset final solution
+        s = env.solution().task.final_solution(env.solution().author)
+        if s:
+            s.final = False
+            s.save()
+        # create new attestation
+
         if checkers_failed == 0:
             if checkers_passed > 0:
                 result.set_log('All %d required checkers passed.' % checkers_passed)
