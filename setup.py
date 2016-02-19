@@ -14,7 +14,7 @@ setup(
     long_description = read('README.md'),
 
     author='IPD Snelting, KIT',
-    author_email='praktomat@googlemail.com',
+    author_email='praktomat@ipd.info.uni-karlsruhe.de',
 
     packages = find_packages('src'),
     package_dir = {'': 'src'},
@@ -30,9 +30,9 @@ setup(
                         'django-extensions >= 0.4.1',
                         'South', # intelligent schema and data migrations
                         'django-tinymce', # widget to render a form field as a TinyMCE editor 
-                        #'chardet', # autodetect file encodings
-			#			'M2Crypto', # Signing uploaded files
-			'subprocess32' # backport of python 3.2/3.3 subprocess
+                        'chardet', # autodetect file encodings
+                        'M2Crypto', # Signing uploaded files
+                        'subprocess32' # backport of python 3.2/3.3 subprocess
                         ],
 
     classifiers = [
@@ -43,5 +43,10 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Topic :: Education :: Testing',
-    ]
+    ],
+
+    entry_points = """
+		[pygments.lexers]
+		isar = utilities.isar_lexer:IsarLexer
+    """
 )

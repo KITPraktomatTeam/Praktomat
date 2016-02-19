@@ -11,4 +11,7 @@ __all__ = [	#"AnonymityChecker",
 			#"JUnit3Checker",
 			"DejaGnu",
 			#"CheckStyleChecker",
-			"AutoAttestChecker"]
+			#"IsabelleChecker",
+			"AutoAttestChecker"
+		  ]
+
