@@ -69,6 +69,7 @@ class JUnitChecker(Checker):
 		environ['POLICY'] = os.path.join(os.path.join(os.path.dirname(os.path.dirname(__file__)),"scripts"),"junit.policy")
 
 		cmd = [settings.JVM_SECURE, "-cp", settings.JAVA_LIBS[self.junit_version]+":.", self.runner(), self.class_name]
+		#cmd = [settings.JVM_SECURE, "-cp", "/opt/praktomat-addons/*:.", self.runner(), self.class_name]
 		[output, error, exitcode,timed_out] = execute_arglist(cmd, env.tmpdir(),environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE)
 
 		result = CheckerResult(checker=self)

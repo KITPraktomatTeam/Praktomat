@@ -50,13 +50,16 @@ class AutoAttestChecker(Checker):
                     checkers_passed += 1
                 else:
                     checkers_failed += 1
-        
+
         result = CheckerResult(checker=self)
         result.set_passed(checkers_failed == 0)
-        grades = list(self.task.final_grade_rating_scale.ratingscaleitem_set.all())
+
+        if User.objects.filter(id=self.author_id).count() == 0:
+            self.author_id = None
+            return result
+
         for a in Attestation.objects.filter(solution=env.solution(), author=self.author):
             a.delete()
-
 
         # reset final/published attestations
         for a in Attestation.objects.filter(solution__task=env.solution().task, solution__author=env.solution().author):
@@ -70,23 +73,25 @@ class AutoAttestChecker(Checker):
             s.save()
         # create new attestation
 
-        if checkers_failed == 0:
-            if checkers_passed > 0:
-                result.set_log('All %d required checkers passed.' % checkers_passed)
+        if self.task.final_grade_rating_scale:
+            grades = list(self.task.final_grade_rating_scale.ratingscaleitem_set.all())
+            if checkers_failed == 0:
+                if checkers_passed > 0:
+                    result.set_log('All %d required checkers passed.' % checkers_passed)
+                else:
+                    result.set_log('WARNING: No checkers.')
+                a = Attestation(solution=env.solution(), author=self.author,
+                                public_comment=self.public_comment, private_comment=self.private_comment,
+                                final=self.final, published=self.published, published_on=datetime.now(),
+                                final_grade=grades[-1])
             else:
-                result.set_log('WARNING: No checkers.')
-            a = Attestation(solution=env.solution(), author=self.author,
-                            public_comment=self.public_comment, private_comment=self.private_comment,
-                            final=self.final, published=self.published, published_on=datetime.now(),
-                            final_grade=grades[-1])
-        else:
-            result.set_log('%d required checkers failed.' % checkers_failed)
-            a = Attestation(solution=env.solution(), author=self.author,
-                            public_comment=self.public_comment, private_comment=self.private_comment,
-                            final=self.final, published=self.published, published_on=datetime.now(),
-                            final_grade=grades[0])
-        a.save()
-        
+                result.set_log('%d required checkers failed.' % checkers_failed)
+                a = Attestation(solution=env.solution(), author=self.author,
+                                public_comment=self.public_comment, private_comment=self.private_comment,
+                                final=self.final, published=self.published, published_on=datetime.now(),
+                                final_grade=grades[0])
+            a.save()
+
         return result
     
 from checker.admin import    CheckerInline

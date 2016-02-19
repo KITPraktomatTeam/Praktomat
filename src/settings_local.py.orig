@@ -22,20 +22,13 @@ TIME_ZONE = 'Europe/Berlin'
 LANGUAGE_CODE = 'en-us'
 
 # The name that will be displayed on top of the page and in emails.
-
 SITE_NAME = 'Praktomat Sommersemester 2015'
 
 # Identifie this Praktomat among multiple installation on one webserver
 PRAKTOMAT_ID = '2015s' 
 
 # The URL where this site is reachable. 'http://localhost:8000/' in case of the developmentserver.
-
-#for testversions on localhost
-#BASE_URL = 'http://localhost:8000/'  + PRAKTOMAT_ID + '/' 
-BASE_URL = 'http://localhost:8000/' + PRAKTOMAT_ID + '/' 
-
-#for testversions on server
-#BASE_URL = 'https://praktomat.inf.h-brs.de/'  + PRAKTOMAT_ID + '/' 
+BASE_URL = 'https://praktomattest.inf.h-brs.de/'  + PRAKTOMAT_ID + '/' 
 
 # URL that serves the static media files (CSS, JavaScript and images) of praktomat contained in 'media/'.
 # Make sure to use a trailing slash if there is a path component (optional in other cases).
@@ -48,7 +41,7 @@ MEDIA_URL = BASE_URL + 'media/'
 ADMIN_MEDIA_PREFIX = BASE_URL + 'media/admin/'
 
 
-SESSION_COOKIE_PATH = '/' ######  + PRAKTOMAT_ID + '/'
+SESSION_COOKIE_PATH = '/' + PRAKTOMAT_ID + '/'
 CSRF_COOKIE_NAME = 'csrftoken_' + PRAKTOMAT_ID
 
 # Absolute path to the directory that shall hold all uploaded files as well as files created at runtime.
@@ -62,37 +55,20 @@ PRAKTOMAT_ROOT = dirname(dirname(__file__))
 
 ADMINS = [
 		  # ('Your Name', 'your_email@domain.com'),
-		  ('Mister Praktomat', 'praktomat@localhost')
+		  ('Stephan Baum', 'sbaum2m+admin@inf.h-brs.de')
 		  ]
 
 DATABASE_ENGINE = 'postgresql_psycopg2'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 DATABASE_NAME = 'praktomat_2015s'   # Or path to database file if using sqlite3.
-
-
 DATABASE_USER = 'praktomat'             # Not used with sqlite3.
 DATABASE_PASSWORD = 'praktomat'         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
-#DATABASE_ENGINE = 'postgresql_psycopg2'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-#DATABASE_NAME = 'Praktomat'   # Or path to database file if using sqlite3.
-#DATABASE_USER = 'postgres'             # Not used with sqlite3.
-#DATABASE_PASSWORD = 'postgres'         # Not used with sqlite3.
-#DATABASE_HOST = 'localhost'             # Set to empty string for localhost. Not used with sqlite3.
-#DATABASE_PORT = '5432'             # Set to empty string for default. Not used with sqlite3.
-
-#DATABASE_ENGINE = 'sqlite3'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-#DATABASE_NAME = UPLOAD_ROOT+'/Database'   # Or path to database file if using sqlite3.
-#DATABASE_USER = ''             # Not used with sqlite3.
-#DATABASE_PASSWORD = ''         # Not used with sqlite3.
-#DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-#DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
-
-DEFAULT_FROM_EMAIL = "praktomat@localhost"
+DEFAULT_FROM_EMAIL = "praktomat@inf.h-brs.de"
 EMAIL_HOST = "localhost"
 EMAIL_PORT = 25
-EMAIL_HOST_USER = "praktomat@localhost"
-
+EMAIL_HOST_USER = ""
 EMAIL_HOST_PASSWORD = ""
 EMAIL_USE_TLS = False
 
@@ -114,7 +90,7 @@ ISABELLE_BINARY = '/data1/praktomat/Isabelle2013/bin/isabelle'
 DEJAGNU_RUNTEST = '/usr/bin/runtest'
 CHECKSTYLEALLJAR = '/home/praktomat/contrib/checkstyle-all-4.4.jar'
 JUNIT38='junit'
-JAVA_LIBS = { 'junit3' : '/usr/share/java/junit.jar', 'junit4' : '/opt/praktomat-addons/*' }
+JAVA_LIBS = { 'junit3' : '/usr/share/java/junit.jar', 'junit4' : '/usr/share/java/junit4.jar' }
 JCFDUMP='jcf-dump'
 
 
