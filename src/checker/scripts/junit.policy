@@ -6,24 +6,32 @@ grant {
 	permission java.lang.RuntimePermission "accessDeclaredMembers";
 	permission java.lang.RuntimePermission "getStackTrace";
 
+
+	//Jacob-Tests
 	//permission java.io.FilePermission "${user.dir}","read";	
-	permission java.io.FilePermission "${user.dir}/-","read";	
-	permission java.io.FilePermission "${user.dir}/../*","read";	
-	permission java.io.FilePermission "${user.dir}/../java/-","read";	
-	permission java.io.FilePermission "${user.dir}/../org/-","read";	
-	permission java.io.FilePermission "${user.dir}/../de/-","read";	
-	permission java.io.FilePermission "${user.dir}/../Comparable","read";	
-	permission java.io.FilePermission "/opt/praktomat-addons/","read";	
-	permission java.io.FilePermission "/opt/praktomat-addons/*","read";	
-	permission java.io.FilePermission "/usr/lib/jvm/java-7-oracle/jre/-","read";	
-	permission java.util.PropertyPermission "user.dir","read";
-	permission java.util.PropertyPermission "osgi.nls.warnings","read";
-	permission java.util.PropertyPermission "tolerateIllegalAmbiguousVarargsInvocation","read";
-	permission java.util.PropertyPermission "suppressRawWhenUnchecked","read";
-	permission java.util.PropertyPermission "java.class.path","read";
-	permission java.util.PropertyPermission "sun.boot.class.path","read";
-	permission java.lang.RuntimePermission "setIO";
-	permission java.lang.RuntimePermission "writeFileDescriptor";
-	permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
-	permission java.util.PropertyPermission "JUnitParams.flat","read";
+	//permission java.io.FilePermission "${user.dir}/-","read";	
+	//permission java.io.FilePermission "${user.dir}/../*","read";	
+	//permission java.io.FilePermission "${user.dir}/../java/-","read";	
+	//permission java.io.FilePermission "${user.dir}/../org/-","read";	
+	//permission java.io.FilePermission "${user.dir}/../de/-","read";	
+	//permission java.io.FilePermission "${user.dir}/../Comparable","read";	
+	//permission java.io.FilePermission "/opt/praktomat-addons/","read";	
+	//permission java.io.FilePermission "/opt/praktomat-addons/*","read";	
+	//permission java.io.FilePermission "/usr/lib/jvm/java-7-oracle/jre/-","read";	
+	//permission java.util.PropertyPermission "user.dir","read";
+	//permission java.util.PropertyPermission "osgi.nls.warnings","read";
+	//permission java.util.PropertyPermission "tolerateIllegalAmbiguousVarargsInvocation","read";
+	//permission java.util.PropertyPermission "suppressRawWhenUnchecked","read";
+	//permission java.util.PropertyPermission "java.class.path","read";
+	//permission java.util.PropertyPermission "sun.boot.class.path","read";
+
+	//permission java.lang.RuntimePermission "setIO";
+	//permission java.lang.RuntimePermission "writeFileDescriptor";
+	//permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
+	//permission java.util.PropertyPermission "JUnitParams.flat","read";
+
+	permission java.lang.RuntimePermission "createSecurityManager"; //HBRS_2015w-bcs/HBRS_2015w-bcs
+	permission java.lang.RuntimePermission "setSecurityManager"; //HBRS_2015w-bcs/HBRS_2015w-bcs
+	permission java.io.FilePermission "/home/praktomat/inst/2015w-bcs/work/SolutionSandbox/*", "read"; //HBRS_2015w-bcs/HBRS_2015w-bcs
+
 };

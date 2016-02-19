@@ -10,7 +10,8 @@ grant {
 	permission java.lang.RuntimePermission "shutdownHooks";
 	
 	// java.io.Console needs this
-	//permission java.lang.RuntimePermission "readFileDescriptor"
-	permission java.lang.RuntimePermission "writeFileDescriptor";
-	permission java.lang.RuntimePermission "readFileDescriptor"
+	permission java.lang.RuntimePermission "readFileDescriptor";    //HBRS_2015w-bcs   
+	//permission java.lang.RuntimePermission "writeFileDescriptor"  //HBRS_2015w-bcs
+	permission java.lang.RuntimePermission "createSecurityManager"; //HBRS_2015w-bcs
+
 };
