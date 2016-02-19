@@ -22,20 +22,19 @@ TIME_ZONE = 'Europe/Berlin'
 LANGUAGE_CODE = 'en-us'
 
 # The name that will be displayed on top of the page and in emails.
-
 SITE_NAME = 'Praktomat Sommersemester 2015'
 
 # Identifie this Praktomat among multiple installation on one webserver
 PRAKTOMAT_ID = '2015s' 
 
 # The URL where this site is reachable. 'http://localhost:8000/' in case of the developmentserver.
-
 #for testversions on localhost
 #BASE_URL = 'http://localhost:8000/'  + PRAKTOMAT_ID + '/' 
 BASE_URL = 'http://localhost:8000/' + PRAKTOMAT_ID + '/' 
 
 #for testversions on server
 #BASE_URL = 'https://praktomat.inf.h-brs.de/'  + PRAKTOMAT_ID + '/' 
+
 
 # URL that serves the static media files (CSS, JavaScript and images) of praktomat contained in 'media/'.
 # Make sure to use a trailing slash if there is a path component (optional in other cases).
@@ -67,12 +66,11 @@ ADMINS = [
 
 DATABASE_ENGINE = 'postgresql_psycopg2'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 DATABASE_NAME = 'praktomat_2015s'   # Or path to database file if using sqlite3.
-
-
 DATABASE_USER = 'praktomat'             # Not used with sqlite3.
 DATABASE_PASSWORD = 'praktomat'         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+
 
 #DATABASE_ENGINE = 'postgresql_psycopg2'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 #DATABASE_NAME = 'Praktomat'   # Or path to database file if using sqlite3.
