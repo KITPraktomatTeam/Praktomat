@@ -1,17 +1,16 @@
-from django.test.simple import DjangoTestSuiteRunner
+from django.test.runner import DiscoverRunner
 from django.test import TestCase as DjangoTestCase
 from django.conf import settings
 from os.path import dirname, join
 from shutil import rmtree
 
-class TestSuiteRunner(DjangoTestSuiteRunner):
+class TestSuiteRunner(DiscoverRunner):
 	testSuiteUploadRoot = join(settings.UPLOAD_ROOT, 'TestSuite')
 	
 	def setup_test_environment(self, **kwargs):
 		""" Change the upload root to not mess up the production folder """
 		super(TestSuiteRunner, self).setup_test_environment(**kwargs)
 		settings.UPLOAD_ROOT = self.testSuiteUploadRoot	
-		settings.MEDA_ROOT = self.testSuiteUploadRoot # just in case
 		# storage object is lazy and is not updated by simply updating the settings
 		from django.core.files.storage import default_storage
 		default_storage.location = self.testSuiteUploadRoot
@@ -39,11 +38,35 @@ class TestCase(DjangoTestCase):
 		""" Asserts whether the request was redirected to a specifivc view function. """
 		from urlparse import urlparse
 		from django.core.urlresolvers import resolve
-		if hasattr(response, 'redirect_chain'):
-			url = response.redirect_chain[-1][0]
-		else:
-			url = response['Location']
+                self.assertTrue(hasattr(response, 'redirect_chain'),
+                    msg="Please use client.get(...,follow=True) with assertRedirectsToView")
+                self.assertTrue(len(response.redirect_chain) > 0,
+                    msg="No redirection found")
+                url = response.redirect_chain[-1][0]
 		self.assertEquals(resolve(urlparse(url)[2])[0].__name__, view)
+
+
+from django.test import LiveServerTestCase
+from selenium.webdriver.phantomjs.webdriver import WebDriver
+
+class SeleniumTestCase(LiveServerTestCase):
+        def setUp(self):
+            super(SeleniumTestCase, self).setUp()
+            self.selenium = WebDriver()
+
+        def tearDown(self):
+            self.selenium.quit()
+            super(SeleniumTestCase, self).tearDown()
+
+        def loginAsUser(self):
+            self.selenium.get('%s%s' % (self.live_server_url, '/accounts/login/'))
+            username_input = self.selenium.find_element_by_name("username")
+            username_input.send_keys('user')
+            password_input = self.selenium.find_element_by_name("password")
+            password_input.send_keys('demo')
+            self.selenium.find_element_by_xpath('//input[@value="Login"]').click()
+
+
 
 
 from accounts.models import User, Tutorial
@@ -52,8 +75,7 @@ from tasks.models import Task
 from solutions.models import Solution, SolutionFile
 from attestation.models import Attestation
 
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django.core.files import File
 
@@ -64,6 +86,7 @@ def create_test_data():
 	trainer = User.objects.create_user('trainer', 'trainer@praktomat.com', 'demo')
 	trainer.groups.add(Group.objects.get(name='Trainer'))
 	trainer.is_staff = True
+	trainer.is_superuser = True
 	trainer.save()
 	
 	tutor = User.objects.create_user('tutor', 'trainer@praktomat.com', 'demo')
@@ -75,13 +98,14 @@ def create_test_data():
 	user = User.objects.create_user('user', 'user@praktomat.com', 'demo')
 	user.groups.add(Group.objects.get(name='User'))
 	user.tutorial = tutorial
+        user.mat_number = 11111
 	user.save()
 
 	# Tasks
 	task = Task.objects.create(
 			title = 'Test task',
 			description = 'Test description.',
-			publication_date = datetime.now(),
+			publication_date = datetime.now() - timedelta(hours=5),
 			submission_date =  datetime.now() + timedelta(hours=5)
 			#model_solution
 			#all_checker_finished = False

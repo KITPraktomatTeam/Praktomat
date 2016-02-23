@@ -10,31 +10,33 @@ from django.contrib.auth.models import User as BasicUser, UserManager
 from django.db.models import signals
 from django.core.validators import RegexValidator
 from django.core import serializers
-from django.db import transaction
+from django.db.transaction import atomic
 
-from accounts.templatetags.in_group import in_group
 from configuration import get_settings
 
 
+def validate_mat_number(value):
+        regex = get_settings().mat_number_validation_regex
+        if regex:
+                RegexValidator("^"+regex+"$", message="This is not a valid student number.", code="")(value)
+
 class User(BasicUser):
-	
-	# all fields need to be null-able in order to create user 
+	# all fields need to be null-able in order to create user
 	tutorial = models.ForeignKey('Tutorial', null=True, blank=True, help_text = _("The tutorial the student belongs to."))
-	def validate_mat_number(value):
-		regex = get_settings().mat_number_validation_regex
-		if regex:
-			RegexValidator("^"+regex+"$", message="This is not a valid student number.", code="")(value)
 	mat_number = models.IntegerField( null=True, blank=True, validators=[validate_mat_number]) # special blank and unique validation in forms
 	final_grade = models.CharField( null=True, blank=True, max_length=100,  help_text = _('The final grade for the whole class.'))
-	
+	programme = models.CharField(null=True, blank=True, max_length=100, help_text = _('The programme the student is enlisted in.'))
 	activation_key=models.CharField(_('activation key'), max_length=40, editable=False)
 	
 	# Use UserManager to get the create_user method, etc.
 	objects = UserManager()
-	
+
 	class Meta:
 		ordering = ['first_name', 'last_name']
 
+        def __init__(self, *args, **kwargs):
+            super(User, self).__init__(*args, **kwargs)
+            self._cached_groups = None
 
 	def __unicode__(self):
 		return self.get_full_name() or self.username
@@ -114,6 +116,23 @@ class User(BasicUser):
 	def is_shibboleth_user(self):
 		return not self.has_usable_password()
 
+        # Cache group membership for users
+        def cached_groups(self):
+            if self._cached_groups is None:
+                self._cached_groups = set(x['name'] for x in self.groups.values('name'))
+            return self._cached_groups
+
+        @property
+        def is_user(self):
+            return 'User' in self.cached_groups()
+        @property
+        def is_tutor(self):
+            return 'Tutor' in self.cached_groups()
+        @property
+        def is_trainer(self):
+            return 'Trainer' in self.cached_groups()
+
+
 	@classmethod
 	def export_user(cls, queryset):
 		""" Serializes a user queryset and related objects to xml """
@@ -122,7 +141,7 @@ class User(BasicUser):
 		return serializers.serialize("xml", django_users + users) # order does matter!
 	
 	@classmethod
-	@transaction.commit_on_success		# May not work with MySQL: see django docu
+	@atomic
 	def import_user(cls, xml_data):
 		basicUser_id_map = {}
 		imported_user_ids = []
@@ -157,7 +176,7 @@ class User(BasicUser):
 #		# the the instance needs to have a primary key value before a many-to-many relationship groups can be used so save it twice
 #		super(User, self).save(force_insert=force_insert, force_update=force_update, *args, **kwargs)
 #		# Bug: groups are not saved at this point!
-#		self.is_staff = (self.is_superuser or in_group(self,'Trainer'))
+#		self.is_staff = (self.is_superuser or self.is_trainer)
 #		super(User, self).save(force_insert=False, force_update=force_update, *args, **kwargs)
 	
 def create_user_for_basicuser(sender, **kwargs):
@@ -179,17 +198,3 @@ class Tutorial(models.Model):
 
 	def __unicode__(self):
 		return("%s: %s" % (self.name, self.tutors_flat()))
-
-	
-
-
-	
-class ShowAllUser(User):
-	class Meta:
-		proxy=True
-		verbose_name_plural="Users (showing all, slow!)"
-		verbose_name="User"
-		
-
-
-	

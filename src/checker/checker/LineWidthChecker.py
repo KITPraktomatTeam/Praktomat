@@ -10,7 +10,7 @@ import re
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.models import Checker, CheckerResult
+from checker.basemodels import Checker
 
 class LineWidthChecker(Checker):
 
@@ -38,7 +38,7 @@ class LineWidthChecker(Checker):
 	def run(self, env):
 		""" Here's the actual work.	 This runs the check in the environment ENV,
 		returning a CheckerResult. """
-		result = CheckerResult(checker=self)
+		result = self.create_result(env)
 
 		log = ""
 		passed = 1

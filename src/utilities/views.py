@@ -26,7 +26,7 @@ def serve_access_denied(request, path):
 @login_required
 def serve_solution_file(request, path, solution_id):
 	solution = get_object_or_404(Solution, pk=solution_id)
-	if solution.author == request.user or request.user.is_staff or request.user.tutored_tutorials.filter(id=solution.author.tutorial.id): 	
+	if solution.author == request.user or request.user.is_staff or (solution.author.tutorial is not None and request.user.tutored_tutorials.filter(id=solution.author.tutorial.id)):
 		return sendfile(request, path)
 	return forbidden(request, path)
 
@@ -45,7 +45,8 @@ def sendfile(request, path):
 		content_type = 'application/octet-stream' 
 	response['Content-Type'] = content_type
 	response['Content-Length'] = os.path.getsize(filename)
-	response['Content-Disposition'] = 'attachment; filename="%s"' % smart_str(os.path.basename(path))
+	if 'view' not in request.GET:
+		response['Content-Disposition'] = 'attachment; filename="%s"' % smart_str(os.path.basename(path))
 	return response 
 
 def forbidden(request, path):

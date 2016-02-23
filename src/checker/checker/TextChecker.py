@@ -7,7 +7,7 @@ TextChecker.
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.models import Checker, CheckerResult
+from checker.basemodels import Checker
 
 class TextChecker(Checker):
 	""" Checks if the specified text is included in a submitted file """
@@ -26,7 +26,7 @@ class TextChecker(Checker):
 	
 	def run(self, env):
 		""" Checks if the specified text is included in a submitted file """
-		result = CheckerResult(checker=self)
+		result = self.create_result(env)
 		
 		lines = []
 		occurances = []
@@ -43,19 +43,19 @@ class TextChecker(Checker):
 				if not inComment:
 					if line.find('/*') >= 0:
 						parts = line.split('/*')
-						if parts[0].find(self.text) > 0:
+						if parts[0].find(self.text) >= 0:
 							occurances.append((name, lineNum))
 						inComment = True	 
 				 
 				if not inComment:		 
 						parts = line.split('//')
-						if parts[0].find(self.text) > 0:
+						if parts[0].find(self.text) >= 0:
 							occurances.append((name, lineNum))				 
 				else:
-					if line.find('*/') > 0:
+					if line.find('*/') >= 0:
 						parts = line.split('*/')
 						if len(parts) > 1:
-							if parts[1].find(self.text) > 0:
+							if parts[1].find(self.text) >= 0:
 								occurances.append((name, lineNum))
 							
 						inComment = False

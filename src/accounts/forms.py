@@ -4,7 +4,7 @@ import hashlib
 import re
 
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
 from django.template import Context, loader
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import Group
@@ -65,7 +65,8 @@ class MyRegistrationForm(UserBaseCreationForm):
 			return username
 		raise forms.ValidationError(_("A user with that username already exists."))
 
-		
+
+	@transaction.atomic
 	def save(self):
 		user = super(MyRegistrationForm, self).save()
 		
@@ -117,10 +118,10 @@ class UserChangeForm(forms.ModelForm):
 		fields = ("first_name","last_name")
 
 
-	
 class AdminUserCreationForm(UserBaseCreationForm):
 	class Meta:
 		model = User
+                fields = "__all__"
 
 	def clean_username(self):
 		username = super(AdminUserCreationForm,self).clean_username()
@@ -129,11 +130,12 @@ class AdminUserCreationForm(UserBaseCreationForm):
 		except User.DoesNotExist:
 			return username
 		raise forms.ValidationError(_("A user with that username already exists."))
-		
+
 class AdminUserChangeForm(UserBaseChangeForm):
 	class Meta:
 		model = User
-	
+                fields = "__all__"
+
 	def clean(self):
 		# Only if user is in group "User" require a mat number.
 		cleaned_data = super(AdminUserChangeForm, self).clean()
@@ -182,3 +184,7 @@ class ImportTutorialAssignmentForm(forms.Form):
 	
 	
 
+class ImportMatriculationListForm(forms.Form):
+    mat_number_file = forms.FileField(required=True, help_text = "A text file consisting of one matriculatoin number per line.")
+    remove_others = forms.BooleanField(required=False, initial = True, help_text = "Also remove all users from the group if they are not listed here.")
+    create_users = forms.BooleanField(required=False, initial = False, help_text = "If a matriculation number is not known yet, create a stub user object")

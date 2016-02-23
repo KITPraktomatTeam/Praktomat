@@ -1,4 +1,5 @@
 from os.path import dirname, join
+from datetime import datetime, timedelta
 
 from utilities.TestSuite import TestCase
 from django.test.client import Client
@@ -26,9 +27,22 @@ class TestViews(TestCase):
 								u'solutionfile_set-INITIAL_FORMS': u'0',
 								u'solutionfile_set-TOTAL_FORMS': u'3',
 								u'solutionfile_set-0-file': f
-							})
+							}, follow=True)
 			self.assertRedirectsToView(response, 'solution_detail')
-		
+
+		def test_post_solution_expired(self):
+                        self.task.submission_date = datetime.now() - timedelta(hours=3)
+                        self.task.save()
+
+			path = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'AMI', 'ModelSolution(flat).zip')
+			f = open(path, 'r')
+			response = self.client.post(reverse('solution_list', args=[self.task.id]), data={
+								u'solutionfile_set-INITIAL_FORMS': u'0',
+								u'solutionfile_set-TOTAL_FORMS': u'3',
+								u'solutionfile_set-0-file': f
+							}, follow=True)
+			self.failUnlessEqual(response.status_code, 403)
+
 		def test_get_solution(self):
 			response = self.client.get(reverse('solution_detail', args=[self.task.solution_set.all()[0].id]))
 			self.failUnlessEqual(response.status_code, 200)

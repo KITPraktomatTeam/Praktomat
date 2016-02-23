@@ -1,14 +1,25 @@
 {% extends "base.html" %}
-{% load i18n  %}{% load in_group %}
+{% load i18n  %}
 {% block extrahead %}{{ block.super }}
-	<script type="text/javascript" src="{{MEDIA_URL}}/script/solution_inlines.js"></script>
-	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}/styles/pygments_friendly.css" />
+	<script type="text/javascript" src="{{STATIC_URL}}script/solution_inlines.js"></script>
+	<link type="text/css" rel="stylesheet" href="{{STATIC_URL}}styles/pygments_friendly.css" />
 {% endblock %}
-{% block breadcrumbs %} {{block.super}} > <a href={% url task_detail task_id=solution.task.id%}>{{solution.task.title}}</a> > {% if user|in_group:"Tutor,Trainer"%} <a href={% url attestation_list solution.task.id %}>My attestations</a> > <a href={% url solution_list task_id=solution.task.id user_id=solution.author.id %}>{{solution.author}}'s solutions</a>{% else %}<a href={% url solution_list task_id=solution.task.id%}>My solutions</a>{% endif %} > Solution {{solution.number}}
+{% block breadcrumbs %}
+{{block.super}}
+&gt; <a href={% url "task_detail" task_id=solution.task.id%}>{{solution.task.title}}</a>
+&gt; {% if user.is_tutor or user.is_trainer %} <a href={% url "attestation_list" solution.task.id %}>My attestations</a>
+&gt; <a href={% url "solution_list" task_id=solution.task.id user_id=solution.author.id %}>{{solution.author}}'s solutions</a>{% else %}<a href={% url "solution_list" task_id=solution.task.id%}>My solutions</a>{% endif %}
+&gt; Solution {{solution.number}}
 {% endblock %}
 {% block content %}<div id='solution_detail'>
 
-<h1>{{solution.task.title}} {% if user|in_group:"Tutor,Trainer" and not full %}(as seen by {{solution.author}}){% endif %}</h1>
+<h1>{{solution.task.title}}</h1>
+{% if user.is_tutor or user.is_trainer %}{% if not full %}
+   <p>
+	(as seen by {{solution.author}},
+	<a href="{% url "solution_detail_full" solution_id=solution.id %}">also show non-public checker results</a>)
+   </p>
+{% endif %}{% endif %}
 
 {% if solution.accepted %}
 	{% if solution.warnings %}
@@ -22,7 +33,11 @@
 	{% if not solution.task.expired %}{% trans "Please correct the errors below and try again!" %}{% endif %}</p>
 {% endif %}
 
-<p> {% if solution.final %}
+<p>
+	{% if solution.testupload %}
+		This is a test submission, and otherwise ignored.
+	{% endif %}
+	{% if solution.final %}
 		This is your current final solution.
 	{% else %}
 		 This is NOT your current final solution.
@@ -33,18 +48,16 @@
 	<p class='error'><span class="icon ui-icon-alert icon-red"></span>{% trans "Marked as Plagiarism" %}</p>
 {% endif %}
 
-{% if not solution.final %}	
-	{% if not solution.task.expired %}
-		{% if accept_all_solutions or solution.accepted %}
-			<form method="post">{% csrf_token %}
-				<input type="submit" value="Resubmit" />
-				<p class="help">You can resubmit this solution to make this your final solution.</p>
-			</form>
-		{% endif %}
-	{% endif %}
+{% if not solution.final and not solution.testupload and not solution.task.expired %}
+    {% if accept_all_solutions or solution.accepted %}
+        <form method="post">{% csrf_token %}
+            <input type="submit" value="Resubmit" />
+            <p class="help">You can resubmit this solution to make this your final solution.</p>
+        </form>
+    {% endif %}
 {% endif %}
 
-{% if full and user|in_group:"Tutor,Trainer" %}
+{% if full %}
 {% with solution.allCheckerResults as results %}
 	{% if results %}
 		<h2>{% trans "Results" %}</h2>

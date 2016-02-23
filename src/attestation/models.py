@@ -5,11 +5,14 @@ from solutions.models import Solution, SolutionFile
 from django.utils.translation import ugettext_lazy as _
 from django.core.mail import EmailMessage
 from django.template import Context, loader
-from django.contrib.sites.models import RequestSite
+from django.contrib.sites.requests import RequestSite
 from datetime import datetime
+from utilities.nub import nub
 import difflib
 
 from accounts.models import User
+from configuration import get_settings
+
 
 class Attestation(models.Model):
 	""""""
@@ -26,34 +29,72 @@ class Attestation(models.Model):
 	published = models.BooleanField(default = False, help_text = _('Indicates whether the user can see the attestation.'))
 	published_on = models.DateTimeField(blank=True,null=True,help_text = _('The Date/Time the attestation was published.'))
 	
-	def publish(self, request):
+	def publish(self, request, by):
 		""" Set attestation to published and send email to user """
 		self.published = True
 		self.published_on = datetime.now()
 		self.save()
-		
+
+                email = self.solution.author.email
+                if not email:
+                    return
+
 		# Send confirmation email
-		if (self.solution.author.email or self.author.email):
-			t = loader.get_template('attestation/attestation_email.html')
-			c = {
-				'attest': self,
-				'protocol': request.is_secure() and "https" or "http",
-				'domain': RequestSite(request).domain,
-				'site_name': settings.SITE_NAME,
-				}
-			subject = _("New attestation for your solution of the task '%s'") % self.solution.task
-			body = t.render(Context(c))
-			recipients = [self.solution.author.email or self.author.email]
-			bcc_recipients = [self.author.email] if self.solution.author.email and self.author.email else None
-			headers = {'Reply-To': self.author.email} if bcc_recipients else None
-			email = EmailMessage(subject, body, None, recipients, bcc_recipients, headers = headers)
-			email.send()
+                t = loader.get_template('attestation/attestation_email.html')
+                c = {
+                        'attest': self,
+                        'protocol': request.is_secure() and "https" or "http",
+                        'domain': RequestSite(request).domain,
+                        'site_name': settings.SITE_NAME,
+                        'by': by,
+                        'invisible_attestor' : get_settings().invisible_attestor,
+                        }
+                subject = _("New attestation for your solution of the task '%s'") % self.solution.task
+                body = t.render(Context(c))
+                reply_to = ([self.author.email]                    if self.author.email and (not get_settings().invisible_attestor) else []) \
+                         + ([get_settings().attestation_reply_to]  if get_settings().attestation_reply_to else [])
+                headers = {'Reply-To': ', '.join(reply_to)} if reply_to else None
+                email = EmailMessage(subject, body, None, (email,), headers = headers)
+                email.send()
+
+        def withdraw(self, request, by):
+		self.published = False
+                self.final = False
+		self.published_on = datetime.now()
+		self.save()
+
+                recps = nub([
+                    self.solution.author, # student
+                    self.author,          # attestation writer
+                    by,                   # usually attestation writer, may be trainer
+                    ] + list(User.objects.filter(groups__name="Trainer"))  # and, for withdrawals, all trainers
+                    )
+                emails = [u.email for u in recps if u.email]
+
+                if not emails:
+                    return
+
+		# Send confirmation email
+                t = loader.get_template('attestation/attestation_withdraw_email.html')
+                c = {
+                        'attest': self,
+                        'protocol': request.is_secure() and "https" or "http",
+                        'domain': RequestSite(request).domain,
+                        'site_name': settings.SITE_NAME,
+                        'by': by,
+                        }
+                subject = _("Attestation for your solution of the task '%s' withdrawn") % self.solution.task
+                body = t.render(Context(c))
+                recipients = emails[0:1]
+                bcc_recipients = emails[1:]
+                email = EmailMessage(subject, body, None, recipients, bcc_recipients)
+                email.send()
 
 class AnnotatedSolutionFile(models.Model):
 	""""""
 	attestation = models.ForeignKey(Attestation)
 	solution_file = models.ForeignKey(SolutionFile)
-	content = models.TextField(help_text = _('The content of the solution file annotated by the tutor.'))
+	content = models.TextField(help_text = _('The content of the solution file annotated by the tutor.'), blank = True)
 	
 	def has_anotations(self):
 		original = self.solution_file.content().replace("\r\n","\n").replace("\r","\n")
@@ -117,6 +158,6 @@ class RatingResult(models.Model):
 	
 class Script(models.Model):
 	""" save java script function of the rating overview page """
-	script = models.TextField(blank=True, help_text = _("This JavaScript will calculate a recommend end note for every user based on final grade of every task."), default="""var sum = 0;\nfor (x in grades) {\n\tsum += parseInt(grades[x]);\n}\nresult=Math.round(sum/grades.length);""")
+	script = models.TextField(blank=True, help_text = _("This JavaScript will calculate a recommend end note for every user based on final grade of every task."), default="""var sum = 0.0;\nfor (x = 0; x != grades.length; ++x) {\n    grade = parseFloat(grades[x]);\n    if (!isNaN(grade)) {\n        sum += grade;\n    }\n}\nresult=sum;""")
 	
 	

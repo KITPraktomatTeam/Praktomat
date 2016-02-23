@@ -1,60 +1,47 @@
-# encoding: utf-8
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from django.db import migrations, models
 import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
-
-class Migration(SchemaMigration):
-
-    def forwards(self, orm):
-        
-        # Adding model 'Settings'
-        db.create_table('configuration_settings', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('email_validation_regex', self.gf('django.db.models.fields.CharField')(default='.*@(student.)?kit.edu', max_length=200, blank=True)),
-            ('mat_number_validation_regex', self.gf('django.db.models.fields.CharField')(default='\\d{5,7}', max_length=200, blank=True)),
-            ('deny_registration_from', self.gf('django.db.models.fields.DateTimeField')()),
-            ('anonymous_attestation', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('final_grades_published', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal('configuration', ['Settings'])
-
-        # Adding model 'Chunk'
-        db.create_table('configuration_chunk', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('settings', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['configuration.Settings'])),
-            ('key', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-            ('content', self.gf('django.db.models.fields.TextField')(blank=True)),
-        ))
-        db.send_create_signal('configuration', ['Chunk'])
 
 
-    def backwards(self, orm):
-        
-        # Deleting model 'Settings'
-        db.delete_table('configuration_settings')
+class Migration(migrations.Migration):
 
-        # Deleting model 'Chunk'
-        db.delete_table('configuration_chunk')
+    dependencies = [
+    ]
 
-
-    models = {
-        'configuration.chunk': {
-            'Meta': {'object_name': 'Chunk'},
-            'content': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'key': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'}),
-            'settings': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['configuration.Settings']"})
-        },
-        'configuration.settings': {
-            'Meta': {'object_name': 'Settings'},
-            'anonymous_attestation': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'deny_registration_from': ('django.db.models.fields.DateTimeField', [], {}),
-            'email_validation_regex': ('django.db.models.fields.CharField', [], {'default': "'.*@(student.)?kit.edu'", 'max_length': '200', 'blank': 'True'}),
-            'final_grades_published': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'mat_number_validation_regex': ('django.db.models.fields.CharField', [], {'default': "'\\\\d{5,7}'", 'max_length': '200', 'blank': 'True'})
-        }
-    }
-
-    complete_apps = ['configuration']
+    operations = [
+        migrations.CreateModel(
+            name='Chunk',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('key', models.CharField(help_text=b'A unique name for this chunk of content', unique=True, max_length=255, editable=False)),
+                ('content', models.TextField(blank=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Settings',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('email_validation_regex', models.CharField(default=b'.*@(student.)?kit.edu', help_text=b'Regular expression used to check the email domain of registering users.', max_length=200, blank=True)),
+                ('mat_number_validation_regex', models.CharField(default=b'\\d{5,7}', help_text=b'Regular expression used to check the student number.', max_length=200, blank=True)),
+                ('new_users_via_sso', models.BooleanField(default=True, help_text=b'If enabled, users previously unknown to the Praktomat can register via sigle sign on (eg. Shibboleth).')),
+                ('deny_registration_from', models.DateTimeField(default=datetime.date(2222, 1, 1), help_text=b'After this date, registration wont be possible.')),
+                ('acount_activation_days', models.IntegerField(default=10, help_text=b'Days until the user has time to activate his account with the link send in the registation email.')),
+                ('account_manual_validation', models.BooleanField(default=False, help_text=b'If enabled, registrations via the website must be manually validate by a trainer.')),
+                ('accept_all_solutions', models.BooleanField(default=False, help_text=b'If enabled, solutions with required checkers, which are not passed, can become the final soution.')),
+                ('anonymous_attestation', models.BooleanField(default=False, help_text=b"If enabled, the tutor can't see the name of the user, who subbmitted the solution.")),
+                ('final_grades_published', models.BooleanField(default=False, help_text=b'If enabeld, all users can see their final grades.')),
+                ('invisible_attestor', models.BooleanField(default=False, help_text=b'If enabeld, users will not learn which tutor wrote attestations to his solutions. In particular, tutors will not ne named in Attestation-Emails.')),
+                ('attestation_reply_to', models.EmailField(help_text=b'Addiotional Reply-To: Address to be set for Attestation emails.', max_length=254, blank=True)),
+            ],
+            options={
+                'verbose_name': 'Setting',
+            },
+        ),
+        migrations.AddField(
+            model_name='chunk',
+            name='settings',
+            field=models.ForeignKey(default=1, to='configuration.Settings', help_text=b'Makes it easy to display chunks as inlines in Settings.'),
+        ),
+    ]

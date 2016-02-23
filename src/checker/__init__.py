@@ -1,2 +1,2 @@
-from checker import *
-from compiler import *
+#from checker import *
+#from compiler import *

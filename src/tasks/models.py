@@ -2,6 +2,7 @@ from datetime import date, datetime, timedelta
 import tempfile
 import zipfile
 
+from django.apps import apps
 from django.db import models
 from django.db import transaction
 from django import db
@@ -21,12 +22,14 @@ class Task(models.Model):
 	description = models.TextField(help_text = _("Description of the assignment."))
 	publication_date = models.DateTimeField(help_text = _("The time on which the user will see the task."))
 	submission_date = models.DateTimeField(help_text = _("The time up until the user has time to complete the task. This time will be extended by one hour for those who yust missed the deadline."))
-	supported_file_types = models.CharField(max_length=1000, default ="^(text/.*|image/.*)$", help_text = _("Regular Expression describing the mime types of solution files that the user is allowed to upload."))
+	supported_file_types = models.CharField(max_length=1000, default ="^(text/.*|image/.*|application/pdf)$", help_text = _("Regular Expression describing the mime types of solution files that the user is allowed to upload."))
 	max_file_size = models.IntegerField(default=1000, help_text = _("The maximum size of an uploaded solution file in kilobyte."))
 	model_solution = models.ForeignKey('solutions.Solution', blank=True,
 			null=True, related_name='model_solution_task')
 	all_checker_finished = models.BooleanField(default=False, editable=False, help_text = _("Indicates whether the checker which don't run immediately on submission have been executed."))
 	final_grade_rating_scale = models.ForeignKey('attestation.RatingScale', null=True, help_text = _("The scale used to mark the whole solution."))
+
+        only_trainers_publish = models.BooleanField(default=False, help_text = _("Indicates that only trainers may publish attestations. Otherwise, tutors may publish final attestations within their tutorials."))
 	
 	def __unicode__(self):
 		return self.title
@@ -38,24 +41,35 @@ class Task(models.Model):
 	def final_solution(self,user):
 		""" get FINAL solution of specified user """
 		solutions = self.solution_set.filter(author=user, final=True)
-		return solutions[0] if solutions else None
-		
+		return solutions.first()
+
 	def expired(self):
 		"""docstring for expired"""
 		return self.submission_date + timedelta(hours=1) < datetime.now()
 	
 	def check_all_final_solutions(self):
-		from checker.models import check_multiple
-		check_multiple(self.solution_set.filter(final=True), True)
+		from checker.basemodels import check_multiple
+		final_solutions = self.solution_set.filter(final=True)
+		count = check_multiple(final_solutions, True)
 
 		if self.expired():
 				self.all_checker_finished = True
 				self.save()
+                return final_solutions.count()
+
+        def get_checkers(self):
+            from checker.basemodels import Checker
+            checker_app = apps.get_app_config('checker')
+
+            checker_classes = filter(lambda x:issubclass(x,Checker), checker_app.get_models())
+            unsorted_checker = sum(map(lambda x: list(x.objects.filter(task=self)), checker_classes),[])
+            checkers = sorted(unsorted_checker, key=lambda checker: checker.order)
+            return checkers
+
 
 	@classmethod
 	def export_Tasks(cls, qureyset):
 		""" Serializes a task queryset and related checkers to xml and bundels it with all files into a zipfile  """
-		from checker.models import Checker
 		from solutions.models import Solution, SolutionFile
 
 		# fetch tasks, media objects, checker and serialize
@@ -63,7 +77,9 @@ class Task(models.Model):
 		media_objects = list( MediaFile.objects.filter(task__in=task_objects) )
 		model_solution_objects = list( Solution.objects.filter(model_solution_task__in=task_objects) )
 		model_solution_file_objects = list( SolutionFile.objects.filter(solution__in=model_solution_objects) )
-		checker_classes = filter(lambda x:issubclass(x,Checker), models.get_models())
+                from checker.basemodels import Checker
+                checker_app = apps.get_app_config('checker')
+		checker_classes = filter(lambda x:issubclass(x,Checker), checker_app.get_models())
 		checker_objects = sum(map(lambda x: list(x.objects.filter(task__in=task_objects)), checker_classes),[])
 		data = serializers.serialize("xml", task_objects + media_objects + checker_objects + model_solution_objects + model_solution_file_objects)
 		
@@ -86,9 +102,9 @@ class Task(models.Model):
 		zip.close()	
 		zip_file.seek(0)		# rewind
 		return zip_file			# return unclosed file-like object!?
-		
+
 	@classmethod
-	@transaction.commit_on_success		# May not work with MySQL: see django docu
+        @transaction.atomic
 	def import_Tasks(cls, zip_file, solution_author):
 		from solutions.models import Solution, SolutionFile
 		zip = zipfile.ZipFile(zip_file,'r')
@@ -136,13 +152,13 @@ class Task(models.Model):
 					object.save()
 
 		for solution in solution_list:
-			solution.check(run_secret=True)
+			solution.check_solution(run_secret=True)
 
-								
+def get_mediafile_storage_path(instance, filename):
+    return 'TaskMediaFiles/Task_%s/%s' % (instance.task.pk, filename)
+
+
 class MediaFile(models.Model):
 
-	def get_storage_path(instance, filename):
-		return 'TaskMediaFiles/Task_%s/%s' % (instance.task.pk, filename)
-
 	task = models.ForeignKey(Task)
-	media_file = DeletingFileField(upload_to=get_storage_path, max_length=500)
+	media_file = DeletingFileField(upload_to=get_mediafile_storage_path, max_length=500)

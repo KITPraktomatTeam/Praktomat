@@ -1,6 +1,9 @@
 from django.contrib import admin
 from attestation.models import *
-	
+from django.core.urlresolvers import reverse
+from django.utils.html import format_html
+
+
 class RatingScaleItemInline(admin.TabularInline):
 	model = RatingScaleItem
 	extra = 0
@@ -37,8 +40,8 @@ class RatingResultAdminInline(admin.StackedInline):
 	
 class AttestationAdmin(admin.ModelAdmin):
 	model = Attestation
-	readonly_fields = ('created','solution',)
-	fields = ( 'solution', 'author', 'created', 'public_comment', 'private_comment', 'final_grade', 'final', 'published','published_on')
+	readonly_fields = ('created','show_solution',)
+	fields = ( 'show_solution', 'author', 'created', 'public_comment', 'private_comment', 'final_grade', 'final', 'published','published_on')
 	list_display = ('solution', 'author', 'created', 'final', 'published','published_on')
 	list_filter = ('final', 'published', 'author', 'solution__author', 'solution__task')
 	inlines = (RatingResultAdminInline, AnnotatedSolutionFileAdminInline)
@@ -52,6 +55,17 @@ class AttestationAdmin(admin.ModelAdmin):
 		if db_field.name == "final_grade":
 			kwargs["queryset"] = RatingScaleItem.objects.filter(scale__id=request.obj.solution.task.final_grade_rating_scale.id)
 		return super(AttestationAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
+        def show_solution(self, instance):
+		return format_html('<a href="{0}">{1}</a> by <a href="{2}">{3}</a>',
+                    reverse('admin:solutions_solution_change', args=(instance.solution.pk,)),
+                    instance.solution,
+                    reverse('admin:accounts_user_change', args=(instance.solution.author.pk,)),
+                    instance.solution.author,
+                    )
+	show_solution.allow_tags = True
+	show_solution.short_description = 'Solution'
+
 
 
 

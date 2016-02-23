@@ -14,8 +14,9 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.models import Checker, CheckerFileField, CheckerResult, execute_arglist
+from checker.basemodels import Checker, CheckerFileField
 from checker.compiler.Builder import Builder
+from utilities.safeexec import execute_arglist
 from utilities import encoding
 from utilities.file_operations import *
 
@@ -28,9 +29,9 @@ RXRUN_BY   = re.compile(r"Run By .* on ")
 # Stuff to remove from output
 RXREMOVE   = re.compile(r"(Schedule of variations:.*interface file.)|(Running \./[ -z]*/[a-z]*\.exp \.\.\.)", re.DOTALL)
 
-class DejaGnu:
+class DejaGnu(object):
 	""" Common superclass for all DejaGnu-related stuff. """
-	
+
 	# Directories
 	def testsuite_dir(self, env):
 		return os.path.join(env.tmpdir(), "testsuite")
@@ -49,7 +50,6 @@ class DejaGnu:
 		makedirs(self.config_dir(env))
 		makedirs(self.lib_dir(env))
 		makedirs(self.tests_dir(env))
-	
 
 
 class DejaGnuTester(Checker, DejaGnu):
@@ -108,7 +108,7 @@ class DejaGnuTester(Checker, DejaGnu):
 		program_name = env.program()
 
 		if " " in program_name:
-			result = self.result()
+			result = self.create_result(env)
 			result.set_log("<pre><b class=\"fail\">Error</b>: Path to the main() - source file contains spaces.\n\nFor Java .zip submittions, the directory hierarchy of the .zip file must excactly match the package structure.\nThe default package must correspond to the .zip root directory.</pre>")
 			result.set_passed(False)
 			return result
@@ -117,12 +117,21 @@ class DejaGnuTester(Checker, DejaGnu):
 
 		environ = {}
 		environ['JAVA'] = settings.JVM
-		environ['POLICY'] = join(join(dirname(dirname(__file__)),"scripts"),"praktomat.policy")
+		script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
+		environ['POLICY'] = join(script_dir,"praktomat.policy")
 		environ['USER'] = env.user().get_full_name().encode(sys.getdefaultencoding(), 'ignore')
 		environ['HOME'] = testsuite
 		environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
 
-		[output, error, exitcode,timed_out] = execute_arglist(cmd, testsuite, environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE)
+		[output, error, exitcode, timed_out, oom_ed] = \
+                    execute_arglist(
+                        cmd,
+                        testsuite,
+                        environment_variables=environ,
+                        timeout=settings.TEST_TIMEOUT,
+                        fileseeklimit=settings.TEST_MAXFILESIZE,
+                        extradirs=[env.tmpdir(), script_dir]
+                        )
 		output = encoding.get_unicode(output)
 
 		try:
@@ -134,9 +143,9 @@ class DejaGnuTester(Checker, DejaGnu):
 
 		complete_output = self.htmlize_output(output + log)
 
-		result = self.result()
-		result.set_log(complete_output,timed_out=timed_out)
-		result.set_passed(not exitcode and not timed_out and self.output_ok(complete_output))
+		result = self.create_result(env)
+		result.set_log(complete_output,timed_out=timed_out or oom_ed)
+		result.set_passed(not exitcode and not timed_out and not oom_ed and self.output_ok(complete_output))
 		return result
 
 
@@ -169,7 +178,7 @@ class DejaGnuSetup(Checker, DejaGnu):
 		defs = string.replace(defs, "JAVA", settings.JVM_SECURE)
 		create_file(os.path.join(self.config_dir(env), "default.exp"), defs)
 
-		return self.result()
+		return self.create_result(env)
 
 from checker.admin import	CheckerInline, AlwaysChangedModelForm
 

@@ -8,7 +8,7 @@
 #    Klassen-Bibliothek statt (java-sandbox.jar).
 # 3. Die Ausfuehrung findet mit einer leeren policy statt.
 #
-# Da der Praktomat als suid praktomat läuft,...
+# Da der Praktomat als suid praktomat lï¿½uft,...
 
 if [ ! -n "$JAVAC" ]
 then

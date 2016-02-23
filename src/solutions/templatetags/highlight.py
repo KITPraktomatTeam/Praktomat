@@ -31,7 +31,7 @@ def colorize_table(value,arg=None):
     except ClassNotFound:
         return mark_safe("<pre>%s</pre>" % escape(value))
 
-rx_diff_pm = re.compile('^(?P<first_line>\d*</pre></div></td><td class="code"><div class="highlight"><pre>)?(?P<line>(<span class=".*?">)?(\+|-).*$)')     
+rx_diff_pm = re.compile('^(?P<first_line>\d*</pre></div></td><td class="code"><div class="highlight"><pre>)?(?P<line>(<span class=".*?">)?(?P<plusminus>\+|-).*?)(?P<endtag></pre>)?$')
 rx_diff_questionmark = re.compile('(?P<line>(<span class="\w*">)?\?.*$)')
 rx_tag = re.compile('^(<[^<]*>)+')
 rx_char = re.compile('^(&\w+;|.)')
@@ -96,7 +96,13 @@ def highlight_diff(value):
 			if m:
 				if m.group('first_line'):
 					result += m.group('first_line')
-				prevline = "<div class='changed'>" + m.group('line') + "</div>"
+				if m.group('plusminus') == '+':
+					extra_class = "added"
+				elif m.group('plusminus') == '-':
+					extra_class = "removed"
+				prevline = "<div class='changed %s'>%s</div>" % (extra_class, m.group('line'))
+				if m.group('endtag'):
+					prevline += m.group('endtag')
 			else:
 				prevline = line
 	if prevline is not None:

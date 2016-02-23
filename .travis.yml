@@ -4,14 +4,13 @@ python:
  - "2.7"
 
 install:
+ - sudo apt-get update
  - sudo apt-get install python2.7-dev swig libsasl2-dev libssl-dev libpq-dev
  - sudo apt-get install openjdk-6-jdk dejagnu checkstyle gcj-jdk
- - pip install setuptools --upgrade
-   # m2crypto does not compile out of the box, see https://github.com/boto/boto/pull/841
- - pip install --upgrade git+https://github.com/msabramo/M2Crypto.git@1de89f579e5377412fd428fb96edbfd3ef4e5c4d
+ - sudo apt-get install phantomjs
+ - sudo apt-get install r-base
+ - pip install http://python-subprocess32.googlecode.com/files/subprocess32-3.2.3.tar.gz
+ - pip install -r requirements.txt
 
 script:
- - python bootstrap.py
- - ./bin/buildout
- - mkdir /tmp/praktomat-upload
- - ./bin/praktomat test --settings=settings_test accounts attestation checker configuration sessionprofile solutions tasks
+ - ./src/manage-test.py test accounts attestation checker configuration solutions tasks

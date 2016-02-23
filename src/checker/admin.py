@@ -19,12 +19,12 @@ class CheckerInline(admin.StackedInline):
 		""" Get the fields public, required and always on the first line without defining fieldsets in every subclass. This saves a lot of space. """
 		if self.declared_fieldsets:
 				return self.declared_fieldsets
-		form = self.get_formset(request).form
+
+		form = self.get_formset(request, obj, fields=None).form
 		fields = form.base_fields.keys() + list(self.get_readonly_fields(request, obj))
 		fields.remove('public')
 		fields.remove('required')
 		fields.remove('always')
-		return [(self.model.description(), {'fields':(('public', 'required', 'always'),)}),
+		fields.remove('critical')
+	        return [(self.model.description(), {'fields':(('public', 'required', 'always', 'critical'),)}),
 						(None, {'fields': fields })]
-	
-	

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 from pipes import quote
 import re, subprocess
 import string
@@ -8,7 +9,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
 
 
-from checker.models import Checker, CheckerResult, execute, execute_arglist
+from checker.basemodels import Checker
+from utilities.safeexec import execute_arglist
 
 class Builder(Checker):
 	""" Build a program. This contains the general infrastructure to build a program with a compiler.  Specialized subclass are provided for different languages and compilers. """
@@ -23,10 +25,11 @@ class Builder(Checker):
 	_env                            = {}
 	
 			
-	_flags			= models.CharField(max_length = 1000, blank = True, default="-Wall", help_text = _('Compiler flags'))
-	_output_flags	= models.CharField(max_length = 1000, blank = True, default ="-o %s", help_text = _('Output flags. \'%s\' will be replaced by the program name.'))
-	_libs			= models.CharField(max_length = 1000, blank = True, default = "", help_text = _('Compiler libraries'))
-	_file_pattern	= models.CharField(max_length = 1000, default = r"^[a-zA-Z0-9_]*$", help_text = _('Regular expression describing all source files to be passed to the compiler.'))
+	_flags			  = models.CharField(max_length = 1000, blank = True, default="-Wall", help_text = _('Compiler flags'))
+	_output_flags	  = models.CharField(max_length = 1000, blank = True, default ="-o %s", help_text = _('Output flags. \'%s\' will be replaced by the program name.'))
+	_libs			  = models.CharField(max_length = 1000, blank = True, default = "", help_text = _('Compiler libraries'))
+	_file_pattern	  = models.CharField(max_length = 1000, default = r"^[a-zA-Z0-9_]*$", help_text = _('Regular expression describing all source files to be passed to the compiler.'))
+	_main_required    = models.BooleanField(default = True, help_text = _('Is a submission required to provide a main method?'))
 	
 	def title(self):
 		return u"%s - Compiler" % self.language()
@@ -104,29 +107,37 @@ class Builder(Checker):
 
 	def run(self, env):
 		""" Build it. """
-		result = CheckerResult(checker=self)
+		result = self.create_result(env)
 
+		# Try to find out the main modules name with only the source files present
 		try:
 			env.set_program(self.main_module(env))
-		except self.NotFoundError as e:
-			result.set_log(e)
-			result.set_passed(False)
-			return result
+		except self.NotFoundError:
+			pass
 		
 		filenames = [name for name in self.get_file_names(env)]
 		args = [self.compiler()] + self.output_flags(env) + self.flags(env) + filenames + self.libs()
-		[output,_,_,_]  = execute_arglist(args, env.tmpdir(),self.environment())
+		script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
+		[output,_,_,_,_]  = execute_arglist(args, env.tmpdir(),self.environment(), extradirs=[script_dir])
 
 		output = escape(output)
 		output = self.enhance_output(env, output)
-		
-		# Allow server to delete created subfolders
-		execute('chmod -R 0777 *', env.tmpdir())		
 
-		# The executable has to exist and we mustn't have any warnings.
+		# We mustn't have any warnings.
 		passed = not self.has_warnings(output)	
-		result.set_log(self.build_log(output,args,set(filenames).intersection([solutionfile.path() for solutionfile in env.solution().solutionfile_set.all()])))
+		log  = self.build_log(output,args,set(filenames).intersection([solutionfile.path() for solutionfile in env.solution().solutionfile_set.all()]))
+
+		# Now that submission was successfully built, try to find the main modules name again
+		try:
+			if passed : env.set_program(self.main_module(env))
+		except self.NotFoundError as e:
+			# But only complain if the main method is required
+			if self._main_required:
+				log += "<pre>" + str(e) + "</pre>"
+				passed = False
+
 		result.set_passed(passed)
+		result.set_log(log)
 		return result
 
 	def build_log(self,output,args,filenames):

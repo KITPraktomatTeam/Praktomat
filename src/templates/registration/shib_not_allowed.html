@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Login not allowed{% endblock %}
+
+{% block content_title %}Login not allowed{% endblock %}
+
+{% block content %}
+
+<p>You are not known to the system, and automatic registration is turned off. Did you register with the course? If you think this is not your fault, please talk to your trainer.</p>
+
+<p>The submitted attributes are:
+<ul>
+  {% for name,value in shib_attrs.items %}
+  <li>{{ name }}:     <b>{{ value|default:'<span class="red">missing</span>' }}</b></li>
+  {% endfor %}
+</ul>
+</p>
+
+{% endblock %}
+

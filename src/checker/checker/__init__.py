@@ -8,10 +8,12 @@ __all__ = [	#"AnonymityChecker",
 			"CreateFileChecker",
 			#"LineCounter",
 			"JUnitChecker",
-			#"JUnit3Checker",
 			"DejaGnu",
 			#"CheckStyleChecker",
 			#"IsabelleChecker",
 			"AutoAttestChecker",
+			"HaskellTestFrameWorkChecker",
+                        "RChecker",
+                        "KeepFileChecker",
 		  ]
 

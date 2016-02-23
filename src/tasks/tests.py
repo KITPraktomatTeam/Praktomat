@@ -1,4 +1,5 @@
 from os.path import dirname, join
+from datetime import datetime, timedelta
 
 from utilities.TestSuite import TestCase
 from django.core.urlresolvers import reverse
@@ -39,7 +40,7 @@ class TestStaffViews(TestCase):
 			f = open(path, 'r')
 			response = self.client.post(reverse('admin:task_import'), data={
 								u'file': f
-							})
+							}, follow=True)
 			self.assertRedirectsToView(response, 'changelist_view')
 
 		def test_get_model_solution(self):
@@ -55,18 +56,27 @@ class TestStaffViews(TestCase):
 							})
 			self.assertNotContains(response, 'error_list')
 
-			def test_task_export(self):
-				response = self.client.post(reverse('admin:tasks_task_changelist'), data={
-								u'_selected_action': 1,
-								u'action': u'export_tasks'
-							})
-				self.failUnlessEqual(response.status_code, 200)
-		
-			def test_task_run_all_checker(self):
-				# TODO: Create checker for test task!
-				response = self.client.post(reverse('admin:tasks_task_changelist'), data={
-								u'_selected_action': 1,
-								u'action': u'run_all_checkers'
-							})
-				self.failUnlessEqual(response.status_code, 200)
+                def test_task_export(self):
+                        response = self.client.post(reverse('admin:tasks_task_changelist'), data={
+                                                        u'_selected_action': 1,
+                                                        u'action': u'export_tasks'
+                                                })
+                        self.failUnlessEqual(response.status_code, 200)
 
+                def test_task_run_all_checker(self):
+                        # needs to be expired first
+                        self.task.submission_date = datetime.now() - timedelta(hours=2)
+                        self.task.save()
+
+                        # TODO: Create checker for test task!
+                        response = self.client.post(reverse('admin:tasks_task_changelist'), data={
+                                                        u'_selected_action': self.task.pk,
+                                                        u'action': u'run_all_checkers'
+                                                }, follow=True)
+                        self.task.refresh_from_db()
+                        self.failUnlessEqual(response.status_code, 200)
+                        self.failUnless(self.task.all_checker_finished)
+
+                def test_task_run_all_checker_parallel(self):
+                    with self.settings(NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL=4):
+                        self.test_task_run_all_checker()

@@ -1,8 +1,7 @@
 {% extends "base.html"%}
-{% load i18n %}{% load in_group %}
+{% load i18n %}
 {% block extrahead %}{{ block.super }}
-<script type="text/javascript" src="{{MEDIA_URL}}/frameworks/jquery/jquery.tools.min.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}frameworks/jquery.formset/jquery.formset.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}frameworks/jquery.formset/jquery.formset.min.js"></script>
 <script type="text/javascript">	
  $(document).ready(function(){
  	$("#help_icon").tooltip({
@@ -27,7 +26,7 @@
 			};
 </style>
 {% endblock %}
-{% block breadcrumbs %} {{block.super}} > <a href={% url task_detail task_id=task.id%}>{{task.title}}</a> > Checker Results{% endblock %}
+{% block breadcrumbs %} {{block.super}} > <a href={% url "task_detail" task_id=task.id%}>{{task.title}}</a> > Checker Results{% endblock %}
 
 {% block content %}
 		<table>
@@ -41,12 +40,12 @@
 		</tr>
 		{% for user,results,solution in users_with_checkerresults %}
 		<tr>
-			<td nowrap><a href={% url solution_detail solution_id=solution.id full='full' %}>{{user}}</a></td>
+			<td nowrap><a href={% url "solution_detail_full" solution_id=solution.id %}>{{user}}</a></td>
 			<td nowrap>{{user.mat_number}}</td>
 			<td nowrap>{{user.username}}</td>
 			{% for result in results %}
 				{% if result %} 
-			<td align="center"><img src="{{MEDIA_URL}}admin/img/admin/icon-{{ result.passed|yesno:"yes,no" }}.gif" alt="{{result.passed}}"></td>
+			<td align="center"><img src="{{STATIC_URL}}admin/img/admin/icon-{{ result.passed|yesno:"yes,no" }}.gif" alt="{{result.passed}}"></td>
 				{% else %}
 			<td></td>
                 	        {% endif %}

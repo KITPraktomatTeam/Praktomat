@@ -7,9 +7,10 @@ Generate some simple lexical statistics.
 import string
 
 from django.db import models
+from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.models import Checker, CheckerResult
+from checker.basemodels import Checker
 
 class LineCounter(Checker):
 	""" Lexical Statistics of the sources.
@@ -20,12 +21,14 @@ class LineCounter(Checker):
 
 	def title(self):
 		""" Returns the title for this checker category. """
-		return "Lexikalische Statistik"
+		# _de("Lexikalische Statistik")
+		return ugettext("Lexical statistics")
 	
 	@staticmethod
 	def description():
 		""" Returns a description for this Checker. """
-		return u"Diese Prüfung wird immer bestanden."
+		# _de(u"Diese Prüfung wird immer bestanden.")
+		return ugettext("This check is always passed.")
 		
 	def run(self, env):
 		""" Here's the actual work.	 This runs the check in the environment ENV,
@@ -100,40 +103,67 @@ class LineCounter(Checker):
 			try:
 				# FIXME : code_lines_in_file, comment_lines_in_file
 				#		  may be 0!!
-				log = log + (	escape(name) + ": "
-							 + `lines_in_file` + " Zeilen, davon "
-							 + `code_lines_in_file` + " Code ("
-							 + `code_lines_in_file*100 / lines_in_file` + "%), "
-							 + `comment_lines_in_file` + " Kommentar ("
-							 + `comment_lines_in_file*100 / lines_in_file` + "%), "
-							 + `coco_lines_in_file` + " beides ("
-							 + `coco_lines_in_file*100 / lines_in_file` + "%).<br>\n")
+				# _de()
+				# log = log + (	escape(name) + ": "
+				# 			 + `lines_in_file` + " Zeilen, davon "
+				# 			 + `code_lines_in_file` + " Code ("
+				# 			 + `code_lines_in_file*100 / lines_in_file` + "%), "
+				# 			 + `comment_lines_in_file` + " Kommentar ("
+				# 			 + `comment_lines_in_file*100 / lines_in_file` + "%), "
+				# 			 + `coco_lines_in_file` + " beides ("
+				# 			 + `coco_lines_in_file*100 / lines_in_file` + "%).<br>\n")
+				l = ugettext(
+					"{0} lines, including {1} code lines ({2}%), {3} comment lines ({4}%), {5} both ({6}%)."
+					.format(lines_in_file, 
+						code_lines_in_file, 
+						code_lines_in_file*100 / lines_in_file,
+						comment_lines_in_file,
+						comment_lines_in_file*100 / lines_in_file,
+						coco_lines_in_file, 
+						coco_lines_in_file*100 / lines_in_file))
+				log = log + (	escape(name) + ": " + l + "<br>\n")
+				
 			except ZeroDivisionError:
 				# FIXME
 				log = log + "Line Width Checker (l 178): ZeroDivisionError " + \
 					  " (no comment / code / coco lines in file!)"
 			
-		lines = lines + lines_in_file
-		comment_lines = comment_lines + comment_lines_in_file
-		code_lines = code_lines + code_lines_in_file
-		coco_lines = coco_lines + coco_lines_in_file
+			lines = lines + lines_in_file
+			comment_lines = comment_lines + comment_lines_in_file
+			code_lines = code_lines + code_lines_in_file
+			coco_lines = coco_lines + coco_lines_in_file
 
+		# All files have been processed.
 		try:
-			log = log + ("<br>" + `files` + " Dateien, "
-						 + `lines` + " Zeilen, davon "
-						 + `code_lines` + " Code ("
-						 + `code_lines * 100 / lines` + "%), "
-						 + `comment_lines` + " Kommentar ("
-						 + `comment_lines * 100 / lines` + "%), "
-						 + `coco_lines` + " beides ("
-						 + `coco_lines * 100 / lines` + "%).\n")
+			# _de()
+			# log = log + ("<br>" + `files` + " Dateien, "
+			# 			 + `lines` + " Zeilen, davon "
+			# 			 + `code_lines` + " Code ("
+			# 			 + `code_lines * 100 / lines` + "%), "
+			# 			 + `comment_lines` + " Kommentar ("
+			# 			 + `comment_lines * 100 / lines` + "%), "
+			# 			 + `coco_lines` + " beides ("
+			# 			 + `coco_lines * 100 / lines` + "%).\n")
+			l = ugettext(
+				"{0} files, {1} lines, including {2} code lines ({3}%), {4} comment lines ({5}%), {6} both ({7}%)."
+				.format(files,
+					lines,
+					code_lines,
+					code_lines * 100 / lines,
+					comment_lines,
+					comment_lines * 100 / lines,
+					coco_lines,
+					coco_lines * 100 / lines)
+				)
+			log = log + ("<br>" + l + "\n")
+
 		except ZeroDivisionError:
 			# FIXME
 			log = log + "Line Width Checker (l 197): ZeroDivisionError " + \
 				  " (no comment / code / coco lines in file!)"
 				
 		# Generate the result.
-		result = CheckerResult(checker=self)
+		result = self.create_result(env)
 		result.set_log(log)
 		result.set_passed(passed)
 		# That's all!

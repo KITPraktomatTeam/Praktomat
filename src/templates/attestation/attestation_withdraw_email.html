@@ -1,0 +1,9 @@
+{% load i18n %}{% autoescape off %}{% trans "Hello " %}{{attest.solution.author}},
+{% with attest.solution.task as task %}
+{% blocktrans %}the attestation of your solution to the task "{{task}}" has been withdrawn by {{by}}.{% endblocktrans %}{% endwith%}
+
+{% trans "Thanks for using our site!" %}
+
+{% blocktrans %}The {{ site_name }} team{% endblocktrans %}
+
+{% endautoescape %}

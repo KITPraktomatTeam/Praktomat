@@ -5,13 +5,14 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.template import RequestContext, Template, Context, loader
 from django.conf import settings
-from accounts.forms import MyRegistrationForm, UserChangeForm, ImportForm, ImportTutorialAssignmentForm, ImportLDAPForm
+from accounts.forms import MyRegistrationForm, UserChangeForm, ImportForm, ImportTutorialAssignmentForm, ImportMatriculationListForm
 from accounts.models import User, Tutorial
 from accounts.decorators import local_user_required
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
-from django.contrib.sites.models import Site, RequestSite
+from django.contrib.sites.requests import RequestSite
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib import messages
 from django.core import urlresolvers
 from django.utils.http import int_to_base36
 from django.core.mail import send_mail
@@ -78,8 +79,13 @@ def view(request):
 	return render_to_response('registration/registration_view.html', {'user':request.user}, context_instance=RequestContext(request))
 
 def access_denied(request):
-	request_path = request.META['HTTP_HOST'] + request.get_full_path()
-	return render_to_response('access_denied.html', {'request_path': request_path}, context_instance=RequestContext(request))
+	request_path = request.META.get('HTTP_HOST', '') + request.get_full_path()
+	res = render_to_response(
+            'access_denied.html',
+            {'request_path': request_path},
+            context_instance=RequestContext(request))
+        res.status_code = 403
+        return res
 
 @staff_member_required
 def import_ldap_users(request):
@@ -119,7 +125,7 @@ def import_user(request):
 		if form.is_valid(): 
 			try:
 				imported_user = User.import_user(form.files['file'])
-				request.user.message_set.create(message="The import was successfull. %i users imported." % imported_user.count())
+                                messages.success(request, "The import was successfull. %i users imported." % imported_user.count())
 				if form.cleaned_data['require_reactivation']:
 					for user in [user for user in imported_user if user.is_active]:
 						user.is_active = False
@@ -142,7 +148,7 @@ def import_user(request):
 				return HttpResponseRedirect(urlresolvers.reverse('admin:accounts_user_changelist'))
 			except:
 				raise
-				from django.forms.util import ErrorList
+				from django.forms.utils import ErrorList
 				msg = "An Error occured. The import file was propably malformed."
 				form._errors["file"] = ErrorList([msg]) 			
 	else:
@@ -168,8 +174,54 @@ def import_tutorial_assignment(request):
 				except:
 					failed += 1
 			#assert False
-			request.user.message_set.create(message="%i assignments were imported successfully, %i failed." % (succeded, failed))
+                        messages.warning(request, "%i assignments were imported successfully, %i failed." % (succeded, failed))
 			return HttpResponseRedirect(urlresolvers.reverse('admin:accounts_user_changelist'))
 	else:
 		form = ImportTutorialAssignmentForm()
 	return render_to_response('admin/accounts/user/import_tutorial_assignment.html', {'form': form, 'title':"Import tutorial assignment"  }, RequestContext(request))
+
+
+@staff_member_required
+def import_matriculation_list(request, group_id):
+    """ Set the group memembership of all users according to an uploaded list of matriculation numbers. """
+    group = get_object_or_404(Group,pk=group_id)
+    if request.method == 'POST':
+        form = ImportMatriculationListForm(request.POST, request.FILES)
+        if form.is_valid():
+            file = form.files['mat_number_file']
+            reader = csv.reader(file)
+            mats = set(int(row[0]) for row in reader)
+
+            nr_already = nr_added = nr_removed = nr_new_users = 0
+
+            # first create all users, if required
+            if form.cleaned_data['create_users']:
+                existing_mats = set(User.objects.values_list('mat_number', flat=True))
+                for new in mats - existing_mats:
+                    user = User.objects.create_user(new, '')
+                    user.groups.add(Group.objects.get(name='User'))
+                    user.mat_number = new
+                    user.save()
+                    nr_new_users += 1
+
+            for u in User.objects.all():
+                if u.mat_number in mats:
+                    if u.groups.filter(id=group.pk).exists():
+                        nr_already += 1
+                    else:
+                        u.groups.add(group)
+                        nr_added += 1
+                else:
+                    if form.cleaned_data['remove_others']:
+                        if u.groups.filter(id=group.pk).exists():
+                            u.groups.remove(group)
+                            nr_removed += 1
+                u.save()
+            messages.success(request,
+                ("%i users added to group %s, %i removed, %i already in group. "+
+                "%i new users created.") % (nr_added, group.name, nr_removed, nr_already, nr_new_users))
+            return HttpResponseRedirect(urlresolvers.reverse('admin:auth_group_change', args=[group_id]))
+    else:
+        form = ImportMatriculationListForm()
+    return render_to_response('admin/auth/group/import_matriculation_list.html', {'form': form, 'title':"Import matriuculation number list"}, RequestContext(request))
+

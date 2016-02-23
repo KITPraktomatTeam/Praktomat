@@ -14,16 +14,22 @@
 		{% include "attestation/rating_scale_items_js_inline.html" %}
 				
 		var all_grades = new Array();
+		var all_plagiarism = new Array();
 		$('.user_row').each(function(index) {
 			var grades=new Array();
+			var plagiarism=new Array();
 			var result;
 			$(this).find('.grade_cell').each(function(index) {
-				grades[index] = $(this).text()
+				grades[index] = $(this).data('score');
+				plagiarism[index] = $(this).data('plagiarism') == 'yes';
+
 			});
-			all_grades[index] = grades
+			all_grades[index] = grades;
+			all_plagiarism[index] = plagiarism;
 			});
 		for (index in all_grades){
 			var grades = all_grades[index];
+			var plagiarism = all_plagiarism[index];
 			var result;
 			try{
 				{{script.script|safe}};
@@ -42,7 +48,7 @@
 	<h2>Other Tutorials</h2>
 	<ul>
 	{% for tutorial in other_tutorials %}
-		<li><a href="{% url tutorial_overview tutorial_id=tutorial.id  %}">{{tutorial}}</a></li>
+		<li><a href="{% url "tutorial_overview" tutorial_id=tutorial.id  %}">{{tutorial}}</a></li>
 	{% endfor %}
 	</ul>
 {% endif %}
@@ -58,7 +64,7 @@
 		<tr>
 			<th>User</th>
 			{% for task in tasks %}
-				<th><div class="heading"><a href="{% url task_detail task_id=task.id  %}">{{task.title}}</a></div></th>
+				<th><div class="heading"><a href="{% url "task_detail" task_id=task.id  %}">{{task.title}}</a></div></th>
 				<th><div class="heading">Rating Aspects</div></th>
 			{% endfor %}
 			<th><div class="heading" id="calculated_grade_heading">Calculated grade</div></th>
@@ -68,16 +74,29 @@
 			<tr class="{% cycle 'odd' 'even' %} user_row">
 				<td><a href="mailto:{{user.email}}">{{user.get_full_name}}</a></td>
 				{% for attestation in attestations %}
-				<td class="grade_cell">
+				<td class="grade_cell"
+				    {% if attestation.solution.plagiarism %}
+				        data-plagiarism="yes"
+				    {% else %}
+				      {% if attestation.final_grade %}
+				        data-score="{{attestation.final_grade}}"
+				      {% endif %}
+				    {% endif %}
+				>
 					{% if attestation.id %}
-					<a href="{% url view_attestation attestation_id=attestation.id%}">
+					<a href="{% url "view_attestation" attestation_id=attestation.id%}">
 					{% endif %}
-					
+
 					{% if attestation.final_grade %}
 						{{attestation.final_grade}}
 					{% else %}
 						-
 					{% endif %}
+
+				        {% if attestation.solution.plagiarism %}
+					  <span class="icon ui-icon-alert icon-red" title="Marked as plagiarism"></span>
+					{% endif %}
+
 
 					{% if attestation.id %}
 					</a>

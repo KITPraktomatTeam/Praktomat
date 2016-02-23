@@ -1,4 +1,4 @@
-#!/usr/local/bin/python2.7
+#!/usr/bin/python
 # Checks whether we're running in daemon-mode
 def application(environ, start_response):
     status = '200 OK'

@@ -4,7 +4,7 @@
 {% block object-tools %}
 {% if change %}{% if not is_popup %}
 <ul class="object-tools">
-	<li><a href="{% url download_final_solutions object_id %}" class="historylink">{% trans "Download Final Solutions" %}</a></li>
+	<li><a href="{% url "download_final_solutions" object_id %}" class="historylink">{% trans "Download Final Solutions" %}</a></li>
 	<li><a href="history/" class="historylink">{% trans "History" %}</a></li>
 	{% if has_absolute_url %}<li><a href="../../../r/{{ content_type_id }}/{{ object_id }}/" class="viewsitelink">{% trans "View on site" %}</a></li>{% endif%}
 </ul>
@@ -19,7 +19,7 @@
 		{% if add %}
 			Save this task to add a model solution
 		{% else %}	
-			<a href="{% url model_solution object_id %}" onclick="return showAddAnotherPopup(this);">{% if original.model_solution %}Edit{% else %}Add{% endif %} model solution</a>
+			<a href="{% url "model_solution" object_id %}" onclick="return showAddAnotherPopup(this);">{% if original.model_solution %}Edit{% else %}Add{% endif %} model solution</a>
 		{% endif %}
 	</div>
 </div> {% endblock %}

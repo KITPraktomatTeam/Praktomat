@@ -5,9 +5,11 @@ import re
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.models import Checker, CheckerFileField, CheckerResult, execute_arglist, truncated_log
+from checker.basemodels import Checker, CheckerResult, CheckerFileField, truncated_log
 from checker.admin import	CheckerInline, AlwaysChangedModelForm
+from utilities.safeexec import execute_arglist
 from utilities.file_operations import *
+from solutions.models import Solution
 
 from checker.compiler.JavaBuilder import JavaBuilder
 
@@ -20,12 +22,20 @@ class IgnoringJavaBuilder(JavaBuilder):
 		rxarg = re.compile(self.rxarg())
 		return [name for (name,content) in env.sources() if rxarg.match(name) and (not name in self._ignore)]
 
+	# Since this checkers instances  will not be saved(), we don't save their results, either
+	def create_result(self, env):
+		assert isinstance(env.solution(), Solution)
+		return CheckerResult(checker=self, solution=env.solution())
+
 class JUnitChecker(Checker):
 	""" New Checker for JUnit3 Unittests. """
 	
 	# Add fields to configure checker instances. You can use any of the Django fields. (See online documentation)
 	# The fields created, task, public, required and always will be inherited from the abstract base class Checker
-	class_name = models.CharField(max_length=100, help_text=_("The fully qualified name of the Testcase class"))
+	class_name = models.CharField(
+            max_length=100,
+            help_text=_("The fully qualified name of the test case class (without .class)")
+        )
 	test_description = models.TextField(help_text = _("Description of the Testcase. To be displayed on Checker Results page when checker is  unfolded."))
 	name = models.CharField(max_length=100, help_text=_("Name of the Testcase. To be displayed as title on Checker Results page"))
 	ignore = models.CharField(max_length=4096, help_text=_("space-seperated list of files to be ignored during compilation"),default="")
@@ -57,7 +67,7 @@ class JUnitChecker(Checker):
 		build_result = java_builder.run(env)
 
 		if not build_result.passed:
-			result = CheckerResult(checker=self)
+			result = self.create_result(env)
 			result.set_passed(False)
 			result.set_log('<pre>' + escape(self.test_description) + '\n\n======== Test Results ======\n\n</pre><br/>\n'+build_result.log)
 			return result
@@ -66,20 +76,20 @@ class JUnitChecker(Checker):
 
 		environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
 		environ['JAVA'] = settings.JVM
-		environ['POLICY'] = os.path.join(os.path.join(os.path.dirname(os.path.dirname(__file__)),"scripts"),"junit.policy")
+                script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
+		environ['POLICY'] = os.path.join(script_dir,"junit.policy")
 
 		cmd = [settings.JVM_SECURE, "-cp", settings.JAVA_LIBS[self.junit_version]+":.", self.runner(), self.class_name]
-		#cmd = [settings.JVM_SECURE, "-cp", "/opt/praktomat-addons/*:.", self.runner(), self.class_name]
-		[output, error, exitcode,timed_out] = execute_arglist(cmd, env.tmpdir(),environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE)
+		[output, error, exitcode,timed_out, oom_ed] = execute_arglist(cmd, env.tmpdir(),environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE, extradirs=[script_dir])
 
-		result = CheckerResult(checker=self)
+		result = self.create_result(env)
 
 		(output,truncated) = truncated_log(output)
 		output = '<pre>' + escape(self.test_description) + '\n\n======== Test Results ======\n\n</pre><br/><pre>' + escape(output) + '</pre>'
 
 
-		result.set_log(output,timed_out=timed_out,truncated=truncated)
-		result.set_passed(not exitcode and not timed_out and self.output_ok(output) and not truncated)
+		result.set_log(output,timed_out=timed_out or oom_ed,truncated=truncated,oom_ed=oom_ed)
+		result.set_passed(not exitcode and not timed_out and not oom_ed and self.output_ok(output) and not truncated)
 		return result
 
 #class JUnitCheckerForm(AlwaysChangedModelForm):

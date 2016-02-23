@@ -13,12 +13,20 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.files import File
 from django.db.models import Max
+from django.db import transaction
 from django.conf import settings
 from django.template.loader import render_to_string
+from django.db.models.signals import post_delete
+from django.dispatch.dispatcher import receiver
 
 from accounts.models import User
 from utilities import encoding, file_operations
 from configuration import get_settings
+
+
+# TODO: This is duplicated from solutions/forms.py. Where should this go?
+for (mimetype,extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
+	mimetypes.add_type(mimetype,extension,strict=True)
 
 class Solution(models.Model):
 	""" """
@@ -29,8 +37,9 @@ class Solution(models.Model):
 	author = models.ForeignKey(User, verbose_name="solution author")
 	creation_date = models.DateTimeField(auto_now_add=True)
 	
-	accepted = models.BooleanField( default = False, help_text = _('Indicates whether the solution has passed all public and required tests'))
-	warnings = models.BooleanField( default = False, help_text = _('Indicates whether the solution has at least failed one public and not required tests'))
+        testupload = models.BooleanField( default = False, help_text = _('Indicates whether this solution is a test upload.'))
+	accepted = models.BooleanField( default = False, help_text = _('Indicates whether the solution has passed all public and required tests.'))
+	warnings = models.BooleanField( default = False, help_text = _('Indicates whether the solution has at least failed one public and not required tests.'))
 	plagiarism = models.BooleanField( default = False, help_text = _('Indicates whether the solution is a rip-off of another one.'))
 	final = models.BooleanField( default = False, help_text = _('Indicates whether this solution is the last (accepted) of the author.'))
 	
@@ -38,16 +47,19 @@ class Solution(models.Model):
 		return unicode(self.task) + ":" + unicode(self.author) + ":" + unicode(self.number)
 
 	def allCheckerResults(self):
-		return sorted(self.checkerresult_set.all(), key=lambda result: result.checker.order)
+		results = self.checkerresult_set.all().prefetch_related('artefacts')
+		return until_critical(sorted(results, key=lambda result: result.checker.order))
 
 	def publicCheckerResults(self):
 		# return self.checkerresult_set.filter(checker__public=True) won't work, because checker is a genericForeignKey!
-		return sorted(filter(lambda x: x.public(), self.checkerresult_set.all()), key = lambda result: result.checker.order)
-		
+		results = self.checkerresult_set.all().prefetch_related('artefacts')
+		return until_critical(sorted(filter(lambda x: x.public(), self.checkerresult_set.all()), key = lambda result: result.checker.order))
+
 	def copySolutionFiles(self, toTempDir):
 		for file in self.solutionfile_set.all():
 			file.copyTo(toTempDir)
 	
+        @transaction.atomic
 	def save(self, *args, **kwargs):
 		"""Override save calculate the number on first save"""
 		if self.number == None:
@@ -57,10 +69,10 @@ class Solution(models.Model):
 			self.task.solutions(self.author).update(final=False)
 		super(Solution, self).save(*args, **kwargs) # Call the "real" save() method.	
 	
-	def check(self, run_secret = 0): 
+	def check_solution(self, run_secret = 0): 
 		"""Builds and tests this solution."""
-		from checker.models import check
-		check(self, run_secret)
+		from checker.basemodels import check_solution
+		check_solution(self, run_secret)
 
 	def attestations_by(self, user):
 		return self.attestation_set.filter(author=user)
@@ -87,6 +99,13 @@ class Solution(models.Model):
 	def textSolutionFiles(self):
 		return [file for file in self.solutionfile_set.all() if (not file.isBinary()) ]
 
+def until_critical(l):
+	res = []
+	for r in l:
+		res.append(r)
+		if r.is_critical():
+			break
+	return res
 
 def sign(file):
 	if not settings.PRIVATE_KEY:
@@ -104,15 +123,15 @@ def verify(file, signature):
 	return sign(file) == signature
 
 
+def get_solutionfile_upload_path(instance, filename):
+    solution = instance.solution
+    return 'SolutionArchive/Task_' + unicode(solution.task.id) + '/User_' + solution.author.username + '/Solution_' + unicode(solution.id) + '/' + filename
+
 class SolutionFile(models.Model):
 	"""docstring for SolutionFile"""
 	
-	def _get_upload_path(instance, filename):
-		solution = instance.solution
-		return 'SolutionArchive/Task_' + unicode(solution.task.id) + '/User_' + solution.author.username + '/Solution_' + unicode(solution.id) + '/' + filename
-	
 	solution = models.ForeignKey(Solution)
-	file = models.FileField(upload_to = _get_upload_path, max_length=500, help_text = _('Source code file as part of a solution an archive file (.zip, .tar or .tar.gz) containing multiple solution files.')) 
+	file = models.FileField(upload_to = get_solutionfile_upload_path, max_length=500, help_text = _('Source code file as part of a solution an archive file (.zip, .tar or .tar.gz) containing multiple solution files.')) 
 	mime_type = models.CharField(max_length=100, help_text = _("Guessed file type. Automatically  set on save()."))
 	
 	# ignore hidden or os-specific files, etc. in zipfiles 
@@ -149,7 +168,7 @@ class SolutionFile(models.Model):
 		else:
 			self.mime_type = mimetypes.guess_type(self.file.name)[0]
 			models.Model.save(self, force_insert, force_update, using)
-	
+
 	def __unicode__(self):
 		return self.file.name.rpartition('/')[2]
 	
@@ -168,9 +187,12 @@ class SolutionFile(models.Model):
 	def isImage(self):
 		return self.mime_type[:5] == "image"
 	
+	def isEmbeddable(self):
+		return self.mime_type in ("application/pdf",)
+
 	def path(self):
 		""" path of file relative to the zip file, which once contained it """
-		return self.file.name[len(self._get_upload_path('')):]
+		return self.file.name[len(get_solutionfile_upload_path(self, '')):]
 		
 	def content(self):
 		"""docstring for content"""
@@ -189,6 +211,23 @@ class SolutionFile(models.Model):
 			shutil.copy(self.file.file.name, new_file_path)
 		else:
 			file_operations.create_file(new_file_path, self.content())
+
+# from http://stackoverflow.com/questions/5372934
+@receiver(post_delete, sender=SolutionFile)
+def solution_file_delete(sender, instance, **kwargs):
+    # Pass false so FileField doesn't save the model.
+    filename = os.path.join(settings.UPLOAD_ROOT, instance.file.name)
+    instance.file.delete(False)
+    # Remove left over empty directories
+    dirname = os.path.dirname(filename)
+    try:
+        while os.path.basename(dirname) != "SolutionArchive":
+            os.rmdir(dirname)
+            dirname = os.path.dirname(dirname)
+    except OSError:
+        pass
+
+
 
 def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 	
@@ -210,6 +249,10 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 			project_name = unicode(solution.task) + u"-" + solution.author.get_full_name() 
 		base_name = path_for_task(solution.task) + '/' + project_path + '/'
 
+		# We need to pass unicode strings to ZipInfo to ensure that it sets bit
+		# 11 appropriately if the filename contains non-ascii characters.
+		assert isinstance(base_name, unicode)
+
 		createfile_checker_files = []
 		checkstyle_checker_files = []
 		junit3 = False
@@ -226,22 +269,23 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 			createfile_checker_files = [(createfile_checker_files_destination + checker.path + '/' + checker.filename,        checker.file)          for checker in createfile_checker]
 			checkstyle_checker_files = [(checkstyle_checker_files_destination + os.path.basename(checker.configuration.name), checker.configuration) for checker in checkstyle_checker]
 		
-		zip.writestr((base_name+'.project').encode('cp437'), render_to_string('solutions/eclipse/project.xml', { 'name': project_name, 'checkstyle' : checkstyle }).encode("utf-8"))
-		zip.writestr((base_name+'.settings/org.eclipse.jdt.core.prefs').encode('cp437'), render_to_string('solutions/eclipse/settings/org.eclipse.jdt.core.prefs', { }).encode("utf-8"))
-		zip.writestr((base_name+'.classpath').encode('cp437'), render_to_string('solutions/eclipse/classpath.xml', {'junit3' : junit3, 'junit4': junit4, 'createfile_checker_files' : include_file_copy_checker_files, 'createfile_checker_files_destination' : createfile_checker_files_destination, 'testsuite_destination' : testsuite_destination }).encode("utf-8"))
+		zip.writestr(base_name+'.project', render_to_string('solutions/eclipse/project.xml', { 'name': project_name, 'checkstyle' : checkstyle }).encode("utf-8"))
+		zip.writestr(base_name+'.settings/org.eclipse.jdt.core.prefs', render_to_string('solutions/eclipse/settings/org.eclipse.jdt.core.prefs', { }).encode("utf-8"))
+		zip.writestr(base_name+'.classpath', render_to_string('solutions/eclipse/classpath.xml', {'junit3' : junit3, 'junit4': junit4, 'createfile_checker_files' : include_file_copy_checker_files, 'createfile_checker_files_destination' : createfile_checker_files_destination, 'testsuite_destination' : testsuite_destination }).encode("utf-8"))
 		if checkstyle:
-			zip.writestr((base_name+'.checkstyle').encode('cp437'), render_to_string('solutions/eclipse/checkstyle.xml', {'checkstyle_files' : [filename for (filename,_) in checkstyle_checker_files], 'createfile_checker_files_destination' : createfile_checker_files_destination, 'testsuite_destination' : testsuite_destination }).encode("utf-8"))
+			zip.writestr(base_name+'.checkstyle', render_to_string('solutions/eclipse/checkstyle.xml', {'checkstyle_files' : [filename for (filename,_) in checkstyle_checker_files], 'createfile_checker_files_destination' : createfile_checker_files_destination, 'testsuite_destination' : testsuite_destination }).encode("utf-8"))
 
 		if junit4:
-			zip.writestr((base_name+testsuite_destination+'AllJUnitTests.java').encode('cp437'), render_to_string('solutions/eclipse/AllJUnitTests.java', { 'testclasses' : [ j.class_name for j in junit_checker if j.junit_version == 'junit4' ]}).encode("utf-8"))
-			zip.writestr((base_name+praktomat_files_destination+'AllJUnitTests.launch').encode('cp437'), render_to_string('solutions/eclipse/AllJUnitTests.launch', { 'project_name' : project_name, 'praktomat_files_destination' : praktomat_files_destination}).encode("utf-8"))
+			zip.writestr(base_name+testsuite_destination+'AllJUnitTests.java', render_to_string('solutions/eclipse/AllJUnitTests.java', { 'testclasses' : [ j.class_name for j in junit_checker if j.junit_version == 'junit4' ]}).encode("utf-8"))
+			zip.writestr(base_name+praktomat_files_destination+'AllJUnitTests.launch', render_to_string('solutions/eclipse/AllJUnitTests.launch', { 'project_name' : project_name, 'praktomat_files_destination' : praktomat_files_destination}).encode("utf-8"))
 			zip.write(os.path.dirname(__file__)+"/../checker/scripts/eclipse-junit.policy", (base_name+praktomat_files_destination+'eclipse-junit.policy'))
 
 		
 		solution_files  = [ (solution_files_destination+solutionfile.path(), solutionfile.file) for solutionfile in solution.solutionfile_set.all()]
 
 		for  (name,file) in solution_files + createfile_checker_files + checkstyle_checker_files:
-			zippath = os.path.normpath((base_name + name).encode('cp437','ignore'))
+			zippath = os.path.normpath(base_name + name)
+			assert isinstance(zippath, unicode)
 			try: # Do not overwrite files from the solution by checker files
 				zip.getinfo(zippath)
 			except KeyError: 
@@ -259,10 +303,10 @@ non_ascii_letters            = ascii_without(string.ascii_letters)
 non_ascii_letters_and_digits = ascii_without(string.ascii_letters + string.digits)
 
 def path_for_user(user):
-	return user.get_full_name().encode('ascii','ignore').translate(None,non_ascii_letters)+'-'+str(user.mat_number)+'-'+str(user.id)
+	return user.get_full_name()+'-'+str(user.mat_number)+'-'+str(user.id)
 
 def path_for_task(task):
-	return task.title.encode('ascii','ignore').translate(None,non_ascii_letters_and_digits)
+	return task.title
 
 path_regexp = re.compile(r'[^-]*-[^-]*-(.*)')
 

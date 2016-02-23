@@ -1,0 +1,65 @@
+{% extends "base.html"%}
+{% load i18n %}
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript" src="{{STATIC_URL}}frameworks/jquery.formset/jquery.formset.min.js"></script>
+<script type="text/javascript">	
+$(function() {
+	$('fieldset.module .form-row').formset({ 
+		prefix: '{{ formset.prefix }}',
+		deleteText: '',
+		deleteCssClass: 'icon icon-orange ui-icon-circle-minus',
+		addText: '',
+		addCssClass: 'icon icon-orange ui-icon-circle-plus'
+	});
+})
+
+$(function(){ 
+	$('form[enctype=multipart/form-data]').submit(function(){ 
+	  	$("#progress").overlay({ 
+	    	top: 272, 
+	    	api: true,
+			closeOnClick: false,
+			closeOnEsc: false, 
+			expose: { 
+	        	color: '#333', 
+	        	loadSpeed: 1000, 
+	        	opacity: 0.9 
+		    }, 
+		}).load();
+	});
+});
+
+ $(document).ready(function(){
+ 	$("#help_icon").tooltip({
+		position:  "center left"
+	});
+ })
+
+</script>
+{% endblock %}
+{% block breadcrumbs %}
+{{block.super}}
+&gt; <a href={% url "task_detail" task_id=task.id%}>{{task.title}}</a>
+&gt; Test Solution Upload
+{% endblock %}
+
+{% block content %}<div id='soluion_upload'>
+
+<h1>{{task.title}} (Test Upload)</h1>
+
+<div class='left'>
+	<h2>{%trans "Upload solution" %}</h2>
+	<form enctype="multipart/form-data" method="post" action="" > {% csrf_token %}
+		{% include "forms/formset_as_div.html" %}
+		<input type="submit" value="upload" />
+	</form>
+</div>
+
+
+<div class="simple_overlay" id="progress"> 
+	<!-- spinner from http://ajaxload.info/ -->
+	<img id="spinner" src="{{STATIC_URL}}images/loading.gif" alt="loading" />
+    <p>Please wait while your solution is examined.</p>
+</div> 
+
+</div>{% endblock %}

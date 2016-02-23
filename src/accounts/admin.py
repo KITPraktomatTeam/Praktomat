@@ -1,42 +1,48 @@
+# -*- coding: utf-8 -*-
+
 from random import randint
 from django.utils.translation import ugettext_lazy as _
 from django.contrib import admin
 from django.contrib.auth.models import User as UserBase, Group
-from django.contrib.auth.admin import UserAdmin as UserBaseAdmin
+from django.contrib.auth.admin import UserAdmin as UserBaseAdmin, GroupAdmin as GroupBaseAdmin
 from django.db.models import Count
-from accounts.models import User, Tutorial, ShowAllUser
-from accounts.templatetags.in_group import in_group
+from django.db.transaction import atomic
+from accounts.models import User, Tutorial 
 from accounts.forms import AdminUserCreationForm, AdminUserChangeForm
+
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+from django.core.urlresolvers import reverse
 
 
 class UserAdmin(UserBaseAdmin):
 	model = User
 	
 	# add active status
-	list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'is_trainer', 'is_tutor', 'email', 'date_joined','is_failed_attempt' )
-	list_filter = ('groups', 'tutorial', 'is_staff', 'is_superuser', 'is_active')
+	list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'is_trainer', 'is_tutor', 'email', 'date_joined','is_failed_attempt','programme' )
+	list_filter = ('groups', 'tutorial', 'is_staff', 'is_superuser', 'is_active','programme')
 	search_fields = ['username', 'first_name', 'last_name', 'mat_number', 'email']
 	date_hierarchy = 'date_joined'
 	actions = ['set_active', 'set_inactive', 'set_tutor', 'distribute_to_tutorials', 'export_users']
-	readonly_fields = ('last_login','date_joined')
+	readonly_fields = ('last_login','date_joined','useful_links',)
 	# exclude user_permissions
 	fieldsets = (
-        (None, {'fields': ('username', 'password')}),
-        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'mat_number')}),
-        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
-        (_('Groups'), {'fields': ('groups','tutorial')}),
-        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
-    )
+            (None, {'fields': ('username', 'password','useful_links')}),
+            (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'mat_number','programme')}),
+            (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
+            (_('Groups'), {'fields': ('groups','tutorial')}),
+            (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+        )
 	
 	form = AdminUserChangeForm
 	add_form = AdminUserCreationForm
 	
 	def is_trainer(self, user):
-		return in_group(user,"Trainer")
+		return user.is_trainer
 	is_trainer.boolean = True
 		
 	def is_tutor(self, user):
-		return in_group(user,"Tutor")
+		return user.is_tutor
 	is_tutor.boolean = True
 
 	def is_failed_attempt(self,user):
@@ -54,6 +60,7 @@ class UserAdmin(UserBaseAdmin):
 		queryset.update(is_active=False)
 		self.message_user(request, "Users were successfully inactivated.")
 
+	@atomic
 	def set_tutor(self, request, queryset):
 		""" Change students to tutors """
 		tutor_group = Group.objects.get(name='Tutor')
@@ -64,6 +71,7 @@ class UserAdmin(UserBaseAdmin):
 			user.save()
 		self.message_user(request, "Users were successfully made to tutors.")
 
+	@atomic
 	def distribute_to_tutorials(self, request, queryset):
 		""" Distribute selectet users evenly to all tutorials """
 		users = list(queryset)
@@ -82,18 +90,31 @@ class UserAdmin(UserBaseAdmin):
 	def export_users(self, request, queryset):
 		from django.http import HttpResponse
 		data = User.export_user(queryset)		
-		response = HttpResponse(data, mimetype="application/xml")
+		response = HttpResponse(data, content_type="application/xml")
 		response['Content-Disposition'] = 'attachment; filename=user_export.xml'
 		return response
 
 	def get_urls(self):
 		""" Add URL to user import """
 		urls = super(UserAdmin, self).get_urls()
-		from django.conf.urls.defaults import url, patterns
+		from django.conf.urls import url, patterns
 		#my_urls = patterns('', url(r'^import/$', 'accounts.views.import_user', name='user_import'))
 		my_urls = patterns('', url(r'^import_ldap_users/$', 'accounts.views.import_ldap_users', name='ldap_user_import')) 
 		#my_urls += patterns('', url(r'^import_tutorial_assignment/$', 'accounts.views.import_tutorial_assignment', name='import_tutorial_assignment')) 
 		return my_urls + urls
+
+        def useful_links(self, instance):
+		if instance.pk:
+			return format_html (
+			    '<a href="{1}">Solutions by {0}</a> • <a href="{2}">Attestations for {0}</a> • <a href="{3}">Attestations by {0}</a>',
+			    instance,
+			    reverse('admin:solutions_solution_changelist') + ("?author__user_ptr__exact=%d" % instance.pk),
+			    reverse('admin:attestation_attestation_changelist') + ("?solution__author__user_ptr__exact=%d" % instance.pk),
+			    reverse('admin:attestation_attestation_changelist') + ("?author__exact=%d" % instance.pk),
+			    )
+		else:
+			return ""
+        useful_links.allow_tags = True
 
 # This should work in Django 1.4 :O
 # from django.contrib.admin import SimpleListFilter
@@ -115,15 +136,16 @@ class UserAdmin(UserBaseAdmin):
 admin.site.unregister(UserBase) 
 admin.site.register(User, UserAdmin)
 
+class GroupAdmin(GroupBaseAdmin):
+	def get_urls(self):
+		""" Add URL to user import """
+		urls = super(GroupAdmin, self).get_urls()
+		from django.conf.urls import url, patterns
+		my_urls = patterns('', url(r'^(\d+)/import_matriculation_list/$', 'accounts.views.import_matriculation_list', name='import_matriculation_list')) 
+		return my_urls + urls
 
-class ShowAllUserAdmin(UserAdmin):
-	model = User
-	
-	def __init__(self, model, admin_site):
-		UserAdmin.__init__(self,User,admin_site)	
-
-	def get_paginator(self, request, queryset, per_page, orphans=0, allow_empty_first_page=True):
-		return self.paginator(queryset, 10000, orphans, allow_empty_first_page)
+admin.site.unregister(Group) 
+admin.site.register(Group, GroupAdmin)
 
 class TutorialAdmin(admin.ModelAdmin):
 	model = Tutorial
@@ -133,6 +155,5 @@ class TutorialAdmin(admin.ModelAdmin):
 		css = {
 			"all": ("styles/admin_style.css",)
 		}
-# admin.site.register(ShowAllUser,ShowAllUserAdmin)
 		
 admin.site.register(Tutorial, TutorialAdmin)

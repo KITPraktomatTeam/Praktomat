@@ -6,7 +6,8 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.models import Checker, CheckerResult, CheckerFileField, execute_arglist
+from checker.basemodels import Checker, CheckerFileField
+from utilities.safeexec import execute_arglist
 from utilities.file_operations import *
 
 class CheckStyleChecker(Checker):
@@ -32,19 +33,22 @@ class CheckStyleChecker(Checker):
 		
 		# Run the tests
 		args = [settings.JVM, "-cp", settings.CHECKSTYLEALLJAR, "-Dbasedir=.", "com.puppycrawl.tools.checkstyle.Main", "-c", "checks.xml"] + [name for (name,content) in env.sources()]
-		[output, error, exitcode,timed_out] = execute_arglist(args, env.tmpdir())
+		[output, error, exitcode,timed_out, oom_ed] = execute_arglist(args, env.tmpdir())
 		
 		# Remove Praktomat-Path-Prefixes from result:
 		output = re.sub(r"^"+re.escape(env.tmpdir())+"/+","",output,flags=re.MULTILINE)
 
-		result = CheckerResult(checker=self)
+		result = self.create_result(env)
+
 		log = '<pre>' + escape(output) + '</pre>'
 		if timed_out:
 			log = log + '<div class="error">Timeout occured!</div>'
+		if oom_ed:
+			log = log + '<div class="error">Out of memory!</div>'
 		result.set_log(log)
 
 		
-		result.set_passed(not timed_out and not exitcode and (not re.match('Starting audit...\nAudit done.', output) == None))
+		result.set_passed(not timed_out and not oom_ed and not exitcode and (not re.match('Starting audit...\nAudit done.', output) == None))
 		
 		return result
 	

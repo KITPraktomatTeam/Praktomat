@@ -1,10 +1,9 @@
+from django.apps import apps
 from django import template
-from django.db import models
 from django.core.cache import cache
 
 register = template.Library()
 
-Chunk = models.get_model('configuration', 'chunk')
 CACHE_PREFIX = "chunk_"
 
 def do_get_chunk(parser, token):
@@ -29,6 +28,7 @@ class ChunkNode(template.Node):
        self.cache_time = cache_time
     
     def render(self, context):
+        Chunk = apps.get_model('configuration','chunk')
         try:
             cache_key = CACHE_PREFIX + self.key
             c = cache.get(cache_key)

@@ -1,117 +1,188 @@
 {% extends "base.html" %}
-{% load highlight %} {% load i18n  %}{% load in_group %}
+{% load highlight %} {% load i18n  %}
 {% block extrahead %}{{ block.super }}
-<script src="{{MEDIA_URL}}/frameworks/highcharts/highcharts.src.js" type="text/javascript">
-</script>
-<!--[if IE]>
-    <script src="{{MEDIA_URL}}/frameworks/highcharts/excanvas.compiled.js" type="text/javascript"></script>
-<![endif]-->
+<script src="{{STATIC_URL}}frameworks/highcharts/highcharts.js" type="text/javascript"></script>
 <script type="text/javascript">
-            $(document).ready(function(){
-                var submission_chart = new Highcharts.Chart({
-                    chart: {
-                        renderTo: 'submission_chart',
-                        defaultSeriesType: 'line',
-        				alignTicks: false,
-                        margin: [80, 100, 60, 100],
-                    },
-                    title: {
-                        text: 'Solution Submission Rate',
-        
-                    },
-                    xAxis: {
-                        type: 'datetime',
-                        title: {
-                            text: 'Date'
-                        },
-        				max: Date.parse('{{task.submission_date|date:"SHORT_DATE_FORMAT"}}'),
-                    },
-                    yAxis: [{
-                        title: {
-                            text: '(Final) Submissions',
-        					style: {
-                    			color: '#AA4643'
-                 			},
-                        },
-        				labels: {
-        			         style: {
-        			            color: '#AA4643'
-        			         }
-        			      },
-        				min: 0,
-                    }, {
-                        title: {
-                            text: 'Submissions Total',
-        					style: {
-                    			color: '#4572A7'
-                 			},
-                        },
-        				labels: {
-        			         formatter: function() {
-        			            return this.value * 100 +' %';
-        			         },
-        			         style: {
-        			            color: '#4572A7'
-        			         }
-        			      },
-                        opposite: true,
-        				max: 1,
-        				min: 0,
-        				gridLineWidth: 0
-                    }],
-        			legend: {
-        				enabled:false
-        			},
-        			credits: {
-        				enabled: false
-        			},
-                    tooltip: {
-                        formatter: function(){
-                            date = new Date(this.x);
-							// getMonth() is zero-based
-        					date_str = date.getDate() + '.' + (date.getMonth()+1) +'.'+ date.getFullYear();
-        					if (this.series.name == 'Submissions Total') {
-        						return '<b>' + this.series.name + '</b><br/>' + date_str + ': ' + Math.round(this.y*100) + '%' ;
-        					} else {
-        						return '<b>' + this.series.name + '</b><br/>' + date_str + ': ' + this.y ;
-        					}
-        					
-                        }
-                    },
-        			plotOptions: {
-        				area: {
-        					fillOpacity:0.75,
-        				},
-        				line: {
-        					lineWidth:3,
-        				},
-        			},
-                    series: [{
-                        type: 'area',
-                        name: 'Submissions Total',
-        				color: '#4572A7',
-        				yAxis: 1,
-                        pointInterval: 24 * 3600 * 1000,
-                        pointStart: Date.parse('{{task.publication_date|date:"SHORT_DATE_FORMAT"}}'),
-                        data: {{acc_submissions}}
-                    }, {
-                        type: 'line',
-                        name: 'Final Submissions',
-        				color: '#AA4643',
-                        pointInterval: 24 * 3600 * 1000,
-                        pointStart: Date.parse('{{task.publication_date|date:"SHORT_DATE_FORMAT"}}'),
-                        data: {{submissions_final}}
-                    }, {
-                        type: 'line',
-                        name: 'Submissions',
-        				color: '#89A54E',
-                        pointInterval: 24 * 3600 * 1000,
-                        pointStart: Date.parse('{{task.publication_date|date:"SHORT_DATE_FORMAT"}}'),
-                        data: {{submissions}}
-                    }]
-                });
-                
+	$(document).ready(function(){
+		var submission_chart = new Highcharts.Chart({
+			chart: {
+				renderTo: 'submission_chart',
+				defaultSeriesType: 'line',
+				alignTicks: false,
+				margin: [80, 100, 60, 100],
+			},
+			title: {
+				text: 'Solution Submission Rate',
+
+			},
+			xAxis: {
+				type: 'datetime',
+				title: {
+					text: 'Date'
+				},
+				max: Date.parse('{{task.submission_date|date:"SHORT_DATE_FORMAT"}}'),
+			},
+			yAxis: [{
+				title: {
+					text: '(Final) Submissions',
+					style: {
+						color: '#AA4643'
+					},
+				},
+				labels: {
+					 style: {
+						color: '#AA4643'
+					 }
+				  },
+				min: 0,
+			}, {
+				title: {
+					text: 'Submissions Total',
+					style: {
+						color: '#4572A7'
+					},
+				},
+				labels: {
+					 formatter: function() {
+						return this.value * 100 +' %';
+					 },
+					 style: {
+						color: '#4572A7'
+					 }
+				  },
+				opposite: true,
+				max: 1,
+				min: 0,
+				gridLineWidth: 0
+			}],
+			legend: {
+				enabled:false
+			},
+			credits: {
+				enabled: false
+			},
+			tooltip: {
+				formatter: function(){
+					date = new Date(this.x);
+					// getMonth() is zero-based
+					date_str = date.getDate() + '.' + (date.getMonth()+1) +'.'+ date.getFullYear();
+					if (this.series.name == 'Submissions Total') {
+						return '<b>' + this.series.name + '</b><br/>' + date_str + ': ' + Math.round(this.y*100) + '%' ;
+					} else {
+						return '<b>' + this.series.name + '</b><br/>' + date_str + ': ' + this.y ;
+					}
+				}
+			},
+			plotOptions: {
+				area: {
+					fillOpacity:0.75,
+				},
+				line: {
+					lineWidth:3,
+				},
+			},
+			series: [{
+				type: 'area',
+				name: 'Submissions Total',
+				color: '#4572A7',
+				yAxis: 1,
+				pointInterval: 24 * 3600 * 1000,
+				pointStart: Date.parse('{{task.publication_date|date:"SHORT_DATE_FORMAT"}}'),
+				data: {{acc_submissions}}
+			}, {
+				type: 'line',
+				name: 'Final Submissions',
+				color: '#AA4643',
+				pointInterval: 24 * 3600 * 1000,
+				pointStart: Date.parse('{{task.publication_date|date:"SHORT_DATE_FORMAT"}}'),
+				data: {{submissions_final}}
+			}, {
+				type: 'line',
+				name: 'Submissions',
+				color: '#89A54E',
+				pointInterval: 24 * 3600 * 1000,
+				pointStart: Date.parse('{{task.publication_date|date:"SHORT_DATE_FORMAT"}}'),
+				data: {{submissions}}
+			}]
+		});
+
+{% if has_runtime_chart %}
+		var runtime_chart = new Highcharts.Chart({
+			chart: {
+				renderTo: 'runtime_chart',
+				defaultSeriesType: 'line',
+				alignTicks: false,
+				margin: [80, 100, 60, 100],
+			},
+			title: {
+				text: 'Solution runtimes',
+
+			},
+			xAxis: {
+				type: 'datetime',
+				title: {
+					text: 'Date'
+				},
+			},
+			yAxis: {
+				title: {
+					text: 'Runtime (ms)',
+					style: {
+						color: '#AA4643'
+					},
+				},
+				labels: {
+					 style: {
+						color: '#AA4643'
+					 }
+				},
+				min: 0,
+			},
+			legend: {
+				enabled:false
+			},
+			credits: {
+				enabled: false
+			},
+			plotOptions: {
+				area: {
+					fillOpacity:0.75,
+				},
+				line: {
+					lineWidth:3,
+				},
+			},
+			series: [
+			{% for runtime_series in runtimes %}
+				{ type: 'scatter',
+				  name: '{{ runtime_series.checker }}',
+				  color: '#4572A7',
+				  data: [
+					{% for point in runtime_series.runtimes %}
+					[ Date.parse('{{point.date|date:"c"}}'), {{point.value|default_if_none:'null'}} ],
+					{% endfor %}
+				  ],
+				},
+				{ type: 'spline',
+				  name: '{{ runtime_series.checker }} (median)',
+				  color: '#DA7D44',
+				  marker: {enabled: false},
+				  data: [
+					{% for point in runtime_series.medians %}
+					[ Date.parse('{{point.date|date:"c"}}'), {{point.value|default_if_none:'null'}} ],
+					{% endfor %}
+				  ],
+				},
+			{% endfor %}
+			]
+		});
+{% endif %}
     			
+        function date_to_timestr(d) {
+        	var h = d.getHours();
+        	var m = d.getMinutes();
+        	return h + ":" + ((m < 10) ? "0" + m : m);
+        }
     			
     	var time_chart = new Highcharts.Chart({
        chart: {
@@ -149,16 +220,11 @@
        tooltip: {
           formatter: function() {
 		  		date = new Date(this.x);
-                return '<b>'+ this.series.name +'</b><br/>' + ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][this.y] + ' ' + date.getHours() +':'+ date.getMinutes();
+                return '<b>'+ this.series.name +'</b><br/>' + ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][this.y] + ' ' + date_to_timestr(date);
           }
        },
        legend: {
-          layout: 'vertical',
-          style: {
-             left: '100px',
-             top: '70px',
-             bottom: 'auto'
-          },
+          layout: 'horizontal',
           backgroundColor: '#FFFFFF',
           borderWidth: 1
        },
@@ -216,18 +282,11 @@
    },
    yAxis: {
 	  max:{{attestations.all}},
-	  tickInterval:1,
 	  title: {
 	  	enabled:false,
 	  },
    },
    legend: {
-      style: {
-         left: 'auto',
-         bottom: 'auto',
-         right: '70px',
-         top: '35px'
-      },
       backgroundColor: '#FFFFFF',
       borderColor: '#CCC',
       borderWidth: 1,
@@ -311,8 +370,8 @@ function grade_chart(div_to_render_into, title, scale_items,ratings){
             rotation: -90,
             color: '#FFFFFF',
             align: 'right',
-            x: -3,
-            y: 10,
+            x: 4,
+            y: 2,
             formatter: function() {
                return this.y;
             },
@@ -326,15 +385,20 @@ function grade_chart(div_to_render_into, title, scale_items,ratings){
 {% for ratings in all_ratings %}
 var final_grade_chart_{{forloop.counter}} = grade_chart('final_grade_chart_{{forloop.counter}}','{{ratings.title}}',{{ final_grade_rating_scale_items|safe }},{{ratings.ratings}});
 {% endfor %}
-            });
+
+});
 </script>
 {% endblock %} 
-{% block breadcrumbs %} {{block.super}} > <a href={% url task_detail task_id=task.id%}>{{task.title}}  </a>
-> Statistics {% endblock %}
+
+{% block breadcrumbs %}
+{{block.super}} &gt; <a href={% url "task_detail" task_id=task.id%}>{{task.title}}  </a> &gt; Statistics
+{% endblock %}
+
 {% block content %}<h1>{{task.title}}</h1>
+
 <h2>{% trans "Statistics" %}</h2>
 <div id="submission_chart"></div>
-<p>Showes the dates on which solution submissions were made. Final submissions indicate when users uploaded their newest solution. Total submissions shows the percantage of active users who have submitted at least one solution.</p><br/><br/>
+<p>Shows the dates on which solution submissions were made. Final submissions indicate when users uploaded their newest solution. Total submissions shows the percantage of active users who have submitted at least one solution.</p><br/><br/>
 <div id="punchcard"></div>
 <p>This chart plots on which time of day the users were most active.</p><br/><br/>
 {% if task.expired %} 
@@ -345,4 +409,10 @@ var final_grade_chart_{{forloop.counter}} = grade_chart('final_grade_chart_{{for
 	<p>{{ratings.desc}}</p><br/><br/>
 {% endfor %}
 {% endif %}
+
+{% if has_runtime_chart %}
+<div id="runtime_chart"></div>
+<p>Shows the time it took to process each of the checkers.</p>
+{% endif %}
+
 {% endblock %}

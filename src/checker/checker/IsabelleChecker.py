@@ -7,7 +7,8 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.models import Checker, CheckerResult, CheckerFileField, execute, execute_arglist
+from checker.basemodels import Checker, CheckerFileField
+from utilities.safeexec import execute_arglist
 from utilities.file_operations import *
 
 
@@ -43,14 +44,17 @@ class IsabelleChecker(Checker):
 
 		ml_cmd = 'Secure.set_secure (); use_thys [%s]' % ','.join(thys)
 		args = [isabelle_process, "-r", "-q", "-e",  ml_cmd, self.logic]
-		(output, error, exitcode, timed_out) = execute_arglist(args, env.tmpdir(),timeout=settings.TEST_TIMEOUT)
+		(output, error, exitcode, timed_out, oom_ed) = execute_arglist(args, env.tmpdir(),timeout=settings.TEST_TIMEOUT)
 
 		if timed_out:
 			output += "\n\n---- check aborted after %d seconds ----\n" % settings.TEST_TIMEOUT
 
-		result = CheckerResult(checker=self)			
+		if oom_ed:
+			output += "\n\n---- check aborted, out of memory ----\n"
+
+		result = self.create_result(env)
 		result.set_log('<pre>' + escape(output) + '</pre>')
-		result.set_passed(not timed_out and self.output_ok(output))
+		result.set_passed(not timed_out and not oom_ed and not self.output_ok(output))
 		
 		return result
 	

@@ -1,7 +1,7 @@
 {% comment %}
 	include the folowing depenencies once in the including pages head:
-	<script type="text/javascript" src="{{MEDIA_URL}}/script/solution_inlines.js"></script>
-	<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}/styles/pygments_friendly.css" />
+	<script type="text/javascript" src="{{STATIC_URL}}script/solution_inlines.js"></script>
+	<link type="text/css" rel="stylesheet" href="{{STATIC_URL}}styles/pygments_friendly.css" />
 {% endcomment %}
 
 
@@ -22,6 +22,10 @@
       <div class="content">
         {% if solutionfile.isImage %}
           <img src="{{solutionfile.file.url}}"/>
+        {% elif solutionfile.isEmbeddable %}
+	   <iframe src="{{solutionfile.file.url}}?view" width="100%" height="500">
+	   (The preview requires iframe support)
+	   </iframe>
         {% else %}
           {{solutionfile.content|highlight_table:solutionfile.file.name}}
         {% endif %}

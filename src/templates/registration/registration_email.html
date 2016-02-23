@@ -3,7 +3,7 @@
 
 {% blocktrans %}Please go to the following page to activate your account within {{ expiration_days }} days{% endblocktrans %}.
 
-{{ protocol }}://{{ domain }}{% url registration_activate activation_key=activation_key %}
+{{ protocol }}://{{ domain }}{% url "registration_activate" activation_key=activation_key %}
 
 {% trans "Your username, in case you've forgotten:" %} {{ user.username }}
 

@@ -1,5 +1,5 @@
-from django.conf.urls.defaults import *
-from django.views.generic.simple import direct_to_template
+from django.conf.urls import patterns, url, include
+from django.views.generic.base import RedirectView
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -11,7 +11,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
 	# Index page
-	url(r'^$', 'django.views.generic.simple.redirect_to', {'url': 'tasks/'}, name="index"),
+	url(r'^$', RedirectView.as_view(pattern_name='task_list', permanent=True), name="index"),
 	
 	# Admin
 	url(r'^admin/tasks/task/(?P<task_id>\d+)/model_solution', 'tasks.views.model_solution', name="model_solution"),
@@ -32,7 +32,7 @@ urlpatterns = patterns('',
 
 	# Solutions
 	url(r'^solutions/(?P<solution_id>\d+)/$', 'solutions.views.solution_detail', name='solution_detail',kwargs={'full' : False}),
-	url(r'^solutions/(?P<solution_id>\d+)/(?P<full>full)/$', 'solutions.views.solution_detail', name='solution_detail'),
+    url(r'^solutions/(?P<solution_id>\d+)/full/$', 'solutions.views.solution_detail', name='solution_detail_full', kwargs={'full': True}),
 	url(r'^solutions/(?P<solution_id>\d+)/download$', 'solutions.views.solution_download', name='solution_download',kwargs={'full' : False}),
    	url(r'^solutions/(?P<solution_id>\d+)/download/(?P<full>full)/$', 'solutions.views.solution_download', name='solution_download'),
 	url(r'^solutions/(?P<solution_id>\d+)/run_checker$', 'solutions.views.solution_run_checker', name='solution_run_checker'),
@@ -41,7 +41,9 @@ urlpatterns = patterns('',
 	url(r'^tasks/(?P<task_id>\d+)/solutiondownload/(?P<full>full)/$', 'solutions.views.solution_download_for_task', name='solution_download_for_task'),
 	url(r'^tasks/(?P<task_id>\d+)/solutionupload/$', 'solutions.views.solution_list', name='solution_list'),
 	url(r'^tasks/(?P<task_id>\d+)/solutionupload/user/(?P<user_id>\d+)$', 'solutions.views.solution_list', name='solution_list'),
-					   
+	url(r'^tasks/(?P<task_id>\d+)/solutionupload/test/$', 'solutions.views.test_upload', name='upload_test_solution'),
+	url(r'^tasks/(?P<task_id>\d+)/solutionupload/test/student/$', 'solutions.views.test_upload_student', name='upload_test_solution_student'),
+
 	#Attestation
 	url(r'^tasks/(?P<task_id>\d+)/attestation/statistics$', 'attestation.views.statistics', name='statistics'),
 	url(r'^tasks/(?P<task_id>\d+)/attestation/$', 'attestation.views.attestation_list', name='attestation_list'),
@@ -49,6 +51,8 @@ urlpatterns = patterns('',
 	url(r'^solutions/(?P<solution_id>\d+)/attestation/new$', 'attestation.views.new_attestation_for_solution', name='new_attestation_for_solution', kwargs={'force_create' : False}),
 	url(r'^solutions/(?P<solution_id>\d+)/attestation/new/(?P<force_create>force_create)$', 'attestation.views.new_attestation_for_solution', name='new_attestation_for_solution'),
 	url(r'^attestation/(?P<attestation_id>\d+)/edit$', 'attestation.views.edit_attestation', name='edit_attestation'),
+	url(r'^attestation/(?P<attestation_id>\d+)/withdraw$', 'attestation.views.withdraw_attestation', name='withdraw_attestation'),
+	url(r'^attestation/(?P<attestation_id>\d+)/run_checker', 'attestation.views.attestation_run_checker', name='attestation_run_checker'),
 	url(r'^attestation/(?P<attestation_id>\d+)$', 'attestation.views.view_attestation', name='view_attestation'),
 	url(r'^attestation/rating_overview$', 'attestation.views.rating_overview', name='rating_overview'),
 	url(r'^attestation/rating_export.csv$', 'attestation.views.rating_export', name='rating_export'),
@@ -64,12 +68,8 @@ urlpatterns = patterns('',
 	
 )
 
-
-# only serve static files through django while in development - for safety and speediness
-if 'runserver' in sys.argv or 'runserver_plus' in sys.argv or 'runconcurrentserver' in sys.argv: 
-	media_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'media')
-	urlpatterns += patterns('',
-		(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': media_path}),
-        (r'^favicon.ico$', 'django.views.static.serve', {'document_root': media_path, 'path':"favicon.ico"}),
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += patterns('',
+        url(r'^__debug__/', include(debug_toolbar.urls)),
     )
-
