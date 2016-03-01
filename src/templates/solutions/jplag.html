@@ -8,6 +8,7 @@
 {% block content %}
 <div id='jplag'>
 
+{% if HAS_JPLAG %}
 <h1>{{task.title}} – jPlag results</h1>
 
 <form method="POST">
@@ -30,5 +31,11 @@ jPlag has not yet run.
 </p>
 {% endif %}
 </form>
+
+{% else %}
+
+This Praktomat instance has no integrated jPlag support. Please download the jPlag jar file and configure the <code>JPLAGJAR</code> setting.
+
+{% endif %}
 
 </div>{% endblock %}

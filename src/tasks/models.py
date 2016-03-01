@@ -85,6 +85,12 @@ class Task(models.Model):
                 self.save()
 
         def run_jplag(self):
+            # sanity check
+            if not hasattr(settings,'JPLAGJAR'):
+                    raise RuntimeError("Setting JPLAGJAR not set")
+            if not os.path.exists(settings.JPLAGJAR):
+                    raise RuntimeError("Setting JPLAGJAR points to non-existing file %s" % settings.JPLAGJAR)
+
             path = self.jplag_dir_path()
             tmp = os.path.join(path,"tmp")
             # clean out previous run
