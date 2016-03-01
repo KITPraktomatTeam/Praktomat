@@ -183,6 +183,20 @@ def solution_download_for_task(request, task_id,full):
 	response['Content-Disposition'] = 'attachment; filename=Solutions.zip'
 	return response
 
+@login_required
+def jplag(request, task_id):
+	if not (request.user.is_tutor or request.user.is_trainer):
+		return access_denied(request)
+	task = get_object_or_404(Task, pk=task_id)
+
+        if request.method == 'POST':
+            task.run_jplag()
+	    return HttpResponseRedirect(reverse('solution_jplag', args=[task_id]))
+
+	return render_to_response("solutions/jplag.html",
+                {"task":task},
+		context_instance=RequestContext(request))
+
 
 @login_required
 def checker_result_list(request,task_id):

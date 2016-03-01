@@ -19,7 +19,7 @@ def serve_staff_only(request, path):
 	if  request.user.is_staff: 
 		return sendfile(request, path)
 	return forbidden(request, path) 
-	 	
+
 def serve_access_denied(request, path): 
 	return forbidden(request, path)
 

@@ -32,6 +32,8 @@ DATABASES = {
 }
 
 
+JPLAGJAR = '/home/jojo/build/jplag/jplag-2.11.8-SNAPSHOT-jar-with-dependencies.jar'
+
 PRIVATE_KEY = join(dirname(dirname(dirname(__file__))), 'examples', 'certificates', 'privkey.pem')
 
 # Finally load defaults for missing setttings.

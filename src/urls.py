@@ -44,6 +44,8 @@ urlpatterns = patterns('',
 	url(r'^tasks/(?P<task_id>\d+)/solutionupload/test/$', 'solutions.views.test_upload', name='upload_test_solution'),
 	url(r'^tasks/(?P<task_id>\d+)/solutionupload/test/student/$', 'solutions.views.test_upload_student', name='upload_test_solution_student'),
 
+	url(r'^tasks/(?P<task_id>\d+)/jplag$', 'solutions.views.jplag', name='solution_jplag'),
+
 	#Attestation
 	url(r'^tasks/(?P<task_id>\d+)/attestation/statistics$', 'attestation.views.statistics', name='statistics'),
 	url(r'^tasks/(?P<task_id>\d+)/attestation/$', 'attestation.views.attestation_list', name='attestation_list'),
@@ -63,6 +65,7 @@ urlpatterns = patterns('',
 	# Uploaded media
 	url(r'^upload/(?P<path>SolutionArchive/Task_\d+/User_.*/Solution_(?P<solution_id>\d+)/.*)$', 'utilities.views.serve_solution_file'),
 	url(r'^upload/(?P<path>TaskMediaFiles.*)$', 'utilities.views.serve_unrestricted'),
+	url(r'^upload/(?P<path>jplag.*)$', 'utilities.views.serve_staff_only'),
 	url(r'^upload/(?P<path>CheckerFiles.*)$', 'utilities.views.serve_staff_only'),
 	url(r'^upload/(?P<path>.*)$', 'utilities.views.serve_access_denied'),
 	

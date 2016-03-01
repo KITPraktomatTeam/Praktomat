@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load i18n  %}
+{% block breadcrumbs %}
+{{block.super}}
+&gt; <a href={% url "task_detail" task_id=task.id%}>{{task.title}}</a>
+&gt; jPlag output
+{% endblock %}
+{% block content %}
+<div id='jplag'>
+
+<h1>{{task.title}} – jPlag results</h1>
+
+<form method="POST">
+{% csrf_token %}
+{% if task.did_jplag_run %}
+<a href="{{task.jplag_log_url}}">jPlag log file</a> &bull;
+<a href="{{task.jplag_index_url}}" target="_blank">Open jPlag output in new window</a> &bull;
+<input type="submit" value="Re-run jPlag"/>
+</form>
+<br/>
+<iframe width="100%" height="800" src="{{task.jplag_index_url}}"></iframe> 
+{% else %}
+<p>
+jPlag has not yet run.
+</p>
+<p>
+<input type="submit" value="Run jPlag"/>
+</p>
+{% endif %}
+</form>
+
+</div>{% endblock %}

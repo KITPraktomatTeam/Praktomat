@@ -1,6 +1,9 @@
 from datetime import date, datetime, timedelta
 import tempfile
 import zipfile
+import os
+import os.path
+import shutil
 
 from django.apps import apps
 from django.db import models
@@ -12,6 +15,7 @@ from django.conf import settings
 from django.db.models import Max
 
 from utilities.deleting_file_field import DeletingFileField
+from utilities.safeexec import execute_arglist
 
 
 class Task(models.Model):
@@ -63,6 +67,48 @@ class Task(models.Model):
             checkers = sorted(unsorted_checker, key=lambda checker: checker.order)
             return checkers
 
+        def jplag_dir_path(self):
+            return os.path.join(settings.UPLOAD_ROOT, 'jplag', 'Task_' + unicode(self.id))
+
+        def jplag_index_url(self):
+            return os.path.join("/upload", 'jplag', 'Task_' + unicode(self.id), "index.html")
+
+        def jplag_log_url(self):
+            return os.path.join("/upload", 'jplag', 'Task_' + unicode(self.id), "jplag.txt")
+
+        def did_jplag_run(self):
+            return os.path.isdir(self.jplag_dir_path())
+
+        def run_jplag(self):
+            path = self.jplag_dir_path()
+            tmp = os.path.join(path,"tmp")
+            # clean out previous run
+            if self.did_jplag_run():
+                shutil.rmtree(path)
+            # create output directory
+            os.makedirs(path)
+
+            # extract all final solutions
+            os.mkdir(tmp)
+            final_solutions = self.solution_set.filter(final=True)
+            from solutions.models import path_for_user
+            for solution in final_solutions:
+                subpath = os.path.join(tmp, path_for_user(solution.author))
+                os.mkdir(subpath)
+                solution.copySolutionFiles(subpath)
+
+            # run jplag
+            args = [settings.JVM,
+                "-jar", settings.JPLAGJAR,
+                "-l", "java17",
+                "-r", path,
+                tmp]
+            [output, error, exitcode,timed_out, oom_ed] = \
+                execute_arglist(args, path, unsafe=True)
+
+            shutil.rmtree(tmp)
+
+            file(os.path.join(path,"jplag.txt"),'w').write(output)
 
 	@classmethod
 	def export_Tasks(cls, qureyset):
