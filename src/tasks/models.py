@@ -29,16 +29,16 @@ class Task(models.Model):
 			null=True, related_name='model_solution_task')
 	all_checker_finished = models.BooleanField(default=False, editable=False, help_text = _("Indicates whether the checker which don't run immediately on submission have been executed."))
 	final_grade_rating_scale = models.ForeignKey('attestation.RatingScale', null=True, help_text = _("The scale used to mark the whole solution."))
-
         only_trainers_publish = models.BooleanField(default=False, help_text = _("Indicates that only trainers may publish attestations. Otherwise, tutors may publish final attestations within their tutorials."))
-	
+        jplag_up_to_date = models.BooleanField(default=False, help_text = _("No new solution uploads since the last jPlag run"))
+
 	def __unicode__(self):
 		return self.title
-		
+
 	def solutions(self,user):
 		""" get ALL solutions of the specified user """
 		return self.solution_set.filter(author=user)
-	
+
 	def final_solution(self,user):
 		""" get FINAL solution of specified user """
 		solutions = self.solution_set.filter(author=user, final=True)
@@ -47,7 +47,7 @@ class Task(models.Model):
 	def expired(self):
 		"""docstring for expired"""
 		return self.submission_date + timedelta(hours=1) < datetime.now()
-	
+
 	def check_all_final_solutions(self):
 		from checker.basemodels import check_multiple
 		final_solutions = self.solution_set.filter(final=True)
@@ -79,6 +79,11 @@ class Task(models.Model):
         def did_jplag_run(self):
             return os.path.isdir(self.jplag_dir_path())
 
+        def need_to_re_run_jplag(self):
+            if self.jplag_up_to_date:
+                self.jplag_up_to_date = False
+                self.save()
+
         def run_jplag(self):
             path = self.jplag_dir_path()
             tmp = os.path.join(path,"tmp")
@@ -106,9 +111,16 @@ class Task(models.Model):
             [output, error, exitcode,timed_out, oom_ed] = \
                 execute_arglist(args, path, unsafe=True)
 
+            # remove solution copies
             shutil.rmtree(tmp)
 
+            # write log file
             file(os.path.join(path,"jplag.txt"),'w').write(output)
+
+            # mark jplag as up-to-date
+            self.jplag_up_to_date = True
+            self.save()
+
 
 	@classmethod
 	def export_Tasks(cls, qureyset):
