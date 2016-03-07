@@ -9,7 +9,7 @@
 
 <h1>{% trans "Change Account" %}</h1>
 
-{% if user.has_usable_password %}
+{% if user.has_usable_password and ACCOUNT_CHANGE_POSSIBLE %}
 <a href="{% url "password_change" %}">Change Password</a><br/><br/>
 {% endif %}
 

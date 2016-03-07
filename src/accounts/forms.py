@@ -58,12 +58,16 @@ class MyRegistrationForm(UserBaseCreationForm):
 		return data
 
 	def clean_username(self):
-		username = super(MyRegistrationForm,self).clean_username()
-		try:
-			User.objects.get(username__iexact=username)
-		except User.DoesNotExist:
-			return username
-		raise forms.ValidationError(_("A user with that username already exists."))
+		# FIXME - see KITPraktomat Bugreport nr 221
+		# https://github.com/KITPraktomatTeam/Praktomat/issues/221
+		# username = super(MyRegistrationForm,self).clean_username()
+		#try:
+		#	User.objects.get(username__iexact=username)
+		#except User.DoesNotExist:
+		#	return username
+		#raise forms.ValidationError(_("A user with that username already exists."))
+		username = self.cleaned_data["username"]
+		return username
 
 
 	@transaction.atomic
@@ -124,12 +128,16 @@ class AdminUserCreationForm(UserBaseCreationForm):
                 fields = "__all__"
 
 	def clean_username(self):
-		username = super(AdminUserCreationForm,self).clean_username()
-		try:
-			User.objects.get(username__iexact=username)
-		except User.DoesNotExist:
-			return username
-		raise forms.ValidationError(_("A user with that username already exists."))
+		# FIXME - see KITPraktomat Bugreport nr 221
+		# https://github.com/KITPraktomatTeam/Praktomat/issues/221
+		#username = super(AdminUserCreationForm,self).clean_username()
+		#try:
+		#	User.objects.get(username__iexact=username)
+		#except User.DoesNotExist:
+		#	return username
+		#raise forms.ValidationError(_("A user with that username already exists."))
+		username = self.cleaned_data["username"]
+		return username
 
 class AdminUserChangeForm(UserBaseChangeForm):
 	class Meta:
@@ -142,11 +150,11 @@ class AdminUserChangeForm(UserBaseChangeForm):
 		groups = cleaned_data.get("groups")
 		if not groups:
 			self._errors["groups"] = self.error_class(["This field is required."])
-		#if ( groups and groups.filter(name="User") and not cleaned_data.get("mat_number")):
-		#	self._errors["mat_number"] = self.error_class(["This field is required for Users."])
-		#	if "mat_number" in cleaned_data:
-		#		#mat_number was probably removed prior to this validation (eg. no number)
-		#		del cleaned_data["mat_number"]
+		if ( groups and groups.filter(name="User") and not (cleaned_data.get("mat_number") or settings.DUMMY_MAT_NUMBERS)):
+			self._errors["mat_number"] = self.error_class(["This field is required for Users."])
+			if "mat_number" in cleaned_data:
+				#mat_number was probably removed prior to this validation (eg. no number)
+				del cleaned_data["mat_number"]
 		return cleaned_data
 
 

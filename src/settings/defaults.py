@@ -306,6 +306,15 @@ def load_defaults(settings):
     # Single Sign On is used
     d.REGISTRATION_POSSIBLE = True
 
+	# Set this to False to disable account changes via the website
+    d.ACCOUNT_CHANGE_POSSIBLE = True
+
+    # Set this to True to automatically set user.mat_number = user.id
+    d.DUMMY_MAT_NUMBERS = False
+
+    # Set this to False to disable "Got Problems?"-link in task list
+    d.SHOW_CONTACT_LINK = True
+
     # Length of timeout applied whenever an external check that runs a students
     # submission is executed,
     # for example: JUnitChecker, DejaGnuChecker

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from accounts.models import User
 from django.contrib.auth.models import check_password, Group
-import settings
+from django.conf import settings
 import ldap
 
 try:
@@ -31,8 +31,6 @@ class LDAPBackend:
         # Wenn bei einem bereits vorhandenen lokalen User keine
         # LDAP-Authentifizierung eingetragen ist, sind wir nicht zuständig.
         if localuser and localuser.password != 'LDAP_AUTH':
-            # vor Abbruch ein UserProfile anlegen, falls noch keins existiert
-#             userprofile = get_or_create_profile(localuser)
             return None
         # LDAP-Abfrage
         ldapUser = fetch_ldapuser_dict(uid=username, password=password)
@@ -48,12 +46,6 @@ class LDAPBackend:
             localuser.last_name = _shortest_unicode([ldapUser['lastName'],
                                                     ldapUser['sn']])
             localuser.save()
-#             userprofile = get_or_create_profile_from_ldap(localuser, ldapUser)
-#             # Matrikelnummer im Profil speichern, falls noch nicht geschehen
-#             if len(userprofile.unique_identifier) == 0 \
-#                and len(ldapUser['uniqueIdentifier']) > 0:
-#                 userprofile.unique_identifier = ldapUser['uniqueIdentifier']
-#                 userprofile.save()
         else:
             return None
             ##print "auto-create local user", username
@@ -65,10 +57,6 @@ class LDAPBackend:
         if localuser.groups.count() == 0:
             g = Group.objects.get(name='User')
             localuser.groups.add(g)
-#         # Usern, die keinerlei Recht haben, ggf. den Redakteur-Status (Staff) entziehen
-#         if localuser.is_staff and localuser.user_permissions.count() == 0 and len(localuser.get_group_permissions()) == 0:
-#             localuser.is_staff = False
-#             localuser.save()
         return localuser
 
     def get_user(self, user_id):
@@ -158,42 +146,4 @@ def create_localuser_from_ldapuser(username, ldapUser):
     localuser.is_staff = False
     localuser.is_superuser = False
     localuser.save()
-#     userprofile = get_or_create_profile_from_ldap(localuser, ldapUser)
     return localuser
-
-def get_or_create_profile_from_ldap(localuser, ldapUser):
-    try:
-        userprofile = localuser.get_profile()
-    except UserProfile.DoesNotExist:
-        if localuser.last_name:
-            sort_name = localuser.last_name
-        else:
-            sort_name = localuser.username
-        userprofile = UserProfile(user=localuser, \
-                                  gender='', \
-                                  language='de', \
-                                  name_prefix=ldapUser['personalTitle'], \
-                                  name_suffix='', \
-                                  sort_name=sort_name, \
-                                  unique_identifier=ldapUser['uniqueIdentifier'])
-        userprofile.save()
-    return userprofile
-
-def get_or_create_profile(localuser):
-    try:
-        userprofile = localuser.get_profile()
-    except UserProfile.DoesNotExist:
-        if localuser.last_name:
-            sort_name = localuser.last_name
-        else:
-            sort_name = localuser.username
-        userprofile = UserProfile(user=localuser, \
-                                  gender='', \
-                                  language='de', \
-                                  name_prefix='', \
-                                  name_suffix='', \
-                                  sort_name=sort_name, \
-                                  unique_identifier='')
-        userprofile.save()
-    return userprofile
-

@@ -1,9 +1,9 @@
 # Settings for deployment
 
-# These settings are KIT-specific and derive some parts of the settings
+# These settings are HBRS-specific and derive some parts of the settings
 # from the directory name.
 #
-# If you are not deploying on praktomat.cs.kit.edu you need to rewrite this file.
+# If you are not deploying on praktomat.inf.h-brs.de you need to rewrite this file.
 
 from os.path import join, dirname, basename
 import re
@@ -49,10 +49,12 @@ else:
 
 # The URL where this site is reachable. 'http://localhost:8000/' in case of the
 # developmentserver.
-BASE_HOST = 'https://praktomat.cs.kit.edu'
+#BASE_HOST = 'https://praktomat.cs.kit.edu'
+BASE_HOST = 'https://praktomat.inf.h-brs.de/'
 BASE_PATH = '/' + PRAKTOMAT_ID + '/'
 
-ALLOWED_HOSTS = [ 'praktomat.cs.kit.edu', ]
+#ALLOWED_HOSTS = [ 'praktomat.cs.kit.edu', ]
+ALLOWED_HOSTS = [ 'praktomat.inf.h-brs.de', ]
 
 # URL to use when referring to static files.
 STATIC_URL = BASE_PATH + 'static/'
@@ -66,12 +68,16 @@ if "cram" in PRAKTOMAT_ID:
 # files created at runtime.
 
 # Example: "/home/media/media.lawrence.com/"
-UPLOAD_ROOT = join(dirname(PRAKTOMAT_PATH), "PraktomatSupport/")
+# UPLOAD_ROOT = join(dirname(PRAKTOMAT_PATH), "PraktomatSupport/")
+# UPLOAD_ROOT = "/home/praktomat/inst/" + PRAKTOMAT_ID + "/work/"
+UPLOAD_ROOT = join(dirname(PRAKTOMAT_PATH), "work/")
+
 
 SANDBOX_DIR = join('/srv/praktomat/sandbox/', PRAKTOMAT_ID)
 
 ADMINS = [
-  ('Praktomat', 'praktomat@ipd.info.uni-karlsruhe.de')
+  #('Praktomat', 'praktomat@ipd.info.uni-karlsruhe.de')
+  ('Praktomat', 'praktomat@inf.h-brs.de')
 ]
 
 
@@ -83,7 +89,8 @@ else:
 	EMAIL_HOST = "localhost"
 	EMAIL_PORT = 25
 
-DEFAULT_FROM_EMAIL = "praktomat@ipd.info.uni-karlsruhe.de"
+#DEFAULT_FROM_EMAIL = "praktomat@ipd.info.uni-karlsruhe.de"
+DEFAULT_FROM_EMAIL = "praktomat@inf.h-brs.de"
 
 DEBUG = MIRROR
 
@@ -95,11 +102,28 @@ DATABASES = {
 }
 
 # Private key used to sign uploded solution files in submission confirmation email
-PRIVATE_KEY = '/srv/praktomat/mailsign/signer_key.pem'
+#PRIVATE_KEY = '/srv/praktomat/mailsign/signer_key.pem'
+PRIVATE_KEY = None # '/home/praktomat/certificates/privkey.pem'
 
 # Enable Shibboleth:
-SHIB_ENABLED = True
+SHIB_ENABLED = False
 REGISTRATION_POSSIBLE = False
+
+ACCOUNT_CHANGE_POSSIBLE = False
+DUMMY_MAT_NUMBERS = False
+SHOW_CONTACT_LINK = True 
+
+
+# LDAP
+AUTHENTICATION_BACKENDS = (
+    'ldap_auth.LDAPBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+LDAP_URI="ldap://ldap.inf.fh-brs.de"
+LDAP_BASE="dc=fh-bonn-rhein-sieg,dc=de"
+
+
+
 
 # Use a dedicated user to test submissions
 USEPRAKTOMATTESTER = False
@@ -108,14 +132,17 @@ USEPRAKTOMATTESTER = False
 USESAFEDOCKER = True
 
 # Various extra files and versions
-CHECKSTYLEALLJAR = '/srv/praktomat/contrib/checkstyle-5.7-all.jar'
+#CHECKSTYLEALLJAR = '/srv/praktomat/contrib/checkstyle-5.7-all.jar'
+CHECKSTYLEALLJAR = '/opt/praktomat-addons/checkstyle-6.15-all.jar'
+JAVA_LIBS = { 'junit3' : '/usr/share/java/junit.jar', 'junit4' : '/opt/praktomat-addons/junit4.12.jar' }
 #JAVA_BINARY = 'javac-sun-1.7'
 #JVM = 'java-sun-1.7'
 
 # Our VM has 4 cores, so lets try to use them
-NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 6
+NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 4
 
-# Finally load defaults for missing setttings.
+
+# Finally load defaults for missing settings.
 import defaults
 defaults.load_defaults(globals())
 
