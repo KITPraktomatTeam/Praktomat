@@ -953,6 +953,9 @@ IE8 */
 	margin: 100px auto auto;
 	width: 300px;
 }
+#login #form label {
+	margin-bottom:0.5em;
+}
 
 /* @end */
 

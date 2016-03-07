@@ -14,6 +14,7 @@ from django import forms
 from django.core import urlresolvers
 from django.contrib import messages
 import django.utils.timezone
+from django.conf import settings
 
 from tasks.models import Task
 from solutions.forms import ModelSolutionFormSet
@@ -53,7 +54,8 @@ def taskList(request):
                         'show_final_grade': get_settings().final_grades_published,
                         'tutors':tutors,
                         'trainers':trainers,
-                        'script':script
+                        'script':script,
+                        'show_contact_link':settings.SHOW_CONTACT_LINK
                 },
                 context_instance=RequestContext(request))
 

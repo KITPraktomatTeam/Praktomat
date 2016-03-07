@@ -32,8 +32,8 @@
 <div id="welcome">
 
 	{% chunk "Welcome Message" %}
-{% if False %}	
-	{% if not user.is_trainer and not user.is_superuser %}
+	
+	{% if show_contact_link and not user.is_trainer and not user.is_superuser %}
 		{% if tutors or trainers %}
 			<div id="contact"><a> Got Problems? </a>
 			{% if tutors %}
@@ -50,7 +50,6 @@
 			{% endif %}</div>
 		{% endif %}
 	{% endif %}
-{% endif %}
 </div>
 
 

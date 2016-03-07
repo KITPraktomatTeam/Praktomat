@@ -3,15 +3,17 @@
 """
 Dump files containing input, expected output and the shell script running diff.
 """
-
-import os
+import os, re
 import os.path
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from checker.models import Checker, CheckerResult, execute_arglist
 from django.utils.html import escape
+from django.utils.encoding import force_unicode
+from checker.basemodels import Checker, CheckerFileField, CheckerResult, truncated_log
+from utilities.safeexec import execute_arglist
 from utilities.file_operations import *
+
 from accounts.models import User
 from attestation.models import RatingScaleItem, Attestation
 from datetime import datetime
