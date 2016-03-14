@@ -30,6 +30,6 @@ DEBUG = False
 
 PRIVATE_KEY = join(dirname(dirname(dirname(__file__))), 'examples', 'certificates', 'privkey.pem')
 
-# Finally load defaults for missing setttings.
+# Finally load defaults for missing settings.
 import defaults
 defaults.load_defaults(globals())

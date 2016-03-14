@@ -60,3 +60,4 @@ RUN pip3 install numdifftools==0.7.7
 
 RUN echo "praktomat:x:1001:1001:,,,:/home/praktomat:/bin/bash" >> /etc/passwd
 RUN echo "praktomat:x:1001:tester" >> /etc/group
+COPY praktomat-addons /opt/praktomat-addons

@@ -154,12 +154,12 @@ def load_defaults(settings):
         secret_keyfile = join(UPLOAD_ROOT, 'SECRET_KEY')
         if os.path.exists(secret_keyfile):
             d.SECRET_KEY = open(secret_keyfile).read()
-            if not SECRET_KEY:
+            if not d.SECRET_KEY:
                 raise RuntimeError("File %s empty!" % secret_keyfile)
         else:
             import uuid
             d.SECRET_KEY = uuid.uuid4().hex
-            os.fdopen(os.open(secret_keyfile,os.O_WRONLY | os.O_CREAT,0600),'w').write(SECRET_KEY)
+            os.fdopen(os.open(secret_keyfile,os.O_WRONLY | os.O_CREAT,0600),'w').write(d.SECRET_KEY)
 
     # Templates
 
