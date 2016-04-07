@@ -282,6 +282,26 @@ class TestChecker(TestCase):
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.failUnless(checkerresult.passed, checkerresult.log)
 
+	def test_c_checker(self):
+		src = join(dirname(dirname(dirname(__file__))), 'examples', 'Hello World.c')
+		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'Hello World.c')
+		# circumvent SuspiciousOperation exception
+		copy_file(src,dest)
+		CreateFileChecker.CreateFileChecker.objects.create(
+					task = self.task,
+					order = 0,
+					file = dest,
+					)
+		CBuilder.CBuilder.objects.create(
+					task = self.task,
+					order = 1,
+					_file_pattern = r"^[a-zA-Z0-9_ ]*\.[cC]$"
+					)
+		self.solution.check_solution()
+
+		# Check if they are all finished, or if one of the dependencies failed.
+		for checkerresult in self.solution.checkerresult_set.all():
+			self.failUnless(checkerresult.passed, checkerresult.log)
 
 	def test_r_checker(self):
 		solution_file = SolutionFile(solution = self.solution)

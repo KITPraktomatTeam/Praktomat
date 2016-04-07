@@ -4,9 +4,12 @@ import os
 from pipes import quote
 import re, subprocess
 import string
+import shlex
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
+from django.template.loader import get_template
+from django.template import Context
 
 
 from checker.basemodels import Checker
@@ -49,7 +52,7 @@ class Builder(Checker):
 	def output_flags(self, env):
 		""" Output flags """
 		try:
-			return (self._output_flags % env.program()).split(" ")
+			return shlex.split(self._output_flags % '"'+env.program()+'"')
 		except:
 			return self._output_flags.split(" ") if self._output_flags else []
 
@@ -75,7 +78,6 @@ class Builder(Checker):
 		rxarg = re.compile(self.rxarg())
 		return [name for (name,content) in env.sources() if rxarg.match(name)]		
 		
-
 	def exec_file(self, tmpdir, program_name):
 		""" File of the generated executable.  To be overloaded in subclasses. """
 		return os.path.join(tmpdir, program_name)
@@ -141,4 +143,11 @@ class Builder(Checker):
 		return result
 
 	def build_log(self,output,args,filenames):
-		return	"<pre>" + output + "</pre>" if output else ""
+		t = get_template('checker/compiler/builder_report.html')
+		return t.render(Context({
+			'filenames' : filenames,
+			'output' : output,
+			'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm,ps: parm + ' ' + ps,args[1:],''),
+			'regexp' : self.rxarg()
+		}))
+
