@@ -250,7 +250,7 @@ def load_defaults(settings):
     d.JVM_SECURE = PRAKTOMAT_ROOT + '/src/checker/scripts/java'
     d.JVM_POLICY = PRAKTOMAT_ROOT + '/src/checker/scripts/java.policy'
     d.FORTRAN_BINARY = 'g77'
-    d.ISABELLE_BINARY = '/data1/praktomat/Isabelle2013/bin/isabelle'
+    d.ISABELLE_BINARY = 'isabelle' # Isabelle should be in PATH
     d.DEJAGNU_RUNTEST = '/usr/bin/runtest'
     d.CHECKSTYLEALLJAR = '/home/praktomat/contrib/checkstyle-all-4.4.jar'
     d.JUNIT38='junit'
