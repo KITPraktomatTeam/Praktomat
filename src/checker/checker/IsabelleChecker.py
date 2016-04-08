@@ -36,7 +36,7 @@ class IsabelleChecker(Checker):
 
 		# Find out the path to isabaelle-process
 		args = [settings.ISABELLE_BINARY, "getenv", "-b", "ISABELLE_PROCESS"]
-		(output, error, exitcode, _) = execute_arglist(args, env.tmpdir())
+		(output, error, exitcode, timed_out, oom_ed) = execute_arglist(args, env.tmpdir())
 
 		isabelle_process = output.rstrip()
 
