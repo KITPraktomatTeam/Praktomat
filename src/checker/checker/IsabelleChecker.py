@@ -36,7 +36,7 @@ class IsabelleChecker(Checker):
 
 		# Find out the path to isabaelle-process
 		args = [settings.ISABELLE_BINARY, "getenv", "-b", "ISABELLE_PROCESS"]
-		(output, error, exitcode, _) = execute_arglist(args, env.tmpdir())
+		(output, error, exitcode, timed_out, oom_ed) = execute_arglist(args, env.tmpdir(), error_to_output=False)
 
 		isabelle_process = output.rstrip()
 
@@ -44,7 +44,7 @@ class IsabelleChecker(Checker):
 
 		ml_cmd = 'Secure.set_secure (); use_thys [%s]' % ','.join(thys)
 		args = [isabelle_process, "-r", "-q", "-e",  ml_cmd, self.logic]
-		(output, error, exitcode, timed_out, oom_ed) = execute_arglist(args, env.tmpdir(),timeout=settings.TEST_TIMEOUT)
+		(output, error, exitcode, timed_out, oom_ed) = execute_arglist(args, env.tmpdir(),timeout=settings.TEST_TIMEOUT, error_to_output=False)
 
 		if timed_out:
 			output += "\n\n---- check aborted after %d seconds ----\n" % settings.TEST_TIMEOUT
@@ -54,7 +54,7 @@ class IsabelleChecker(Checker):
 
 		result = self.create_result(env)
 		result.set_log('<pre>' + escape(output) + '</pre>')
-		result.set_passed(not timed_out and not oom_ed and not self.output_ok(output))
+		result.set_passed(not timed_out and not oom_ed and self.output_ok(output))
 		
 		return result
 	
