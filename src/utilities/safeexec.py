@@ -10,7 +10,7 @@ import resource
 
 from django.conf import settings
 
-def execute_arglist(args, working_directory, environment_variables={}, timeout=None, maxmem=None, fileseeklimit=None, extradirs=[], unsafe=False):
+def execute_arglist(args, working_directory, environment_variables={}, timeout=None, maxmem=None, fileseeklimit=None, extradirs=[], unsafe=False, error_to_output=True):
 	""" Wrapper to execute Commands with the praktomat testuser. Excpects Command as list of arguments, the first being the execeutable to run. """
 	assert isinstance(args, list)
 
@@ -69,7 +69,7 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
 	process = subprocess32.Popen(
 		command,
 		stdout=subprocess32.PIPE,
-		stderr=subprocess32.PIPE,
+		stderr=subprocess32.STDOUT if error_to_output else subprocess32.PIPE,
 		cwd=working_directory,
 		env=environment,
 		preexec_fn=prepare_subprocess)
