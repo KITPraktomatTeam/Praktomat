@@ -54,7 +54,7 @@ class IsabelleChecker(Checker):
 
 		result = self.create_result(env)
 		result.set_log('<pre>' + escape(output) + '</pre>')
-		result.set_passed(not timed_out and not oom_ed and not self.output_ok(output))
+		result.set_passed(not timed_out and not oom_ed and self.output_ok(output))
 		
 		return result
 	
