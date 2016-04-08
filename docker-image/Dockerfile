@@ -66,3 +66,6 @@ RUN isabelle build -sbv HOL
 
 RUN echo "praktomat:x:1001:1001:,,,:/home/praktomat:/bin/bash" >> /etc/passwd
 RUN echo "praktomat:x:1001:tester" >> /etc/group
+
+# We use a fresh tmpfs with /home in each container
+RUN chmod 1777 /home
