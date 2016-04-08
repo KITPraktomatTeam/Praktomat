@@ -69,7 +69,7 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
 	process = subprocess32.Popen(
 		command,
 		stdout=subprocess32.PIPE,
-		stderr=subprocess32.STDOUT,
+		stderr=subprocess32.PIPE,
 		cwd=working_directory,
 		env=environment,
 		preexec_fn=prepare_subprocess)
