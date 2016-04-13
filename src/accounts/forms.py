@@ -57,14 +57,6 @@ class MyRegistrationForm(UserBaseCreationForm):
 				raise forms.ValidationError(mark_safe("A user with this number is already registered. Please Contact an Trainer: %s" % trainers ))
 		return data
 
-	def clean_username(self):
-		username = super(MyRegistrationForm,self).clean_username()
-		try:
-			User.objects.get(username__iexact=username)
-		except User.DoesNotExist:
-			return username
-		raise forms.ValidationError(_("A user with that username already exists."))
-
 
 	@transaction.atomic
 	def save(self):
@@ -123,13 +115,6 @@ class AdminUserCreationForm(UserBaseCreationForm):
 		model = User
                 fields = "__all__"
 
-	def clean_username(self):
-		username = super(AdminUserCreationForm,self).clean_username()
-		try:
-			User.objects.get(username__iexact=username)
-		except User.DoesNotExist:
-			return username
-		raise forms.ValidationError(_("A user with that username already exists."))
 
 class AdminUserChangeForm(UserBaseChangeForm):
 	class Meta:
