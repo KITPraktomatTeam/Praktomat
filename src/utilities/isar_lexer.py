@@ -1,6 +1,6 @@
 import re
 from pygments.lexers.theorem import IsabelleLexer
-from pygments.lexer import RegexLexer
+from pygments.lexer import RegexLexer, inherit, bygroups, words
 from pygments.token import *
 
 import encoding
@@ -9,6 +9,39 @@ __all__ = ['IsarLexer']
 
 class IsarLexer(IsabelleLexer):
 	name = 'Isabelle/Isar'
+
+	keyword_cartouche_text = ('text', 'txt', 'text_raw',
+		'chapter', 'section', 'subsection', 'subsubsection',
+		'paragraph', 'subparagraph',
+	)
+	tokens = {
+		'root': [
+			(words(keyword_cartouche_text, prefix=r'\b', suffix=r'(%\w+)?(\s*\\<open>)'), bygroups(Keyword,Comment.Preproc,Comment), 'cartouche-text'),
+			(r'\\<comment>.*$', Comment),
+			(r'%\w+', Comment.Preproc),
+			(r'\\<open>', String.Other, 'fact'),
+			inherit,
+		],
+		'cartouche-text': [
+			(r'[^\\@]', Comment),
+			(r'(@\{)(\w+)', bygroups(String.Other, Keyword), 'antiquotation'),
+			(r'\\<open>', Text, '#push'),
+			(r'\\<close>', Comment, '#pop'),
+			(r'\\<[\^\w]+>', Comment.Symbol),
+			(r'\\', Comment),
+		],
+		'antiquotation': [
+			(r'[^\{\}\\]', Text),
+			(r'\{', String.Other, '#push'),
+			(r'\}', String.Other, '#pop'),
+			(r'\\<[\^\w]+>', String.Symbol),
+			(r'\\', Text),
+		],
+		'fact': [
+			(r'\\<close>', String.Other, '#pop'),
+			inherit,
+		],
+	}
 
 	def get_tokens_unprocessed(self, text):
 		for index, token, value in RegexLexer.get_tokens_unprocessed(self, text):
@@ -37,7 +70,7 @@ def isar_decode(raw):
 			return symbol_table[m.group(0)]
 		else:
 			return m.group(0)
-	return re.sub(r"\\<[a-zA-Z]+>", repl, raw)
+	return re.sub(r"\\<[\^a-zA-Z]+>", repl, raw)
 
 
 # ~~/etc/symbols from Isabelle2016
