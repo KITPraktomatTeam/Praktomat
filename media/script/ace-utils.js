@@ -30,6 +30,8 @@ function guessMode(filename) {
 	mode = "haskell";
    } else if (/^.*\.R$/.test(filename)) {
 	mode = "r";
+   } else if (/^.*\.thy$/.test(filename)) {
+	mode = "isabelle";
    } else  {
 	mode = "plain_text";
    }
