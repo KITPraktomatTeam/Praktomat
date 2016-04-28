@@ -87,13 +87,22 @@ class Task(models.Model):
                 self.jplag_up_to_date = False
                 self.save()
 
-        def run_jplag(self):
+        def jplag_languages(self):
+            return { 'Java':     { 'param': 'java17', 'files': '.java,.JAVA' },
+                     'R':        { 'param': 'text',   'files': '.R' },
+                     'Isabelle': { 'param': 'text',   'files': '.isa' },
+                   }
+
+        def run_jplag(self, lang):
             # sanity check
             if not hasattr(settings,'JPLAGJAR'):
                     raise RuntimeError("Setting JPLAGJAR not set")
             if not os.path.exists(settings.JPLAGJAR):
                     raise RuntimeError("Setting JPLAGJAR points to non-existing file %s" % settings.JPLAGJAR)
+            if not lang in self.jplag_languages():
+                    raise RuntimeError("Unknown jplag settings %s" % lang)
 
+            jplag_settings = self.jplag_languages()[lang]
             path = self.jplag_dir_path()
             tmp = os.path.join(path,"tmp")
             # clean out previous run
@@ -114,7 +123,8 @@ class Task(models.Model):
             # run jplag
             args = [settings.JVM,
                 "-jar", settings.JPLAGJAR,
-                "-l", "java17",
+                "-l", jplag_settings['param'],
+                "-p", jplag_settings['files'],
                 "-r", path,
                 tmp]
             [output, error, exitcode,timed_out, oom_ed] = \

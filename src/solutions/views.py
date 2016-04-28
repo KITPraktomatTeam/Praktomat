@@ -190,7 +190,7 @@ def jplag(request, task_id):
 	task = get_object_or_404(Task, pk=task_id)
 
         if request.method == 'POST':
-            task.run_jplag()
+            task.run_jplag(request.POST['lang'])
 	    return HttpResponseRedirect(reverse('solution_jplag', args=[task_id]))
 
 	return render_to_response("solutions/jplag.html",

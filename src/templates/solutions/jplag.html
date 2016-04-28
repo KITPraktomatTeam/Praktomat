@@ -9,35 +9,51 @@
 <div id='jplag'>
 
 {% if HAS_JPLAG %}
-<h1>{{task.title}} – jPlag results</h1>
+ <h1>{{task.title}} – jPlag results</h1>
 
-<form method="POST">
-{% csrf_token %}
-{% if task.did_jplag_run %}
-  <a href="{{task.jplag_log_url}}">jPlag log file</a>
-  &bull;
-  {% if task.did_jplag_succeed %}
-    <a href="{{task.jplag_index_url}}" target="_blank">Open jPlag output in new window</a> &bull;
-  {% endif %}
-  <input type="submit" value="Re-run jPlag"/>
-  {% if not task.jplag_up_to_date %}
-  &bull; <span class="warning">Warning: jPlag output not up-to-date with regard to final solutions.</span>
-  {% endif %}
-  {% if task.did_jplag_succeed %}
-  <br/>
-  <iframe width="100%" height="800" src="{{task.jplag_index_url}}"></iframe>
-  {% else %}
-  &bull; <span class="warning">Warning: The last jPlag run did not produce any output.</span>
-  {% endif %}
-{% else %}
-  <p>
-  jPlag has not yet run.
-  </p>
-  <p>
-  <input type="submit" value="Run jPlag"/>
-  </p>
-{% endif %}
-</form>
+ <form method="POST">
+
+ {% csrf_token %}
+ {% if task.did_jplag_run %}
+   <a href="{{task.jplag_log_url}}">jPlag log file</a>
+   &bull;
+ {% endif %}
+
+ {% if task.did_jplag_succeed %}
+     <a href="{{task.jplag_index_url}}" target="_blank">Open jPlag output in new window</a> &bull;
+ {% endif %}
+
+ <select name="lang">
+   {% for opt in task.jplag_languages.keys %}
+	<option value="{{ opt }}">{{opt}}</option>
+   {% endfor %}
+ </select>
+
+ {% if task.did_jplag_run %}
+   <input type="submit" value="Re-run jPlag"/>
+ {% else %}
+   <input type="submit" value="Run jPlag"/>
+ {% endif %}
+
+ {% if not task.jplag_up_to_date %}
+   &bull; <span class="warning">Warning: jPlag output not up-to-date with regard to final solutions.</span>
+ {% endif %}
+
+ {% if task.did_jplag_run %}
+   {% if task.did_jplag_succeed %}
+     <br/><iframe width="100%" height="800" src="{{task.jplag_index_url}}"></iframe>
+   {% else %}
+     &bull; <span class="warning">Warning: The last jPlag run did not produce any output.</span>
+   {% endif %}
+ {% else %}
+   <p>
+   jPlag has not yet run.
+   </p>
+   <p>
+   <input type="submit" value="Run jPlag"/>
+   </p>
+ {% endif %}
+ </form>
 
 {% else %}
 
