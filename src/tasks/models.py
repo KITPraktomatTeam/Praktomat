@@ -71,10 +71,10 @@ class Task(models.Model):
             return os.path.join(settings.UPLOAD_ROOT, 'jplag', 'Task_' + unicode(self.id))
 
         def jplag_index_url(self):
-            return os.path.join("/upload", 'jplag', 'Task_' + unicode(self.id), "index.html")
+            return os.path.join('jplag', 'Task_' + unicode(self.id), "index.html")
 
         def jplag_log_url(self):
-            return os.path.join("/upload", 'jplag', 'Task_' + unicode(self.id), "jplag.txt")
+            return os.path.join('jplag', 'Task_' + unicode(self.id), "jplag.txt")
 
         def did_jplag_run(self):
             return os.path.isdir(self.jplag_dir_path())

@@ -65,7 +65,7 @@ urlpatterns = patterns('',
 	# Uploaded media
 	url(r'^upload/(?P<path>SolutionArchive/Task_\d+/User_.*/Solution_(?P<solution_id>\d+)/.*)$', 'utilities.views.serve_solution_file'),
 	url(r'^upload/(?P<path>TaskMediaFiles.*)$', 'utilities.views.serve_unrestricted'),
-	url(r'^upload/(?P<path>jplag.*)$', 'utilities.views.serve_staff_only'),
+	url(r'^upload/(?P<path>jplag.*)$', 'utilities.views.serve_staff_only', name='jplag_download'),
 	url(r'^upload/(?P<path>CheckerFiles.*)$', 'utilities.views.serve_staff_only'),
 	url(r'^upload/(?P<path>.*)$', 'utilities.views.serve_access_denied'),
 	

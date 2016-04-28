@@ -15,12 +15,12 @@
 
  {% csrf_token %}
  {% if task.did_jplag_run %}
-   <a href="{{task.jplag_log_url}}">jPlag log file</a>
+   <a href="{% url "jplag_download" path=task.jplag_log_url %}">jPlag log file</a>
    &bull;
  {% endif %}
 
  {% if task.did_jplag_succeed %}
-     <a href="{{task.jplag_index_url}}" target="_blank">Open jPlag output in new window</a> &bull;
+     <a href="{% url "jplag_download" path=task.jplag_index_url %}" target="_blank">Open jPlag output in new window</a> &bull;
  {% endif %}
 
  <select name="lang">
@@ -41,7 +41,7 @@
 
  {% if task.did_jplag_run %}
    {% if task.did_jplag_succeed %}
-     <br/><iframe width="100%" height="800" src="{{task.jplag_index_url}}"></iframe>
+     <br/><iframe width="100%" height="800" src="{% url "jplag_download" path=task.jplag_index_url %}"></iframe>
    {% else %}
      &bull; <span class="warning">Warning: The last jPlag run did not produce any output.</span>
    {% endif %}
