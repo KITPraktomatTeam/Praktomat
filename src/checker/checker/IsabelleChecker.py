@@ -37,8 +37,17 @@ class IsabelleChecker(Checker):
 		# Find out the path to isabaelle-process
 		args = [settings.ISABELLE_BINARY, "getenv", "-b", "ISABELLE_PROCESS"]
 		(output, error, exitcode, timed_out, oom_ed) = execute_arglist(args, env.tmpdir(), error_to_output=False)
-
 		isabelle_process = output.rstrip()
+
+		if not isabelle_process:
+			output = "isabelle gentenv -b ISABELLE_PROCESS failed\n"
+			output += "error: " + error + "\n"
+			output += "timed_out: " + timed_out + "\n"
+			output += "oom_ed: " + oom_ed + "\n"
+			result = self.create_result(env)
+			result.set_log('<pre>' + escape(output) + '</pre>')
+			result.set_passed(False)
+			return result
 
 		thys = map (lambda (name,_): ('"%s"' % os.path.splitext(name)[0]), env.sources())
 
