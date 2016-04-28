@@ -79,6 +79,9 @@ class Task(models.Model):
         def did_jplag_run(self):
             return os.path.isdir(self.jplag_dir_path())
 
+        def did_jplag_succeed(self):
+            return os.path.exists(os.path.join(self.jplag_dir_path(), 'index.html'))
+
         def need_to_re_run_jplag(self):
             if self.jplag_up_to_date:
                 self.jplag_up_to_date = False
