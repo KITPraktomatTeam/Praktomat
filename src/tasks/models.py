@@ -90,7 +90,7 @@ class Task(models.Model):
         def jplag_languages(self):
             return { 'Java':     { 'param': 'java17', 'files': '.java,.JAVA' },
                      'R':        { 'param': 'text',   'files': '.R' },
-                     'Isabelle': { 'param': 'text',   'files': '.isa' },
+                     'Isabelle': { 'param': 'text',   'files': '.thy' },
                    }
 
         def run_jplag(self, lang):
