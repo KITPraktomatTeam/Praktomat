@@ -203,6 +203,16 @@ The Praktomat tries to limit the resources available to the student submissions:
 At the time of writing, the amount of diskspace available to the user is
 unlimited, which can probably be exploited easily.
 
+jPlag integration
+=================
+
+Praktomat provides a rudimentary, but convenient integration of the plagiarism
+detection program [jPlag](https://jplag.ipd.kit.edu/). Do enable this support, you have to do these two steps:
+
+ * Download the latest [jPlag release](https://github.com/jplag/jplag/releases) (latest tested version: v2.11.8)
+ * Copy the resulting `.jar` file somewhere on the Praktomat server.
+ * In the settings, set `JPLAGJAR = /full/path/to/jplag.jar`
+
 
 PhpBB integration
 =================
