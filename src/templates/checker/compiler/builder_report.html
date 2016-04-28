@@ -1,0 +1,12 @@
+{% if filenames %}
+<div>{{ filenames|length }} user-submitted files matching "{{regexp}}" found for compilation: {% for file in filenames%} {{ file }} &nbsp; {% endfor %}</div>
+{% if output %}
+<div>Compiler output:</div>
+<pre>{{output|safe}}</pre>
+{% else %}
+<div>The Compiler produced no messages.</div>
+{% endif %}
+{% else %}
+<div>No Input files matching "{{regexp}}" found.</div>
+{% endif %}
+

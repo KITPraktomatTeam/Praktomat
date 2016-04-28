@@ -6,6 +6,10 @@ import re
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import get_lexer_by_name,guess_lexer, guess_lexer_for_filename, ClassNotFound
+from pygments.lexers._mapping import LEXERS
+
+# This is a hack to register our Isabelle Lexer without patching pygments or using setuptools' entry_points.
+LEXERS['IsarLexer'] = ('utilities.isar_lexer', 'Isabelle/Isar', ('isabelle',), ('*.thy',), ('text/x-isabelle',))
 
 register = template.Library()
 
