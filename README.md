@@ -22,7 +22,7 @@ Prerequisites
   On a Debian or Ubuntu System, install the packages
 
     postgresql
-    apache2-mpm-worker	
+    apache2-mpm-worker
 
   Praktomat requires some 3rd-Party libraries programs to run.
   On a Ubuntu/Debian System, these can be installed by installing the following packages:
@@ -41,14 +41,14 @@ Prerequisites
     junit4
     dejagnu
     gcj-jdk (jcf-dump, for checking Submissions for use of javax.* etc)
-   
+
     git-core
 
   If youre going to use Praktomat to check Haskell submissions, you will also require the packages:
 
     ghc libghc-test-framework-dev libghc-test-framework-hunit-dev libghc-test-framework-quickcheck2-dev
 
- For Checkstyle, we recommend getting checkstyle-all-4.4.jar  
+ For Checkstyle, we recommend getting checkstyle-all-4.4.jar
 
     http://sourceforge.net/projects/checkstyle/files/checkstyle/4.4/
 
@@ -119,7 +119,7 @@ a database "praktomat_default". Also edit `pg_hba.conf` to allow the access.
 sudo -u postgres createuser -DRS praktomat
 sudo -u postgres createdb -O praktomat praktomat_default
 ```
-	
+
 Configure Praktomat in `Praktomat/src/settings/local.py`, to set data base
 names and paths.
 
@@ -135,7 +135,7 @@ It should now be possible to start the deployment server with:
 ```bash
 ./Praktomat/src/manage-local.py runserver
 ```
-If you want to deploy the project using mod_wsgi in apache you could use `documentation/apache_praktomat_wsgi.conf` as a starting point. Don't forget to install `mod_xsendfile` to serve uploaded files. 
+If you want to deploy the project using mod_wsgi in apache you could use `documentation/apache_praktomat_wsgi.conf` as a starting point. Don't forget to install `mod_xsendfile` to serve uploaded files.
 
 Adding the first user
 ---------------------
