@@ -192,7 +192,11 @@ class SolutionFile(models.Model):
 
 	def path(self):
 		""" path of file relative to the zip file, which once contained it """
-		return self.file.name[len(get_solutionfile_upload_path(self, '')):]
+		# dont use length of filename but use reg-expression!! It is realy saver, i.e. if someone resubmit a solution via button and the new solution-number switched from xxxx to yyyyy, the first letter of filename get lost if here only the length was used!! 
+		pattern = r'^SolutionArchive/Task_\d+/User_\S+/Solution_\d+/(.+)'
+		return re.match(pattern, self.file.name).group(1) # for playing with regex, see:  http://pythex.org/
+		# return self.file.name[len(get_solutionfile_upload_path(self, '')):]
+
 		
 	def content(self):
 		"""docstring for content"""
