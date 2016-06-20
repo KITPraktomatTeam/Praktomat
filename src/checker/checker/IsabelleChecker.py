@@ -17,6 +17,7 @@ RXFAIL	   = re.compile(r"^\*\*\*",	re.MULTILINE)
 
 class IsabelleChecker(Checker):
 	logic = models.CharField(max_length=100, default="HOL", help_text=_("Default heap to use"))
+	trusted_theories = models.CharField(max_length=200, blank=True, help_text=_("Isabelle theories to be run in trusted mode (Library theories or theories uploaded using the Create File Checker). Do not include the file extensions. Separate multiple theories by space"))
 
 	def title(self):
 		""" Returns the title for this checker category. """
@@ -50,8 +51,11 @@ class IsabelleChecker(Checker):
 			return result
 
 		thys = map (lambda (name,_): ('"%s"' % os.path.splitext(name)[0]), env.sources())
+		trusted_thys = map (lambda name: '"%s"' % name, re.split("  |,",self.trusted_theories))
+		untrusted_thys = filter (lambda name: name not in trusted_thys, thys)
 
-		ml_cmd = 'Secure.set_secure (); use_thys [%s]' % ','.join(thys)
+		ml_cmd = 'use_thys [%s]; Secure.set_secure (); use_thys [%s]' % \
+			(','.join(trusted_thys), ','.join(untrusted_thys))
 		args = [isabelle_process, "-r", "-q", "-e",  ml_cmd, self.logic]
 		(output, error, exitcode, timed_out, oom_ed) = execute_arglist(args, env.tmpdir(),timeout=settings.TEST_TIMEOUT, error_to_output=False)
 

@@ -68,6 +68,9 @@ STATIC_ROOT = join(dirname(PRAKTOMAT_PATH), "static")
 if "cram" in PRAKTOMAT_ID:
   TEST_TIMEOUT=600
 
+if "tba" in PRAKTOMAT_ID:
+  TEST_TIMEOUT=600
+
 # Absolute path to the directory that shall hold all uploaded files as well as
 # files created at runtime.
 
