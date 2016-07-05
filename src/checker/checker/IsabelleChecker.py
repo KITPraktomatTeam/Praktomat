@@ -42,7 +42,7 @@ class IsabelleChecker(Checker):
 		isabelle_process = output.rstrip()
 
 		thys = map (lambda (name,_): ('"%s"' % os.path.splitext(name)[0]), env.sources())
-		trusted_thys = ['"%s"' % name for name in re.split("  |,",self.trusted_theories) if name]
+		trusted_thys = ['"%s"' % name for name in re.split(" |,",self.trusted_theories) if name]
 		untrusted_thys = filter (lambda name: name not in trusted_thys, thys)
 
 		ml_cmd = 'use_thys [%s]; Secure.set_secure (); use_thys [%s]' % \
