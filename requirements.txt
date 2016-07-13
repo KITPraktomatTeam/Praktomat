@@ -9,5 +9,5 @@ django-debug-toolbar==1.4
 docutils>=0.10
 subprocess32
 psycopg2
-selenium==2.40.0
+selenium==2.53.6
 
