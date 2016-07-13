@@ -193,8 +193,10 @@ def jplag(request, task_id):
             task.run_jplag(request.POST['lang'])
 	    return HttpResponseRedirect(reverse('solution_jplag', args=[task_id]))
 
+        jplag_lang = get_settings().jplag_setting
+
 	return render_to_response("solutions/jplag.html",
-                {"task":task},
+                {"task":task, "jplag_lang": jplag_lang},
 		context_instance=RequestContext(request))
 
 

@@ -14,6 +14,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.db.models import Max
 
+from configuration import get_settings
+
 from utilities.deleting_file_field import DeletingFileField
 from utilities.safeexec import execute_arglist
 
@@ -87,9 +89,11 @@ class Task(models.Model):
                 self.jplag_up_to_date = False
                 self.save()
 
-        def jplag_languages(self):
+        @staticmethod
+        def jplag_languages():
             return { 'Java':     { 'param': 'java17', 'files': '.java,.JAVA' },
                      'R':        { 'param': 'text',   'files': '.R' },
+                     'Python':   { 'param': 'text',   'files': '.py' },
                      'Isabelle': { 'param': 'text',   'files': '.thy' },
                    }
 
@@ -101,6 +105,11 @@ class Task(models.Model):
                     raise RuntimeError("Setting JPLAGJAR points to non-existing file %s" % settings.JPLAGJAR)
             if not lang in self.jplag_languages():
                     raise RuntimeError("Unknown jplag settings %s" % lang)
+
+            # Remember jplag setting
+            configuration = get_settings()
+            configuration.jplag_setting = lang
+            configuration.save()
 
             jplag_settings = self.jplag_languages()[lang]
             path = self.jplag_dir_path()
