@@ -10,6 +10,8 @@ from django.template.loader import get_template
 from django.template import Context
 from checker.basemodels import Checker, CheckerFileField, truncated_log
 from checker.admin import	CheckerInline, AlwaysChangedModelForm
+from solutions.models import Solution
+from checker.basemodels import CheckerResult
 from utilities.file_operations import *
 from utilities.safeexec import execute_arglist
 from utilities import encoding
@@ -28,11 +30,21 @@ class IgnoringHaskellBuilder(HaskellBuilder):
 		rxarg = re.compile(self.rxarg())
 		return [name for (name,content) in env.sources() if rxarg.match(name) and (not name in self._ignore)]
 
+	def create_result(self, env):
+		assert isinstance(env.solution(), Solution)
+		result = CheckerResult(checker=self, solution=env.solution())
+		return result
+
 class TestOnlyBuildingBuilder(HaskellBuilder):
         _testsuite_filename = ""
 
 	def get_file_names(self,env):
 		return [self._testsuite_filename]
+
+	def create_result(self, env):
+		assert isinstance(env.solution(), Solution)
+		result = CheckerResult(checker=self, solution=env.solution())
+		return result
 
 class HaskellTestFrameWorkChecker(CheckerWithFile):
 	""" Checker for Haskell TestFrameWork Tests. """
@@ -97,7 +109,7 @@ class HaskellTestFrameWorkChecker(CheckerWithFile):
 
 		environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
 
-		cmd = ["./"+self.module_binary_name(), "--maximum-generated-tests=5000"]
+		cmd = ["./"+self.module_binary_name(), "--maximum-generated-tests=1000"]
 		[output, error, exitcode,timed_out, oom_ed] = execute_arglist(cmd, env.tmpdir(),environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE)
 
 		result = self.create_result(env)
