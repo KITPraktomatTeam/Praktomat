@@ -23,13 +23,15 @@ class AutoAttestChecker(Checker):
     author = models.ForeignKey(User, verbose_name="attestation author", limit_choices_to = {'groups__name': 'Tutor'})
     public_comment = models.TextField(blank=True, help_text = _('Comment which is shown to the user.'))
     private_comment = models.TextField(blank=True, help_text = _('Comment which is only visible to tutors'))
-    final = models.BooleanField(default = False, help_text = _('Indicates whether the attestation is ready to be published'))
-    published = models.BooleanField(default = False, help_text = _('Indicates whether the user can see the attestation.'))
+    final = models.BooleanField(default = True, help_text = _('Indicates whether the attestation is ready to be published'))
+    published = models.BooleanField(default = True, help_text = _('Indicates whether the user can see the attestation.'))
 
     def __init__(self, *args, **kwargs):
         super(AutoAttestChecker, self).__init__(*args, **kwargs)
         self._meta.get_field_by_name('always')[0].default = False
         self._meta.get_field_by_name('public')[0].default = False
+        self._meta.get_field_by_name('final')[0].default = True
+        self._meta.get_field_by_name('published')[0].default = True
 
     def title(self):
         """ Returns the title for this checker category. """
@@ -53,13 +55,16 @@ class AutoAttestChecker(Checker):
                 else:
                     checkers_failed += 1
 
-        result = CheckerResult(checker=self)
+	#result = CheckerResult(checker=self)
+        result = CheckerResult(checker=self,solution=env.solution())
         result.set_passed(checkers_failed == 0)
-
+	
+	
         if User.objects.filter(id=self.author_id).count() == 0:
-            self.author_id = None
+            self.author_id = None    # warum nicht self.author ???
             return result
-
+ 
+	# delete all old own Attestations for this solution.
         for a in Attestation.objects.filter(solution=env.solution(), author=self.author):
             a.delete()
 
