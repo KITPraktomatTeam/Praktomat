@@ -73,13 +73,14 @@ class AutoAttestChecker(Checker):
             a.final = False
             a.published = False
             a.save()
+            
         # reset final solution
         s = env.solution().task.final_solution(env.solution().author)
         if s:
             s.final = False
             s.save()
+        
         # create new attestation
-
         if self.task.final_grade_rating_scale:
             grades = list(self.task.final_grade_rating_scale.ratingscaleitem_set.all())
             if checkers_failed == 0:
@@ -87,18 +88,25 @@ class AutoAttestChecker(Checker):
                     result.set_log('All %d required checkers passed.' % checkers_passed)
                 else:
                     result.set_log('WARNING: No checkers.')
+
+		new_final_solution = env.solution()
+		if new_final_solution:
+			new_final_solution.final = True			
+			new_final_solution.save()
+    
                 a = Attestation(solution=env.solution(), author=self.author,
                                 public_comment=self.public_comment, private_comment=self.private_comment,
                                 final=self.final, published=self.published, published_on=datetime.now(),
                                 final_grade=grades[-1])
+		a.save()
             else:
                 result.set_log('%d required checkers failed.' % checkers_failed)
+#                result.set_solution_id(env.solution())
                 a = Attestation(solution=env.solution(), author=self.author,
                                 public_comment=self.public_comment, private_comment=self.private_comment,
                                 final=self.final, published=self.published, published_on=datetime.now(),
                                 final_grade=grades[0])
-            a.save()
-
+		a.save()
         return result
     
 from checker.admin import    CheckerInline
