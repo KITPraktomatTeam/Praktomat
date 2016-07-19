@@ -11,9 +11,23 @@
 {% endif %}{% endif %}
 {% endblock %}
 
+{% block after_field_sets %}
+{{ block.super }}
+<div class="inline-group" id="solution_set-group1">
+    <h2>Model Solution</h2>
+	<div class="add-row">
+		{% if add %}
+			Save this task to add a model solution
+		{% else %}	
+			<a href="{% url "model_solution" object_id %}" onclick="return showAddAnotherPopup(this);">{% if original.model_solution %}Edit{% else %}Add{% endif %} model solution</a>
+		{% endif %}
+	</div>
+</div> 
+{% endblock %}
+
 
 {% block after_related_objects %}
-<div class="inline-group" id="solution_set-group">
+<div class="inline-group" id="solution_set-group2">
     <h2>Model Solution</h2>
 	<div class="add-row">
 		{% if add %}
