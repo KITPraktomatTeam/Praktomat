@@ -19,8 +19,10 @@ def load_defaults(settings):
         if not callable(v) and not k.startswith('__'):
             globals()[k] = v
 
-    class D:
+    class D(object):
+	  
         def __setattr__(self,k,v):
+	    object.__setattr__(self, k, v)   # assign value v to instance attribute k
             if k not in globals():
                 settings[k] = v
                 globals()[k] = v
@@ -148,18 +150,19 @@ def load_defaults(settings):
     d.SESSION_COOKIE_PATH = BASE_PATH
 
     d.CSRF_COOKIE_NAME = 'csrftoken_' + PRAKTOMAT_ID
-
-    # Make this unique, and don't share it with anybody.
+        
+    # Make this unique, and don't share it with anybody.    
     if 'SECRET_KEY' not in globals():
         secret_keyfile = join(UPLOAD_ROOT, 'SECRET_KEY')
         if os.path.exists(secret_keyfile):
             d.SECRET_KEY = open(secret_keyfile).read()
-            if not SECRET_KEY:
+            if not d.SECRET_KEY:
                 raise RuntimeError("File %s empty!" % secret_keyfile)
         else:
-            import uuid
+            import uuid            
             d.SECRET_KEY = uuid.uuid4().hex
             os.fdopen(os.open(secret_keyfile,os.O_WRONLY | os.O_CREAT,0600),'w').write(SECRET_KEY)
+
 
     # Templates
 
