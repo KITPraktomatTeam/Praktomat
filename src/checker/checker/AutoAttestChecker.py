@@ -11,6 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
 from django.utils.encoding import force_unicode
 from checker.basemodels import Checker, CheckerFileField, CheckerResult, truncated_log
+from django.core.exceptions import ValidationError
 from utilities.safeexec import execute_arglist
 from utilities.file_operations import *
 
@@ -30,8 +31,13 @@ class AutoAttestChecker(Checker):
         super(AutoAttestChecker, self).__init__(*args, **kwargs)
         self._meta.get_field_by_name('always')[0].default = False
         self._meta.get_field_by_name('public')[0].default = False
+        self._meta.get_field_by_name('required')[0].default = False
         self._meta.get_field_by_name('final')[0].default = True
         self._meta.get_field_by_name('published')[0].default = True
+        
+    def clean(self):
+	super(AutoAttestChecker, self).clean()
+	if (self.required or self.always or self.public): raise ValidationError("Robert says: AutoAttestChecker have to be non-required, non-always, non-public")
 
     def title(self):
         """ Returns the title for this checker category. """
