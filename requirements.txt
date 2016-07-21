@@ -1,4 +1,5 @@
 Django==1.8.5
+
 M2Crypto==0.22.3
 Markdown>=2.2.1
 Pygments>=2.0
@@ -6,6 +7,7 @@ chardet>=2.1.1
 django-extensions>=1.0.3,<1.3.0
 django-tinymce>=1.5.2
 django-debug-toolbar==1.4
+sqlparse==0.1.19 
 docutils>=0.10
 subprocess32
 psycopg2
