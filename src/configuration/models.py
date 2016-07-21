@@ -84,6 +84,14 @@ class Settings(models.Model):
 				help_text="If enabled, tutors can re-run all checkers for solutions they attest. Can be used to re-run checks that failed due to problems unrelated to the solutione (e.g.: time-outs because of high server-load), but needs to be used with care, since it may change the results from what the student saw when he submitted his solution."
 			)
 
+        jplag_setting = \
+            models.CharField(
+                max_length=200,
+                default='Java',
+                help_text="Default settings for jPlag"
+            )
+
+
 class Chunk(models.Model):
 	""" A Chunk is a piece of content associated with a unique key that can be inserted into any template with the use of a special template tag """
 	settings = models.ForeignKey(

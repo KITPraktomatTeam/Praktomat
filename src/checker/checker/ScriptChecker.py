@@ -76,7 +76,54 @@ class ScriptChecker(Checker):
 		return result
 	
 from checker.admin import	CheckerInline
+from django import forms
+from django.contrib import messages
+from django.contrib import admin
+
+class WarningScriptCheckerFormSet(forms.BaseInlineFormSet):
+	class Meta:
+		model = ScriptChecker
+		exclude = []
+
+	def __init__(self, *args, **kwargs):
+		self.request = kwargs.pop('request', None)
+		super(WarningScriptCheckerFormSet, self).__init__(*args, **kwargs)
+
+	def save(self, *args, **kwargs):
+		scriptcheckers = super(WarningScriptCheckerFormSet, self).save(*args, **kwargs)
+
+		for checker in scriptcheckers:
+			script = checker.shell_script
+			# Workaround that may not be necerssay anymore  in Django > 1.8,
+			# see https://code.djangoproject.com/ticket/13809 and https://code.djangoproject.com/ticket/26398
+			script.close()
+			script.file.close()
+
+			# In Universal Newline mode, python will collect encountered newlines
+			script.open(mode="rU")
+			# make sure self.newlines is populated
+			script.readline()
+			script.readline()
+			script.readline()
+
+			if (script.newlines is None) or ("\r\n" in script.newlines):
+				messages.add_message(self.request, messages.WARNING, "Script File %s does not appear to use UNIX line-endings. Instead it uses: %s" % (script.name, repr(script.newlines)))
+
+			script.close()
+		
+		return scriptcheckers
 
 class ScriptCheckerInline(CheckerInline):
 	model = ScriptChecker
+
+	formset = WarningScriptCheckerFormSet
+	def get_formset(self, request, obj=None, **kwargs):
+		AdminFormset = super(ScriptCheckerInline, self).get_formset(request, obj, **kwargs)
+
+		class AdminFormsetWithRequest(AdminFormset):
+			def __new__(cls, *args, **kwargs):
+				kwargs['request'] = request
+				return AdminFormset(*args, **kwargs)
+
+		return AdminFormsetWithRequest
 

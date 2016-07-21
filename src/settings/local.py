@@ -49,6 +49,12 @@ PRAKTOMAT_PATH = dirname(dirname(dirname(__file__)))
 # Hard overwriting Praktomat_id 
 # Identifie this Praktomat among multiple installation on one webserver
 PRAKTOMAT_ID = '2016w' 
+	(?P<tba>tba_)?
+	(?P<mlfds>mlfds_)?
+	elif match.group('mlfds') is not None:
+		SITE_NAME = 'MLFDS '
+	elif match.group('tba') is not None:
+		SITE_NAME = 'Theorembeweiser '
 
 
 # The name that will be displayed on top of the page and in emails.
@@ -72,6 +78,9 @@ STATIC_ROOT = join(dirname(PRAKTOMAT_PATH), "static")
 
 #if "cram" in PRAKTOMAT_ID:
 #  TEST_TIMEOUT=600
+
+if "tba" in PRAKTOMAT_ID:
+  TEST_TIMEOUT=600
 
 # Absolute path to the directory that shall hold all uploaded files as well as
 # files created at runtime.
@@ -223,15 +232,22 @@ USESAFEDOCKER = False
 
 
 # Various extra files and versions
+JPLAGJAR = '/srv/praktomat/contrib/jplag.jar'
+
 #CHECKSTYLEALLJAR = '/srv/praktomat/contrib/checkstyle-5.7-all.jar'
 CHECKSTYLEALLJAR = '/opt/praktomat-addons/checkstyle-6.15-all.jar'
+
 JAVA_LIBS = { 'junit3' : '/usr/share/java/junit.jar', 'junit4' : '/opt/praktomat-addons/*' }
 #JAVA_BINARY = 'javac-sun-1.7'
 #JVM = 'java-sun-1.7'
 
 # Our VM has 4 cores, so lets try to use them
+# NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 6
 # HBRS only 2 
 NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 2
+# But not with Isabelle, which is memory bound
+if match.group('tba') is not None:
+    NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 1
 
 # Finally load defaults for missing settings.
 import defaults

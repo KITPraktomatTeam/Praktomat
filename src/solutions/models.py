@@ -67,6 +67,8 @@ class Solution(models.Model):
 		if self.final:
 			# delete old final flag if this is the new final solution
 			self.task.solutions(self.author).update(final=False)
+                        # may need to re-run jplag
+                        self.task.need_to_re_run_jplag()
 		super(Solution, self).save(*args, **kwargs) # Call the "real" save() method.	
 	
 	def check_solution(self, run_secret = 0): 

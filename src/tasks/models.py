@@ -1,6 +1,9 @@
 from datetime import date, datetime, timedelta
 import tempfile
 import zipfile
+import os
+import os.path
+import shutil
 
 from django.apps import apps
 from django.db import models
@@ -11,7 +14,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.db.models import Max
 
+from configuration import get_settings
+
 from utilities.deleting_file_field import DeletingFileField
+from utilities.safeexec import execute_arglist
 
 
 class Task(models.Model):
@@ -32,16 +38,16 @@ class Task(models.Model):
 			null=True, related_name='model_solution_task')
 	all_checker_finished = models.BooleanField(default=False, editable=False, help_text = _("Indicates whether the checker which don't run immediately on submission have been executed."))
 	final_grade_rating_scale = models.ForeignKey('attestation.RatingScale', null=True, help_text = _("The scale used to mark the whole solution."))
-
         only_trainers_publish = models.BooleanField(default=False, help_text = _("Indicates that only trainers may publish attestations. Otherwise, tutors may publish final attestations within their tutorials."))
-	
+        jplag_up_to_date = models.BooleanField(default=False, help_text = _("No new solution uploads since the last jPlag run"))
+
 	def __unicode__(self):
 		return self.title
-		
+
 	def solutions(self,user):
 		""" get ALL solutions of the specified user """
 		return self.solution_set.filter(author=user)
-	
+
 	def final_solution(self,user):
 		""" get FINAL solution of specified user """
 		solutions = self.solution_set.filter(author=user, final=True)
@@ -50,7 +56,7 @@ class Task(models.Model):
 	def expired(self):
 		"""docstring for expired"""
 		return self.submission_date + timedelta(hours=1) < datetime.now()
-	
+
 	def check_all_final_solutions(self):
 		from checker.basemodels import check_multiple
 		final_solutions = self.solution_set.filter(final=True)
@@ -69,6 +75,86 @@ class Task(models.Model):
             unsorted_checker = sum(map(lambda x: list(x.objects.filter(task=self)), checker_classes),[])
             checkers = sorted(unsorted_checker, key=lambda checker: checker.order)
             return checkers
+
+        def jplag_dir_path(self):
+            return os.path.join(settings.UPLOAD_ROOT, 'jplag', 'Task_' + unicode(self.id))
+
+        def jplag_index_url(self):
+            return os.path.join('jplag', 'Task_' + unicode(self.id), "index.html")
+
+        def jplag_log_url(self):
+            return os.path.join('jplag', 'Task_' + unicode(self.id), "jplag.txt")
+
+        def did_jplag_run(self):
+            return os.path.isdir(self.jplag_dir_path())
+
+        def did_jplag_succeed(self):
+            return os.path.exists(os.path.join(self.jplag_dir_path(), 'index.html'))
+
+        def need_to_re_run_jplag(self):
+            if self.jplag_up_to_date:
+                self.jplag_up_to_date = False
+                self.save()
+
+        @staticmethod
+        def jplag_languages():
+            return { 'Java':     { 'param': 'java17', 'files': '.java,.JAVA' },
+                     'R':        { 'param': 'text',   'files': '.R' },
+                     'Python':   { 'param': 'text',   'files': '.py' },
+                     'Isabelle': { 'param': 'text',   'files': '.thy' },
+                   }
+
+        def run_jplag(self, lang):
+            # sanity check
+            if not hasattr(settings,'JPLAGJAR'):
+                    raise RuntimeError("Setting JPLAGJAR not set")
+            if not os.path.exists(settings.JPLAGJAR):
+                    raise RuntimeError("Setting JPLAGJAR points to non-existing file %s" % settings.JPLAGJAR)
+            if not lang in self.jplag_languages():
+                    raise RuntimeError("Unknown jplag settings %s" % lang)
+
+            # Remember jplag setting
+            configuration = get_settings()
+            configuration.jplag_setting = lang
+            configuration.save()
+
+            jplag_settings = self.jplag_languages()[lang]
+            path = self.jplag_dir_path()
+            tmp = os.path.join(path,"tmp")
+            # clean out previous run
+            if self.did_jplag_run():
+                shutil.rmtree(path)
+            # create output directory
+            os.makedirs(path)
+
+            # extract all final solutions
+            os.mkdir(tmp)
+            final_solutions = self.solution_set.filter(final=True)
+            from solutions.models import path_for_user
+            for solution in final_solutions:
+                subpath = os.path.join(tmp, path_for_user(solution.author))
+                os.mkdir(subpath)
+                solution.copySolutionFiles(subpath)
+
+            # run jplag
+            args = [settings.JVM,
+                "-jar", settings.JPLAGJAR,
+                "-l", jplag_settings['param'],
+                "-p", jplag_settings['files'],
+                "-r", path,
+                tmp]
+            [output, error, exitcode,timed_out, oom_ed] = \
+                execute_arglist(args, path, unsafe=True)
+
+            # remove solution copies
+            shutil.rmtree(tmp)
+
+            # write log file
+            file(os.path.join(path,"jplag.txt"),'w').write(output)
+
+            # mark jplag as up-to-date
+            self.jplag_up_to_date = True
+            self.save()
 
 
 	@classmethod

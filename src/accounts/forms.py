@@ -69,7 +69,6 @@ class MyRegistrationForm(UserBaseCreationForm):
 		username = self.cleaned_data["username"]
 		return username
 
-
 	@transaction.atomic
 	def save(self):
 		user = super(MyRegistrationForm, self).save()
