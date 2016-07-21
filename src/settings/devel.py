@@ -14,7 +14,7 @@ PRAKTOMAT_ID = 'devel'
 # developmentserver.
 #BASE_HOST = 'http://praktomattest.inf.h-brs.de:8910'
 BASE_HOST = 'http://localhost:8000'
-BASE_PATH = '/'+ PRAKTOMAT_ID + '/'
+BASE_PATH = '/' # + PRAKTOMAT_ID + '/'  # using here the PRAKTOMAT_ID  runserver and runserver_plus  don't manage it to let you login.
 
 # URL to use when referring to static files.
 STATIC_URL = BASE_PATH + 'static/'
