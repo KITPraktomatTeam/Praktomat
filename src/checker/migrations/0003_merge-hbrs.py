@@ -11,6 +11,7 @@ class Migration(migrations.Migration):
         ('tasks', '0002_merge-hbrs'),
         ('accounts', '0002_add_groups'),
         ('checker', '0002_auto_20151006_1416'),
+        ('checker', '0003_isabellechecker_trusted_theories'),
     ]
 
     operations = [
