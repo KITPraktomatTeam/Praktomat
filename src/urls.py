@@ -9,7 +9,12 @@ import os
 from django.contrib import admin
 admin.autodiscover()
 
+favicon_view = RedirectView.as_view(url=settings.STATIC_URL+'/favicon.ico', permanent=True)
+
 urlpatterns = patterns('',
+	#Favicon
+	url(r'^favicon\.ico$', favicon_view),	       
+		       
 	# Index page
 	url(r'^$', RedirectView.as_view(pattern_name='task_list', permanent=True), name="index"),
 	
