@@ -158,6 +158,7 @@ USESAFEDOCKER = False
 # Various extra files and versions
 
 JPLAGJAR = join(dirname(dirname(dirname(__file__))), 'jplag.jar')
+JPLAGJAR = '/opt/praktomat-addons/jplag.jar'
 
 #CHECKSTYLEALLJAR = '/srv/praktomat/contrib/checkstyle-5.7-all.jar'
 CHECKSTYLEALLJAR = '/opt/praktomat-addons/checkstyle-6.15-all.jar'
