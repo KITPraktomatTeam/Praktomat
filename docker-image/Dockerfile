@@ -60,10 +60,10 @@ RUN pip3 install scikit-learn
 RUN pip3 install numdifftools==0.7.7
 
 # Install Isabelle2016
-RUN apt-get install --yes curl                                    && apt-get clean
-RUN curl http://isabelle.in.tum.de/dist/Isabelle2016_app.tar.gz | tar -C /opt -xz
-RUN ln -s /opt/Isabelle2016/bin/isabelle /usr/local/bin
-RUN isabelle build -sbv HOL
+#RUN apt-get install --yes curl                                    && apt-get clean
+#RUN curl http://isabelle.in.tum.de/dist/Isabelle2016_app.tar.gz | tar -C /opt -xz
+#RUN ln -s /opt/Isabelle2016/bin/isabelle /usr/local/bin
+#RUN isabelle build -sbv HOL
 
 RUN echo "praktomat:x:1001:1001:,,,:/home/praktomat:/bin/bash" >> /etc/passwd
 RUN echo "praktomat:x:1001:tester" >> /etc/group
