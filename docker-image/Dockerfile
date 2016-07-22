@@ -52,6 +52,7 @@ RUN apt-get install --yes python3-xlrd                            && apt-get cle
 # Requirements for statsmodels
 RUN apt-get install --yes python3-patsy                           && apt-get clean
 
+RUN pip3 install --upgrade pip setuptools wheel
 RUN pip3 install statsmodels
 RUN pip3 install scikit-learn
 
