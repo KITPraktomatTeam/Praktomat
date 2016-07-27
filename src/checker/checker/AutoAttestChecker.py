@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Dump files containing input, expected output and the shell script running diff.
+AutoAttestChecker (basierend auf S.B. (HBRS FB02,2013) updated by Robert Hartmann,HBRS FB02, 2013 - 2016)
 """
 import os, re
 import os.path
