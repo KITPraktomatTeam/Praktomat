@@ -50,6 +50,7 @@ class ScriptChecker(Checker):
 		environ['PROGRAM'] = env.program() or ''
 
 		script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
+		
 
 		[output, error, exitcode,timed_out, oom_ed] = execute_arglist(
                             args,

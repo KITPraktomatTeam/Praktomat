@@ -79,7 +79,7 @@ class DiffChecker(Checker):
         script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
         
         #[output, error, exitcode,_] = execute_arglist(args, working_directory=test_dir, environment_variables=environ)
-        
+               
         [output, error, exitcode,timed_out, oom_ed] = execute_arglist(
                             args,
                             working_directory=test_dir,
