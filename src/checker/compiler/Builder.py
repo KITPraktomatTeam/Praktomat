@@ -31,7 +31,7 @@ class Builder(Checker):
 	_flags			  = models.CharField(max_length = 1000, blank = True, default="-Wall", help_text = _('Compiler flags'))
 	_output_flags	  = models.CharField(max_length = 1000, blank = True, default ="-o %s", help_text = _('Output flags. \'%s\' will be replaced by the program name.'))
 	_libs			  = models.CharField(max_length = 1000, blank = True, default = "", help_text = _('Compiler libraries'))
-	_file_pattern	  = models.CharField(max_length = 1000, default = r"^[a-zA-Z0-9_]*$", help_text = _('Regular expression describing all source files to be passed to the compiler.'))
+	_file_pattern	  = models.CharField(max_length = 1000, default = r"^[^[a-zA-Z0-9_ . \-\?\!]*\.[cC]$]*$", help_text = _('Regular expression describing all source files to be passed to the compiler.'))
 	_main_required    = models.BooleanField(default = True, help_text = _('Is a submission required to provide a main method?'))
 	
 	def title(self):
