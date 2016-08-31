@@ -5,6 +5,7 @@ A C compiler for construction.
 """
 
 from django.conf import settings
+from checker.basemodels import Checker
 from checker.compiler.Builder import Builder
 
 class CBuilder(Builder):
@@ -26,7 +27,9 @@ class CheckerForm(AlwaysChangedModelForm):
 		#self.fields["_flags"].initial = "-Wall"
 		#self.fields["_output_flags"].initial = "-o %s"
 		#self.fields["_libs"].initial = ""
-		self.fields["_file_pattern"].initial = r"^[a-zA-Z0-9_]*\.[cC]$"
+		self.fields["_file_pattern"].initial = r"^[a-zA-Z0-9_ . \-\?\!]*\.[cC]$"
+                self.fields["required"].initial = True
+                self.fields["critical"].initial = True
 	
 class CBuilderInline(CheckerInline):
 	model = CBuilder
