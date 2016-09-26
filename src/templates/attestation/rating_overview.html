@@ -38,16 +38,23 @@
 	function calculate(){
 		var all_grades = new Array();
 		var all_plagiarism = new Array();
+		var all_aspects = new Array();
 		$('.user_row').each(function(index) {
 							var grades=new Array();
 							var plagiarism=new Array();
+							var aspects=new Array();
 							var result;
 							$(this).find('.grade_cell').each(function(index) {
-															 grades[index] = $(this).data('score');
-															 plagiarism[index] = $(this).data('plagiarism') == 'yes';
-															 });
+								grades[index] = $(this).data('score');
+								plagiarism[index] = $(this).data('plagiarism') == 'yes';
+								aspects[index] = new Object();
+								$(this).find('.aspect_span').each(function(index_unused) {
+									aspects[index][$(this).data('aspect')] = $(this).data('score');
+								});
+							});
 							all_grades[index] = grades;
 							all_plagiarism[index] = plagiarism;
+							all_aspects[index] = aspects;
 							});
 	
 		
@@ -56,6 +63,7 @@
 		for (index in all_grades){
 			var grades = all_grades[index];
 			var plagiarism = all_plagiarism[index];
+			var aspects = all_aspects[index];
 			var result;
 			
 			try {
@@ -85,7 +93,15 @@
 	
 	{{script_form.script}}
 	<input type="button" id="calculate_button" value="calculate" onClick="calculate()" />
-	<p class="help">This JavaScript will be executed for every user listed below to calculate a proposed end note. This calculation is also shown to the tutors and users. <i><b>grades</b></i> is an Array containing all final grades for one user as Stings. <i><b>plagiarism</b></i> is an Array of booleans, indicating whether the solution was plagiarism. <i><b>ratingScaleItems</b></i> is an array of arrays containing the names of the rating scale items of every task's final grade rating scale. Save the end note recommendation in <i><b>result</b></i> so it can be displayed in the row 'Calculated grade' and on the user index page.</p>
+	<p class="help">
+		This JavaScript will be executed for every user listed below to calculate a proposed end note.
+		This calculation is also shown to the tutors and users.
+		<i><b>grades</b></i> is an Array containing all final grades for one user as Stings.
+		<i><b>plagiarism</b></i> is an Array of booleans, indicating whether the solution was plagiarism.
+		<i><b>ratingScaleItems</b></i> is an array of arrays containing the names of the rating scale items of every task's final grade rating scale.
+		<i><b>aspects</b></i> is a map from additional rating aspects (if any are present, identified by their name) to their value.
+		Save the end note recommendation in <i><b>result</b></i> so it can be displayed in the row 'Calculated grade' and on the user index page.
+</p>
 
 	<div id="email"><a href="mailto:?bcc={% for user, attestations in rating_list %}{{user.email}},{% endfor %}"><span class="icon ui-icon-mail-closed"></span>Email all users</a></div>  <div id="export"><a href="{% url "rating_export" %}"><span class="icon ui-icon-extlink"></span>Export as csv (utf-8)</a></div>
 
@@ -108,7 +124,12 @@
 						{% else %}
 						{% if attestation.final_grade %}
 							<td class="grade_cell" data-score="{{attestation.final_grade}}">
+							{% for ratingresult in attestation.ratingresult_set.all %}
+								<span class="aspect_span" data-aspect="{{ratingresult.rating.aspect.name}}" data-score="{{ratingresult.mark.name}}"></span>
+							{% endfor %}
+							<span title="{% for ratingresult in attestation.ratingresult_set.all %}{{ratingresult.rating.aspect.name}}: {{ratingresult.mark.name}},{% endfor %}">
 							  <a href="{% url "view_attestation" attestation_id=attestation.id%}">{{attestation.final_grade}}</a>
+							</span>
 							</td>
 						{% else %}
 							<td class="grade_cell">-</td>
