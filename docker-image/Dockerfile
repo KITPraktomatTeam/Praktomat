@@ -47,6 +47,8 @@ RUN python3 -m pip install --upgrade pip
 RUN pip3 install numpy scipy matplotlib ipython pandas
 RUN sed -i -e 's/^backend      : \(\(TkAgg\)\|\(tkagg\)\)$/backend      : Agg/g' /usr/local/lib/python3.4/dist-packages/matplotlib/mpl-data/matplotlibrc
 
+# set up some font cache once and for all
+RUN python3 -c "from matplotlib.font_manager import FontManager"
 
 RUN pip3 install statsmodels
 RUN pip3 install scikit-learn
