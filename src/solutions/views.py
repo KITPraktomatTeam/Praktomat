@@ -185,7 +185,7 @@ def solution_download_for_task(request, task_id,full):
 
 @login_required
 def jplag(request, task_id):
-	if not (request.user.is_tutor or request.user.is_trainer):
+	if not (request.user.is_staff):
 		return access_denied(request)
 	task = get_object_or_404(Task, pk=task_id)
 
