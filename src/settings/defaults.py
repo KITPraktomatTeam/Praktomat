@@ -199,7 +199,7 @@ def load_defaults(settings):
     
     # Default email address to use for various automated correspondence from
     # the site manager(s).
-    d.DEFAULT_FROM_EMAIL = "im-praktomat@oth-regensburg.de"
+    d.DEFAULT_FROM_EMAIL = ""
     d.EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     d.EMAIL_HOST = "127.0.0.1"
     d.EMAIL_PORT = 26
