@@ -24,6 +24,8 @@ Prerequisites
     postgresql
     apache2-mpm-worker
 
+  In ubuntu 16 the package `apache2-mpm-worker` has been merged into `apache2`.
+
   Praktomat requires some 3rd-Party libraries programs to run.
   On a Ubuntu/Debian System, these can be installed by installing the following packages:
 
