@@ -258,6 +258,8 @@ def load_defaults(settings):
     d.JCFDUMP='jcf-dump'
     d.JAVAP='javap'
     d.GHC='ghc'
+    d.SCALA='scala'
+    d.SCALAC='scalac'
 
     # Enable to run all scripts (checker) as the unix user 'tester'. Therefore
     # put 'tester' as well as the Apache user '_www' (and your development user

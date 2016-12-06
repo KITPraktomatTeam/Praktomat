@@ -5,4 +5,5 @@ __all__ = [	"Builder",
 			"JavaGCCBuilder",
 			"FortranBuilder",
 			"HaskellBuilder",
+			"ScalaBuilder",
 			]

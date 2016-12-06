@@ -46,6 +46,7 @@ class ScriptChecker(Checker):
 		environ['HOME'] = env.tmpdir()
 		environ['JAVA'] = settings.JVM
 		environ['JAVA_SECURE'] = settings.JVM_SECURE
+		environ['SCALA'] = settings.SCALA
 		environ['POLICY'] = settings.JVM_POLICY
 		environ['PROGRAM'] = env.program() or ''
 
