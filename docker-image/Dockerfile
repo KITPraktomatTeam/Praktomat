@@ -1,7 +1,4 @@
 FROM debian:jessie
-#FROM mikemckibben/java:1.8
-#FROM java:8
-FROM openjdk:8-jdk
 
 MAINTAINER Martin Hecker <martin.hecker@kit.edu>
 
