@@ -51,7 +51,7 @@ def load_defaults(settings):
 
     # Language code for this installation. All choices can be found here:
     # http://www.i18nguy.com/unicode/language-identifiers.html
-    d.LANGUAGE_CODE = 'en-us'
+    d.LANGUAGE_CODE = 'de-de'
 
     # A tuple that lists people who get code error notifications. When
     # DEBUG=False and a view raises an exception, Django will email these
@@ -201,8 +201,8 @@ def load_defaults(settings):
     # the site manager(s).
     d.DEFAULT_FROM_EMAIL = ""
     d.EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    d.EMAIL_HOST = "smtp.googlemail.com"
-    d.EMAIL_PORT = 587
+    d.EMAIL_HOST = "127.0.0.1"
+    d.EMAIL_PORT = 26
     d.EMAIL_HOST_USER = ""
     d.EMAIL_HOST_PASSWORD = ""
     d.EMAIL_USE_TLS = False
@@ -238,7 +238,7 @@ def load_defaults(settings):
     #d.PRIVATE_KEY = '/home/praktomat/certificates/privkey.pem'
 
 	# Is this a mirror of another instance (different styling)
-    d.MIRROR = False
+    d.MIRROR = True
 
     # The Compiler binarys used to compile a submitted solution
     d.C_BINARY = 'gcc'
@@ -250,7 +250,7 @@ def load_defaults(settings):
     d.JVM_SECURE = PRAKTOMAT_ROOT + '/src/checker/scripts/java'
     d.JVM_POLICY = PRAKTOMAT_ROOT + '/src/checker/scripts/java.policy'
     d.FORTRAN_BINARY = 'g77'
-    d.ISABELLE_BINARY = 'isabelle' # Isabelle should be in PATH
+    d.ISABELLE_BINARY = '/data1/praktomat/Isabelle2013/bin/isabelle'
     d.DEJAGNU_RUNTEST = '/usr/bin/runtest'
     d.CHECKSTYLEALLJAR = '/home/praktomat/contrib/checkstyle-all-4.4.jar'
     d.JUNIT38='junit'
@@ -258,6 +258,8 @@ def load_defaults(settings):
     d.JCFDUMP='jcf-dump'
     d.JAVAP='javap'
     d.GHC='ghc'
+    d.SCALA='scalac'
+
 
     # Enable to run all scripts (checker) as the unix user 'tester'. Therefore
     # put 'tester' as well as the Apache user '_www' (and your development user
@@ -271,7 +273,7 @@ def load_defaults(settings):
  
     # Alternatively: Run everything in a docker instance, to provide higher
     # insulation. Should not be used together iwth USEPRAKTOMATTESTER.
-    d.USESAFEDOCKER = False
+    d.USESAFEDOCKER = True
 
     # Make sure uploaded solution are not work-readable
     d.FILE_UPLOAD_PERMISSIONS = 0640
@@ -309,7 +311,7 @@ def load_defaults(settings):
     # Length of timeout applied whenever an external check that runs a students
     # submission is executed,
     # for example: JUnitChecker, DejaGnuChecker
-    d.TEST_TIMEOUT=60
+    d.TEST_TIMEOUT=10
 
     # Amount of memory available to the checker, in megabytes
     # (this is currently only supported with USESAFEDOCKER=True)
@@ -329,8 +331,7 @@ def load_defaults(settings):
 
     d.MIMETYPE_ADDITIONAL_EXTENSIONS = \
         [("text/plain",".properties"),
-         ("text/x-r-script",".R"),
-         ("text/x-isabelle",".thy")]
+         ("text/x-r-script",".R")]
 
     # Subclassed TestSuitRunner to prepopulate unit test database.
     d.TEST_RUNNER = 'utilities.TestSuite.TestSuiteRunner'

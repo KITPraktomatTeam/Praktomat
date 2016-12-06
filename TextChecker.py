@@ -13,7 +13,7 @@ from checker.basemodels import Checker
 class TextChecker(Checker):
     """ Checks if the specified text is included in a submitted file """
 
-    #Code OTH Regensburg Francesco Cucinotta
+   
     SET_OF_CHOICES = [(0,'The text must not be in the solution'),
                       (1,'The text has to be in the solution'),]
 
@@ -94,12 +94,7 @@ class TextChecker(Checker):
                     log += escape(name) + " Zeile: " + str(num) + "<br>"
                 passed = 0
         else:
-            if self.choices == 1:
-                log = "<strong>" + "'" + escape(self.text) + "'" + "</strong>" + u" kommt nicht in Ihrer Lösung vor!"
-                passed = 0
-            elif self.choices == 0:
-                log = "<strong>"+"'"+escape(self.text)+"'"+"</strong>" + u" kommt nicht in Ihrer Lösung vor!"
-
+            log = "<strong>"+"'"+escape(self.text)+"'"+"</strong>" + u" kommt nicht in Ihrer Lösung vor!"
 
         result.set_log(log)
         result.set_passed(passed)
