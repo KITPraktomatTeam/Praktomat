@@ -60,7 +60,7 @@ class JUnitChecker(Checker):
 		return (RXFAIL.search(output) == None)
 
 	def run(self, env):
-		java_builder = IgnoringJavaBuilder(_flags="", _libs=self.junit_version,_file_pattern=r"^.*\.[jJ][aA][vV][aA]$",_output_flags="")
+		java_builder = IgnoringJavaBuilder(_flags="", _libs=self.junit_version,_file_pattern=r"^.*\.[jJ][aA][vV][aA]$",_output_flags="",_main_required=False)
 		java_builder._ignore = self.ignore.split(" ")
 
 		
