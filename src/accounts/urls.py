@@ -27,5 +27,6 @@ urlpatterns = patterns('',
 	url(r'^register/complete/$', TemplateView.as_view(template_name='registration/registration_complete.html'), name='registration_complete'),
 	url(r'^register/allow/(?P<user_id>\d+)/$', 'accounts.views.activation_allow', name='activation_allow'),
 	url(r'^activate/(?P<activation_key>.+)/$', 'accounts.views.activate', name='registration_activate'),
+	url(r'^deactivated/(?P<user_id>\d+)/$', 'accounts.views.deactivated', name='registration_deactivated'),
 )
 

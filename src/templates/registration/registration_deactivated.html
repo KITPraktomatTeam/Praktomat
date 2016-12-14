@@ -1,0 +1,19 @@
+{% extends "base.html"%}
+
+{% load i18n %}
+
+{% block breadcrumbs %}
+	{{ block.super }} > {% trans 'Deactivated ' %}
+{% endblock %}
+
+{% block content %}
+
+<h1>{% trans 'Account deactivated' %}</h1>
+
+<p>{% blocktrans with username=user.username %}
+   The Account <i>{{ username }}</i> has been deactivated. 
+   Did you register with the course? If you think this is not your fault, please talk to your trainer.
+   {% endblocktrans %}
+</p>
+
+{% endblock %}

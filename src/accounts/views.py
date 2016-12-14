@@ -2,6 +2,7 @@
 from datetime import datetime
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 from django.template import RequestContext, Template, Context, loader
 from django.conf import settings
@@ -192,4 +193,10 @@ def import_matriculation_list(request, group_id):
     else:
         form = ImportMatriculationListForm()
     return render_to_response('admin/auth/group/import_matriculation_list.html', {'form': form, 'title':"Import matriuculation number list"}, RequestContext(request))
+
+def deactivated(request,user_id):
+	user = get_object_or_404(User,pk=user_id)
+	if user.is_active:
+		return HttpResponse(status=409)
+	return render_to_response('registration/registration_deactivated.html', { 'user': user, }, context_instance=RequestContext(request))
 
