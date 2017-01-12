@@ -105,7 +105,7 @@ class UserAdmin(UserBaseAdmin):
         def useful_links(self, instance):
 		if instance.pk:
 			return format_html (
-			    '<a href="{1}">Solutions by {0}</a> • <a href="{2}">Attestations for {0}</a> • <a href="{3}">Attestations by {0}</a>',
+			    u'<a href="{1}">Solutions by {0}</a> • <a href="{2}">Attestations for {0}</a> • <a href="{3}">Attestations by {0}</a>',
 			    instance,
 			    reverse('admin:solutions_solution_changelist') + ("?author__user_ptr__exact=%d" % instance.pk),
 			    reverse('admin:attestation_attestation_changelist') + ("?solution__author__user_ptr__exact=%d" % instance.pk),
