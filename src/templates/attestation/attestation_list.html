@@ -79,6 +79,15 @@
 	{% else %}
 	
 		<div id="Solutions">
+
+			{% if user.is_tutor %}
+				<h2>{% trans "Attestation Progress" %}</h2>
+				<p>{{ unattested_solutions|length }} solutions to attest.</p>
+				<div>
+					<input id="next_attestation_button" type="button" value="Attest next solution" {% if unattested_solutions|l\
+ength == 0 %}disabled="disabled"{% endif %} onclick="location.href ='{% url "new_attestation_for_task" task_id=task.id %}'"/>
+				</div>
+			{% endif %}
 			
 			{% if user.is_trainer %}
 				<h2>{% trans "Attestation Progress by Tutor" %}</h2>
