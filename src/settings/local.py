@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Settings for deployment
 
 # These settings are HBRS-specific and derive some parts of the settings
@@ -16,8 +17,6 @@ PRAKTOMAT_PATH = dirname(dirname(dirname(__file__)))
 #	(?:praktomat_)?
 #	(?P<algo1>algo1_)?
 #	(?P<cram>cram_)?
-#	(?P<tba>tba_)?
-#	(?P<mlfds>mlfds_)?
 #	(?P<year>\d+)_
 #	(?P<semester>WS|SS)
 #	(?P<abschluss>_Abschluss)?
@@ -28,10 +27,6 @@ PRAKTOMAT_PATH = dirname(dirname(dirname(__file__)))
 #		SITE_NAME = 'Algorithmen I '
 #	elif match.group('cram') is not None:
 #		SITE_NAME = 'CRAM '
-#	elif match.group('mlfds') is not None:
-#		SITE_NAME = 'MLFDS '
-#	elif match.group('tba') is not None:
-#		SITE_NAME = 'Theorembeweiser '
 #	else:
 #		SITE_NAME = 'Programmieren '
 #
@@ -52,25 +47,33 @@ PRAKTOMAT_PATH = dirname(dirname(dirname(__file__)))
 #else:
 #	raise NotImplementedError("Autoconfig for PRAKTOMAT_ID %s not possible", PRAKTOMAT_ID)
 
+#	(?P<tba>tba_)?
+#	(?P<mlfds>mlfds_)?
+#	elif match.group('mlfds') is not None:
+#		SITE_NAME = 'MLFDS '
+#	elif match.group('tba') is not None:
+#		SITE_NAME = 'Theorembeweiser '
+
+
 # Hard overwriting Praktomat_id 
 # Identifie this Praktomat among multiple installation on one webserver
-PRAKTOMAT_ID = '2016w' 
+PRAKTOMAT_ID = '2017s' 
 
 
 # The name that will be displayed on top of the page and in emails.
-SITE_NAME = 'TestVM - Praktomat - local'
-
-
+SITE_NAME = u'Praktomat - SoSe 2017 (AlgoDat)'
 
 # The URL where this site is reachable. 'http://localhost:8000/' in case of the
 # developmentserver.
 #BASE_HOST = 'https://praktomat.cs.kit.edu'
-BASE_HOST = 'https://localhost/'
+#BASE_HOST = 'https://localhost/'
+BASE_HOST = 'https://praktomat.inf.h-brs.de'
 BASE_PATH = '/' + PRAKTOMAT_ID + '/'
 
 #ALLOWED_HOSTS = [ 'praktomat.cs.kit.edu', ]
+ALLOWED_HOSTS = [ 'praktomat.inf.h-brs.de', ]
 #ALLOWED_HOSTS = [ 'praktomattest.inf.h-brs.de', ]
-ALLOWED_HOSTS = [ 'localhost', ]
+#ALLOWED_HOSTS = [ 'localhost', ]
 
 # URL to use when referring to static files.
 STATIC_URL = BASE_PATH + 'static/'
@@ -114,7 +117,7 @@ EMAIL_PORT = 25
 
 
 #DEFAULT_FROM_EMAIL = "praktomat@ipd.info.uni-karlsruhe.de"
-DEFAULT_FROM_EMAIL = "praktomattest@inf.h-brs.de"
+DEFAULT_FROM_EMAIL = "praktomat@inf.h-brs.de"
 
 #DEBUG = MIRROR
 DEBUG = False
@@ -159,12 +162,12 @@ DATABASES = {
 #sudo -u postgres -P praktomat
 #
 #sudo -u postgres createdb -O <db_user> <db_name>
-#sudo -u postgres createdb -O praktomat praktomat_2016w
+#sudo -u postgres createdb -O praktomat praktomat_2017s
 
 
 # SECRET_KEY gets generated via defaults.py
 
-# Private key used to sign uploded solution files in submission confirmation email
+# Private key used to sign uploaded solution files in submission confirmation email
 #PRIVATE_KEY = '/srv/praktomat/mailsign/signer_key.pem'
 PRIVATE_KEY = None # '/home/praktomat/certificates/privkey.pem'
 
@@ -178,8 +181,8 @@ REGISTRATION_POSSIBLE = False
 # to see how to overwrite SHIB_ATTRIBUTE_MAP , SHIB_USERNAME , SHIB_PROVIDER 
 
 ACCOUNT_CHANGE_POSSIBLE = False
-DUMMY_MAT_NUMBERS = True
-SHOW_CONTACT_LINK = False 
+DUMMY_MAT_NUMBERS = True      #Because HBRS is not using MatrikelNr in Praktomat
+SHOW_CONTACT_LINK = False     #Because at HBS students should use an other plattform to contact Course Trainers 
 
 
 # LDAP
@@ -222,7 +225,7 @@ USESAFEDOCKER = False
 # "developer	ALL=(tester) NOPASSWD: ALL"
 # "praktomat 	ALL=(tester) NOPASSWD: ALL, NOPASSWD: /usr/local/bin/safe-docker"
 #
-# be shure that you change file permission 
+# be sure that you change file permission 
 # sudo chown praktomat:tester praktomat/src/checker/scripts/java
 # sudo chown praktomat:tester praktomat/src/checker/scripts/javac
 # sudo chmod u+x,g+x,o-x praktomat/src/checker/scripts/java
@@ -238,14 +241,14 @@ JPLAGJAR = '/opt/praktomat-addons/jplag.jar'
 #CHECKSTYLEALLJAR = '/srv/praktomat/contrib/checkstyle-5.7-all.jar'
 CHECKSTYLEALLJAR = '/opt/praktomat-addons/checkstyle-6.15-all.jar'
 
-JAVA_LIBS = { 'junit3' : '/usr/share/java/junit.jar', 'junit4' : '/opt/praktomat-addons/*' }
+JAVA_LIBS = { 'junit3' : '/usr/share/java/junit.jar', 'junit4' : '/opt/praktomat-addons/*' , 'TaskLocal_TestRunner': './*', 'PTestRunner': '/opt/praktomat-addons/PTestRunner/*', 'PTestRunner2': '/opt/praktomat-addons/PTestRunner2/*'}
 #JAVA_BINARY = 'javac-sun-1.7'
 #JVM = 'java-sun-1.7'
 
 # Our VM has 4 cores, so lets try to use them
 # NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 6
-# HBRS only 2 
-NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 2
+# HBRS has updated VM from 2 to 4 
+NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 4
 # But not with Isabelle, which is memory bound
 #if match.group('tba') is not None:
 #    NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 1
