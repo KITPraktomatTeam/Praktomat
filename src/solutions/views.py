@@ -43,7 +43,9 @@ def solution_list(request, task_id, user_id=None):
         if task.publication_date >= datetime.now() and not request.user.is_trainer:
 		raise Http404
 	
+	# linear waiting function
 	uploads_left = task.submission_maxpossible - solutions.count()
+	
 	minutes_to_wait_for_next_upload = task.submission_waitdelta * ( solutions.count() - task.submission_free_uploads )
 	
 	upload_next_possible_time = datetime.now()
@@ -51,6 +53,12 @@ def solution_list(request, task_id, user_id=None):
 		upload_next_possible_time = solutions[0].creation_date + timedelta(minutes=minutes_to_wait_for_next_upload)
 	
 	dnow = datetime.now()	
+
+	#as Andreas wish ... dont use a linear waiting function but a constant
+	minutes_to_wait_for_next_upload = 1 * task.submission_waitdelta #multiply with one, to be sure getting an integer ...
+	if solutions.count() > 0 :
+		upload_next_possible_time = solutions[0].creation_date + timedelta(minutes=minutes_to_wait_for_next_upload)
+
 	
 	if request.method == "POST":
                 if task.expired() and not request.user.is_trainer:
