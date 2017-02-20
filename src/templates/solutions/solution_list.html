@@ -56,6 +56,7 @@ $(function(){
 
 
 <div class='left'>
+{% load tasks_extras %}
 {% comment %}
 Just for Deguging... </br>
 	"Task submission_free_uploads": {{task.submission_free_uploads}},</br>
@@ -93,7 +94,7 @@ Just for Deguging... </br>
 				{% else %}		
 					<h2>{%trans "Upload solution denied" %}</h2>
 						{%trans "You have reached the limit of allowed submissions for this task." %} </br>
-						{%trans "But you can resubmit a former upload out of Solution History." %}
+						{%trans "But you can resubmit a former accepted upload out of Solution History." %}
 						
 				{% endif %}		
 			{% elif task.submission_waitdelta > 0 and dnow < upload_next_possible_time %}
@@ -116,13 +117,23 @@ Just for Deguging... </br>
 					      {% endif %}
 					  </h2>
 						{%trans "Your current wait-time is:" %} <strong> {{ upload_next_possible_time|timeuntil }} </strong></br>
-						{%trans "But you can resubmit a former upload out of Solution History." %}
+						{%trans "But you can resubmit a former accepted upload out of Solution History." %}
 				  {% endif %}
 			{% else %}									
 				<h2>{%trans "Upload solution" %}
 				    {% if task.submission_maxpossible > 0 %}
 				    ( {{ uploads_left }} {%trans "tries left" %} )
-				    {% endif %}				    
+				    {% endif %}
+				    {% if task.submission_free_uploads > 1 %}
+				    <br><h3>
+				    {%trans "Uploads with no wait time left" %} {{ task.submission_free_uploads|uploadsleft:solutions }} 
+				    </h3>
+				    {% endif %}
+				    {% if task.submission_waitdelta > 0 %}
+				    <h3>
+				    {%trans "After this upload you can uploade again in " %} {{ upload_next_possible_time|timeuntil }} 
+				    </h3>
+				    {% endif %}
 				</h2>
 				{# From Django-Docs: Use of both and and or clauses within the same tag is allowed, with and having higher precedence than or #}
 				{% if task.expired and user.is_tutor or task.expired and user.is_trainer %}
@@ -137,7 +148,18 @@ Just for Deguging... </br>
 			<h2>{%trans "Upload solution" %}
 			    {% if task.submission_maxpossible > 0 %}
 			    ( {{ uploads_left }} {%trans "tries left" %} )
-			    {% endif %}				    
+			    {% endif %}	
+			    {% if task.submission_free_uploads > 1 %}
+			    <br><h3>
+			    {%trans "Uploads with no wait time left" %} {{ task.submission_free_uploads|uploadsleft:solutions }} 
+			    </h3>
+			    {% endif %}
+			    {% if task.submission_waitdelta > 0 %}
+			    <h3>
+			    {%trans "After this upload you can uploade again in " %} {{ upload_next_possible_time|timeuntil }} 
+			    </h3>
+			    {% endif %}
+			
 			</h2>	  
 			<form enctype="multipart/form-data" method="post" action="" > {% csrf_token %}
 				{% include "forms/formset_as_div.html" %}
