@@ -46,11 +46,11 @@ class ScriptChecker(Checker):
 		environ['HOME'] = env.tmpdir()
 		environ['JAVA'] = settings.JVM
 		environ['JAVA_SECURE'] = settings.JVM_SECURE
+		environ['SCALA'] = settings.SCALA
 		environ['POLICY'] = settings.JVM_POLICY
 		environ['PROGRAM'] = env.program() or ''
 
 		script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
-		
 
 		[output, error, exitcode,timed_out, oom_ed] = execute_arglist(
                             args,

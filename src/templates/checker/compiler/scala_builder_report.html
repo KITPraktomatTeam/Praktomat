@@ -1,0 +1,12 @@
+{% if filenames %}
+<div>{{ filenames|length }} <tt>Scala</tt> user-submitted files found for compilation: {% for scalafile in filenames%} {{ scalafile }} &nbsp; {% endfor %}</div>
+{% if output %}
+<div>Scala compiler output:</div>
+<pre>{{output|safe}}</pre>
+{% else %}
+<div>The Scala compiler produced no messages.</div>
+{% endif %}
+{% else %}
+<div>No Scala input files found.</div>
+{% endif %}
+

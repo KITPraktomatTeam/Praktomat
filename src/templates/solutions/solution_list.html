@@ -46,126 +46,16 @@ $(function(){
 
 {% block content %}<div id='soluion_upload'>
 
-<h1>{{task.title}}
-{% if user.is_tutor or user.is_trainer %}
-	{% if user|stringformat:"s" != author|stringformat:"s" %}
-		(as seen by {{author}})
-	{% endif %}
-{% endif %}</h1>
-
-
+<h1>{{task.title}} {% if user.is_tutor or user.is_trainer %}(as seen by {{author}}){% endif %}</h1>
 
 <div class='left'>
-{% load tasks_extras %}
-{% comment %}
-Just for Deguging... </br>
-	"Task submission_free_uploads": {{task.submission_free_uploads}},</br>
-	"Task submission_waitdelta": {{task.submission_waitdelta}},</br>
-	"now:" {{ dnow }}, </br>
-	"upload_next_possible_time":{{ upload_next_possible_time}},<br>
-	"next upload possible in":{{ upload_next_possible_time|timeuntil}},<br>
-
-	"Task submission_maxpossible": {{task.submission_maxpossible}},</br>
-	"uploads_left":{{ uploads_left }},<br>				
-	"Task-Submission date " = {{ task.submission_date }} </br>
-	"Time to complete the Task " = {{ task.submission_date|timeuntil }} </br>		
-	
-	{% load tasks_extras %}
-	FreeUploads left = {{ task.submission_free_uploads|uploadsleft:solutions }} </br>
-Just for Deguging... </br>
-{% endcomment %}
 	{% if not task.expired or user.is_tutor or user.is_trainer %}
 		<a>{%trans "Time left:" %} {{ task.submission_date|timeuntil }}</a>
-		
-		{% if solutions %}
-			{% if task.submission_maxpossible > 0 and uploads_left <= 0 %}			
-				{% if user.is_tutor or user.is_trainer %}
-					<h2>{%trans "Upload solution" %}</h2>	  
-						<strong> {%trans "A student couldn't upload now because:" %} </strong></br>
-						{% if task.expired  %}
-						<strong> {%trans "upload time has passed!" %} </strong></br>	
-						{% elif uploads_left <= 0 %}
-							{%trans "the limit of allowed submissions has been reached." %}
-						{% endif %}				
-						<form enctype="multipart/form-data" method="post" action="" > {% csrf_token %}
-							{% include "forms/formset_as_div.html" %}
-							<input type="submit" value="upload" />
-						</form>
-				{% else %}		
-					<h2>{%trans "Upload solution denied" %}</h2>
-						{%trans "You have reached the limit of allowed submissions for this task." %} </br>
-						{%trans "But you can resubmit a former accepted upload out of Solution History." %}
-						
-				{% endif %}		
-			{% elif task.submission_waitdelta > 0 and dnow < upload_next_possible_time %}
-				{% if user.is_tutor or user.is_trainer %}
-					<h2>{%trans "Upload solution" %}</h2>	  
-						<strong> {%trans "A student couldn't upload now because:" %} </strong></br>
-						{% if task.expired  %}
-						<strong> {%trans "upload time has passed!" %} </strong></br>	
-						{% elif dnow < upload_next_possible_time %}
-							{%trans "the current wait-time is: " %} <strong>  {{ upload_next_possible_time|timeuntil }} </strong></br>
-						{% endif %}
-						<form enctype="multipart/form-data" method="post" action="" > {% csrf_token %}
-							{% include "forms/formset_as_div.html" %}
-							<input type="submit" value="upload" />
-						</form>
-				{% else %}					
-					 <h2>{%trans "Upload solution denied for now" %}
-					      {% if task.submission_maxpossible > 0 %}
-					      ( {{ uploads_left }} {%trans "tries left" %} )
-					      {% endif %}
-					  </h2>
-						{%trans "Your current wait-time is:" %} <strong> {{ upload_next_possible_time|timeuntil }} </strong></br>
-						{%trans "But you can resubmit a former accepted upload out of Solution History." %}
-				  {% endif %}
-			{% else %}									
-				<h2>{%trans "Upload solution" %}
-				    {% if task.submission_maxpossible > 0 %}
-				    ( {{ uploads_left }} {%trans "tries left" %} )
-				    {% endif %}
-				    {% if task.submission_free_uploads > 1 %}
-				    <br><h3>
-				    {%trans "Uploads with no wait time left" %} {{ task.submission_free_uploads|uploadsleft:solutions }} 
-				    </h3>
-				    {% endif %}
-				    {% if task.submission_waitdelta > 0 %}
-				    <h3>
-				    {%trans "After this upload you can uploade again in " %} {{ upload_next_possible_time|timeuntil }} 
-				    </h3>
-				    {% endif %}
-				</h2>
-				{# From Django-Docs: Use of both and and or clauses within the same tag is allowed, with and having higher precedence than or #}
-				{% if task.expired and user.is_tutor or task.expired and user.is_trainer %}
-				<strong> {%trans "A student couldn't upload now because: upload time has passed!" %} </strong></br>
-				{% endif %}
-				<form enctype="multipart/form-data" method="post" action="" > {% csrf_token %}
-					{% include "forms/formset_as_div.html" %}
-					<input type="submit" value="upload" />
-				</form>
-			{% endif %}
-		{% else %}	
-			<h2>{%trans "Upload solution" %}
-			    {% if task.submission_maxpossible > 0 %}
-			    ( {{ uploads_left }} {%trans "tries left" %} )
-			    {% endif %}	
-			    {% if task.submission_free_uploads > 1 %}
-			    <br><h3>
-			    {%trans "Uploads with no wait time left" %} {{ task.submission_free_uploads|uploadsleft:solutions }} 
-			    </h3>
-			    {% endif %}
-			    {% if task.submission_waitdelta > 0 %}
-			    <h3>
-			    {%trans "After this upload you can uploade again in " %} {{ upload_next_possible_time|timeuntil }} 
-			    </h3>
-			    {% endif %}
-			
-			</h2>	  
-			<form enctype="multipart/form-data" method="post" action="" > {% csrf_token %}
-				{% include "forms/formset_as_div.html" %}
-				<input type="submit" value="upload" />
-			</form>
-		{% endif %}
+		<h2>{%trans "Upload solution" %}</h2>
+		<form enctype="multipart/form-data" method="post" action="" > {% csrf_token %}
+			{% include "forms/formset_as_div.html" %}
+			<input type="submit" value="upload" />
+		</form>
 	{% else %}
 		<h2>{%trans "Upload solution" %}</h2> 
 		{%trans "The deadline has passed. Therefore (re)submission is not possible." %}

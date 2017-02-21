@@ -1,14 +1,6 @@
 // Default java policy for the praktomat
 // Set as $POLICY by ScriptChecker and used by ./src/checker/scripts/java
 grant {
-	permission java.io.FilePermission "*","read";	
-	permission java.io.FilePermission "${user.dir}/PreTest.java","read";	
-	permission java.io.FilePermission "${user.dir}/*.java","read";	
-	permission java.io.FilePermission "${user.dir}/*","read";	
 	permission java.lang.RuntimePermission "shutdownHooks";
 	permission java.lang.RuntimePermission "setIO";
-	permission java.lang.RuntimePermission "readFileDescriptor";    //HBRS_2015w-bcs   
-	//permission java.lang.RuntimePermission "writeFileDescriptor"  //HBRS_2015w-bcs
-	permission java.lang.RuntimePermission "createSecurityManager"; //HBRS_2015w-bcs
-
 };

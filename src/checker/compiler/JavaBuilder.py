@@ -10,18 +10,16 @@ from checker.compiler.Builder import Builder
 from django.conf import settings
 from django.template.loader import get_template
 from django.template import Context
+from checker.basemodels import Checker
 
 from utilities.safeexec import execute_arglist
 
-class JavaBuilder(Builder):
-	"""	 A Java bytecode compiler for construction. """
 
-	# Initialization sets own attributes to default values.
-	_compiler	= settings.JAVA_BINARY_SECURE
-	_language	= "Java"
-	_env            = {}
-	_env['JAVAC'] = settings.JAVA_BINARY
-	_env['JCFDUMP'] = settings.JCFDUMP
+class ClassFileGeneratingBuilder(Builder):
+	""" A base class for Builders that generate .class files """
+
+	class Meta(Checker.Meta):
+		abstract = True
 
 	def main_module(self, env):
 		""" find the first class file containing a main method """
@@ -39,6 +37,15 @@ class JavaBuilder(Builder):
 
 		raise self.NotFoundError("A class containing the main method ('public static void main(String[] args)') could not be found in the files %s" % ", ".join(class_files))
 
+class JavaBuilder(ClassFileGeneratingBuilder):
+	"""	 A Java bytecode compiler for construction. """
+
+	# Initialization sets own attributes to default values.
+	_compiler	= settings.JAVA_BINARY_SECURE
+	_language	= "Java"
+	_env            = {}
+	_env['JAVAC'] = settings.JAVA_BINARY
+	_env['JCFDUMP'] = settings.JCFDUMP
 
 	def libs(self):
 		def toPath(lib):

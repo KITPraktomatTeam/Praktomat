@@ -38,7 +38,7 @@ class JUnitChecker(Checker):
         )
 	test_description = models.TextField(help_text = _("Description of the Testcase. To be displayed on Checker Results page when checker is  unfolded."))
 	name = models.CharField(max_length=100, help_text=_("Name of the Testcase. To be displayed as title on Checker Results page"))
-	ignore = models.CharField(max_length=4096, help_text=_("space-seperated list of files to be ignored during compilation"),default="")
+	ignore = models.CharField(max_length=4096, help_text=_("space-seperated list of files to be ignored during compilation, i.e.: these files will not be compiled."),default="", blank=True)
 
 	JUNIT_CHOICES = (
 	  (u'junit4', u'JUnit 4'),
@@ -60,8 +60,9 @@ class JUnitChecker(Checker):
 		return (RXFAIL.search(output) == None)
 
 	def run(self, env):
-		java_builder = IgnoringJavaBuilder(_flags="", _libs=self.junit_version,_file_pattern=r"^.*\.[jJ][aA][vV][aA]$",_output_flags="")
-		java_builder._ignore = self.ignore.split(" ")			
+		java_builder = IgnoringJavaBuilder(_flags="", _libs=self.junit_version,_file_pattern=r"^.*\.[jJ][aA][vV][aA]$",_output_flags="",_main_required=False)
+		java_builder._ignore = self.ignore.split(" ")
+
 		
 		build_result = java_builder.run(env)
 
@@ -79,15 +80,7 @@ class JUnitChecker(Checker):
 		environ['POLICY'] = os.path.join(script_dir,"junit.policy")
 
 		cmd = [settings.JVM_SECURE, "-cp", settings.JAVA_LIBS[self.junit_version]+":.", self.runner(), self.class_name]
-
-		
-		[output, error, exitcode,timed_out, oom_ed] = execute_arglist(
-				    cmd, 
-				    working_directory=env.tmpdir(),
-				    environment_variables=environ,
-				    timeout=settings.TEST_TIMEOUT,
-				    fileseeklimit=settings.TEST_MAXFILESIZE, 
-				    extradirs=[script_dir])
+		[output, error, exitcode,timed_out, oom_ed] = execute_arglist(cmd, env.tmpdir(),environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE, extradirs=[script_dir])
 
 		result = self.create_result(env)
 

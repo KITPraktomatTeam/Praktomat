@@ -1,8 +1,9 @@
 __all__ = [	"Builder",
-			#"CBuilder",
-			#"CXXBuilder",
+			"CBuilder",
+			"CXXBuilder",
 			"JavaBuilder",
 			"JavaGCCBuilder",
-			#"FortranBuilder",
-			#"HaskellBuilder",
+			"FortranBuilder",
+			"HaskellBuilder",
+			"ScalaBuilder",
 			]

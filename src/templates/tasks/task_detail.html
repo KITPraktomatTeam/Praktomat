@@ -17,9 +17,9 @@
 {% if user.is_tutor or user.is_trainer %}
 	<span class="icon ui-icon-triangle-1-e"></span><a href={% url "attestation_list" task_id=task.id%}>{% trans "Attestations" %}</a>
 	<span class="icon ui-icon-triangle-1-e"></span><a href={% url "statistics" task_id=task.id%}>{% trans "Statistics"%}</a>
-	{% if HAS_JPLAG %}
+{% endif %}
+{% if user.is_staff and HAS_JPLAG %}
 	<span class="icon ui-icon-triangle-1-e"></span><a href={% url "solution_jplag" task_id=task.id%}>{% trans "jPlag"%}</a>
-	{% endif %}
 {% endif %}
 {% if user.is_user %}
 	<span class="icon ui-icon-triangle-1-e"></span><a href={% url "solution_list" task_id=task.id%}>{% trans "My Solutions" %}</a>

@@ -1,6 +1,6 @@
 [submodule "media/frameworks/ace"]
 	path = media/frameworks/ace
-	url = https://github.com/ajaxorg/ace-builds.git
+	url = git://github.com/ajaxorg/ace-builds.git
 [submodule "media/frameworks/jquery.easy-confirm-dialog"]
 	path = media/frameworks/jquery.easy-confirm-dialog
 	url = https://github.com/wiggin/jQuery-Easy-Confirm-Dialog-plugin.git

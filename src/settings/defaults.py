@@ -157,11 +157,11 @@ def load_defaults(settings):
         if os.path.exists(secret_keyfile):
             d.SECRET_KEY = open(secret_keyfile).read()
             if not d.SECRET_KEY:
-                raise RuntimeError("File %s empty!" % secret_keyfile)	      
+                raise RuntimeError("File %s empty!" % secret_keyfile)
         else:
             import uuid            
             d.SECRET_KEY = uuid.uuid4().hex
-            os.fdopen(os.open(secret_keyfile,os.O_WRONLY | os.O_CREAT,0600),'w').write(d.SECRET_KEY)
+            os.fdopen(os.open(secret_keyfile,os.O_WRONLY | os.O_CREAT,0600),'w').write(SECRET_KEY)
 
 
     # Templates
@@ -261,6 +261,8 @@ def load_defaults(settings):
     d.JCFDUMP='jcf-dump'
     d.JAVAP='javap'
     d.GHC='ghc'
+    d.SCALA='scala'
+    d.SCALAC='scalac'
 
     # Enable to run all scripts (checker) as the unix user 'tester'. Therefore
     # put 'tester' as well as the Apache user '_www' (and your development user
@@ -308,15 +310,6 @@ def load_defaults(settings):
     # Set this to False to disable registration via the website, e.g. when
     # Single Sign On is used
     d.REGISTRATION_POSSIBLE = True
-
-	# Set this to False to disable account changes via the website
-    d.ACCOUNT_CHANGE_POSSIBLE = True
-
-    # Set this to True to automatically set user.mat_number = user.id
-    d.DUMMY_MAT_NUMBERS = False
-
-    # Set this to False to disable "Got Problems?"-link in task list
-    d.SHOW_CONTACT_LINK = True
 
     # Length of timeout applied whenever an external check that runs a students
     # submission is executed,

@@ -2,10 +2,11 @@
 from datetime import datetime
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 from django.template import RequestContext, Template, Context, loader
 from django.conf import settings
-from accounts.forms import MyRegistrationForm, UserChangeForm, ImportForm, ImportLDAPForm, ImportTutorialAssignmentForm, ImportMatriculationListForm
+from accounts.forms import MyRegistrationForm, UserChangeForm, ImportForm, ImportTutorialAssignmentForm, ImportMatriculationListForm
 from accounts.models import User, Tutorial
 from accounts.decorators import local_user_required
 from django.contrib.auth.models import Group
@@ -18,7 +19,6 @@ from django.utils.http import int_to_base36
 from django.core.mail import send_mail
 from django.utils.translation import ugettext_lazy as _
 from configuration import get_settings
-from accounts.ldap_auth import fetch_ldapuser_dict, create_localuser_from_ldapuser
 
 import csv
 
@@ -125,36 +125,6 @@ def import_user(request):
 	return render_to_response('admin/accounts/user/import.html', {'form': form, 'title':"Import User"  }, RequestContext(request))
 
 @staff_member_required
-def import_ldap_user(request):
-       """ View in the admin """
-       if request.method == 'POST': 
-               form = ImportLDAPForm(request.POST)
-               if form.is_valid():
-                       tutorial = form.cleaned_data['tutorial']
-                       uids = form.cleaned_data['uids'].split()
-                       g = Group.objects.get(name='User')
-
-                       udict = {}
-                       unknown_uids = []
-                       for uid in uids:
-                               udict[uid] = fetch_ldapuser_dict(uid=uid)
-                               if udict[uid] is None:
-                                       unknown_uids.append(uid)
-                       if unknown_uids:
-                               messages.add_message(request, messages.ERROR, "ERROR! Import cancelled. Unknown UIDs: %s" % (", ".join(unknown_uids)))
-                               return render_to_response('admin/accounts/user/import_ldap.html', {'form':form, 'title':"Import LDAP Users"  }, RequestContext(request))
-                       for uid in udict:
-                               u = create_localuser_from_ldapuser(username=uid, ldapUser=udict[uid])
-
-                               u.groups.add(g)
-                               u.tutorial = tutorial
-                               u.save()
-               return HttpResponseRedirect(urlresolvers.reverse('admin:accounts_user_changelist'))
-       else:
-               form = ImportLDAPForm()
-       return render_to_response('admin/accounts/user/import_ldap.html', {'form':form, 'title':"Import LDAP Users"  }, RequestContext(request))
-
-@staff_member_required
 def import_tutorial_assignment(request):
 	""" View in the admin """
 	if request.method == 'POST': 
@@ -223,4 +193,10 @@ def import_matriculation_list(request, group_id):
     else:
         form = ImportMatriculationListForm()
     return render_to_response('admin/auth/group/import_matriculation_list.html', {'form': form, 'title':"Import matriuculation number list"}, RequestContext(request))
+
+def deactivated(request,user_id):
+	user = get_object_or_404(User,pk=user_id)
+	if user.is_active:
+		return HttpResponse(status=409)
+	return render_to_response('registration/registration_deactivated.html', { 'user': user, }, context_instance=RequestContext(request))
 

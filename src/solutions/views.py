@@ -16,7 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.requests import RequestSite
 
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from tasks.models import Task
 from attestation.models import Attestation
@@ -43,23 +43,6 @@ def solution_list(request, task_id, user_id=None):
         if task.publication_date >= datetime.now() and not request.user.is_trainer:
 		raise Http404
 	
-	# linear waiting function
-	uploads_left = task.submission_maxpossible - solutions.count()
-	
-	minutes_to_wait_for_next_upload = task.submission_waitdelta * ( solutions.count() - task.submission_free_uploads )
-	
-	upload_next_possible_time = datetime.now()
-	if solutions.count() > 0 :
-		upload_next_possible_time = solutions[0].creation_date + timedelta(minutes=minutes_to_wait_for_next_upload)
-	
-	dnow = datetime.now()	
-
-	#as Andreas wish ... dont use a linear waiting function but a constant
-	minutes_to_wait_for_next_upload = 1 * task.submission_waitdelta #multiply with one, to be sure getting an integer ...
-	if solutions.count() > 0 :
-		upload_next_possible_time = solutions[0].creation_date + timedelta(minutes=minutes_to_wait_for_next_upload)
-
-	
 	if request.method == "POST":
                 if task.expired() and not request.user.is_trainer:
                         return access_denied(request)
@@ -69,7 +52,7 @@ def solution_list(request, task_id, user_id=None):
 		if formset.is_valid():
 			solution.save()
 			formset.save()
-                        run_all_checker = bool(User.objects.filter(id=user_id, tutorial__tutors__pk=request.user.id) and task.expired() or request.user.is_trainer and task.expired() )
+                        run_all_checker = bool(User.objects.filter(id=user_id, tutorial__tutors__pk=request.user.id) or request.user.is_trainer)
 			solution.check_solution(run_all_checker)
 			
 			if solution.accepted:  
@@ -94,9 +77,9 @@ def solution_list(request, task_id, user_id=None):
 	
 	attestations = Attestation.objects.filter(solution__task=task, author__tutored_tutorials=request.user.tutorial)
 	attestationsPublished = attestations[0].published if attestations else False
-	
+
 	return render_to_response("solutions/solution_list.html",
-                {"formset": formset, "task":task, "solutions": solutions, "final_solution":final_solution, "uploads_left":uploads_left, "upload_next_possible_time":upload_next_possible_time, "dnow":dnow, "attestationsPublished":attestationsPublished, "author":author, "invisible_attestor":get_settings().invisible_attestor},
+                {"formset": formset, "task":task, "solutions": solutions, "final_solution":final_solution, "attestationsPublished":attestationsPublished, "author":author, "invisible_attestor":get_settings().invisible_attestor},
 		context_instance=RequestContext(request))
 @login_required
 def test_upload(request, task_id):
@@ -202,7 +185,7 @@ def solution_download_for_task(request, task_id,full):
 
 @login_required
 def jplag(request, task_id):
-	if not (request.user.is_tutor or request.user.is_trainer):
+	if not (request.user.is_staff):
 		return access_denied(request)
 	task = get_object_or_404(Task, pk=task_id)
 

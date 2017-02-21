@@ -8,7 +8,7 @@
 #    Klassen-Bibliothek statt (java-sandbox.jar).
 # 3. Die Ausfuehrung findet mit einer leeren policy statt.
 #
-# Da der Praktomat als suid praktomat lï¿½uft,...
+# Da der Praktomat als suid praktomat läuft,...
 
 if [ ! -n "$JAVAC" ]
 then
@@ -33,10 +33,8 @@ umask o+rwx
 #if /usr/bin/sudo -u praktomat \
 
 # -encoding UTF-8
-# -classpath .:/opt/praktomat-addons/ \
 if $JAVAC \
  -classpath . \
- -source 1.8 \
  -nowarn \
  -d . \
  "$@" 

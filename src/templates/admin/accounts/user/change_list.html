@@ -5,8 +5,8 @@
   {% if has_add_permission %}
 	<ul class="object-tools">
 	  <li>
-		<a href="import_ldap/" class="addlink">
-		  {% blocktrans with cl.opts.verbose_name as name %}Import LDAP users{% endblocktrans %}
+		<a href="import/" class="addlink">
+		  {% blocktrans with cl.opts.verbose_name as name %}Import {{ name }}{% endblocktrans %}
 		</a>
 	  </li>
 	  <li>

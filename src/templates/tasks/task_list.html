@@ -33,7 +33,7 @@
 
 	{% chunk "Welcome Message" %}
 	
-	{% if show_contact_link and not user.is_trainer and not user.is_superuser %}
+	{% if not user.is_trainer and not user.is_superuser %}
 		{% if tutors or trainers %}
 			<div id="contact"><a> Got Problems? </a>
 			{% if tutors %}
@@ -71,9 +71,9 @@
 			{% if user.is_tutor or user.is_trainer%}
 				<a href="{% url "attestation_list" task_id=task.id%}">{% trans "Attestation"%}</a>
 				<a href="{% url "statistics" task_id=task.id%}">{% trans "Statistics"%}</a>
-				{% if HAS_JPLAG %}
+			{% endif %}
+			{% if user.is_staff and HAS_JPLAG %}
 				<a href="{% url "solution_jplag" task_id=task.id%}">{% trans "jPlag"%}</a>
-				{% endif %}
 			{% endif %} <br/><br/>
 		{% endfor %}
 	</div>

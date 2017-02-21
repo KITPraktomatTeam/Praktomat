@@ -114,10 +114,7 @@ class User(BasicUser):
 	activate_user = staticmethod(activate_user)
 	
 	def is_shibboleth_user(self):
-		return not self.has_usable_password() and not self.is_ldap_user()
-
-	def is_ldap_user(self):
-		return self.password == 'LDAP_AUTH'
+		return not self.has_usable_password()
 
         # Cache group membership for users
         def cached_groups(self):
@@ -170,10 +167,8 @@ class User(BasicUser):
 					pass # unique username validation - user allredy existed
 		return User.objects.filter(id__in = imported_user_ids) 	# get them fresh from the db, otherwise the user object won't have basicUser attributes set
 				
-	def clean(self):
-		super(User, self).clean()
-		if settings.DUMMY_MAT_NUMBERS:			
-			self.mat_number = self.id
+				
+
 
 	
 #	def save(self, force_insert=False, force_update=False, *args, **kwargs):
