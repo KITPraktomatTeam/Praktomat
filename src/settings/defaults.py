@@ -161,7 +161,7 @@ def load_defaults(settings):
         else:
             import uuid            
             d.SECRET_KEY = uuid.uuid4().hex
-            os.fdopen(os.open(secret_keyfile,os.O_WRONLY | os.O_CREAT,0600),'w').write(SECRET_KEY)
+            os.fdopen(os.open(secret_keyfile,os.O_WRONLY | os.O_CREAT,0600),'w').write(d.SECRET_KEY)
 
 
     # Templates
