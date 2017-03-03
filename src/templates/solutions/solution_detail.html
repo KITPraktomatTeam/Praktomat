@@ -78,4 +78,6 @@
 	{% include "solutions/solution_files_inline.html" %}
 {% endwith %}
 
+<a href={% url "solution_download" solution_id=solution.id %} id='download'><span class="ui-icon ui-icon-disk"></span>Download Solution</a>
+
 </div>{% endblock %}
