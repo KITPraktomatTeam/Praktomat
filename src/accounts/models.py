@@ -117,7 +117,7 @@ class User(BasicUser):
 		return not self.has_usable_password() and not self.is_ldap_user()
 	
 	def is_ldap_user(self):
--		return self.password == 'LDAP_AUTH'
+		return self.password == 'LDAP_AUTH'
 
         # Cache group membership for users
         def cached_groups(self):
