@@ -517,7 +517,7 @@ def rating_export(request):
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; rating_export.csv'
 
-	if LDAP_ENABLED:
+	if settings.LDAP_ENABLED:
 		t = loader.get_template('attestation/rating_export_ldap.csv')
 		c = Context({'rating_list':rating_list, 'task_list':task_list})
 		#response.write(u'\ufeff') setting utf-8 BOM for Exel doesn't work
