@@ -16,3 +16,5 @@ subprocess32
 psycopg2
 selenium==2.53.6
 
+#for LDAP support make sure, that ldap module is installed
+python-ldap==2.3.13
