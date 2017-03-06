@@ -21,6 +21,9 @@ from utilities.safeexec import execute_arglist
 
 
 class Task(models.Model):
+	class Meta:
+		ordering = ['title']
+		
 	title = models.CharField(max_length=100, help_text = _("The name of the Task"))
 	description = models.TextField(help_text = _("Description of the assignment."))
 	publication_date = models.DateTimeField(help_text = _("The time on which the user will see the task."))
