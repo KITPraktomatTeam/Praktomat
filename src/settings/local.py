@@ -128,7 +128,7 @@ NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 6
 if match.group('tba') is not None:
     NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 1
 
-# Finally load defaults for missing setttings.
+# Finally load defaults for missing settings.
 import defaults
 defaults.load_defaults(globals())
 
