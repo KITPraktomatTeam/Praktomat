@@ -18,4 +18,7 @@ selenium==2.53.6
 
 #modules used in fix bug #255 in safeexec.py
 psutil
-#deepcopy
+
+#for LDAP support make sure, that ldap module is installed
+python-ldap==2.3.13
+

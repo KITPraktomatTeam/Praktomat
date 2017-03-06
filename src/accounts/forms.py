@@ -15,7 +15,7 @@ from django.utils.http import int_to_base36
 from django.utils.safestring import mark_safe
 from configuration import get_settings
 
-from accounts.models import User
+from accounts.models import User, Tutorial
 
 class MyRegistrationForm(UserBaseCreationForm):
 	
@@ -127,7 +127,7 @@ class AdminUserChangeForm(UserBaseChangeForm):
 		groups = cleaned_data.get("groups")
 		if not groups:
 			self._errors["groups"] = self.error_class(["This field is required."])
-		if ( groups and groups.filter(name="User") and not cleaned_data.get("mat_number")):
+		if ( groups and groups.filter(name="User") and not (cleaned_data.get("mat_number") or settings.DUMMY_MAT_NUMBERS)):
 			self._errors["mat_number"] = self.error_class(["This field is required for Users."])
 			if "mat_number" in cleaned_data:
 				#mat_number was probably removed prior to this validation (eg. no number)
@@ -155,6 +155,11 @@ class ImportForm(forms.Form):
 	require_reactivation = forms.BooleanField(initial=True, required=False, help_text = "Deactivate all imported users")
 	send_reactivation_email = forms.BooleanField(initial=False, required=False, help_text = "Send activation email to imported users (if deactivated during import)")
 	meassagetext = forms.CharField(required=False, widget=forms.Textarea, initial = reactivation_message_text, help_text = "Message to be embedded into activation mail if reactivation is required.")
+
+class ImportLDAPForm(forms.Form):
+	tutorial = forms.ModelChoiceField(queryset=Tutorial.objects.all(), required=False)
+	uids = forms.CharField(label='UIDs', required=False, widget=forms.Textarea, initial = '', help_text = "List of UIDs to be imported, delimited by whitespace. Already existing accounts will be ignored.")
+
 
 class ImportTutorialAssignmentForm(forms.Form):
 	csv_file = forms.FileField(required=True, help_text = "The csv file containing the tutorial name and the students mat number.")

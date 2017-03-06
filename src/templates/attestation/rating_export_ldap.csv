@@ -1,0 +1,3 @@
+{{byte_order_marker}}"First Name","Last Name","UID","eMail","Final grade",{% for task in task_list %}"{{task|addslashes}}",{% endfor %}
+{% for user_row in rating_list %}{% for attestation in user_row %}{% if forloop.first %}"{{attestation.first_name|addslashes}}","{{attestation.last_name|addslashes}}","{{attestation.username|addslashes}}","{{attestation.email|addslashes}}","{{attestation.final_grade|addslashes}}",{% else %}"{{attestation.final_grade|addslashes }}",{% endif %}{% endfor %}
+{% endfor %}

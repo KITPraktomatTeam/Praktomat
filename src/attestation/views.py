@@ -517,10 +517,16 @@ def rating_export(request):
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; rating_export.csv'
 
-	t = loader.get_template('attestation/rating_export.csv')
-	c = Context({'rating_list':rating_list, 'task_list':task_list})
-	#response.write(u'\ufeff') setting utf-8 BOM for Exel doesn't work
-	response.write(t.render(c))
+	if settings.LDAP_ENABLED:
+		t = loader.get_template('attestation/rating_export_ldap.csv')
+		c = Context({'rating_list':rating_list, 'task_list':task_list})
+		#response.write(u'\ufeff') setting utf-8 BOM for Exel doesn't work
+		response.write(t.render(c))
+	else:
+		t = loader.get_template('attestation/rating_export.csv')
+		c = Context({'rating_list':rating_list, 'task_list':task_list})
+		#response.write(u'\ufeff') setting utf-8 BOM for Exel doesn't work
+		response.write(t.render(c))
 	return response
 	
 def frange(start, end, inc):
