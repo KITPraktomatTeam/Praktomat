@@ -24,7 +24,7 @@ class ClassFileGeneratingBuilder(Builder):
 	def main_module(self, env):
 		""" find the first class file containing a main method """
 		main_method = "public static void main(java.lang.String[])"
-		class_name  = re.compile(r"^(public )?(abstract )?(final )?class ([^ ]*)( extends .*)? \{$", re.MULTILINE)
+		class_name  = re.compile(r"^(public )?(abstract )?(final )?class ([^ ]*)( extends .*)?( implements .*)? \{$", re.MULTILINE)
 		class_files = []
 		for dirpath, dirs, files in os.walk(env.tmpdir()):
 			for filename in files:
