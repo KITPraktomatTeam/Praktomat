@@ -65,6 +65,8 @@ STATIC_URL = BASE_PATH + 'static/'
 
 STATIC_ROOT = join(dirname(PRAKTOMAT_PATH), "static")
 
+TEST_TIMEOUT=180
+
 if "cram" in PRAKTOMAT_ID:
   TEST_TIMEOUT=600
 
@@ -77,7 +79,10 @@ if "tba" in PRAKTOMAT_ID:
 # Example: "/home/media/media.lawrence.com/"
 UPLOAD_ROOT = join(dirname(PRAKTOMAT_PATH), "PraktomatSupport/")
 
-SANDBOX_DIR = join('/srv/praktomat/sandbox/', PRAKTOMAT_ID)
+if MIRROR:
+	SANDBOX_DIR = join('/srv/praktomat/sandbox_Mirror/', PRAKTOMAT_ID)
+else:
+	SANDBOX_DIR = join('/srv/praktomat/sandbox/', PRAKTOMAT_ID)
 
 ADMINS = [
   ('Praktomat', 'praktomat@ipd.info.uni-karlsruhe.de')
