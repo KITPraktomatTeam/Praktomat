@@ -16,6 +16,7 @@ match = re.match(r'''
 	(?:praktomat_)?
 	(?P<algo1>algo1_)?
 	(?P<cram>cram_)?
+	(?P<birap>birap_)?
 	(?P<tba>tba_)?
 	(?P<mlfds>mlfds_)?
 	(?P<year>\d+)_
@@ -28,6 +29,8 @@ if match:
 		SITE_NAME = 'Algorithmen I '
 	elif match.group('cram') is not None:
 		SITE_NAME = 'CRAM '
+	elif match.group('birap') is not None:
+		SITE_NAME = 'BIRAP '
 	elif match.group('mlfds') is not None:
 		SITE_NAME = 'MLFDS '
 	elif match.group('tba') is not None:
