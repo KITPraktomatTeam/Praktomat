@@ -261,8 +261,10 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 		# 11 appropriately if the filename contains non-ascii characters.
 		assert isinstance(base_name, unicode)
 
+		createfile_checker_files_destinations = []
 		createfile_checker_files = []
 		checkstyle_checker_files = []
+		script_checker_files     = []
 		junit3 = False
 		junit4 = False
 		checkstyle = False
@@ -292,11 +294,11 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 
 			checkstyle_checker_files = [(checkstyle_checker_files_destination + os.path.basename(checker.configuration.name), checker.configuration) for checker in checkstyle_checker]
 			script_checker_files     = [(script_checker_files_destination     + checker.path_relative_to_sandbox(),    checker.shell_script)  for checker in script_checker]
+			createfile_checker_files_destinations = set([createfile_checker_files_destination + checker.path for checker in createfile_checker if checker.is_sourcecode])
 		
 		zip.writestr(base_name+'.project', render_to_string('solutions/eclipse/project.xml', { 'name': project_name, 'checkstyle' : checkstyle }).encode("utf-8"))
 		zip.writestr(base_name+'.settings/org.eclipse.jdt.core.prefs', render_to_string('solutions/eclipse/settings/org.eclipse.jdt.core.prefs', { }).encode("utf-8"))
 
-		createfile_checker_files_destinations = set([createfile_checker_files_destination + checker.path for checker in createfile_checker if checker.is_sourcecode])
 		zip.writestr(base_name+'.classpath', render_to_string('solutions/eclipse/classpath.xml', {'junit3' : junit3, 'junit4': junit4, 'createfile_checker_files' : include_file_copy_checker_files, 'createfile_checker_files_destinations' : createfile_checker_files_destinations, 'testsuite_destination' : testsuite_destination }).encode("utf-8"))
 		if checkstyle:
 			zip.writestr(base_name+'.checkstyle', render_to_string('solutions/eclipse/checkstyle.xml', {'checkstyle_files' : [filename for (filename,_) in checkstyle_checker_files], 'createfile_checker_files_destination' : createfile_checker_files_destination, 'testsuite_destination' : testsuite_destination }).encode("utf-8"))
