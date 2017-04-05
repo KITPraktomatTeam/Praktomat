@@ -233,8 +233,8 @@ def solution_file_delete(sender, instance, **kwargs):
 
 def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 	
-	zip_file = tempfile.SpooledTemporaryFile()
-	zip = zipfile.ZipFile(zip_file,'w')
+	zip_file = tempfile.TemporaryFile()
+	zip = zipfile.ZipFile(zip_file,'w', allowZip64 = True)
 	praktomat_files_destination          = "praktomat-files/"
 	testsuite_destination                = praktomat_files_destination + "testsuite/"
 	createfile_checker_files_destination = praktomat_files_destination + "other/"
