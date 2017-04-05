@@ -275,7 +275,7 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 			junit4     = bool([ 0 for j in junit_checker if  j.junit_version == 'junit4' ])
 			checkstyle = bool(checkstyle_checker)
 
-			createfile_checker_files = [(createfile_checker_files_destination + checker.path + '/' + checker.filename,        checker.file)          for checker in createfile_checker if not checker.unpack_zipfile]
+			createfile_checker_files = [(createfile_checker_files_destination + checker.path + '/' + checker.path_relative_to_sandbox(),        checker.file)          for checker in createfile_checker if not checker.unpack_zipfile]
 			# Temporary build directory
 			sandbox = settings.SANDBOX_DIR
 			tmpdir = file_operations.create_tempfolder(sandbox)
@@ -291,7 +291,7 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 				)
 
 			checkstyle_checker_files = [(checkstyle_checker_files_destination + os.path.basename(checker.configuration.name), checker.configuration) for checker in checkstyle_checker]
-			script_checker_files     = [(script_checker_files_destination     + os.path.basename(checker.shell_script.path),  checker.shell_script)  for checker in script_checker]
+			script_checker_files     = [(script_checker_files_destination     + checker.path_relative_to_sandbox(),    checker.shell_script)  for checker in script_checker]
 		
 		zip.writestr(base_name+'.project', render_to_string('solutions/eclipse/project.xml', { 'name': project_name, 'checkstyle' : checkstyle }).encode("utf-8"))
 		zip.writestr(base_name+'.settings/org.eclipse.jdt.core.prefs', render_to_string('solutions/eclipse/settings/org.eclipse.jdt.core.prefs', { }).encode("utf-8"))
