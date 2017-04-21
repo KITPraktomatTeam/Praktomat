@@ -231,6 +231,11 @@ def solution_file_delete(sender, instance, **kwargs):
 
 
 
+class DummyFile:
+	def __init__(self, path):
+		self.path = path
+	
+
 def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 	
 	zip_file = tempfile.TemporaryFile()
@@ -238,6 +243,7 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 	praktomat_files_destination          = "praktomat-files/"
 	testsuite_destination                = praktomat_files_destination + "testsuite/"
 	createfile_checker_files_destination = praktomat_files_destination + "other/"
+	script_checker_files_destination     = praktomat_files_destination + "other/"
 	checkstyle_checker_files_destination = praktomat_files_destination + "checkstyle/"
 	solution_files_destination           = "solution/"
 
@@ -255,25 +261,45 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 		# 11 appropriately if the filename contains non-ascii characters.
 		assert isinstance(base_name, unicode)
 
+		createfile_checker_files_destinations = []
 		createfile_checker_files = []
 		checkstyle_checker_files = []
+		script_checker_files     = []
 		junit3 = False
 		junit4 = False
 		checkstyle = False
 		if include_file_copy_checker_files:
 			createfile_checker = solution.task.createfilechecker_set.all()
 			checkstyle_checker = solution.task.checkstylechecker_set.all()
+			script_checker     = solution.task.scriptchecker_set.all()
 			junit_checker      = solution.task.junitchecker_set.all()
 			junit3     = bool([ 0 for j in junit_checker if  j.junit_version == 'junit3' ])
 			junit4     = bool([ 0 for j in junit_checker if  j.junit_version == 'junit4' ])
 			checkstyle = bool(checkstyle_checker)
 
-			createfile_checker_files = [(createfile_checker_files_destination + checker.path + '/' + checker.filename,        checker.file)          for checker in createfile_checker]
+			createfile_checker_files = [(createfile_checker_files_destination + checker.path + '/' + checker.path_relative_to_sandbox(),        checker.file)          for checker in createfile_checker if not checker.unpack_zipfile]
+			# Temporary build directory
+			sandbox = settings.SANDBOX_DIR
+			tmpdir = file_operations.create_tempfolder(sandbox)
+			for zipchecker in [ checker for checker in createfile_checker if checker.unpack_zipfile ]:
+				cleanpath = string.lstrip(zipchecker.path,"/ ")
+				path = os.path.join(tmpdir,cleanpath)
+				file_operations.unpack_zipfile_to(zipchecker.file.path, path,
+					lambda n: None,
+					lambda f: createfile_checker_files.append((
+						os.path.join(createfile_checker_files_destination, os.path.join(cleanpath,f)),
+						DummyFile(os.path.join(path,f))
+					))
+				)
+
 			checkstyle_checker_files = [(checkstyle_checker_files_destination + os.path.basename(checker.configuration.name), checker.configuration) for checker in checkstyle_checker]
+			script_checker_files     = [(script_checker_files_destination     + checker.path_relative_to_sandbox(),    checker.shell_script)  for checker in script_checker]
+			createfile_checker_files_destinations = set([createfile_checker_files_destination + checker.path for checker in createfile_checker if checker.is_sourcecode])
 		
 		zip.writestr(base_name+'.project', render_to_string('solutions/eclipse/project.xml', { 'name': project_name, 'checkstyle' : checkstyle }).encode("utf-8"))
 		zip.writestr(base_name+'.settings/org.eclipse.jdt.core.prefs', render_to_string('solutions/eclipse/settings/org.eclipse.jdt.core.prefs', { }).encode("utf-8"))
-		zip.writestr(base_name+'.classpath', render_to_string('solutions/eclipse/classpath.xml', {'junit3' : junit3, 'junit4': junit4, 'createfile_checker_files' : include_file_copy_checker_files, 'createfile_checker_files_destination' : createfile_checker_files_destination, 'testsuite_destination' : testsuite_destination }).encode("utf-8"))
+
+		zip.writestr(base_name+'.classpath', render_to_string('solutions/eclipse/classpath.xml', {'junit3' : junit3, 'junit4': junit4, 'createfile_checker_files' : include_file_copy_checker_files, 'createfile_checker_files_destinations' : createfile_checker_files_destinations, 'testsuite_destination' : testsuite_destination }).encode("utf-8"))
 		if checkstyle:
 			zip.writestr(base_name+'.checkstyle', render_to_string('solutions/eclipse/checkstyle.xml', {'checkstyle_files' : [filename for (filename,_) in checkstyle_checker_files], 'createfile_checker_files_destination' : createfile_checker_files_destination, 'testsuite_destination' : testsuite_destination }).encode("utf-8"))
 
@@ -285,7 +311,7 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 		
 		solution_files  = [ (solution_files_destination+solutionfile.path(), solutionfile.file) for solutionfile in solution.solutionfile_set.all()]
 
-		for  (name,file) in solution_files + createfile_checker_files + checkstyle_checker_files:
+		for  (name,file) in solution_files + createfile_checker_files + checkstyle_checker_files + script_checker_files:
 			zippath = os.path.normpath(base_name + name)
 			assert isinstance(zippath, unicode)
 			try: # Do not overwrite files from the solution by checker files
