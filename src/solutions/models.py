@@ -23,7 +23,6 @@ from accounts.models import User
 from utilities import encoding, file_operations
 from configuration import get_settings
 
-
 # TODO: This is duplicated from solutions/forms.py. Where should this go?
 for (mimetype,extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
 	mimetypes.add_type(mimetype,extension,strict=True)
@@ -245,6 +244,7 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 	createfile_checker_files_destination = praktomat_files_destination + "other/"
 	script_checker_files_destination     = praktomat_files_destination + "other/"
 	checkstyle_checker_files_destination = praktomat_files_destination + "checkstyle/"
+	artefact_files_destination           = praktomat_files_destination + "artefacts/"
 	solution_files_destination           = "solution/"
 
 	for solution in solutions:
@@ -265,6 +265,7 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 		createfile_checker_files = []
 		checkstyle_checker_files = []
 		script_checker_files     = []
+		artefact_files           = []
 		junit3 = False
 		junit4 = False
 		checkstyle = False
@@ -273,6 +274,7 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 			checkstyle_checker = solution.task.checkstylechecker_set.all()
 			script_checker     = solution.task.scriptchecker_set.all()
 			junit_checker      = solution.task.junitchecker_set.all()
+			artefacts          = [ artefact for result in solution.allCheckerResults() for artefact in result.artefacts.all() ]
 			junit3     = bool([ 0 for j in junit_checker if  j.junit_version == 'junit3' ])
 			junit4     = bool([ 0 for j in junit_checker if  j.junit_version == 'junit4' ])
 			checkstyle = bool(checkstyle_checker)
@@ -295,7 +297,8 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 			checkstyle_checker_files = [(checkstyle_checker_files_destination + os.path.basename(checker.configuration.name), checker.configuration) for checker in checkstyle_checker]
 			script_checker_files     = [(script_checker_files_destination     + checker.path_relative_to_sandbox(),    checker.shell_script)  for checker in script_checker]
 			createfile_checker_files_destinations = set([createfile_checker_files_destination + checker.path for checker in createfile_checker if checker.is_sourcecode])
-		
+			artefact_files           = [(artefact_files_destination + os.path.basename(artefact.file.name), artefact.file) for artefact in artefacts]
+	
 		zip.writestr(base_name+'.project', render_to_string('solutions/eclipse/project.xml', { 'name': project_name, 'checkstyle' : checkstyle }).encode("utf-8"))
 		zip.writestr(base_name+'.settings/org.eclipse.jdt.core.prefs', render_to_string('solutions/eclipse/settings/org.eclipse.jdt.core.prefs', { }).encode("utf-8"))
 
@@ -311,7 +314,7 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 		
 		solution_files  = [ (solution_files_destination+solutionfile.path(), solutionfile.file) for solutionfile in solution.solutionfile_set.all()]
 
-		for  (name,file) in solution_files + createfile_checker_files + checkstyle_checker_files + script_checker_files:
+		for  (name,file) in solution_files + createfile_checker_files + checkstyle_checker_files + script_checker_files + artefact_files:
 			zippath = os.path.normpath(base_name + name)
 			assert isinstance(zippath, unicode)
 			try: # Do not overwrite files from the solution by checker files
