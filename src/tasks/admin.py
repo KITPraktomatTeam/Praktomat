@@ -9,7 +9,7 @@ from django.core.urlresolvers import reverse
 from tinymce.widgets import TinyMCE
 from django.utils.html import format_html
 
-from tasks.models import Task, MediaFile
+from tasks.models import Task, MediaFile, HtmlInjector
 from solutions.models import Solution, SolutionFile
 from attestation.admin import RatingAdminInline
 
@@ -20,6 +20,10 @@ admin.autodiscover()
 
 class MediaInline(admin.StackedInline): 
 	model = MediaFile
+	extra = 0
+
+class HtmlInjectorInline(admin.StackedInline): 
+	model = HtmlInjector
 	extra = 0
 
 class TaskAdmin(admin.ModelAdmin):
@@ -43,7 +47,7 @@ class TaskAdmin(admin.ModelAdmin):
 	search_fields = ['title']
 	date_hierarchy = 'publication_date'
 	save_on_top = True
-	inlines = [MediaInline] + CheckerInline.__subclasses__() + [ RatingAdminInline]
+	inlines = [MediaInline] + [HtmlInjectorInline] + CheckerInline.__subclasses__() + [ RatingAdminInline]
 	actions = ['export_tasks', 'run_all_checkers']
 	
 	formfield_overrides = {

@@ -16,7 +16,7 @@ from collections import Counter
 import datetime
 import codecs
 
-from tasks.models import Task
+from tasks.models import Task, HtmlInjector
 from solutions.models import Solution, SolutionFile
 from solutions.forms import SolutionFormSet
 from checker.basemodels import CheckerResult, check_solution
@@ -353,8 +353,23 @@ def edit_attestation(request, attestation_id):
 	
 	show_author = not get_settings().anonymous_attestation 
 	show_run_checkers = get_settings().attestation_allow_run_checkers
+	htmlinjectors = HtmlInjector.objects.filter(task = solution.task, inject_in_attestation_edit = True)
+	htmlinjector_snippets = [ injector.html_file.read() for injector in htmlinjectors ] 
 	
-	return render_to_response("attestation/attestation_edit.html", {"attestForm": attestForm, "attestFileFormSet": attestFileFormSet, "ratingResultFormSet":ratingResultFormSet, "solution": solution, "model_solution":model_solution, "show_author":show_author, "show_run_checkers":show_run_checkers},	context_instance=RequestContext(request))
+	return render_to_response(
+		"attestation/attestation_edit.html",
+		 {
+			"attestForm": attestForm,
+			"attestFileFormSet": attestFileFormSet,
+			"ratingResultFormSet": ratingResultFormSet,
+			"solution": solution,
+			"model_solution": model_solution,
+			"show_author": show_author,
+			"show_run_checkers": show_run_checkers,
+			"htmlinjector_snippets": htmlinjector_snippets,
+		},
+		context_instance=RequestContext(request)
+	)
 
 @login_required	
 def view_attestation(request, attestation_id):
@@ -381,7 +396,23 @@ def view_attestation(request, attestation_id):
 		form = AttestationPreviewForm(instance=attest)
 		submitable = may_modify and not attest.published
 		withdrawable = may_modify and attest.published
-                return render_to_response("attestation/attestation_view.html", {"attest": attest, 'submitable':submitable, 'withdrawable': withdrawable, 'form':form, 'show_author': not get_settings().anonymous_attestation, 'show_attestor': not get_settings().invisible_attestor},	context_instance=RequestContext(request))
+
+		htmlinjectors = HtmlInjector.objects.filter(task = attest.solution.task, inject_in_attestation_view = True)
+		htmlinjector_snippets = [ injector.html_file.read() for injector in htmlinjectors ] 
+
+                return render_to_response(
+			"attestation/attestation_view.html",
+			{
+				"attest": attest,
+				"submitable": submitable,
+				"withdrawable": withdrawable,
+				"form":form,
+				"show_author": not get_settings().anonymous_attestation,
+				"show_attestor": not get_settings().invisible_attestor,
+				"htmlinjector_snippets" : htmlinjector_snippets,
+			},
+			context_instance=RequestContext(request)
+		)
 
 
 def user_task_attestation_map(users,tasks,only_published=True):

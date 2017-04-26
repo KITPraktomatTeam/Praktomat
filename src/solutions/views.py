@@ -18,7 +18,7 @@ from django.contrib.sites.requests import RequestSite
 
 from datetime import datetime
 
-from tasks.models import Task
+from tasks.models import Task, HtmlInjector
 from attestation.models import Attestation
 from solutions.models import Solution, SolutionFile, get_solutions_zip
 from solutions.forms import SolutionFormSet
@@ -148,6 +148,15 @@ def solution_detail(request,solution_id,full):
 	else:
 		attestations = Attestation.objects.filter(solution__task=solution.task, author__tutored_tutorials=request.user.tutorial)
 		attestationsPublished = attestations[0].published if attestations else False
+		htmlinjectors = []
+		if full:
+			htmlinjectors = HtmlInjector.objects.filter(task = solution.task, inject_in_solution_full_view = True)
+		else:
+			htmlinjectors = HtmlInjector.objects.filter(task = solution.task, inject_in_solution_view      = True)
+		htmlinjector_snippets = [ injector.html_file.read() for injector in htmlinjectors ] 
+
+		
+
 
                 return render_to_response(
                     "solutions/solution_detail.html",
@@ -155,6 +164,7 @@ def solution_detail(request,solution_id,full):
                         "solution": solution,
                         "attestationsPublished": attestationsPublished,
                         "accept_all_solutions": accept_all_solutions,
+			"htmlinjector_snippets": htmlinjector_snippets,
                         "full":full
                     },
                     context_instance=RequestContext(request))
