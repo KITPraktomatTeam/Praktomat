@@ -45,6 +45,14 @@ class AttestationAdmin(admin.ModelAdmin):
 	list_display = ('solution', 'author', 'created', 'final', 'published','published_on')
 	list_filter = ('final', 'published', 'author', 'solution__author', 'solution__task')
 	inlines = (RatingResultAdminInline, AnnotatedSolutionFileAdminInline)
+	actions = ['export_attestations']
+
+	def export_attestations(self, request, queryset):
+		""" Export Attestation action """
+		from django.http import HttpResponse
+		response = HttpResponse(Attestation.export_Attestation(queryset).read(), content_type="application/zip")
+		response['Content-Disposition'] = 'attachment; filename=AttestationExport.zip'
+		return response
 
 	def get_form(self, request, obj=None, **kwargs):
 		request.obj = obj

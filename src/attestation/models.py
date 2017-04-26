@@ -4,14 +4,18 @@ from tasks.models import Task
 from solutions.models import Solution, SolutionFile
 from django.utils.translation import ugettext_lazy as _
 from django.core.mail import EmailMessage
+from django.core import serializers
 from django.template import Context, loader
 from django.contrib.sites.requests import RequestSite
 from datetime import datetime
 from utilities.nub import nub
 import difflib
+import tempfile
+import zipfile
 
 from accounts.models import User
 from configuration import get_settings
+
 
 
 class Attestation(models.Model):
@@ -89,6 +93,36 @@ class Attestation(models.Model):
                 bcc_recipients = emails[1:]
                 email = EmailMessage(subject, body, None, recipients, bcc_recipients)
                 email.send()
+
+	@classmethod
+	def export_Attestation(cls, qureyset):
+		""" Serializes an Attestation queryset to xml """
+		from solutions.models import Solution
+
+		# fetch tasks, media objects, checker and serialize
+		attestation_objects = list(qureyset)
+		solution_objects = list([attestation.solution for attestation in attestation_objects])
+		task_objects = list(set([attestation.solution.task for attestation in attestation_objects]))
+		
+		ratingresult_objects  = list(RatingResult.objects.filter(attestation__in = attestation_objects))
+		aspect_grades_objects = set([ratingresult.mark for ratingresult in ratingresult_objects])
+		final_grades_objects  = set([attestation.final_grade for attestation in attestation_objects])
+		rating_objects        = set([ratingresult.rating for ratingresult in ratingresult_objects])
+ 		aspect_objects        = set([rating.aspect for rating in rating_objects])
+		ratingscale_objects = list(
+			  set(RatingScale.objects.filter(ratingscaleitem__in = final_grades_objects | aspect_grades_objects))
+		)
+		ratingscaleitems_objects = list(RatingScaleItem.objects.filter(scale__in = ratingscale_objects))
+
+		data = serializers.serialize("xml", attestation_objects + solution_objects + ratingscale_objects + ratingscaleitems_objects + ratingresult_objects + list(rating_objects) + list(aspect_objects))
+		
+		# zip it up
+		zip_file = tempfile.SpooledTemporaryFile()
+		zip = zipfile.ZipFile(zip_file,'w')
+		zip.writestr('data.xml', data)
+		zip.close()	
+		zip_file.seek(0)		# rewind
+		return zip_file			# return unclosed file-like object!?
 
 class AnnotatedSolutionFile(models.Model):
 	""""""
