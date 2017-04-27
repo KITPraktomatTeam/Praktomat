@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.conf import settings
 from tasks.models import Task
 from solutions.models import Solution, SolutionFile
@@ -7,6 +7,7 @@ from django.core.mail import EmailMessage
 from django.core import serializers
 from django.template import Context, loader
 from django.contrib.sites.requests import RequestSite
+from django.contrib import messages
 from datetime import datetime
 from utilities.nub import nub
 import difflib
@@ -116,13 +117,59 @@ class Attestation(models.Model):
 
 		data = serializers.serialize("xml", attestation_objects + solution_objects + ratingscale_objects + ratingscaleitems_objects + ratingresult_objects + list(rating_objects) + list(aspect_objects))
 		
-		# zip it up
-		zip_file = tempfile.SpooledTemporaryFile()
-		zip = zipfile.ZipFile(zip_file,'w')
-		zip.writestr('data.xml', data)
-		zip.close()	
-		zip_file.seek(0)		# rewind
-		return zip_file			# return unclosed file-like object!?
+		return data
+
+	@classmethod
+	@transaction.atomic
+	def update_Attestations(cls, request, xml_file):
+		from solutions.models import Solution, SolutionFile
+		data = xml_file.read()
+		deserialized = list(serializers.deserialize("xml", data))
+
+		tosave_attestation = []
+		tosave_ratingresult = []
+		
+
+		for deserialized_object in deserialized:
+			new_object = deserialized_object.object
+
+			if isinstance(new_object, Attestation):
+				old_object = Attestation.objects.get(id = new_object.id)
+				
+				if not(attributes_equal(new_object, old_object, ["solution"])):
+					messages.error(request, "1Invalid change from " + str(old_object) + " to " + str(new_object) + ". Nothing was imported.")
+					return
+				tosave_attestation.append(deserialized_object)
+
+			elif isinstance(new_object, RatingResult):
+				old_object = RatingResult.objects.get(id = new_object.id)
+				if not(attributes_equal(new_object, old_object, ["attestation", "rating"])):
+					messages.error(request, "2Invalid change from " + str(old_object) + " to " + str(new_object) + ". Nothing was imported.")
+					return
+				tosave_ratingresult.append(deserialized_object)
+
+
+			elif ( isinstance(new_object, Solution)
+                            or isinstance(new_object, Rating)
+                            or isinstance(new_object, RatingAspect)
+                            or isinstance(new_object, RatingScale)
+                            or isinstance(new_object, RatingScaleItem)):
+				old_object = new_object.__class__.objects.get(id = new_object.id)
+				if not(model_fields_equal(new_object, old_object)):
+					messages.error(request, "3Invalid change from " + str(old_object) + " to " + str(new_object) + ". Nothing was imported.")
+					return
+			else:
+				messages.error(request, "Invalid model class for: " + str(new_object) + ". Nothing was imported.")
+				return
+
+		for object in (tosave_attestation + tosave_ratingresult):
+			object.save()
+		
+		messages.success(request, "Updated %d attestations, and %d rating results." % (len(tosave_attestation), len(tosave_ratingresult)))
+
+		return
+			
+
 
 class AnnotatedSolutionFile(models.Model):
 	""""""
@@ -194,4 +241,20 @@ class Script(models.Model):
 	""" save java script function of the rating overview page """
 	script = models.TextField(blank=True, help_text = _("This JavaScript will calculate a recommend end note for every user based on final grade of every task."), default="""var sum = 0.0;\nfor (x = 0; x != grades.length; ++x) {\n    grade = parseFloat(grades[x]);\n    if (!isNaN(grade)) {\n        sum += grade;\n    }\n}\nresult=sum;""")
 	
-	
+
+
+
+def attributes_equal(this,that,attrs):
+	_NOTFOUND = object()
+        for attr in attrs:
+            v1, v2 = [getattr(obj, attr, _NOTFOUND) for obj in [this, that]]
+            if (v1 is _NOTFOUND) != (v2 is _NOTFOUND):
+		return False
+            elif v1 != v2:
+                return False
+        return True
+
+def model_fields_equal(this,that):
+	this_fields = [field.name for field in this._meta.fields]
+	that_fields = [field.name for field in that._meta.fields]
+	return this_fields == that_fields and attributes_equal(this, that, this_fields)

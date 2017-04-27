@@ -3,6 +3,7 @@ from attestation.models import *
 from django.core.urlresolvers import reverse
 from django.utils.html import format_html
 
+admin.autodiscover()
 
 class RatingScaleItemInline(admin.TabularInline):
 	model = RatingScaleItem
@@ -50,8 +51,8 @@ class AttestationAdmin(admin.ModelAdmin):
 	def export_attestations(self, request, queryset):
 		""" Export Attestation action """
 		from django.http import HttpResponse
-		response = HttpResponse(Attestation.export_Attestation(queryset).read(), content_type="application/zip")
-		response['Content-Disposition'] = 'attachment; filename=AttestationExport.zip'
+		response = HttpResponse(Attestation.export_Attestation(queryset), content_type="application/xml")
+		response['Content-Disposition'] = 'attachment; filename=AttestationExport.xml'
 		return response
 
 	def get_form(self, request, obj=None, **kwargs):
@@ -75,6 +76,12 @@ class AttestationAdmin(admin.ModelAdmin):
 	show_solution.short_description = 'Solution'
 
 
+	def get_urls(self):
+		""" Add URL to Attestation update """
+		urls = super(AttestationAdmin, self).get_urls()
+		from django.conf.urls import url, patterns
+		my_urls = patterns('', url(r'^update/$', 'attestation.views.update_attestations', name='attestation_update'))
+		return my_urls + urls
 
 
 

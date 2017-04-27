@@ -4,6 +4,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
 from django.core.urlresolvers import reverse
+from django.core import urlresolvers
 from django.forms.models import modelformset_factory
 from django.db.models import Count, Max, Sum
 from django.db import transaction
@@ -12,6 +13,7 @@ from django.views.decorators.cache import cache_control
 from django.http import HttpResponse
 from django.template import loader, Context
 from django.conf import settings
+from django import forms
 from collections import Counter
 import datetime
 import codecs
@@ -610,6 +612,26 @@ def attestation_run_checker(request,attestation_id):
 	check_solution(solution,True)
 	return HttpResponseRedirect(reverse('edit_attestation', args=[attestation_id]))
 	
+class ImportForm(forms.Form):
+	file = forms.FileField()
+
+@staff_member_required
+def update_attestations(request):
+	""" View in the admin """
+	if request.method == 'POST': 
+		form = ImportForm(request.POST, request.FILES)
+		if form.is_valid(): 
+			try:
+				Attestation.update_Attestations(request, form.files['file'])
+				return render_to_response('admin/attestation/update.html', {'form': form, 'title':"Update Attestations"  }, RequestContext(request))
+			except Exception, e:
+				from django.forms.utils import ErrorList
+				msg = "An Error occured. The import file was propably malformed.: %s" % str(e)
+				form._errors["file"] = ErrorList([msg]) 			
+	else:
+		form = ImportForm()
+	return render_to_response('admin/attestation/update.html', {'form': form, 'title':"Update Attestations"  }, RequestContext(request))
+
 # Can be replaced by // in python 3.2
 def timedelta_diff(td1,td2):
     return int(td1.total_seconds() / td2.total_seconds())
