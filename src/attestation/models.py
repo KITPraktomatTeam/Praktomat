@@ -103,6 +103,12 @@ class Attestation(models.Model):
 		# fetch tasks, media objects, checker and serialize
 		attestation_objects = list(qureyset)
 		solution_objects = list([attestation.solution for attestation in attestation_objects])
+		annotatedsolutionfiles_objects = list(AnnotatedSolutionFile.objects.filter(attestation__in = attestation_objects).defer('content'))
+		for annotatedsolutionfile in annotatedsolutionfiles_objects:
+			annotatedsolutionfile.content = ""
+			annotatedsolutionfile._meta.model_name = "annotatedsolutionfile" # *sigh*
+		solutionfile_objects = list([annotatedsolutionfile.solution_file for annotatedsolutionfile in annotatedsolutionfiles_objects])
+
 		task_objects = list(set([attestation.solution.task for attestation in attestation_objects]))
 		
 		ratingresult_objects  = list(RatingResult.objects.filter(attestation__in = attestation_objects))
@@ -115,7 +121,7 @@ class Attestation(models.Model):
 		)
 		ratingscaleitems_objects = list(RatingScaleItem.objects.filter(scale__in = ratingscale_objects))
 
-		data = serializers.serialize("xml", attestation_objects + solution_objects + ratingscale_objects + ratingscaleitems_objects + ratingresult_objects + list(rating_objects) + list(aspect_objects))
+		data = serializers.serialize("xml", attestation_objects + solution_objects + ratingscale_objects + ratingscaleitems_objects + ratingresult_objects + list(rating_objects) + list(aspect_objects) + annotatedsolutionfiles_objects + solutionfile_objects)
 		
 		return data
 
@@ -148,11 +154,17 @@ class Attestation(models.Model):
 					return
 				tosave_ratingresult.append(deserialized_object)
 
+			elif isinstance(new_object, AnnotatedSolutionFile):
+				old_object = AnnotatedSolutionFile.objects.get(id = new_object.id)
+				if not(attributes_equal(new_object, old_object, ["attestation", "solutionfile"])):
+					messages.error(request, "4Invalid change from " + str(old_object) + " to " + str(new_object) + ". Nothing was imported.")
+					return
 
 			elif ( isinstance(new_object, Solution)
                             or isinstance(new_object, Rating)
                             or isinstance(new_object, RatingAspect)
                             or isinstance(new_object, RatingScale)
+                            or isinstance(new_object, SolutionFile)
                             or isinstance(new_object, RatingScaleItem)):
 				old_object = new_object.__class__.objects.get(id = new_object.id)
 				if not(model_fields_equal(new_object, old_object)):
