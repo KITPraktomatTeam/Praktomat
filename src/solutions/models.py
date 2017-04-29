@@ -270,7 +270,7 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 		junit4 = False
 		checkstyle = False
 		if include_file_copy_checker_files:
-			createfile_checker = solution.task.createfilechecker_set.all()
+			createfile_checker = solution.task.createfilechecker_set.all().filter(include_in_solution_download=True)
 			checkstyle_checker = solution.task.checkstylechecker_set.all()
 			script_checker     = solution.task.scriptchecker_set.all()
 			junit_checker      = solution.task.junitchecker_set.all()

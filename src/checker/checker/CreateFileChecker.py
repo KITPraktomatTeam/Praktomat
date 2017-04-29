@@ -21,6 +21,8 @@ class CheckerWithFile(Checker):
 	path = models.CharField(max_length=500, blank=True, help_text=_("Subfolder in the sandbox which shall contain the file."))
         unpack_zipfile = models.BooleanField(default=False, help_text=_("Unpack the zip file into the given subfolder. (It will be an error if the file is not a zip file; the filename is ignored.)")) 
         is_sourcecode = models.BooleanField(default=False, help_text=_("The file is (or, if it is a zipfile to be unpacked: contains) source code"))
+	include_in_solution_download = models.BooleanField(default=True, help_text=_("The file is (or, if it is a zipfile to be unpacked: its content) is included in \"full\" solution download .zip files"))
+
 
 
         _add_to_environment = True
