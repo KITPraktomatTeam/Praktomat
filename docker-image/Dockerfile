@@ -17,6 +17,8 @@ RUN apt-get install --yes python3-pip                             && apt-get cle
 RUN apt-get install --yes python3-six        python-six           && apt-get clean
 RUN apt-get install --yes python3-responses                       && apt-get clean
 RUN apt-get install --yes python3-xlrd                            && apt-get clean
+RUN apt-get install --yes python3-simplejson python-simplejson    && apt-get clean
+
 
 RUN python3 -m pip install --upgrade pip
 RUN pip3 install numpy scipy matplotlib ipython pandas
