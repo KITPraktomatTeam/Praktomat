@@ -247,6 +247,31 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 	artefact_files_destination           = praktomat_files_destination + "artefacts/"
 	solution_files_destination           = "solution/"
 
+	tmpdir = None
+
+	createfile_checker_files_destinations = []
+	createfile_checker_files = []
+
+	if include_file_copy_checker_files:
+		createfile_checker = set([ checker for solution in solutions for checker in solution.task.createfilechecker_set.all().filter(include_in_solution_download=True) ])
+		createfile_checker_files = [(createfile_checker_files_destination + checker.path + '/' + checker.path_relative_to_sandbox(),        checker.file)          for checker in createfile_checker if not checker.unpack_zipfile]
+		# Temporary build directory
+		sandbox = settings.SANDBOX_DIR
+		tmpdir = file_operations.create_tempfolder(sandbox)
+		for zipchecker in [ checker for checker in createfile_checker if checker.unpack_zipfile ]:
+			cleanpath = string.lstrip(zipchecker.path,"/ ")
+			path = os.path.join(tmpdir,cleanpath)
+			file_operations.unpack_zipfile_to(zipchecker.file.path, path,
+				lambda n: None,
+				lambda f: createfile_checker_files.append((
+					os.path.join(createfile_checker_files_destination, os.path.join(cleanpath,f)),
+					DummyFile(os.path.join(path,f))
+				))
+			)
+		createfile_checker_files_destinations = set([createfile_checker_files_destination + checker.path for checker in createfile_checker if checker.is_sourcecode])
+
+
+
 	for solution in solutions:
 		# TODO: make this work for anonymous attesration, too
 		if get_settings().anonymous_attestation:
@@ -261,8 +286,6 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 		# 11 appropriately if the filename contains non-ascii characters.
 		assert isinstance(base_name, unicode)
 
-		createfile_checker_files_destinations = []
-		createfile_checker_files = []
 		checkstyle_checker_files = []
 		script_checker_files     = []
 		artefact_files           = []
@@ -270,7 +293,6 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 		junit4 = False
 		checkstyle = False
 		if include_file_copy_checker_files:
-			createfile_checker = solution.task.createfilechecker_set.all().filter(include_in_solution_download=True)
 			checkstyle_checker = solution.task.checkstylechecker_set.all()
 			script_checker     = solution.task.scriptchecker_set.all()
 			junit_checker      = solution.task.junitchecker_set.all()
@@ -279,24 +301,8 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 			junit4     = bool([ 0 for j in junit_checker if  j.junit_version == 'junit4' ])
 			checkstyle = bool(checkstyle_checker)
 
-			createfile_checker_files = [(createfile_checker_files_destination + checker.path + '/' + checker.path_relative_to_sandbox(),        checker.file)          for checker in createfile_checker if not checker.unpack_zipfile]
-			# Temporary build directory
-			sandbox = settings.SANDBOX_DIR
-			tmpdir = file_operations.create_tempfolder(sandbox)
-			for zipchecker in [ checker for checker in createfile_checker if checker.unpack_zipfile ]:
-				cleanpath = string.lstrip(zipchecker.path,"/ ")
-				path = os.path.join(tmpdir,cleanpath)
-				file_operations.unpack_zipfile_to(zipchecker.file.path, path,
-					lambda n: None,
-					lambda f: createfile_checker_files.append((
-						os.path.join(createfile_checker_files_destination, os.path.join(cleanpath,f)),
-						DummyFile(os.path.join(path,f))
-					))
-				)
-
 			checkstyle_checker_files = [(checkstyle_checker_files_destination + os.path.basename(checker.configuration.name), checker.configuration) for checker in checkstyle_checker]
 			script_checker_files     = [(script_checker_files_destination     + checker.path_relative_to_sandbox(),    checker.shell_script)  for checker in script_checker]
-			createfile_checker_files_destinations = set([createfile_checker_files_destination + checker.path for checker in createfile_checker if checker.is_sourcecode])
 			artefact_files           = [(artefact_files_destination + os.path.basename(artefact.file.name), artefact.file) for artefact in artefacts]
 	
 		zip.writestr(base_name+'.project', render_to_string('solutions/eclipse/project.xml', { 'name': project_name, 'checkstyle' : checkstyle }).encode("utf-8"))
@@ -325,6 +331,13 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 
 	zip.close()	
 	zip_file.seek(0)
+
+	if include_file_copy_checker_files:
+		if (tmpdir is None) or (not os.path.isdir(tmpdir)) or (not os.path.basename(tmpdir).startswith("tmp")):
+			raise Exception("Invalid tmpdir: " + tmpdir)
+		shutil.rmtree(tmpdir)
+		
+
 	return zip_file
 
 def ascii_without(chars):
