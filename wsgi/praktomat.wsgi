@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import os
+import mod_wsgi
 from os.path import join, dirname
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.local')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.%s' % mod_wsgi.process_group)
 
 import site
 site.addsitedir(join(dirname(dirname(dirname(__file__))), "env", "lib", "python2.7","site-packages"))
