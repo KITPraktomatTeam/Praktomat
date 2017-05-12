@@ -23,7 +23,7 @@ def validate_mat_number(value):
 class User(BasicUser):
 	# all fields need to be null-able in order to create user
 	tutorial = models.ForeignKey('Tutorial', null=True, blank=True, help_text = _("The tutorial the student belongs to."))
-	mat_number = models.IntegerField( null=True, blank=True, validators=[validate_mat_number]) # special blank and unique validation in forms
+	mat_number = models.CharField(null=True, blank=True, max_length=100, validators=[validate_mat_number])  # special blank and unique validation in forms
 	final_grade = models.CharField( null=True, blank=True, max_length=100,  help_text = _('The final grade for the whole class.'))
 	programme = models.CharField(null=True, blank=True, max_length=100, help_text = _('The programme the student is enlisted in.'))
 	activation_key=models.CharField(_('activation key'), max_length=40, editable=False)
