@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import os
 from os.path import join, dirname
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings.local'
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.local')
 
 import site
 site.addsitedir(join(dirname(dirname(dirname(__file__))), "env", "lib", "python2.7","site-packages"))
