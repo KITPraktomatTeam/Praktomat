@@ -90,6 +90,8 @@ def shib_login(request):
 			last_login=datetime.datetime.now())
                     user_group = Group.objects.get(name='User')
                     user.groups.add(user_group)
+                    if get_settings().account_manual_validation:
+                        user.is_active = False
                 else:
                     return render_forbidden('registration/shib_not_allowed.html',
 								  context,
