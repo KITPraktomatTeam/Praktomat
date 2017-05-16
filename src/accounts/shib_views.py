@@ -85,6 +85,12 @@ def shib_login(request):
                     raise User.DoesNotExist
             except:
                 if get_settings().new_users_via_sso:
+                    if get_settings().deny_registration_from < datetime.datetime.now():
+                        extra_context = {}
+                        extra_context['deny_registration_from'] = get_settings().deny_registration_from
+                        extra_context['admins'] = User.objects.filter(is_superuser=True)
+                        extra_context['trainers'] = Group.objects.get(name="Trainer").user_set.all()
+                        return render_to_response('registration/registration_form.html', extra_context, context_instance=RequestContext(request))
                     user = User.objects.create_user(
 			attr[settings.SHIB_USERNAME], '',
 			last_login=datetime.datetime.now())
