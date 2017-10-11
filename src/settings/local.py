@@ -19,6 +19,7 @@ match = re.match(r'''
 	(?P<birap>birap_)?
 	(?P<tba>tba_)?
 	(?P<mlfds>mlfds_)?
+	(?P<pp>pp_)?
 	(?P<year>\d+)_
 	(?P<semester>WS|SS)
 	(?P<abschluss>_Abschluss)?
@@ -35,6 +36,8 @@ if match:
 		SITE_NAME = 'MLFDS '
 	elif match.group('tba') is not None:
 		SITE_NAME = 'Theorembeweiser '
+	elif match.group('pp') is not None:
+		SITE_NAME = 'Programmierparadigmen '
 	else:
 		SITE_NAME = 'Programmieren '
 
