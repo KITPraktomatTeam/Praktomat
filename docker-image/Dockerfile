@@ -5,6 +5,7 @@ MAINTAINER Martin Hecker <martin.hecker@kit.edu>
 RUN echo "deb http://http.debian.net/debian jessie-backports main" > /etc/apt/sources.list.d/jessie-backports.list
 RUN apt-get --yes update
 RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
+RUN apt-get install --yes -t jessie-backports ca-certificates-java
 RUN apt-get install --yes openjdk-8-jdk junit junit4 dejagnu gcj-jdk && apt-get clean
 RUN update-java-alternatives -s java-1.8.0-openjdk
 
@@ -33,13 +34,14 @@ RUN pip3 install numdifftools
 
 # Install Isabelle2016
 RUN apt-get install --yes curl                                    && apt-get clean
-RUN curl http://isabelle.in.tum.de/dist/Isabelle2016_app.tar.gz | tar -C /opt -xz
-RUN ln -s /opt/Isabelle2016/bin/isabelle /usr/local/bin
+RUN curl http://isabelle.in.tum.de/dist/Isabelle2017_app.tar.gz | tar -C /opt -xz
+RUN ln -s /opt/Isabelle2017/bin/isabelle /usr/local/bin
 RUN isabelle build -sbv HOL
 
 
 
 ###################SCALA###################
+RUN apt-get install --yes wget && apt-get clean
 
 ENV SCALA_VERSION 2.11.7
 ENV SBT_VERSION 0.13.12
@@ -57,6 +59,14 @@ RUN dpkg -i scala-$SCALA_VERSION.deb
 RUN sbt
 
 #########################################
+
+
+###################GHC###################
+
+RUN apt-get install --yes ghc libghc-test-framework-dev libghc-test-framework-hunit-dev libghc-test-framework-quickcheck2-dev
+
+#########################################
+
 
 RUN echo "praktomat:x:1001:1001:,,,:/home/praktomat:/bin/bash" >> /etc/passwd
 RUN echo "praktomat:x:1001:tester" >> /etc/group
