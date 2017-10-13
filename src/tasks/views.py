@@ -35,9 +35,13 @@ def taskList(request):
 
 	attestations = []
 	expired_Tasks = Task.objects.filter(submission_date__lt = now).order_by('publication_date','submission_date')
+	warning_threshold = 0
 	for task in expired_Tasks:
 		attestation_qs =  Attestation.objects.filter(solution__task = task, published=True, solution__author=request.user)
-		attestations.append((task, attestation_qs.first()))
+		attestation = attestation_qs.first()
+		attestations.append((task, attestation))
+		if attestation or (task.expired() and not task.final_solution(request.user)):
+			warning_threshold += task.warning_threshold
 
 	script = Script.objects.get_or_create(id=1)[0].script
 
@@ -53,7 +57,8 @@ def taskList(request):
                         'show_final_grade': get_settings().final_grades_published,
                         'tutors':tutors,
                         'trainers':trainers,
-                        'script':script
+                        'script':script,
+                        'warning_threshold':warning_threshold,
                 },
                 context_instance=RequestContext(request))
 

@@ -38,6 +38,7 @@ class TaskAdmin(admin.ModelAdmin):
                             ('supported_file_types', 'max_file_size'),
                             'final_grade_rating_scale',
                             'only_trainers_publish',
+                            'warning_threshold',
                             'useful_links',
                         )
 		}),

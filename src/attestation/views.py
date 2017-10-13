@@ -432,14 +432,19 @@ def user_task_attestation_map(users,tasks,only_published=True):
 	
 	rating_list = []
 	for user_id in user_id_list:
+		user = User.objects.get(id=user_id)
 		rating_for_user_list = []
+		threshold = 0
 		for task_id in task_id_list:
+			task = Task.objects.get(id=task_id)
 			try:
 				rating = attestation_dict[task_id,user_id]
 			except KeyError:
 				rating = None
+			if rating or (task.expired() and not task.final_solution(user)):
+				threshold += task.warning_threshold
 			rating_for_user_list.append(rating)
-		rating_list.append((User.objects.get(id=user_id),rating_for_user_list))
+		rating_list.append((user,rating_for_user_list,threshold))
 	
 	return rating_list
 
@@ -508,7 +513,7 @@ def tutorial_overview(request, tutorial_id=None):
 
 	averages     = [0.0 for i in range(len(tasks))]
 	nr_of_grades = [0 for i in range(len(tasks))]
-	for (user,attestations) in rating_list:
+	for (user,attestations,threshold_ignored) in rating_list:
 		averages     = [avg+to_float(att,0.0,None)[0] for (avg,att) in zip(averages,attestations)]
 		nr_of_grades = [n+to_float(att,0,1)[1] for (n,att) in zip(nr_of_grades,attestations)]
 
