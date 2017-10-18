@@ -108,7 +108,7 @@
 		Save the end note recommendation in <i><b>result</b></i> so it can be displayed in the row 'Calculated grade' and on the user index page.
 </p>
 
-	<div id="email"><a href="mailto:?bcc={% for user, attestations in rating_list %}{{user.email}},{% endfor %}"><span class="icon ui-icon-mail-closed"></span>Email all users</a></div>  <div id="export"><a href="{% url "rating_export" %}"><span class="icon ui-icon-extlink"></span>Export as csv (utf-8)</a></div>
+	<div id="email"><a href="mailto:?bcc={% for user, attestations, threshold_ignored in rating_list %}{{user.email}},{% endfor %}"><span class="icon ui-icon-mail-closed"></span>Email all users</a></div>  <div id="export"><a href="{% url "rating_export" %}"><span class="icon ui-icon-extlink"></span>Export as csv (utf-8)</a></div>
 
     {{ final_grade_formset.management_form }}
 	<table class="noLinkHighlight">
