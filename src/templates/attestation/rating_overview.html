@@ -76,6 +76,8 @@
 			$("#calculated_grade_cell"+index).text(result);
 			if (result < parseFloat(all_thresholds[index].text())) {
 				$("#warning"+index).text("Warning");
+			} else {
+				$("#warning"+index).text("");
 			}
 		}
 	}
