@@ -451,7 +451,8 @@ def user_task_attestation_map(users,tasks,only_published=True):
 
 @login_required	
 def rating_overview(request):
-	if not (request.user.is_trainer or request.user.is_superuser):
+	if not (request.user.is_trainer or request.user.is_superuser
+			or (request.user.is_coordinator and request.method != "POST")):
 		return access_denied(request)
 	
 	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date')
@@ -477,7 +478,7 @@ def rating_overview(request):
 		script_form = ScriptForm(instance=script)
 		publish_final_grade_form = PublishFinalGradeForm(instance=get_settings())
 	
-	return render_to_response("attestation/rating_overview.html", {'rating_list':rating_list, 'tasks':tasks, 'final_grade_formset':final_grade_formset, 'script_form':script_form, 'publish_final_grade_form':publish_final_grade_form},	context_instance=RequestContext(request))
+	return render_to_response("attestation/rating_overview.html", {'rating_list':rating_list, 'tasks':tasks, 'final_grade_formset':final_grade_formset, 'script_form':script_form, 'publish_final_grade_form':publish_final_grade_form, 'full_form':(request.user.is_trainer or request.user.is_superuser)},	context_instance=RequestContext(request))
 
 @login_required	
 def tutorial_overview(request, tutorial_id=None):
@@ -527,7 +528,7 @@ def tutorial_overview(request, tutorial_id=None):
 
 @login_required	
 def rating_export(request):
-	if not (request.user.is_trainer or request.user.is_superuser):
+	if not (request.user.is_trainer or request.user.is_coordinator or request.user.is_superuser):
 		return access_denied(request)
 	
 	attestations = Attestation.objects.filter(published=True, solution__plagiarism=False)

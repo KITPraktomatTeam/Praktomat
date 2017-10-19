@@ -19,7 +19,7 @@ class UserAdmin(UserBaseAdmin):
 	model = User
 	
 	# add active status
-	list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'is_trainer', 'is_tutor', 'email', 'date_joined','is_failed_attempt','programme' )
+	list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'is_trainer', 'is_tutor', 'is_coordinator', 'email', 'date_joined','is_failed_attempt','programme' )
 	list_filter = ('groups', 'tutorial', 'is_staff', 'is_superuser', 'is_active','programme')
 	search_fields = ['username', 'first_name', 'last_name', 'mat_number', 'email']
 	date_hierarchy = 'date_joined'
@@ -44,6 +44,10 @@ class UserAdmin(UserBaseAdmin):
 	def is_tutor(self, user):
 		return user.is_tutor
 	is_tutor.boolean = True
+
+	def is_coordinator(self, user):
+		return user.is_coordinator
+	is_coordinator.boolean = True
 
 	def is_failed_attempt(self,user):
 		successfull = [ u for u in User.objects.all().filter(mat_number=user.mat_number) if u.is_active]

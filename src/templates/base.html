@@ -38,7 +38,7 @@
 					/ <a href="{% url "registration_change" %}">Change Account</a>
                     {% endif %}
 					/ <a href="{% url "logout" %}">Log-out</a><br/>
-					{% if user.is_staff or user.is_trainer %}<a href={% url "rating_overview" %}>{% trans "Rating overview"%}</a>
+					{% if user.is_staff or user.is_trainer or user.is_coordinator %}<a href={% url "rating_overview" %}>{% trans "Rating overview"%}</a>
 					{% if user.is_staff %} / <a href="{% url "admin:index" %}">Admin Panel</a>	{%endif%} {%endif%}
 					{% if user.is_tutor %} <a href={% url "tutorial_overview" %}>{% trans "My Tutorial"%}</a>{%endif%}
 				{% else %}
