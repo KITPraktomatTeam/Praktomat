@@ -62,6 +62,8 @@
 		
 		{% include "attestation/rating_scale_items_js_inline.html" %}
 		
+		var warning_emails = "mailto:?bcc=";
+		
 		for (index in all_grades){
 			var grades = all_grades[index];
 			var plagiarism = all_plagiarism[index];
@@ -76,10 +78,14 @@
 			$("#calculated_grade_cell"+index).text(result);
 			if (result < parseFloat(all_thresholds[index].text())) {
 				$("#warning"+index).text("Warning");
+				$("#email"+index).show();
+				warning_emails += $("#email"+index).text() + ",";
 			} else {
 				$("#warning"+index).text("");
+				$("#email"+index).hide();
 			}
 		}
+		$("#warning_emails")[0].href = warning_emails;
 	}
 	
 	function takeAll(){
@@ -123,6 +129,7 @@
 			<th>Final grade</th>
 			<th>Threshold</th>
 			<th>Warnings</th>
+			<th></th>
 		</tr>
 		{% for user, attestations, threshold in rating_list %}
 			<tr class="{% cycle 'odd' 'even' %} user_row">
@@ -155,6 +162,7 @@
 				</td>
 				<td id="threshold{{forloop.counter0}}">{{threshold}}</td>
 				<td id="warning{{forloop.counter0}}" style="font-weight:bold;color:red;"></td>
+				<td id="email{{forloop.counter0}}"><a href="mailto:{{user.email}}">{{user.email}}</a></td>
 			</tr>
 		{% endfor %}
 		<tr>
@@ -163,6 +171,7 @@
 	</table>
 	{{publish_final_grade_form}}
 	<input type="submit" name="submit" value="Save Grades and Script" />
+	<div><a href="a" id="warning_emails">email to users with warnings</a></div>
 </form></div>
 </div>
 {% endblock %}
