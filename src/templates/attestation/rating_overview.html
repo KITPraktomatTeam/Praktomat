@@ -130,6 +130,8 @@
 	<table class="noLinkHighlight">
 		<tr>
 			<th>User</th>
+			<th>MatrNo</th>
+			<th>Programme</th>
 			{% for task in tasks %}
 				<th><div class="heading"><a href="{% url "task_detail" task_id=task.id  %}">{{task.title}}</a></div></th>
 			{% endfor %}
@@ -144,6 +146,8 @@
 		{% for user, attestations, threshold in rating_list %}
 			<tr class="{% cycle 'odd' 'even' %} user_row">
 				<td><a href="mailto:{{user.email}}">{{user.get_full_name}}</a></td>
+				<td>{{user.mat_number}}</td>
+				<td>{{user.programme}}</td>
 				{% for attestation in attestations %}
 				    {% if attestation.solution.plagiarism %}
 							<td class="grade_cell" data-plagiarism="yes"><span class="icon ui-icon-alert icon-red" title="Marked as plagiarism"></span></td>
