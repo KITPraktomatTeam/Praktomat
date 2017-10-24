@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
 from django.core.urlresolvers import reverse
 from django.core import urlresolvers
+from django.forms import formset_factory
 from django.forms.models import modelformset_factory
 from django.db.models import Count, Max, Sum
 from django.db import transaction
@@ -448,13 +449,24 @@ def user_task_attestation_map(users,tasks,only_published=True):
 	
 	return rating_list
 
+class WarningForm(forms.Form):
+	warning = forms.CharField(required=False,
+	                          widget=forms.TextInput(attrs={'readonly':'readonly', 'size':'4','style':'font-weight:bold;color:red'}))
+
+class IdForm(forms.Form):
+	user_id = forms.CharField(required=False,
+	                          widget=forms.HiddenInput())
 
 @login_required	
 def rating_overview(request):
-	if not (request.user.is_trainer or request.user.is_superuser
-			or (request.user.is_coordinator and request.method != "POST")):
+	if not (request.user.is_trainer or request.user.is_superuser or request.user.is_coordinator):
 		return access_denied(request)
+
+	if 'export' in request.POST:
+		return rating_export(request)
 	
+	full_form = request.user.is_trainer or request.user.is_superuser
+
 	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date')
 	users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name')
 	rating_list = user_task_attestation_map(users, tasks)
@@ -462,11 +474,18 @@ def rating_overview(request):
 	FinalGradeFormSet = modelformset_factory(User, fields=('final_grade',), extra=0)
 	# corresponding user to user_id_list in reverse order! important for easy displaying in template
 	user = User.objects.filter(groups__name='User').filter(is_active=True).order_by('-last_name','-first_name')
+	WarningFormSet = formset_factory(WarningForm, extra=len(user))
+	warning_formset = WarningFormSet(prefix='warning')
+	IdFormSet = formset_factory(IdForm, extra=len(user))
+	id_formset = IdFormSet(prefix='id')
 	
 	script = Script.objects.get_or_create(id=1)[0]
 	
 	if request.method == "POST":
-		final_grade_formset = FinalGradeFormSet(request.POST, request.FILES, queryset = user)
+		if not full_form:
+			return access_denied(request)
+			
+		final_grade_formset = FinalGradeFormSet(request.POST, request.FILES, queryset = user, prefix='grade')
 		script_form = ScriptForm(request.POST, instance=script)
 		publish_final_grade_form = PublishFinalGradeForm(request.POST, instance=get_settings())
 		if final_grade_formset.is_valid() and script_form.is_valid() and publish_final_grade_form.is_valid():
@@ -474,11 +493,11 @@ def rating_overview(request):
 			script_form.save()
 			publish_final_grade_form.save()
 	else:
-		final_grade_formset = FinalGradeFormSet(queryset = user)
+		final_grade_formset = FinalGradeFormSet(queryset = user, prefix='grade')
 		script_form = ScriptForm(instance=script)
 		publish_final_grade_form = PublishFinalGradeForm(instance=get_settings())
 	
-	return render_to_response("attestation/rating_overview.html", {'rating_list':rating_list, 'tasks':tasks, 'final_grade_formset':final_grade_formset, 'script_form':script_form, 'publish_final_grade_form':publish_final_grade_form, 'full_form':(request.user.is_trainer or request.user.is_superuser)},	context_instance=RequestContext(request))
+	return render_to_response("attestation/rating_overview.html", {'rating_list':rating_list, 'tasks':tasks, 'final_grade_formset':final_grade_formset, 'warning_formset':warning_formset, 'id_formset':id_formset, 'script_form':script_form, 'publish_final_grade_form':publish_final_grade_form, 'full_form':full_form},	context_instance=RequestContext(request))
 
 @login_required	
 def tutorial_overview(request, tutorial_id=None):
@@ -541,7 +560,21 @@ def rating_export(request):
 	user_id_list = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name').values_list('id', flat=True)
 	
 	task_list = map(lambda task_id:Task.objects.get(id=task_id), task_id_list)	
-	
+
+	WarningFormSet = formset_factory(WarningForm)
+	warning_formset = WarningFormSet(request.POST, request.FILES, prefix='warning')
+	IdFormSet = formset_factory(IdForm)
+	id_formset = IdFormSet(request.POST, request.FILES, prefix='id')
+
+	warning_formset.is_valid()
+	id_formset.is_valid()
+
+	user_warnings = {}
+	for i in range(len(user_id_list)):
+		warning = warning_formset.forms[i].cleaned_data.get('warning','')
+		user_id = id_formset.forms[i].cleaned_data['user_id']
+		user_warnings[user_id] = warning
+
 	rating_list = []
 	for user_id in user_id_list:
 		rating_for_user_list = [User.objects.get(id=user_id)]
@@ -551,7 +584,10 @@ def rating_export(request):
 			except KeyError:
 				rating = None
 			rating_for_user_list.append(rating)
+		rating_for_user_list.append(user_warnings.get(str(user_id),""))
+
 		rating_list.append(rating_for_user_list)
+
 	
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; rating_export.csv'

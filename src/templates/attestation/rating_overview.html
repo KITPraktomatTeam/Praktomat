@@ -80,15 +80,17 @@
 				{% endif %}
 			} catch (e) {
 			}
-			
+
+			warning_field = $("#warning"+index)[0].children[0];
+			user_id = $("#id"+index)[0].getAttribute('user_id');
+			$("#id"+index)[0].children[0].value = user_id;
+
 			$("#calculated_grade_cell"+index).text(result);
 			if (result < parseFloat(all_thresholds[index].text())) {
-				$("#warning"+index).text("Warning");
-				$("#email"+index).show();
-				warning_emails += $("#email"+index).text() + ",";
+				warning_field.value = "Warning";
+				warning_emails += $("#warning"+index)[0].getAttribute('email') + ",";
 			} else {
-				$("#warning"+index).text("");
-				$("#email"+index).hide();
+				warning_field.value = "";
 			}
 		}
 		$("#warning_emails")[0].href = warning_emails;
@@ -124,9 +126,9 @@
 	</p>
 	{% endif %}
 
-	<div id="email"><a href="mailto:?bcc={% for user, attestations, threshold_ignored in rating_list %}{{user.email}},{% endfor %}"><span class="icon ui-icon-mail-closed"></span>Email all users</a></div>  <div id="export"><a href="{% url "rating_export" %}"><span class="icon ui-icon-extlink"></span>Export as csv (utf-8)</a></div>
-
     {{ final_grade_formset.management_form }}
+    {{ warning_formset.management_form }}
+    {{ id_formset.management_form }}
 	<table class="noLinkHighlight">
 		<tr>
 			<th>User</th>
@@ -177,8 +179,16 @@
 				</td>
 				{% endif %}
 				<td id="threshold{{forloop.counter0}}">{{threshold}}</td>
-				<td id="warning{{forloop.counter0}}" style="font-weight:bold;color:red;"></td>
-				<td id="email{{forloop.counter0}}"><a href="mailto:{{user.email}}">{{user.email}}</a></td>
+				<td id="warning{{forloop.counter0}}" email="{{user.email}}">
+					{% for field in warning_formset.forms.pop %}
+						{{ field }}
+					{% endfor %}
+				</td>
+				<td id="id{{forloop.counter0}}" user_id="{{ user.id }}">
+					{% for field in id_formset.forms.pop %}
+						{{ field }}
+					{% endfor %}
+				</td>
 			</tr>
 		{% endfor %}
 		{% if full_form %}
@@ -191,7 +201,11 @@
 	{{publish_final_grade_form}}
 	<input type="submit" name="submit" value="Save Grades and Script" />
 	{% endif %}
-	<div><a href="a" id="warning_emails">email to users with warnings</a></div>
-</form></div>
+	<button name="export" class="no-expand btn btn-default btn-xs">Export as csv (utf-8)</button>
+
+	<div><a href="mailto:?bcc={% for user, a, b in rating_list %}{{user.email}},{% endfor %}"><span class="icon ui-icon-mail-closed"></span>Email all users</a></div>
+	<div><a href="" id="warning_emails"><span class="icon ui-icon-mail-closed"></span>Email to users with warnings</a></div>
+</form>
+</div>
 </div>
 {% endblock %}
