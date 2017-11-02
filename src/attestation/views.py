@@ -590,7 +590,7 @@ def rating_export(request):
 
 	
 	response = HttpResponse(content_type='text/csv')
-	response['Content-Disposition'] = 'attachment; rating_export.csv'
+	response['Content-Disposition'] = 'attachment; filename=rating_export.csv'
 
 	t = loader.get_template('attestation/rating_export.csv')
 	c = Context({'rating_list':rating_list, 'task_list':task_list})
