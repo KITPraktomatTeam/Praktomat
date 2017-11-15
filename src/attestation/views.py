@@ -423,7 +423,9 @@ def user_task_attestation_map(users,tasks,only_published=True):
 		attestations = Attestation.objects.filter( published=True )
 	else:
 		attestations = Attestation.objects.all()
-	
+
+	attestations = attestations.select_related("solution", "solution__task", "solution__author", "final_grade")
+	attestations = attestations.prefetch_related("ratingresult_set")
 	attestation_dict = {} 	#{(task_id,user_id):attestation}
 	for attestation in attestations:
 		attestation_dict[attestation.solution.task_id, attestation.solution.author_id] = attestation
@@ -432,14 +434,13 @@ def user_task_attestation_map(users,tasks,only_published=True):
 	user_id_list = users.values_list('id', flat=True)
 	
 	rating_list = []
-	for user_id in user_id_list:
-		user = User.objects.get(id=user_id)
+	for user in users:
 		rating_for_user_list = []
 		threshold = 0
 		for task_id in task_id_list:
 			task = Task.objects.get(id=task_id)
 			try:
-				rating = attestation_dict[task_id,user_id]
+				rating = attestation_dict[task_id,user.id]
 			except KeyError:
 				rating = None
 			if rating or (task.expired() and not task.final_solution(user)):
@@ -469,6 +470,7 @@ def rating_overview(request):
 
 	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date')
 	users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name')
+	users = users.select_related("user_ptr", "user_ptr__groups__name", "user_ptr__is_active", "user_ptr__user_id")
 	rating_list = user_task_attestation_map(users, tasks)
 		
 	FinalGradeFormSet = modelformset_factory(User, fields=('final_grade',), extra=0)
