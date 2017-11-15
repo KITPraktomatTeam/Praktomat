@@ -469,16 +469,16 @@ def rating_overview(request):
 	full_form = request.user.is_trainer or request.user.is_superuser
 
 	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date')
-	users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name')
+	users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name','id')
+	# corresponding user to user_id_list in reverse order! important for easy displaying in template
+	rev_users = users.reverse()
 	users = users.select_related("user_ptr", "user_ptr__groups__name", "user_ptr__is_active", "user_ptr__user_id")
 	rating_list = user_task_attestation_map(users, tasks)
 		
 	FinalGradeFormSet = modelformset_factory(User, fields=('final_grade',), extra=0)
-	# corresponding user to user_id_list in reverse order! important for easy displaying in template
-	user = User.objects.filter(groups__name='User').filter(is_active=True).order_by('-last_name','-first_name')
-	WarningFormSet = formset_factory(WarningForm, extra=len(user))
+	WarningFormSet = formset_factory(WarningForm, extra=len(rev_users))
 	warning_formset = WarningFormSet(prefix='warning')
-	IdFormSet = formset_factory(IdForm, extra=len(user))
+	IdFormSet = formset_factory(IdForm, extra=len(rev_users))
 	id_formset = IdFormSet(prefix='id')
 	
 	script = Script.objects.get_or_create(id=1)[0]
@@ -487,7 +487,7 @@ def rating_overview(request):
 		if not full_form:
 			return access_denied(request)
 			
-		final_grade_formset = FinalGradeFormSet(request.POST, request.FILES, queryset = user, prefix='grade')
+		final_grade_formset = FinalGradeFormSet(request.POST, request.FILES, queryset = rev_users, prefix='grade')
 		script_form = ScriptForm(request.POST, instance=script)
 		publish_final_grade_form = PublishFinalGradeForm(request.POST, instance=get_settings())
 		if final_grade_formset.is_valid() and script_form.is_valid() and publish_final_grade_form.is_valid():
@@ -495,7 +495,7 @@ def rating_overview(request):
 			script_form.save()
 			publish_final_grade_form.save()
 	else:
-		final_grade_formset = FinalGradeFormSet(queryset = user, prefix='grade')
+		final_grade_formset = FinalGradeFormSet(queryset = rev_users, prefix='grade')
 		script_form = ScriptForm(instance=script)
 		publish_final_grade_form = PublishFinalGradeForm(instance=get_settings())
 	
