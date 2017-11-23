@@ -31,9 +31,10 @@ RUN python3 -c "from matplotlib.font_manager import FontManager"
 RUN pip3 install statsmodels
 RUN pip3 install scikit-learn
 RUN pip3 install numdifftools
+RUN pip3 install arch
 
 # Install Isabelle2016
-RUN apt-get install --yes curl                                    && apt-get clean
+RUN apt-get install --yes -t jessie-backports curl                && apt-get clean
 RUN curl http://isabelle.in.tum.de/dist/Isabelle2017_app.tar.gz | tar -C /opt -xz
 RUN ln -s /opt/Isabelle2017/bin/isabelle /usr/local/bin
 RUN isabelle build -sbv HOL
