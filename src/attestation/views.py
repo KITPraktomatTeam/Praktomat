@@ -430,17 +430,13 @@ def user_task_attestation_map(users,tasks,only_published=True):
 	for attestation in attestations:
 		attestation_dict[attestation.solution.task_id, attestation.solution.author_id] = attestation
 	
-	task_id_list = tasks.values_list('id', flat=True)
-	user_id_list = users.values_list('id', flat=True)
-	
 	rating_list = []
 	for user in users:
 		rating_for_user_list = []
 		threshold = 0
-		for task_id in task_id_list:
-			task = Task.objects.get(id=task_id)
+		for task in tasks:
 			try:
-				rating = attestation_dict[task_id,user.id]
+				rating = attestation_dict[task.id,user.id]
 			except KeyError:
 				rating = None
 			if rating or (task.expired() and not task.final_solution(user)):
