@@ -429,6 +429,11 @@ def user_task_attestation_map(users,tasks,only_published=True):
 	attestation_dict = {} 	#{(task_id,user_id):attestation}
 	for attestation in attestations:
 		attestation_dict[attestation.solution.task_id, attestation.solution.author_id] = attestation
+
+	solutions = Solution.objects.filter( final=True )
+	final_solutions_dict = {} 	#{(task_id,user_id):final solution exists?}
+	for solution in solutions:
+		final_solutions_dict[solution.task_id, solution.author_id] = True
 	
 	rating_list = []
 	for user in users:
@@ -439,7 +444,7 @@ def user_task_attestation_map(users,tasks,only_published=True):
 				rating = attestation_dict[task.id,user.id]
 			except KeyError:
 				rating = None
-			if rating or (task.expired() and not task.final_solution(user)):
+			if rating or (task.expired() and not (task.id,user.id) in final_solutions_dict):
 				threshold += task.warning_threshold
 			rating_for_user_list.append(rating)
 		rating_list.append((user,rating_for_user_list,threshold))
