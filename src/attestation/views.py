@@ -424,7 +424,7 @@ def user_task_attestation_map(users,tasks,only_published=True):
 	else:
 		attestations = Attestation.objects.all()
 
-	attestations = attestations.select_related("solution", "solution__task", "solution__author", "final_grade")
+	attestations = attestations.select_related("solution", "final_grade")
 	attestations = attestations.prefetch_related("ratingresult_set")
 	attestation_dict = {} 	#{(task_id,user_id):attestation}
 	for attestation in attestations:
