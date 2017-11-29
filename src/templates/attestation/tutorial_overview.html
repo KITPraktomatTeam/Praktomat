@@ -73,7 +73,7 @@
 		{% for user, attestations, threshold_ignored in rating_list %}
 			<tr class="{% cycle 'odd' 'even' %} user_row">
 				<td><a href="mailto:{{user.email}}">{{user.get_full_name}}</a></td>
-				{% for attestation in attestations %}
+				{% for attestation, has_solution in attestations %}
 				<td class="grade_cell"
 				    {% if attestation.solution.plagiarism %}
 				        data-plagiarism="yes"
@@ -90,7 +90,11 @@
 					{% if attestation.final_grade %}
 						{{attestation.final_grade}}
 					{% else %}
-						-
+						{% if has_solution %}
+							?
+						{% else %}
+							-
+						{% endif %}
 					{% endif %}
 
 				        {% if attestation.solution.plagiarism %}

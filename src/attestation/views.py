@@ -440,13 +440,14 @@ def user_task_attestation_map(users,tasks,only_published=True):
 		rating_for_user_list = []
 		threshold = 0
 		for task in tasks:
+			has_solution = (task.id,user.id) in final_solutions_dict
 			try:
 				rating = attestation_dict[task.id,user.id]
 			except KeyError:
 				rating = None
-			if rating or (task.expired() and not (task.id,user.id) in final_solutions_dict):
+			if rating or (task.expired() and not has_solution):
 				threshold += task.warning_threshold
-			rating_for_user_list.append(rating)
+			rating_for_user_list.append((rating,has_solution))
 		rating_list.append((user,rating_for_user_list,threshold))
 	
 	return rating_list
@@ -537,8 +538,8 @@ def tutorial_overview(request, tutorial_id=None):
 	averages     = [0.0 for i in range(len(tasks))]
 	nr_of_grades = [0 for i in range(len(tasks))]
 	for (user,attestations,threshold_ignored) in rating_list:
-		averages     = [avg+to_float(att,0.0,None)[0] for (avg,att) in zip(averages,attestations)]
-		nr_of_grades = [n+to_float(att,0,1)[1] for (n,att) in zip(nr_of_grades,attestations)]
+		averages     = [avg+to_float(att,0.0,None)[0] for (avg,(att,_)) in zip(averages,attestations)]
+		nr_of_grades = [n+to_float(att,0,1)[1] for (n,(att,_)) in zip(nr_of_grades,attestations)]
 
 	nr_of_grades = [ (n if n>0 else 1) for n in nr_of_grades]
 
