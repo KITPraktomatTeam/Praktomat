@@ -83,3 +83,8 @@ class GenerateRatingScaleForm(forms.Form):
 	end = forms.FloatField(initial=15, help_text="The last RatingScaleItem to generate.")
 	step = forms.FloatField(initial=1, help_text="The step size between the RatingScaleItems.")
 
+
+class FinalGradeOptionForm(ModelForm):
+	class Meta:
+		model = Settings
+		fields = ('final_grades_arithmetic_option', 'final_grades_plagiarism_option')

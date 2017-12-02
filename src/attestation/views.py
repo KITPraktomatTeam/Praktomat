@@ -24,7 +24,7 @@ from solutions.models import Solution, SolutionFile
 from solutions.forms import SolutionFormSet
 from checker.basemodels import CheckerResult, check_solution
 from attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, Script, RatingScale, RatingScaleItem
-from attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm, ScriptForm, PublishFinalGradeForm, GenerateRatingScaleForm
+from attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm, ScriptForm, PublishFinalGradeForm, GenerateRatingScaleForm, FinalGradeOptionForm
 from accounts.models import User, Tutorial
 from accounts.views import access_denied
 from configuration import get_settings
@@ -489,35 +489,40 @@ def rating_overview(request):
 
 	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date')
 	users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name')
-	rating_list = user_task_attestation_map(users, tasks)
-		
+
 	FinalGradeFormSet = modelformset_factory(User, fields=('final_grade',), extra=0)
 	# corresponding user to user_id_list in reverse order! important for easy displaying in template
 	user = User.objects.filter(groups__name='User').filter(is_active=True).order_by('-last_name','-first_name')
-	WarningFormSet = formset_factory(WarningForm, extra=len(user))
-	warning_formset = WarningFormSet(prefix='warning')
-	IdFormSet = formset_factory(IdForm, extra=len(user))
-	id_formset = IdFormSet(prefix='id')
-	
-	script = Script.objects.get_or_create(id=1)[0]
-	
+
 	if request.method == "POST":
 		if not full_form:
 			return access_denied(request)
-			
-		final_grade_formset = FinalGradeFormSet(request.POST, request.FILES, queryset = user, prefix='grade')
-		script_form = ScriptForm(request.POST, instance=script)
-		publish_final_grade_form = PublishFinalGradeForm(request.POST, instance=get_settings())
-		if final_grade_formset.is_valid() and script_form.is_valid() and publish_final_grade_form.is_valid():
-			final_grade_formset.save()
-			script_form.save()
-			publish_final_grade_form.save()
+
+		final_grade_option_form = FinalGradeOptionForm(request.POST, instance=get_settings())
+		if final_grade_option_form.is_valid():
+			final_grade_option_form.save()
+
+		if 'save' in request.POST:
+			# also save final grades
+			final_grade_formset = FinalGradeFormSet(request.POST, request.FILES, queryset=user, prefix='grade')
+			publish_final_grade_form = PublishFinalGradeForm(request.POST, instance=get_settings())
+			if final_grade_formset.is_valid() and publish_final_grade_form.is_valid():
+				final_grade_formset.save()
+				publish_final_grade_form.save()
+		else:
+			final_grade_formset = FinalGradeFormSet(queryset=user, prefix='grade')
+			publish_final_grade_form = PublishFinalGradeForm(instance=get_settings())
+
 	else:
-		final_grade_formset = FinalGradeFormSet(queryset = user, prefix='grade')
-		script_form = ScriptForm(instance=script)
+		# all 3 forms are created without request input
+		final_grade_option_form = FinalGradeOptionForm(instance=get_settings())
+		final_grade_formset = FinalGradeFormSet(queryset=user, prefix='grade')
 		publish_final_grade_form = PublishFinalGradeForm(instance=get_settings())
+
+	rating_list = user_task_attestation_map(users, tasks)
+
+	return render_to_response("attestation/rating_overview.html", {'rating_list': rating_list, 'tasks': tasks, 'final_grade_formset': final_grade_formset, 'final_grade_option_form': final_grade_option_form, 'publish_final_grade_form': publish_final_grade_form, 'full_form': full_form}, context_instance=RequestContext(request))
 	
-	return render_to_response("attestation/rating_overview.html", {'rating_list':rating_list, 'tasks':tasks, 'final_grade_formset':final_grade_formset, 'warning_formset':warning_formset, 'id_formset':id_formset, 'script_form':script_form, 'publish_final_grade_form':publish_final_grade_form, 'full_form':full_form},	context_instance=RequestContext(request))
 
 @login_required	
 def tutorial_overview(request, tutorial_id=None):
@@ -553,7 +558,7 @@ def tutorial_overview(request, tutorial_id=None):
 
 	averages     = [0.0 for i in range(len(tasks))]
 	nr_of_grades = [0 for i in range(len(tasks))]
-	for (user,attestations,threshold_ignored) in rating_list:
+	for (user,attestations,threshold_ignored,calculated_grade) in rating_list:
 		averages     = [avg+to_float(att,0.0,None)[0] for (avg,att) in zip(averages,attestations)]
 		nr_of_grades = [n+to_float(att,0,1)[1] for (n,att) in zip(nr_of_grades,attestations)]
 
