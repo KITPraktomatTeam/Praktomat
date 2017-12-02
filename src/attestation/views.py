@@ -431,11 +431,17 @@ def user_task_attestation_map(users,tasks,only_published=True):
 	task_id_list = tasks.values_list('id', flat=True)
 	user_id_list = users.values_list('id', flat=True)
 	
+	settings = get_settings()
+	arithmetic_option = settings.final_grades_arithmetic_option
+	plagiarism_option = settings.final_grades_plagiarism_option
+
 	rating_list = []
 	for user_id in user_id_list:
 		user = User.objects.get(id=user_id)
 		rating_for_user_list = []
+		grade_sum = 0
 		threshold = 0
+
 		for task_id in task_id_list:
 			task = Task.objects.get(id=task_id)
 			try:
@@ -444,9 +450,23 @@ def user_task_attestation_map(users,tasks,only_published=True):
 				rating = None
 			if rating or (task.expired() and not task.final_solution(user)):
 				threshold += task.warning_threshold
+			if rating is not None:
+				if plagiarism_option == 'WP' or (plagiarism_option == 'NP' and not rating.solution.plagiarism):
+					grade_sum += float(rating.final_grade.name)
+
 			rating_for_user_list.append(rating)
-		rating_list.append((user,rating_for_user_list,threshold))
-	
+
+		if arithmetic_option == 'SUM':
+			calculated_grade = grade_sum
+		else:
+			# in this case: arithmetic_option == 'AVG'
+			if len(rating_for_user_list) == 0:
+				calculated_grade = 0
+			else:
+				calculated_grade = grade_sum / len(rating_for_user_list)
+
+		rating_list.append((user, rating_for_user_list, threshold, calculated_grade))
+
 	return rating_list
 
 class WarningForm(forms.Form):
