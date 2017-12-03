@@ -4,27 +4,21 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
 from django.core.urlresolvers import reverse
-from django.core import urlresolvers
-from django.forms import formset_factory
 from django.forms.models import modelformset_factory
-from django.db.models import Count, Max, Sum
+from django.db.models import Count
 from django.db import transaction
 from django.contrib.auth.models import Group
 from django.views.decorators.cache import cache_control
 from django.http import HttpResponse
 from django.template import loader, Context
-from django.conf import settings
 from django import forms
-from collections import Counter
 import datetime
-import codecs
 
 from tasks.models import Task, HtmlInjector
-from solutions.models import Solution, SolutionFile
-from solutions.forms import SolutionFormSet
-from checker.basemodels import CheckerResult, check_solution
-from attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, Script, RatingScale, RatingScaleItem
-from attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm, ScriptForm, PublishFinalGradeForm, GenerateRatingScaleForm, FinalGradeOptionForm
+from solutions.models import Solution
+from checker.basemodels import check_solution
+from attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, RatingScale, RatingScaleItem
+from attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm, PublishFinalGradeForm, GenerateRatingScaleForm, FinalGradeOptionForm
 from accounts.models import User, Tutorial
 from accounts.views import access_denied
 from configuration import get_settings
@@ -469,14 +463,6 @@ def user_task_attestation_map(users,tasks,only_published=True):
 
 	return rating_list
 
-class WarningForm(forms.Form):
-	warning = forms.CharField(required=False,
-	                          widget=forms.TextInput(attrs={'readonly':'readonly', 'size':'4','style':'font-weight:bold;color:red'}))
-
-class IdForm(forms.Form):
-	user_id = forms.CharField(required=False,
-	                          widget=forms.HiddenInput())
-
 @login_required	
 def rating_overview(request):
 	full_form = request.user.is_trainer or request.user.is_superuser
@@ -498,19 +484,19 @@ def rating_overview(request):
 
 		if 'save' in request.POST:
 			# also save final grades
-			final_grade_formset = FinalGradeFormSet(request.POST, request.FILES, queryset=user, prefix='grade')
+			final_grade_formset = FinalGradeFormSet(request.POST, request.FILES, queryset=user)
 			publish_final_grade_form = PublishFinalGradeForm(request.POST, instance=get_settings())
 			if final_grade_formset.is_valid() and publish_final_grade_form.is_valid():
 				final_grade_formset.save()
 				publish_final_grade_form.save()
 		else:
-			final_grade_formset = FinalGradeFormSet(queryset=user, prefix='grade')
+			final_grade_formset = FinalGradeFormSet(queryset=user)
 			publish_final_grade_form = PublishFinalGradeForm(instance=get_settings())
 
 	else:
 		# all 3 forms are created without request input
 		final_grade_option_form = FinalGradeOptionForm(instance=get_settings())
-		final_grade_formset = FinalGradeFormSet(queryset=user, prefix='grade')
+		final_grade_formset = FinalGradeFormSet(queryset=user)
 		publish_final_grade_form = PublishFinalGradeForm(instance=get_settings())
 
 	rating_list = user_task_attestation_map(users, tasks)
@@ -559,9 +545,8 @@ def tutorial_overview(request, tutorial_id=None):
 	nr_of_grades = [ (n if n>0 else 1) for n in nr_of_grades]
 
 	averages = [a/n for (a,n) in zip(averages,nr_of_grades)]
-	script = Script.objects.get_or_create(id=1)[0]
 	
-	return render_to_response("attestation/tutorial_overview.html", {'other_tutorials':other_tutorials, 'tutorial':tutorial, 'rating_list':rating_list, 'tasks':tasks, 'final_grades_published': get_settings().final_grades_published, 'script':script, 'averages':averages},	context_instance=RequestContext(request))
+	return render_to_response("attestation/tutorial_overview.html", {'other_tutorials':other_tutorials, 'tutorial':tutorial, 'rating_list':rating_list, 'tasks':tasks, 'final_grades_published': get_settings().final_grades_published, 'averages':averages},	context_instance=RequestContext(request))
 
 
 @login_required	

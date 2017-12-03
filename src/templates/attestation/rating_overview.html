@@ -72,24 +72,19 @@
 				<td>{{user.mat_number}}</td>
 				<td>{{user.programme}}</td>
 				{% for attestation in attestations %}
-				    {% if attestation.solution.plagiarism %}
-						<td class="grade_cell" data-plagiarism="yes"><span class="icon ui-icon-alert icon-red" title="Marked as plagiarism"></span></td>
+					{% if attestation.solution.plagiarism %}
+						<td class="grade_cell"><span class="icon ui-icon-alert icon-red" title="Marked as plagiarism"></span></td>
 					{% else %}
 						{% if attestation.final_grade %}
-							<td class="grade_cell" data-score="{{attestation.final_grade}}">
-							{% for ratingresult in attestation.ratingresult_set.all %}
-								<span class="aspect_span" data-aspect="{{ratingresult.rating.aspect.name}}" data-score="{{ratingresult.mark.name}}"></span>
-							{% endfor %}
-							<span title="{% for ratingresult in attestation.ratingresult_set.all %}{{ratingresult.rating.aspect.name}}: {{ratingresult.mark.name}},{% endfor %}">
-							  <a href="{% url "view_attestation" attestation_id=attestation.id%}">{{attestation.final_grade}}</a>
-							</span>
+							<td class="grade_cell">
+                                <a href="{% url "view_attestation" attestation_id=attestation.id%}">{{attestation.final_grade}}</a>
 							</td>
 						{% else %}
 							<td class="grade_cell">-</td>
 						{% endif %}
 					{% endif %}
 				{% endfor %}
-				<td class="calculated_grade_cell" id="calculated_grade_cell{{forloop.counter0}}">
+				<td class="calculated_grade_cell">
 					{{ calculated_grade }}
 				</td>
 				{% if full_form %}
@@ -100,8 +95,8 @@
 					{% endwith %}
 				</td>
 				{% endif %}
-				<td id="threshold{{forloop.counter0}}">{{threshold}}</td>
-				<td id="warning{{forloop.counter0}}" email="{{user.email}}">
+				<td>{{threshold}}</td>
+				<td>
 					{% if calculated_grade < threshold %}
 						<span style="font-weight:bold; color:red"> Warning </span>
 					{% endif %}
@@ -119,7 +114,7 @@
 	<input type="submit" name="save" value="Save Final Grades" />
 	{% endif %}
 
-	<div><a href="mailto:?bcc={% for user, a, b in rating_list %}{{user.email}},{% endfor %}"><span class="icon ui-icon-mail-closed"></span>Email all users</a></div>
+	<div><a href="mailto:?bcc={% for user, _, _, _ in rating_list %}{{user.email}},{% endfor %}"><span class="icon ui-icon-mail-closed"></span>Email all users</a></div>
 	<div><a href="" id="warning_emails"><span class="icon ui-icon-mail-closed"></span>Email to users with warnings</a></div>
 	<div><a href="{% url "rating_export" %}"><span class="icon ui-icon-extlink"></span>Export as csv (utf-8)</a></div>
 </form>

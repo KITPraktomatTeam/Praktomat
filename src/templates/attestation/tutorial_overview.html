@@ -30,7 +30,7 @@
 			<th><div class="heading" id="calculated_grade_heading">Calculated grade</div></th>
 			<th><div class="heading">Final grade</div></th>	
 		</tr>
-		{% for user, attestations, threshold_ignored, calculated_grade in rating_list %}
+		{% for user, attestations, _, _ in rating_list %}
 			<tr class="{% cycle 'odd' 'even' %} user_row">
 				<td><a href="mailto:{{user.email}}">{{user.get_full_name}}</a></td>
 				{% for attestation in attestations %}
@@ -82,7 +82,7 @@
 			</tr> 
 	</table>
 	<br/>
-	<a href="mailto:?bcc={% for user, attestations in rating_list %}{{user.email}},{% endfor %}"><span class="icon ui-icon-mail-closed"></span>Email all users</a>
+	<a href="mailto:?bcc={% for user, _, _, _ in rating_list %}{{user.email}},{% endfor %}"><span class="icon ui-icon-mail-closed"></span>Email all users</a>
 	
 </div>
 </div>
