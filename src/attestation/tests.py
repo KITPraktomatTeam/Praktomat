@@ -66,22 +66,13 @@ class TestTrainerViews(TestCase):
 
 		def test_post_raiting_overview(self):
 			response = self.client.post(reverse('rating_overview'), data={
-								u'script': "",
-								u'grade-TOTAL_FORMS': 1,
-								u'grade-INITIAL_FORMS': 1,
-								u'grade-0-user_ptr': 1,
-								u'grade-0-final_grade:': u'',
+								u'form-TOTAL_FORMS': 1,
+								u'form-INITIAL_FORMS': 1,
+								u'form-0-user_ptr': 1,
+								u'form-0-final_grade:': u'',
 							})
 			self.failUnlessEqual(response.status_code, 200)
 
-		def test_post_raiting_export(self):
-			response = self.client.post(reverse('rating_overview'), data={
-								u'export': u'',
-								u'id-TOTAL_FORMS': 1,
-								u'id-INITIAL_FORMS': 1,
-								u'id-0-user_id:': u'1',
-								u'warning-TOTAL_FORMS': 1,
-								u'warning-INITIAL_FORMS': 1,
-								u'warning-0-warning:': u'Warning',
-							})
+		def test_rating_export(self):
+			response = self.client.get(reverse('rating_export'))
 			self.failUnlessEqual(response.status_code, 200)

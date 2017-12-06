@@ -479,13 +479,10 @@ class IdForm(forms.Form):
 
 @login_required	
 def rating_overview(request):
-	if not (request.user.is_trainer or request.user.is_superuser or request.user.is_coordinator):
-		return access_denied(request)
-
-	if 'export' in request.POST:
-		return rating_export(request)
-	
 	full_form = request.user.is_trainer or request.user.is_superuser
+	
+	if not (full_form or (request.user.is_coordinator and request.method != "POST")):
+		return access_denied(request)
 
 	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date')
 	users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name')
@@ -495,9 +492,6 @@ def rating_overview(request):
 	user = User.objects.filter(groups__name='User').filter(is_active=True).order_by('-last_name','-first_name')
 
 	if request.method == "POST":
-		if not full_form:
-			return access_denied(request)
-
 		final_grade_option_form = FinalGradeOptionForm(request.POST, instance=get_settings())
 		if final_grade_option_form.is_valid():
 			final_grade_option_form.save()
@@ -574,51 +568,15 @@ def tutorial_overview(request, tutorial_id=None):
 def rating_export(request):
 	if not (request.user.is_trainer or request.user.is_coordinator or request.user.is_superuser):
 		return access_denied(request)
-	
-	attestations = Attestation.objects.filter(published=True, solution__plagiarism=False)
-	
-	attestation_dict = {} 	#{(task_id,user_id):rating}
-	for attestation in attestations:
-			attestation_dict[attestation.solution.task_id, attestation.solution.author_id] = attestation
-	
-	task_id_list = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date').values_list('id', flat=True)
-	user_id_list = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name').values_list('id', flat=True)
-	
-	task_list = map(lambda task_id:Task.objects.get(id=task_id), task_id_list)	
 
-	WarningFormSet = formset_factory(WarningForm)
-	warning_formset = WarningFormSet(request.POST, request.FILES, prefix='warning')
-	IdFormSet = formset_factory(IdForm)
-	id_formset = IdFormSet(request.POST, request.FILES, prefix='id')
+	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date')
+	users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name')
+	rating_list = user_task_attestation_map(users, tasks)
 
-	warning_formset.is_valid()
-	id_formset.is_valid()
-
-	user_warnings = {}
-	for i in range(len(user_id_list)):
-		warning = warning_formset.forms[i].cleaned_data.get('warning','')
-		user_id = id_formset.forms[i].cleaned_data['user_id']
-		user_warnings[user_id] = warning
-
-	rating_list = []
-	for user_id in user_id_list:
-		rating_for_user_list = [User.objects.get(id=user_id)]
-		for task_id in task_id_list:
-			try:
-				rating = attestation_dict[task_id,user_id]
-			except KeyError:
-				rating = None
-			rating_for_user_list.append(rating)
-		rating_for_user_list.append(user_warnings.get(str(user_id),""))
-
-		rating_list.append(rating_for_user_list)
-
-	
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename=rating_export.csv'
-
 	t = loader.get_template('attestation/rating_export.csv')
-	c = Context({'rating_list':rating_list, 'task_list':task_list})
+	c = Context({'rating_list': rating_list, 'tasks': tasks})
 	#response.write(u'\ufeff') setting utf-8 BOM for Exel doesn't work
 	response.write(t.render(c))
 	return response
