@@ -417,38 +417,43 @@ def user_task_attestation_map(users,tasks,only_published=True):
 		attestations = Attestation.objects.filter( published=True )
 	else:
 		attestations = Attestation.objects.all()
-	
+
+	attestations = attestations.select_related("solution", "final_grade")
+	attestations = attestations.prefetch_related("ratingresult_set")
 	attestation_dict = {} 	#{(task_id,user_id):attestation}
 	for attestation in attestations:
 		attestation_dict[attestation.solution.task_id, attestation.solution.author_id] = attestation
-	
-	task_id_list = tasks.values_list('id', flat=True)
-	user_id_list = users.values_list('id', flat=True)
+
+	solutions = Solution.objects.filter( final=True )
+	final_solutions_dict = {} 	#{(task_id,user_id):final solution exists?}
+	for solution in solutions:
+		final_solutions_dict[solution.task_id, solution.author_id] = True
 	
 	settings = get_settings()
 	arithmetic_option = settings.final_grades_arithmetic_option
 	plagiarism_option = settings.final_grades_plagiarism_option
 
 	rating_list = []
-	for user_id in user_id_list:
-		user = User.objects.get(id=user_id)
+	for user in users:
 		rating_for_user_list = []
 		grade_sum = 0
 		threshold = 0
 
-		for task_id in task_id_list:
-			task = Task.objects.get(id=task_id)
+		for task in tasks:
+			has_solution = (task.id,user.id) in final_solutions_dict
+
 			try:
-				rating = attestation_dict[task_id,user_id]
+				rating = attestation_dict[task.id,user.id]
 			except KeyError:
 				rating = None
-			if rating or (task.expired() and not task.final_solution(user)):
+			if rating or (task.expired() and not has_solution):
 				threshold += task.warning_threshold
+
 			if rating is not None:
 				if plagiarism_option == 'WP' or (plagiarism_option == 'NP' and not rating.solution.plagiarism):
 					grade_sum += float(rating.final_grade.name)
 
-			rating_for_user_list.append(rating)
+			rating_for_user_list.append((rating,has_solution))
 
 		if arithmetic_option == 'SUM':
 			calculated_grade = grade_sum
@@ -471,11 +476,12 @@ def rating_overview(request):
 		return access_denied(request)
 
 	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date')
-	users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name')
+	users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name','id')
+	# corresponding user to user_id_list in reverse order! important for easy displaying in template
+	rev_users = users.reverse()
+	users = users.select_related("user_ptr", "user_ptr__groups__name", "user_ptr__is_active", "user_ptr__user_id")
 
 	FinalGradeFormSet = modelformset_factory(User, fields=('final_grade',), extra=0)
-	# corresponding user to user_id_list in reverse order! important for easy displaying in template
-	user = User.objects.filter(groups__name='User').filter(is_active=True).order_by('-last_name','-first_name')
 
 	if request.method == "POST":
 		final_grade_option_form = FinalGradeOptionForm(request.POST, instance=get_settings())
@@ -484,19 +490,19 @@ def rating_overview(request):
 
 		if 'save' in request.POST:
 			# also save final grades
-			final_grade_formset = FinalGradeFormSet(request.POST, request.FILES, queryset=user)
+			final_grade_formset = FinalGradeFormSet(request.POST, request.FILES, queryset=rev_users)
 			publish_final_grade_form = PublishFinalGradeForm(request.POST, instance=get_settings())
 			if final_grade_formset.is_valid() and publish_final_grade_form.is_valid():
 				final_grade_formset.save()
 				publish_final_grade_form.save()
 		else:
-			final_grade_formset = FinalGradeFormSet(queryset=user)
+			final_grade_formset = FinalGradeFormSet(queryset=rev_users)
 			publish_final_grade_form = PublishFinalGradeForm(instance=get_settings())
 
 	else:
 		# all 3 forms are created without request input
 		final_grade_option_form = FinalGradeOptionForm(instance=get_settings())
-		final_grade_formset = FinalGradeFormSet(queryset=user)
+		final_grade_formset = FinalGradeFormSet(queryset=rev_users)
 		publish_final_grade_form = PublishFinalGradeForm(instance=get_settings())
 
 	rating_list = user_task_attestation_map(users, tasks)
@@ -538,9 +544,10 @@ def tutorial_overview(request, tutorial_id=None):
 
 	averages     = [0.0 for i in range(len(tasks))]
 	nr_of_grades = [0 for i in range(len(tasks))]
-	for (user,attestations,threshold_ignored,calculated_grade) in rating_list:
-		averages     = [avg+to_float(att,0.0,None)[0] for (avg,att) in zip(averages,attestations)]
-		nr_of_grades = [n+to_float(att,0,1)[1] for (n,att) in zip(nr_of_grades,attestations)]
+
+	for (user,attestations,_,_) in rating_list:
+		averages     = [avg+to_float(att,0.0,None)[0] for (avg,(att,_)) in zip(averages,attestations)]
+		nr_of_grades = [n+to_float(att,0,1)[1] for (n,(att,_)) in zip(nr_of_grades,attestations)]
 
 	nr_of_grades = [ (n if n>0 else 1) for n in nr_of_grades]
 

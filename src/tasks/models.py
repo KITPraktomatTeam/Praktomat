@@ -35,6 +35,9 @@ class Task(models.Model):
         only_trainers_publish = models.BooleanField(default=False, help_text = _("Indicates that only trainers may publish attestations. Otherwise, tutors may publish final attestations within their tutorials."))
         jplag_up_to_date = models.BooleanField(default=False, help_text = _("No new solution uploads since the last jPlag run"))
 
+	class Meta:
+		ordering = ['submission_date', 'title']
+
 	def __unicode__(self):
 		return self.title
 

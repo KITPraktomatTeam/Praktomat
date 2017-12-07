@@ -71,8 +71,9 @@
 				<td><a href="mailto:{{user.email}}">{{user.get_full_name}}</a></td>
 				<td>{{user.mat_number}}</td>
 				<td>{{user.programme}}</td>
-				{% for attestation in attestations %}
-					{% if attestation.solution.plagiarism %}
+
+				{% for attestation, has_solution in attestations %}
+				    {% if attestation.solution.plagiarism %}
 						<td class="grade_cell"><span class="icon ui-icon-alert icon-red" title="Marked as plagiarism"></span></td>
 					{% else %}
 						{% if attestation.final_grade %}
@@ -80,7 +81,11 @@
                                 <a href="{% url "view_attestation" attestation_id=attestation.id%}">{{attestation.final_grade}}</a>
 							</td>
 						{% else %}
-							<td class="grade_cell">-</td>
+							{% if has_solution %}
+								<td class="grade_cell">?</td>
+							{% else %}
+								<td class="grade_cell">-</td>
+							{% endif %}
 						{% endif %}
 					{% endif %}
 				{% endfor %}

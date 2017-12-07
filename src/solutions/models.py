@@ -70,10 +70,10 @@ class Solution(models.Model):
                         self.task.need_to_re_run_jplag()
 		super(Solution, self).save(*args, **kwargs) # Call the "real" save() method.	
 	
-	def check_solution(self, run_secret = 0): 
+	def check_solution(self, run_secret = 0, debug_keep_tmp = False):
 		"""Builds and tests this solution."""
 		from checker.basemodels import check_solution
-		check_solution(self, run_secret)
+		check_solution(self, run_secret, debug_keep_tmp)
 
 	def attestations_by(self, user):
 		return self.attestation_set.filter(author=user)
