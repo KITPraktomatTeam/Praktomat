@@ -115,7 +115,7 @@
 	{% endif %}
 
 	<div><a href="mailto:?bcc={% for user, _, _, _ in rating_list %}{{user.email}},{% endfor %}"><span class="icon ui-icon-mail-closed"></span>Email all users</a></div>
-	<div><a href="" id="warning_emails"><span class="icon ui-icon-mail-closed"></span>Email to users with warnings</a></div>
+	<div><a href="mailto:?bcc={% for user, _, threshold, calculated_grade in rating_list %}{% if calculated_grade < threshold %}{{user.email}},{% endif %}{% endfor %}" id="warning_emails"><span class="icon ui-icon-mail-closed"></span>Email to users with warnings</a></div>
 	<div><a href="{% url "rating_export" %}"><span class="icon ui-icon-extlink"></span>Export as csv (utf-8)</a></div>
 </form>
 </div>
