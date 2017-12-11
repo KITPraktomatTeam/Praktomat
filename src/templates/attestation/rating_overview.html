@@ -1,134 +1,55 @@
 {% extends "base.html" %}
 {% load highlight %} {% load i18n  %}
 {% block extrahead %}{{ block.super }}
-<script src="{{STATIC_URL}}frameworks/ace/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
-<script src="{{STATIC_URL}}frameworks/ace/src-min/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
-<script src="{{STATIC_URL}}frameworks/ace/src-min/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
-<script type="text/javascript">	
-	
-	
-	var editor;
+<script type="text/javascript">
 	window.onload = function() {
-		{% if full_form %}
-		$("#editor").html($("#id_script").text())
-		$("#id_script").hide()
-		editor = ace.edit("editor");
-		editor.setTheme("ace/theme/twilight");
-		editor.renderer.setShowPrintMargin(false);
-		var JavaScriptMode = require("ace/mode/javascript").Mode;
-		editor.getSession().setMode(new JavaScriptMode());
-		calculate();
-		$(".calculated_grade_cell").hover(
-										  function () {
-										  $(this).append($("<span class='icon ui-icon-arrowreturnthick-1-e'></span>"));
-										  }, 
-										  function () {
-										  $(this).find("span:last").remove();
-										  }
-										  );
+
+	    $(".calculated_grade_cell").hover(
+			function () {
+				$(this).append($("<span class='icon ui-icon-arrowreturnthick-1-e'></span>"));
+			},
+			function () {
+				$(this).find("span:last").remove();
+			}
+		);
+
 		$(".calculated_grade_cell").click(function () {
-										  $(this).next().find("input[type=text]")[0].value = $(this).text();
-										  });
-		$("input[type=submit]").click(function () {
-									  $("#id_script").text(editor.getSession().getValue());
-									  })
-		{% else %}
-		calculate();
-		{% endif %}
-	};	
-	
-	
-	function calculate(){
-		var all_grades = new Array();
-		var all_plagiarism = new Array();
-		var all_aspects = new Array();
-		var all_thresholds = new Array();
-		$('.user_row').each(function(index) {
-							var grades=new Array();
-							var plagiarism=new Array();
-							var aspects=new Array();
-							var result;
-							$(this).find('.grade_cell').each(function(index) {
-								grades[index] = $(this).data('score');
-								plagiarism[index] = $(this).data('plagiarism') == 'yes';
-								aspects[index] = new Object();
-								$(this).find('.aspect_span').each(function(index_unused) {
-									aspects[index][$(this).data('aspect')] = $(this).data('score');
-								});
-							});
-							all_grades[index] = grades;
-							all_plagiarism[index] = plagiarism;
-							all_aspects[index] = aspects;
-							all_thresholds[index] = $("#threshold"+index);
-							});
-	
-		
-		{% include "attestation/rating_scale_items_js_inline.html" %}
-		
-		var warning_emails = "mailto:?bcc=";
-		
-		for (index in all_grades){
-			var grades = all_grades[index];
-			var plagiarism = all_plagiarism[index];
-			var aspects = all_aspects[index];
-			var result;
-			try {
-				{% if full_form	%}
-				eval(editor.getSession().getValue());
-				{% else %}
-				{{ script_form.script.value }}
-				{% endif %}
-			} catch (e) {
-			}
+			$(this).next().find("input[type=text]")[0].value = $.trim($(this).text());
+		});
 
-			warning_field = $("#warning"+index)[0].children[0];
-			user_id = $("#id"+index)[0].getAttribute('user_id');
-			$("#id"+index)[0].children[0].value = user_id;
+	};
 
-			$("#calculated_grade_cell"+index).text(result);
-			if (result < parseFloat(all_thresholds[index].text())) {
-				warning_field.value = "Warning";
-				warning_emails += $("#warning"+index)[0].getAttribute('email') + ",";
-			} else {
-				warning_field.value = "";
-			}
-		}
-		$("#warning_emails")[0].href = warning_emails;
-	}
-	
 	function takeAll(){
 		$(".calculated_grade_cell").click();
 	}
-	
 </script>
 {% endblock %} 
+
 {% block breadcrumbs %} {{block.super}} > Rating Overview {% endblock %}
 {% block content %}<div id="rating">
 <h2>{% trans "Rating Overview" %}</h2>
 
 
+<form method="post" action="">
+{% csrf_token %}
 
-<div><form method="post" action="">{% csrf_token %}
+{% if full_form %}
 
-	{% if full_form %}
-	<pre id="editor"></pre>
-	
-	{{script_form.script}}
-	<input type="button" id="calculate_button" value="calculate" onClick="calculate()" />
-	<p class="help">
-		This JavaScript will be executed for every user listed below to calculate a proposed end note.
-		This calculation is also shown to the tutors and users.
-		<i><b>grades</b></i> is an Array containing all final grades for one user as Stings.
-		<i><b>plagiarism</b></i> is an Array of booleans, indicating whether the solution was plagiarism.
-		<i><b>ratingScaleItems</b></i> is an array of arrays containing the names of the rating scale items of every task's final grade rating scale.
-		<i><b>aspects</b></i> is a map from additional rating aspects (if any are present, identified by their name) to their value.
-		Save the end note recommendation in <i><b>result</b></i> so it can be displayed in the row 'Calculated grade' and on the user index page.
-	</p>
-	{% endif %}
+		The
+
+		{{ final_grade_option_form.final_grades_arithmetic_option }}
+
+		of all grades
+
+		{{ final_grade_option_form.final_grades_plagiarism_option }}
+
+		plagiarism notes will be calculated as the final grades. <br>
+
+		<input type="submit" value="Calculate" name="calculate" id="calculate_button" /><br>
+{% endif %}
 
     {{ final_grade_formset.management_form }}
-    {{ warning_formset.management_form }}
-    {{ id_formset.management_form }}
+
 	<table class="noLinkHighlight">
 		<tr>
 			<th>User</th>
@@ -145,23 +66,19 @@
 			<th>Warnings</th>
 			<th></th>
 		</tr>
-		{% for user, attestations, threshold in rating_list %}
+		{% for user, attestations, threshold, calculated_grade in rating_list %}
 			<tr class="{% cycle 'odd' 'even' %} user_row">
 				<td><a href="mailto:{{user.email}}">{{user.get_full_name}}</a></td>
 				<td>{{user.mat_number}}</td>
 				<td>{{user.programme}}</td>
+
 				{% for attestation, has_solution in attestations %}
 				    {% if attestation.solution.plagiarism %}
-							<td class="grade_cell" data-plagiarism="yes"><span class="icon ui-icon-alert icon-red" title="Marked as plagiarism"></span></td>
-						{% else %}
+						<td class="grade_cell"><span class="icon ui-icon-alert icon-red" title="Marked as plagiarism"></span></td>
+					{% else %}
 						{% if attestation.final_grade %}
-							<td class="grade_cell" data-score="{{attestation.final_grade}}">
-							{% for ratingresult in attestation.ratingresult_set.all %}
-								<span class="aspect_span" data-aspect="{{ratingresult.rating.aspect.name}}" data-score="{{ratingresult.mark.name}}"></span>
-							{% endfor %}
-							<span title="{% for ratingresult in attestation.ratingresult_set.all %}{{ratingresult.rating.aspect.name}}: {{ratingresult.mark.name}},{% endfor %}">
-							  <a href="{% url "view_attestation" attestation_id=attestation.id%}">{{attestation.final_grade}}</a>
-							</span>
+							<td class="grade_cell">
+                                <a href="{% url "view_attestation" attestation_id=attestation.id%}">{{attestation.final_grade}}</a>
 							</td>
 						{% else %}
 							{% if has_solution %}
@@ -170,10 +87,11 @@
 								<td class="grade_cell">-</td>
 							{% endif %}
 						{% endif %}
-						{% endif %}
-	
+					{% endif %}
 				{% endfor %}
-				<td class="calculated_grade_cell" id="calculated_grade_cell{{forloop.counter0}}"></td>
+				<td class="calculated_grade_cell">
+					{{ calculated_grade }}
+				</td>
 				{% if full_form %}
 				<td>
 					{% with final_grade_formset.forms.pop as form %}
@@ -182,16 +100,11 @@
 					{% endwith %}
 				</td>
 				{% endif %}
-				<td id="threshold{{forloop.counter0}}">{{threshold}}</td>
-				<td id="warning{{forloop.counter0}}" email="{{user.email}}">
-					{% for field in warning_formset.forms.pop %}
-						{{ field }}
-					{% endfor %}
-				</td>
-				<td id="id{{forloop.counter0}}" user_id="{{ user.id }}">
-					{% for field in id_formset.forms.pop %}
-						{{ field }}
-					{% endfor %}
+				<td>{{threshold}}</td>
+				<td>
+					{% if calculated_grade < threshold %}
+						<span style="font-weight:bold; color:red"> Warning </span>
+					{% endif %}
 				</td>
 			</tr>
 		{% endfor %}
@@ -203,13 +116,12 @@
 	</table>
 	{% if full_form %}
 	{{publish_final_grade_form}}
-	<input type="submit" name="submit" value="Save Grades and Script" />
+	<input type="submit" name="save" value="Save Final Grades" />
 	{% endif %}
-	<button name="export" class="no-expand btn btn-default btn-xs">Export as csv (utf-8)</button>
 
-	<div><a href="mailto:?bcc={% for user, a, b in rating_list %}{{user.email}},{% endfor %}"><span class="icon ui-icon-mail-closed"></span>Email all users</a></div>
-	<div><a href="" id="warning_emails"><span class="icon ui-icon-mail-closed"></span>Email to users with warnings</a></div>
+	<div><a href="mailto:?bcc={% for user, _, _, _ in rating_list %}{{user.email}},{% endfor %}"><span class="icon ui-icon-mail-closed"></span>Email all users</a></div>
+	<div><a href="mailto:?bcc={% for user, _, threshold, calculated_grade in rating_list %}{% if calculated_grade < threshold %}{{user.email}},{% endif %}{% endfor %}" id="warning_emails"><span class="icon ui-icon-mail-closed"></span>Email to users with warnings</a></div>
+	<div><a href="{% url "rating_export" %}"><span class="icon ui-icon-extlink"></span>Export as csv (utf-8)</a></div>
 </form>
-</div>
 </div>
 {% endblock %}

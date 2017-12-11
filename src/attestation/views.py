@@ -4,27 +4,21 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
 from django.core.urlresolvers import reverse
-from django.core import urlresolvers
-from django.forms import formset_factory
 from django.forms.models import modelformset_factory
-from django.db.models import Count, Max, Sum
+from django.db.models import Count
 from django.db import transaction
 from django.contrib.auth.models import Group
 from django.views.decorators.cache import cache_control
 from django.http import HttpResponse
 from django.template import loader, Context
-from django.conf import settings
 from django import forms
-from collections import Counter
 import datetime
-import codecs
 
 from tasks.models import Task, HtmlInjector
-from solutions.models import Solution, SolutionFile
-from solutions.forms import SolutionFormSet
-from checker.basemodels import CheckerResult, check_solution
-from attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, Script, RatingScale, RatingScaleItem
-from attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm, ScriptForm, PublishFinalGradeForm, GenerateRatingScaleForm
+from solutions.models import Solution
+from checker.basemodels import check_solution
+from attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, RatingScale, RatingScaleItem
+from attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm, PublishFinalGradeForm, GenerateRatingScaleForm, FinalGradeOptionForm
 from accounts.models import User, Tutorial
 from accounts.views import access_denied
 from configuration import get_settings
@@ -435,73 +429,86 @@ def user_task_attestation_map(users,tasks,only_published=True):
 	for solution in solutions:
 		final_solutions_dict[solution.task_id, solution.author_id] = True
 	
+	settings = get_settings()
+	arithmetic_option = settings.final_grades_arithmetic_option
+	plagiarism_option = settings.final_grades_plagiarism_option
+
 	rating_list = []
 	for user in users:
 		rating_for_user_list = []
+		grade_sum = 0
 		threshold = 0
+
 		for task in tasks:
 			has_solution = (task.id,user.id) in final_solutions_dict
+
 			try:
 				rating = attestation_dict[task.id,user.id]
 			except KeyError:
 				rating = None
 			if rating or (task.expired() and not has_solution):
 				threshold += task.warning_threshold
+
+			if rating is not None:
+				if plagiarism_option == 'WP' or (plagiarism_option == 'NP' and not rating.solution.plagiarism):
+					grade_sum += float(rating.final_grade.name)
+
 			rating_for_user_list.append((rating,has_solution))
-		rating_list.append((user,rating_for_user_list,threshold))
-	
+
+		if arithmetic_option == 'SUM':
+			calculated_grade = grade_sum
+		else:
+			# in this case: arithmetic_option == 'AVG'
+			if len(rating_for_user_list) == 0:
+				calculated_grade = 0
+			else:
+				calculated_grade = grade_sum / len(rating_for_user_list)
+
+		rating_list.append((user, rating_for_user_list, threshold, calculated_grade))
+
 	return rating_list
-
-class WarningForm(forms.Form):
-	warning = forms.CharField(required=False,
-	                          widget=forms.TextInput(attrs={'readonly':'readonly', 'size':'4','style':'font-weight:bold;color:red'}))
-
-class IdForm(forms.Form):
-	user_id = forms.CharField(required=False,
-	                          widget=forms.HiddenInput())
 
 @login_required	
 def rating_overview(request):
-	if not (request.user.is_trainer or request.user.is_superuser or request.user.is_coordinator):
-		return access_denied(request)
-
-	if 'export' in request.POST:
-		return rating_export(request)
-	
 	full_form = request.user.is_trainer or request.user.is_superuser
+	
+	if not (full_form or (request.user.is_coordinator and request.method != "POST")):
+		return access_denied(request)
 
 	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date')
 	users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name','id')
 	# corresponding user to user_id_list in reverse order! important for easy displaying in template
 	rev_users = users.reverse()
 	users = users.select_related("user_ptr", "user_ptr__groups__name", "user_ptr__is_active", "user_ptr__user_id")
-	rating_list = user_task_attestation_map(users, tasks)
-		
+
 	FinalGradeFormSet = modelformset_factory(User, fields=('final_grade',), extra=0)
-	WarningFormSet = formset_factory(WarningForm, extra=len(rev_users))
-	warning_formset = WarningFormSet(prefix='warning')
-	IdFormSet = formset_factory(IdForm, extra=len(rev_users))
-	id_formset = IdFormSet(prefix='id')
-	
-	script = Script.objects.get_or_create(id=1)[0]
-	
+
 	if request.method == "POST":
-		if not full_form:
-			return access_denied(request)
-			
-		final_grade_formset = FinalGradeFormSet(request.POST, request.FILES, queryset = rev_users, prefix='grade')
-		script_form = ScriptForm(request.POST, instance=script)
-		publish_final_grade_form = PublishFinalGradeForm(request.POST, instance=get_settings())
-		if final_grade_formset.is_valid() and script_form.is_valid() and publish_final_grade_form.is_valid():
-			final_grade_formset.save()
-			script_form.save()
-			publish_final_grade_form.save()
+		final_grade_option_form = FinalGradeOptionForm(request.POST, instance=get_settings())
+		if final_grade_option_form.is_valid():
+			final_grade_option_form.save()
+
+		if 'save' in request.POST:
+			# also save final grades
+			final_grade_formset = FinalGradeFormSet(request.POST, request.FILES, queryset=rev_users)
+			publish_final_grade_form = PublishFinalGradeForm(request.POST, instance=get_settings())
+			if final_grade_formset.is_valid() and publish_final_grade_form.is_valid():
+				final_grade_formset.save()
+				publish_final_grade_form.save()
+		else:
+			final_grade_formset = FinalGradeFormSet(queryset=rev_users)
+			publish_final_grade_form = PublishFinalGradeForm(instance=get_settings())
+
 	else:
-		final_grade_formset = FinalGradeFormSet(queryset = rev_users, prefix='grade')
-		script_form = ScriptForm(instance=script)
+		# all 3 forms are created without request input
+		final_grade_option_form = FinalGradeOptionForm(instance=get_settings())
+		final_grade_formset = FinalGradeFormSet(queryset=rev_users)
 		publish_final_grade_form = PublishFinalGradeForm(instance=get_settings())
+
+	rating_list = user_task_attestation_map(users, tasks)
+
+	return render_to_response("attestation/rating_overview.html", {'rating_list': rating_list, 'tasks': tasks, 'final_grade_formset': final_grade_formset, 'final_grade_option_form': final_grade_option_form, 'publish_final_grade_form': publish_final_grade_form, 'full_form': full_form}, context_instance=RequestContext(request))
 	
-	return render_to_response("attestation/rating_overview.html", {'rating_list':rating_list, 'tasks':tasks, 'final_grade_formset':final_grade_formset, 'warning_formset':warning_formset, 'id_formset':id_formset, 'script_form':script_form, 'publish_final_grade_form':publish_final_grade_form, 'full_form':full_form},	context_instance=RequestContext(request))
 
 @login_required	
 def tutorial_overview(request, tutorial_id=None):
@@ -537,67 +544,31 @@ def tutorial_overview(request, tutorial_id=None):
 
 	averages     = [0.0 for i in range(len(tasks))]
 	nr_of_grades = [0 for i in range(len(tasks))]
-	for (user,attestations,threshold_ignored) in rating_list:
+
+	for (user,attestations,_,_) in rating_list:
 		averages     = [avg+to_float(att,0.0,None)[0] for (avg,(att,_)) in zip(averages,attestations)]
 		nr_of_grades = [n+to_float(att,0,1)[1] for (n,(att,_)) in zip(nr_of_grades,attestations)]
 
 	nr_of_grades = [ (n if n>0 else 1) for n in nr_of_grades]
 
 	averages = [a/n for (a,n) in zip(averages,nr_of_grades)]
-	script = Script.objects.get_or_create(id=1)[0]
 	
-	return render_to_response("attestation/tutorial_overview.html", {'other_tutorials':other_tutorials, 'tutorial':tutorial, 'rating_list':rating_list, 'tasks':tasks, 'final_grades_published': get_settings().final_grades_published, 'script':script, 'averages':averages},	context_instance=RequestContext(request))
+	return render_to_response("attestation/tutorial_overview.html", {'other_tutorials':other_tutorials, 'tutorial':tutorial, 'rating_list':rating_list, 'tasks':tasks, 'final_grades_published': get_settings().final_grades_published, 'averages':averages},	context_instance=RequestContext(request))
 
 
 @login_required	
 def rating_export(request):
 	if not (request.user.is_trainer or request.user.is_coordinator or request.user.is_superuser):
 		return access_denied(request)
-	
-	attestations = Attestation.objects.filter(published=True, solution__plagiarism=False)
-	
-	attestation_dict = {} 	#{(task_id,user_id):rating}
-	for attestation in attestations:
-			attestation_dict[attestation.solution.task_id, attestation.solution.author_id] = attestation
-	
-	task_id_list = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date').values_list('id', flat=True)
-	user_id_list = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name').values_list('id', flat=True)
-	
-	task_list = map(lambda task_id:Task.objects.get(id=task_id), task_id_list)	
 
-	WarningFormSet = formset_factory(WarningForm)
-	warning_formset = WarningFormSet(request.POST, request.FILES, prefix='warning')
-	IdFormSet = formset_factory(IdForm)
-	id_formset = IdFormSet(request.POST, request.FILES, prefix='id')
+	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date')
+	users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name')
+	rating_list = user_task_attestation_map(users, tasks)
 
-	warning_formset.is_valid()
-	id_formset.is_valid()
-
-	user_warnings = {}
-	for i in range(len(user_id_list)):
-		warning = warning_formset.forms[i].cleaned_data.get('warning','')
-		user_id = id_formset.forms[i].cleaned_data['user_id']
-		user_warnings[user_id] = warning
-
-	rating_list = []
-	for user_id in user_id_list:
-		rating_for_user_list = [User.objects.get(id=user_id)]
-		for task_id in task_id_list:
-			try:
-				rating = attestation_dict[task_id,user_id]
-			except KeyError:
-				rating = None
-			rating_for_user_list.append(rating)
-		rating_for_user_list.append(user_warnings.get(str(user_id),""))
-
-		rating_list.append(rating_for_user_list)
-
-	
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename=rating_export.csv'
-
 	t = loader.get_template('attestation/rating_export.csv')
-	c = Context({'rating_list':rating_list, 'task_list':task_list})
+	c = Context({'rating_list': rating_list, 'tasks': tasks})
 	#response.write(u'\ufeff') setting utf-8 BOM for Exel doesn't work
 	response.write(t.render(c))
 	return response

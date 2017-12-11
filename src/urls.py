@@ -57,6 +57,7 @@ urlpatterns = patterns('',
 	url(r'^attestation/(?P<attestation_id>\d+)/run_checker', 'attestation.views.attestation_run_checker', name='attestation_run_checker'),
 	url(r'^attestation/(?P<attestation_id>\d+)$', 'attestation.views.view_attestation', name='view_attestation'),
 	url(r'^attestation/rating_overview$', 'attestation.views.rating_overview', name='rating_overview'),
+	url(r'^attestation/rating_export.csv$', 'attestation.views.rating_export', name='rating_export'),
 	
 	url(r'^tutorial/$', 'attestation.views.tutorial_overview', name='tutorial_overview'),
    	url(r'^tutorial/(?P<tutorial_id>\d+)$', 'attestation.views.tutorial_overview', name='tutorial_overview'),
