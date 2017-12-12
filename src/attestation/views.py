@@ -154,7 +154,20 @@ def statistics(request,task_id):
 def daterange(start_date, end_date):
     for n in range((end_date - start_date).days + 1):
         yield start_date + datetime.timedelta(n)
-	
+
+
+def tutor_attestation_stats(task, tutor):
+	stats = {'tutor': tutor,
+             'unattested' : Solution.objects.filter(task = task, final=True, plagiarism = False, attestation = None,author__tutorial__tutors=tutor).count(), 
+             'final': Attestation.objects.filter(solution__task = task,final=True,author=tutor).count(),
+             'nonfinal': Attestation.objects.filter(solution__task = task,final=False,author=tutor).count() }
+
+	stats['attested'] = stats['final']+stats['nonfinal']
+	stats['total']    = stats['final']+stats['nonfinal']+stats['unattested']
+
+	return stats
+
+
 @login_required
 @cache_control(must_revalidate=True, no_cache=True, no_store=True, max_age=0) #reload the page from the server even if the user used the back button
 def attestation_list(request, task_id):
@@ -164,16 +177,12 @@ def attestation_list(request, task_id):
 	task = Task.objects.get(pk=task_id)
 
 	attestation_stats = []
+	no_tutorial_stats = {}
         if request.user.is_trainer:
-		attestation_stats =  [ {'tutor': tutor,
-        	                        'unattested' : Solution.objects.filter(task = task, final=True, plagiarism = False, attestation = None,author__tutorial__tutors=tutor).count(), 
-                	                'final': Attestation.objects.filter(solution__task = task,final=True,author=tutor).count(),
-                        	        'nonfinal': Attestation.objects.filter(solution__task = task,final=False,author=tutor).count() }
+		attestation_stats =  [ tutor_attestation_stats(task, tutor)
 	                              for tutor in User.objects.filter(groups__name="Tutor")]
 
-		for entry in attestation_stats:
-			entry['attested'] = entry['final']+entry['nonfinal']
-			entry['total']    = entry['final']+entry['nonfinal']+entry['unattested']
+		no_tutorial_stats = tutor_attestation_stats(task, None)
 
 
 	tutored_users = User.objects.filter(groups__name="User", is_active=True).order_by('last_name') if request.user.is_trainer or request.user.is_superuser else None
@@ -246,7 +255,8 @@ def attestation_list(request, task_id):
 		 'publishable_tutorial': publishable_tutorial,
 		 'publishable_all': publishable_all,
 		 'show_author': show_author,
-		 'attestation_stats' : attestation_stats}
+		 'attestation_stats' : attestation_stats,
+		 'no_tutorial_stats' : no_tutorial_stats,}
 	return render_to_response("attestation/attestation_list.html", data, context_instance=RequestContext(request))
 
 
