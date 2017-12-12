@@ -63,13 +63,13 @@
 			<h2>Result Overview</h2>
 			<table>
 				<tr><th>Task</th><th>Grade</th><th>Rating Scale</th></tr>
-				{% for attestation, _ in attestations%}
+				{% for task, attestation, has_solution in attestations %}
 					<tr>
-						<td>{{attestation.solution.task}}</td>
+						<td>{{task}}</td>
 						<td class="grade_cell">{% if attestation %}
 							<a href="{% url "view_attestation" attestation_id=attestation.id%}">{{attestation.final_grade}} </a>
-							{%else%}-{%endif%}</td>
-						<td>{{attestation.solution.task.final_grade_rating_scale.name}}</td>
+							{% else %}{% if has_solution %}?{% else %}-{% endif %}{% endif %}</td>
+						<td>{{task.final_grade_rating_scale.name}}</td>
 					</tr>
 				{% endfor %}
 				

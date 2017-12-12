@@ -38,6 +38,7 @@ def taskList(request):
     # we only have a single user here, so the rating_list only contains a single row;
     # this row belongs to that user
 	(_,attestations,threshold,calculated_grade) = user_task_attestation_map([request.user], tasks)[0]
+	attestations = map(lambda a, b: (a,)+b, tasks, attestations)
 
 	def tasksWithSolutions(tasks):
 		return map(lambda t: (t, t.final_solution(request.user)), tasks)
