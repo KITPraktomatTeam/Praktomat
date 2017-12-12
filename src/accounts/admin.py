@@ -152,11 +152,16 @@ admin.site.register(Group, GroupAdmin)
 
 class TutorialAdmin(admin.ModelAdmin):
 	model = Tutorial
-	list_display = ('name', 'tutors_flat',)
+	list_display = ('name', 'view_url', 'tutors_flat',)
 		
 	class Media:
 		css = {
 			"all": ("styles/admin_style.css",)
 		}
-		
+
+	def view_url(self,tutorial):
+		return '<a href="%s">View</a>' % (reverse('tutorial_overview', args=[tutorial.id]))
+	view_url.allow_tags = True
+	view_url.short_description = 'View (Tutor Site)'
+
 admin.site.register(Tutorial, TutorialAdmin)
