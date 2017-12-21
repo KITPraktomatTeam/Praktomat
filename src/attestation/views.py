@@ -454,6 +454,10 @@ def user_task_attestation_map(users,tasks,only_published=True):
 
 			try:
 				rating = attestation_dict[task.id,user.id]
+				if rating.final_grade is None:
+					# rating has no grade, so it is shown as if there was no rating
+					# should only be relevant for unfinished attestations
+					rating = None
 			except KeyError:
 				rating = None
 			if rating or (task.expired() and not has_solution):
