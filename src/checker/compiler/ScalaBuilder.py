@@ -9,7 +9,6 @@ from django.conf import settings
 from checker.basemodels import Checker
 from checker.compiler.Builder import Builder
 from checker.compiler.JavaBuilder import ClassFileGeneratingBuilder
-from django.template import Context
 from django.template.loader import get_template
 
 class ScalaBuilder(ClassFileGeneratingBuilder):
@@ -23,7 +22,7 @@ class ScalaBuilder(ClassFileGeneratingBuilder):
 
     def build_log(self,output,args,filenames):
         t = get_template('checker/compiler/scala_builder_report.html')
-        return t.render(Context({'filenames' : filenames, 'output' : output, 'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm,ps: parm + ' ' + ps,args[1:],'')}))
+        return t.render({'filenames' : filenames, 'output' : output, 'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm,ps: parm + ' ' + ps,args[1:],'')})
 
 from checker.admin import CheckerInline, AlwaysChangedModelForm
 
