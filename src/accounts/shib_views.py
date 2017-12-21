@@ -1,8 +1,8 @@
 import datetime
 
 from django.http import HttpResponseRedirect, HttpResponseForbidden
-from django.template import loader, RequestContext
-from django.shortcuts import render_to_response, resolve_url
+from django.template import loader
+from django.shortcuts import render, resolve_url
 from django.contrib.auth import login
 from django.conf import settings
 from django.db import transaction
@@ -45,7 +45,7 @@ def shib_hello(request):
             context['next'] = request.GET['next']
         context['title'] = "Login via shibboleth"
         context['provider'] = settings.SHIB_PROVIDER
-	return render_to_response('registration/shib_hello.html', context, RequestContext(request))
+	return render(request, 'registration/shib_hello.html', context)
 
 @shibboleth_support_required
 @transaction.atomic
@@ -59,21 +59,15 @@ def shib_login(request):
 	context = {'shib_attrs': attr,
 			   'was_redirected': was_redirected}
 	if error:
-		return render_forbidden('registration/shib_error.html',
-								  context,
-								  context_instance=RequestContext(request))
+		return render_forbidden(request, 'registration/shib_error.html', context)
 	try:
 		username = attr[settings.SHIB_USERNAME]
 		# TODO this should log a misconfiguration.
 	except:
-		return render_forbidden('registration/shib_error.html',
-								  context,
-								  context_instance=RequestContext(request))
+		return render_forbidden(request, 'registration/shib_error.html', context)
 
 	if not attr[settings.SHIB_USERNAME] or attr[settings.SHIB_USERNAME] == '':
-		return render_forbidden('registration/shib_error.html',
-								  context,
-								  context_instance=RequestContext(request))
+		return render_forbidden(request, 'registration/shib_error.html', context)
 
 	try:
 		user = User.objects.get(username=attr[settings.SHIB_USERNAME])
@@ -90,7 +84,7 @@ def shib_login(request):
                         extra_context['deny_registration_from'] = get_settings().deny_registration_from
                         extra_context['admins'] = User.objects.filter(is_superuser=True)
                         extra_context['trainers'] = Group.objects.get(name="Trainer").user_set.all()
-                        return render_to_response('registration/registration_form.html', extra_context, context_instance=RequestContext(request))
+                        return render(request, 'registration/registration_form.html', extra_context)
                     user = User.objects.create_user(
 			attr[settings.SHIB_USERNAME], '',
 			last_login=datetime.datetime.now())
@@ -99,9 +93,7 @@ def shib_login(request):
                     if get_settings().account_manual_validation:
                         user.is_active = False
                 else:
-                    return render_forbidden('registration/shib_not_allowed.html',
-								  context,
-								  context_instance=RequestContext(request))
+                    return render_forbidden(request, 'registration/shib_not_allowed.html', context)
 
 
 	# This needs to be made more general smarter

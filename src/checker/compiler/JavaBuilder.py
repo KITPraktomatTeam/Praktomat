@@ -9,7 +9,6 @@ import string
 from checker.compiler.Builder import Builder
 from django.conf import settings
 from django.template.loader import get_template
-from django.template import Context
 from checker.basemodels import Checker
 
 from utilities.safeexec import execute_arglist
@@ -63,7 +62,7 @@ class JavaBuilder(ClassFileGeneratingBuilder):
 
 	def build_log(self,output,args,filenames):
 		t = get_template('checker/compiler/java_builder_report.html')
-		return t.render(Context({'filenames' : filenames, 'output' : output, 'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm,ps: parm + ' ' + ps,args[1:],'')}))
+		return t.render({'filenames' : filenames, 'output' : output, 'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm,ps: parm + ' ' + ps,args[1:],'')})
 
 from checker.admin import CheckerInline, AlwaysChangedModelForm
 

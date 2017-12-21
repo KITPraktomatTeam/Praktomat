@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.contrib.auth.admin import UserAdmin
 from django.db import models
 from django.db import transaction
@@ -12,6 +12,8 @@ from django.utils.html import format_html
 from tasks.models import Task, MediaFile, HtmlInjector
 from solutions.models import Solution, SolutionFile
 from attestation.admin import RatingAdminInline
+
+import tasks.views
 
 from checker.admin import CheckerInline
 from timeit import default_timer as timer
@@ -84,8 +86,8 @@ class TaskAdmin(admin.ModelAdmin):
 	def get_urls(self):
 		""" Add URL to task import """
 		urls = super(TaskAdmin, self).get_urls()
-		from django.conf.urls import url, patterns
-		my_urls = patterns('', url(r'^import/$', 'tasks.views.import_tasks', name='task_import')) 
+		from django.conf.urls import url
+		my_urls = [url(r'^import/$', tasks.views.import_tasks, name='task_import')]
 		return my_urls + urls
 
         def attestations_url(self,task):

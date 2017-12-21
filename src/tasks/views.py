@@ -5,10 +5,9 @@ import zipfile
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 from django.http import HttpResponseRedirect, HttpResponse
-from django.template.context import RequestContext
 from datetime import datetime
 from django import forms
 from django.core import urlresolvers
@@ -43,7 +42,7 @@ def taskList(request):
 	def tasksWithSolutions(tasks):
 		return map(lambda t: (t, t.final_solution(request.user)), tasks)
 
-	return render_to_response(
+	return render(request,
                 'tasks/task_list.html',
                 {
                         'tasks':tasksWithSolutions(tasks),
@@ -54,8 +53,7 @@ def taskList(request):
                         'trainers':trainers,
                         'threshold':threshold,
                         'calculated_grade':calculated_grade,
-                },
-                context_instance=RequestContext(request))
+                })
 
 @login_required
 def taskDetail(request,task_id):
@@ -65,13 +63,12 @@ def taskDetail(request,task_id):
 		raise Http404
 
 	my_solutions = Task.objects.get(pk=task_id).solution_set.filter(author = request.user)
-        return render_to_response(
+        return render(request,
                 'tasks/task_detail.html',
                 {
                         'task': task,
                         'solutions': my_solutions,
-                },
-                context_instance=RequestContext(request))
+                })
 
 class ImportForm(forms.Form):
 	file = forms.FileField()
@@ -92,7 +89,7 @@ def import_tasks(request):
 				form._errors["file"] = ErrorList([msg]) 			
 	else:
 		form = ImportForm()
-	return render_to_response('admin/tasks/task/import.html', {'form': form, 'title':"Import Task"  }, RequestContext(request))
+	return render(request, 'admin/tasks/task/import.html', {'form': form, 'title':"Import Task"  })
 
 @staff_member_required
 def download_final_solutions(request, task_id):
@@ -133,5 +130,5 @@ def model_solution(request, task_id):
 	else:
 		formset = ModelSolutionFormSet()
 	context = {"formset": formset, "task": task, 'title': "Model Solution", 'is_popup': True, }
-	return render_to_response("admin/tasks/task/model_solution.html", context, context_instance=RequestContext(request))
+	return render(request, "admin/tasks/task/model_solution.html", context)
 
