@@ -27,9 +27,7 @@ class CheckerForm(AlwaysChangedModelForm):
 		#self.fields["_output_flags"].initial = "-o %s"
 		#self.fields["_libs"].initial = ""
 		self.fields["_file_pattern"].initial = r"^[a-zA-Z0-9_]*\.[cC]$"
-	
+
 class CBuilderInline(CheckerInline):
 	model = CBuilder
 	form = CheckerForm
-	
-

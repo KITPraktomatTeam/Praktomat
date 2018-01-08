@@ -10,4 +10,3 @@ def from_settings(request):
 	    'MIRROR' : settings.MIRROR,
 	    'HAS_JPLAG' : hasattr(settings, 'JPLAGJAR'),
 	}
-

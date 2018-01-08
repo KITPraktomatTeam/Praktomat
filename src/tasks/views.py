@@ -34,8 +34,8 @@ def taskList(request):
 		tutors = None
 	trainers = User.objects.filter(groups__name="Trainer")
 
-    # we only have a single user here, so the rating_list only contains a single row;
-    # this row belongs to that user
+	# we only have a single user here, so the rating_list only contains a single row;
+	# this row belongs to that user
 	(_,attestations,threshold,calculated_grade) = user_task_attestation_map([request.user], tasks)[0]
 	attestations = map(lambda a, b: (a,)+b, tasks, attestations)
 
@@ -43,32 +43,32 @@ def taskList(request):
 		return map(lambda t: (t, t.final_solution(request.user)), tasks)
 
 	return render(request,
-                'tasks/task_list.html',
-                {
-                        'tasks':tasksWithSolutions(tasks),
-                        'expired_tasks': tasksWithSolutions(expired_Tasks),
-                        'attestations':attestations,
-                        'show_final_grade': get_settings().final_grades_published,
-                        'tutors':tutors,
-                        'trainers':trainers,
-                        'threshold':threshold,
-                        'calculated_grade':calculated_grade,
-                })
+	              'tasks/task_list.html',
+	              {
+	                  'tasks':tasksWithSolutions(tasks),
+	                  'expired_tasks': tasksWithSolutions(expired_Tasks),
+	                  'attestations':attestations,
+	                  'show_final_grade': get_settings().final_grades_published,
+	                  'tutors':tutors,
+	                  'trainers':trainers,
+	                  'threshold':threshold,
+	                  'calculated_grade':calculated_grade,
+	              })
 
 @login_required
 def taskDetail(request,task_id):
 	task = get_object_or_404(Task,pk=task_id)
 
-        if task.publication_date >= datetime.now() and not request.user.is_trainer:
+	if task.publication_date >= datetime.now() and not request.user.is_trainer:
 		raise Http404
 
 	my_solutions = Task.objects.get(pk=task_id).solution_set.filter(author = request.user)
-        return render(request,
-                'tasks/task_detail.html',
-                {
-                        'task': task,
-                        'solutions': my_solutions,
-                })
+	return render(request,
+	              'tasks/task_detail.html',
+	              {
+	                  'task': task,
+	                  'solutions': my_solutions,
+	              })
 
 class ImportForm(forms.Form):
 	file = forms.FileField()
@@ -76,17 +76,17 @@ class ImportForm(forms.Form):
 @staff_member_required
 def import_tasks(request):
 	""" View in the admin """
-	if request.method == 'POST': 
+	if request.method == 'POST':
 		form = ImportForm(request.POST, request.FILES)
-		if form.is_valid(): 
+		if form.is_valid():
 			try:
 				Task.import_Tasks(form.files['file'], request.user)
-                                messages.success(request, "The import was successfull.")
+				messages.success(request, "The import was successfull.")
 				return HttpResponseRedirect(urlresolvers.reverse('admin:tasks_task_changelist'))
 			except Exception, e:
 				from django.forms.utils import ErrorList
-                                msg = "An Error occured. The import file was propably malformed.: %s" % str(e)
-				form._errors["file"] = ErrorList([msg]) 			
+				msg = "An Error occured. The import file was propably malformed.: %s" % str(e)
+				form._errors["file"] = ErrorList([msg])
 	else:
 		form = ImportForm()
 	return render(request, 'admin/tasks/task/import.html', {'form': form, 'title':"Import Task"  })
@@ -104,31 +104,30 @@ def download_final_solutions(request, task_id):
 	response = HttpResponse(zip_file.read(), content_type="application/zip")
 	response['Content-Disposition'] = 'attachment; filename=FinalSolutions.zip'
 	return response
-	
+
 
 @staff_member_required
 def model_solution(request, task_id):
 	""" View in the admin """
 	task = get_object_or_404(Task,pk=task_id)
-	
-	if request.method == "POST":	
+
+	if request.method == "POST":
 		solution = Solution(task = task, author=request.user)
 		formset = ModelSolutionFormSet(request.POST, request.FILES, instance=solution)
 		if formset.is_valid():
 			try:
-				solution.save(); 
+				solution.save();
 				# no deleting the old solution:
-				# delete will cascade on db level deleting checker results and checker 
+				# delete will cascade on db level deleting checker results and checker
 				# as this isn't easily prevented just keep the old solution around until the task is deleted
-				formset.save()		
+				formset.save()
 				solution.check_solution(request.session)
 				task.model_solution = solution;
 				task.save()
 			except:
-				solution.delete()	# delete files 
+				solution.delete()	# delete files
 				raise				# dont commit db changes
 	else:
 		formset = ModelSolutionFormSet()
 	context = {"formset": formset, "task": task, 'title': "Model Solution", 'is_popup': True, }
 	return render(request, "admin/tasks/task/model_solution.html", context)
-

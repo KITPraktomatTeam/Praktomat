@@ -11,9 +11,9 @@ import mimetypes
 import re
 
 from solutions.models import Solution, SolutionFile
-						
-ziptype_re = re.compile(r'^application/(zip|x-zip|x-zip-compressed|x-compressed)$')	
-tartype_re = re.compile(r'^application/(tar|x-tar|x-tar-compressed)$')	
+
+ziptype_re = re.compile(r'^application/(zip|x-zip|x-zip-compressed|x-compressed)$')
+tartype_re = re.compile(r'^application/(tar|x-tar|x-tar-compressed)$')
 
 for (mimetype,extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
 	mimetypes.add_type(mimetype,extension,strict=True)
@@ -22,7 +22,7 @@ class SolutionFileForm(ModelForm):
 	class Meta:
 		model = SolutionFile
 		exclude = ('mime_type',)
-		
+
 	def clean_file(self):
 		data = self.cleaned_data['file']
 		task = self.cleaned_data['solution'].task
@@ -39,7 +39,7 @@ class SolutionFileForm(ModelForm):
 					if zip.testzip():
 						raise forms.ValidationError(_('The zip file seams to be corrupt.'))
 					if sum(fileinfo.file_size for fileinfo in zip.infolist()) > 1000000:
-						raise forms.ValidationError(_('The zip file is to big.'))	
+						raise forms.ValidationError(_('The zip file is to big.'))
 					for fileinfo in zip.infolist():
 						(type, encoding) = mimetypes.guess_type(fileinfo.filename)
 						ignorred = SolutionFile.ignorred_file_names_re.search(fileinfo.filename)
@@ -77,16 +77,16 @@ class SolutionFileForm(ModelForm):
 					raise
 				except SafeUncompressor.FileTooLarge:
 					raise forms.ValidationError(_('The tar file is to big.'))
- 				except:
+				except:
 					raise forms.ValidationError(_('Uhoh - something unexpected happened.'))
 			if data.size > max_file_size:
 				raise forms.ValidationError(_("The file '%(file)s' is bigger than %(size)iKB which is not suported." %{'file':data.name, 'size':max_file_size_kb}))
 			return data
 
 class MyBaseInlineFormSet(BaseInlineFormSet):
-    def clean(self):
-        super(MyBaseInlineFormSet, self).clean()
-        if not reduce(lambda x,y: x + y.changed_data, self.forms, []):
+	def clean(self):
+		super(MyBaseInlineFormSet, self).clean()
+		if not reduce(lambda x,y: x + y.changed_data, self.forms, []):
 			raise forms.ValidationError(_('You must at least choose one file.'))
 
 SolutionFormSet = inlineformset_factory(Solution, SolutionFile, form=SolutionFileForm, formset=MyBaseInlineFormSet, can_delete=False, extra=3)

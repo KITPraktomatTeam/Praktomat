@@ -19,29 +19,29 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
 
 	environment = os.environ
 	environment.update(environment_variables)
-        if fileseeklimit is not None:
-            fileseeklimitbytes = fileseeklimit * 1024
+	if fileseeklimit is not None:
+		fileseeklimitbytes = fileseeklimit * 1024
 
 	sudo_prefix = ["sudo", "-E", "-u", "tester"]
 
-        if unsafe:
-                command = []
+	if unsafe:
+		command = []
 	elif settings.USEPRAKTOMATTESTER:
 		command = sudo_prefix
 	elif settings.USESAFEDOCKER:
 		command = ["sudo", "safe-docker"]
-                # for safe-docker, we cannot kill it ourselves, due to sudo, so
-                # rely on the timeout provided by safe-docker
-                if timeout is not None:
-                    command += ["--timeout", "%d" % timeout]
-                    # give the time out mechanism below some extra time
-                    timeout += 5
-                if maxmem is not None:
-                    command += ["--memory", "%sm" % maxmem]
+		# for safe-docker, we cannot kill it ourselves, due to sudo, so
+		# rely on the timeout provided by safe-docker
+		if timeout is not None:
+			command += ["--timeout", "%d" % timeout]
+			# give the time out mechanism below some extra time
+			timeout += 5
+		if maxmem is not None:
+			command += ["--memory", "%sm" % maxmem]
 		for d in extradirs:
 			command += ["--dir", d]
 		command += ["--"]
-                # ensure ulimit
+		# ensure ulimit
 		if fileseeklimit:
 			# Doesn’t work yet: http://stackoverflow.com/questions/25789425
 			command += ["bash","-c", 'ulimit -f %d; exec \"$@\"' % fileseeklimit, "ulimit-helper"]
@@ -98,7 +98,3 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
 		oom_ed = True
 
 	return [output, error, process.returncode, timed_out, oom_ed]
-
-
-
-

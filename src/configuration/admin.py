@@ -37,11 +37,11 @@ class SettingsAdmin(admin.ModelAdmin):
                 )
             }),
             ('Attestation Publishing/Viewing', {
-             	'fields': (
-             		'invisible_attestor',
-             		'attestation_reply_to',
-             	)
-			})
+                 'fields': (
+                     'invisible_attestor',
+                     'attestation_reply_to',
+                 )
+            })
         )
 	inlines = [ChunkInline]
 

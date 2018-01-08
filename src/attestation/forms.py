@@ -7,7 +7,7 @@ from django import forms
 
 from attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, SolutionFile
 from configuration.models import Settings
-											
+
 
 class AttestationForm(ModelForm):
 	class Meta:
@@ -18,15 +18,15 @@ class AttestationForm(ModelForm):
 			'private_comment': forms.Textarea(attrs={'cols': 80, 'rows': 10}),
 		}
 
-		
-	def __init__(self, *args, **kwargs): 
-		super(AttestationForm, self).__init__(*args, **kwargs) 
+
+	def __init__(self, *args, **kwargs):
+		super(AttestationForm, self).__init__(*args, **kwargs)
 		final_grade_rating_scale = kwargs['instance'].solution.task.final_grade_rating_scale
 		if final_grade_rating_scale:
 			self.fields['final_grade'].choices = [ (item['id'], item['name']) for item in final_grade_rating_scale.ratingscaleitem_set.values() ]
 		else:
 			del self.fields['final_grade']
-	
+
 class AttestationPreviewForm(ModelForm):
 	class Meta:
 		model = Attestation
@@ -49,18 +49,18 @@ class AnnotatedFileForm(ModelForm):
 		return solution_file
 
 
-		
+
 AnnotatedFileFormSet = inlineformset_factory(Attestation, AnnotatedSolutionFile, form=AnnotatedFileForm, formset=BaseInlineFormSet, can_delete=False, extra=0)
 
 
 class RatingResultForm(ModelForm):
-	def __init__(self, *args, **kwargs): 
+	def __init__(self, *args, **kwargs):
 		super(RatingResultForm, self).__init__(*args, **kwargs)
 		ratingResult = kwargs['instance']
-		self.fields['mark'].label = ratingResult.rating.aspect.name 
-		self.fields['mark'].help_text = ratingResult.rating.aspect.description 
+		self.fields['mark'].label = ratingResult.rating.aspect.name
+		self.fields['mark'].help_text = ratingResult.rating.aspect.description
 		self.fields['mark'].choices = [ (item['id'], item['name']) for item in ratingResult.rating.scale.ratingscaleitem_set.values() ]
-	
+
 	class Meta:
 		model = RatingResult
 		fields=('mark',)

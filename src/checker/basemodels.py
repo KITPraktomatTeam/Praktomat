@@ -54,20 +54,20 @@ It is *required* - it must be passed for submission
 
 	created = models.DateTimeField(auto_now_add=True)
 	order = models.IntegerField(help_text = _('Determines the order in wich the checker will start. Not necessary continuously!'))
-	
+
 	task = models.ForeignKey(Task)
-	
+
 	public = models.BooleanField(default=True, help_text = _('Test results are displayed to the submitter.'))
 	required = models.BooleanField(default=False, help_text = _('The test must be passed to submit the solution.'))
 	always = models.BooleanField(default=True, help_text = _('The test will run on submission time.'))
 	critical = models.BooleanField(default=False, help_text = _('If this test fails, do not display further test results.'))
-	
+
 	results = GenericRelation("CheckerResult") # enables cascade on delete.
-	
+
 	class Meta:
 		abstract = True
 		app_label = 'checker'
-		
+
 	def __unicode__(self):
 		return self.title()
 
@@ -104,8 +104,8 @@ It is *required* - it must be passed for submission
 
 	def requires(self):
 		""" Returns the list of passed Checkers required by this checker.
-		Overloaded by subclasses. """ 
-		return []	
+		Overloaded by subclasses. """
+		return []
 
 	def clean(self):
 		if self.required and (not self.show_publicly(False)): raise ValidationError("Checker is required, but Failure isn't publicly reported to student during submission")
@@ -120,13 +120,13 @@ class CheckerEnvironment:
 		sandbox = settings.SANDBOX_DIR
 		self._tmpdir = file_operations.create_tempfolder(sandbox)
 		# Sources as [(name, content)...]
-		self._sources = []   
-		for file in solution.solutionfile_set.all().order_by('file'): 
+		self._sources = []
+		for file in solution.solutionfile_set.all().order_by('file'):
 			self._sources.append((file.path(),file.content()))
 		# Submitter of this program
-		self._user = solution.author	
+		self._user = solution.author
 		# Executable program
-		self._program = None 
+		self._program = None
 
 		# The Solution
 		self._solution = solution
@@ -147,11 +147,11 @@ class CheckerEnvironment:
 		""" Add source to the list of source files. [(name, content)...] """
 		self._sources.append((path,content))
 
-	
+
 	def user(self):
 		""" Returns the submitter of this program (class User). """
 		return self._user
-	
+
 	def program(self):
 		""" Returns the name of the executable program, if already set. """
 		return self._program
@@ -185,18 +185,18 @@ class CheckerResult(models.Model):
 		- The title of the check.
 		- The log of the run.
 		- The time of the run. """
-	
+
 	from solutions.models import Solution
 	solution = models.ForeignKey(Solution)
-	content_type = models.ForeignKey(ContentType) 
-	object_id = models.PositiveIntegerField() 
-	checker = GenericForeignKey('content_type','object_id') 
-	
+	content_type = models.ForeignKey(ContentType)
+	object_id = models.PositiveIntegerField()
+	checker = GenericForeignKey('content_type','object_id')
+
 	passed = models.BooleanField(default=True,  help_text=_('Indicates whether the test has been passed'))
 	log = models.TextField(help_text=_('Text result of the checker'))
 	creation_date = models.DateTimeField(auto_now_add=True)
 	runtime = models.IntegerField(default=0, help_text=_('Runtime in milliseconds'))
-	
+
 	def title(self):
 		""" Returns the title of the Checker that did run. """
 		return self.checker.title()
@@ -280,17 +280,17 @@ def solution_file_delete(sender, instance, **kwargs):
     except OSError:
         pass
 
-def check_solution(solution, run_all = 0, debug_keep_tmp = True): 
+def check_solution(solution, run_all = 0, debug_keep_tmp = True):
 	"""Builds and tests this solution."""
-	
+
 	# Delete previous results if the checker have already been run
 	solution.checkerresult_set.all().delete()
 	# set up environment
 	env = CheckerEnvironment(solution)
-				
+
 	solution.copySolutionFiles(env.tmpdir())
 	run_checks(solution, env, run_all)
-	
+
 	# Delete temporary directory
 	if not(debug_keep_tmp and settings.DEBUG):
 		try:
@@ -319,15 +319,15 @@ def check_multiple(solutions, run_secret = False, debug_keep_tmp = False):
 	else:
 		check_it = partial(check_with_own_connection_rev, run_secret, debug_keep_tmp)
 
-		pool = Pool(processes=settings.NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL)  # Check n solutions at once 
+		pool = Pool(processes=settings.NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL)  # Check n solutions at once
 		pool.map(check_it, solutions,1)
 		connection.close()
-	
 
-	
-	
 
-def run_checks(solution, env, run_all):		
+
+
+
+def run_checks(solution, env, run_all):
 	"""  """
 
 	passed_checkers = set()
@@ -337,7 +337,7 @@ def run_checks(solution, env, run_all):
 	solution.warnings = False
 	for checker in checkers:
 		if (checker.always or run_all):
-			# Check dependencies -> This requires the right order of the checkers			
+			# Check dependencies -> This requires the right order of the checkers
 			can_run_checker = True
 			for requirement in checker.requires():
 				passed_requirement = False
@@ -346,9 +346,9 @@ def run_checks(solution, env, run_all):
 				can_run_checker = can_run_checker and passed_requirement
 
 			start_time = time.time()
-								
-			if can_run_checker: 
-				# Invoke Checker 
+
+			if can_run_checker:
+				# Invoke Checker
 				if settings.DEBUG or 'test' in sys.argv:
 					result = checker.run(env)
 				else:
@@ -365,7 +365,7 @@ def run_checks(solution, env, run_all):
 				result = checker.create_result(env)
 				result.set_log(u"Checker konnte nicht ausgeführt werden, da benötigte Checker nicht bestanden wurden.")
 				result.set_passed(False)
-				
+
 			elapsed_time = time.time() - start_time
 			result.runtime = int(elapsed_time*1000)
 			result.save()
@@ -375,9 +375,8 @@ def run_checks(solution, env, run_all):
 					solution_accepted = False
 				else:
 					solution.warnings= True
-					
+
 			if result.passed:
 				passed_checkers.add(checker.__class__)
 	solution.accepted = solution_accepted
 	solution.save()
-

@@ -20,19 +20,20 @@ class HaskellBuilder(Builder):
 	_compiler	= settings.GHC
 	_language	= "Haskell"
 	_env            = {}
-        _detected_main  = None
+	_detected_main  = None
 
 
 	def main_module(self, env):
-                if self._detected_main: return self._detected_main
-                raise self.NotFoundError("A module Main containing the function main :: IO () could not be found.")
+		if self._detected_main:
+			return self._detected_main
+		raise self.NotFoundError("A module Main containing the function main :: IO () could not be found.")
 
 	def libs(self):
 		required_libs = super(HaskellBuilder,self).libs()
-                return [x for l in [["-package",lib] for lib in required_libs] for x in l]
+		return [x for l in [["-package",lib] for lib in required_libs] for x in l]
 
 	def flags(self, env):
-                """ Always use -v1, since we grep the output for linked binaries, if any"""
+		""" Always use -v1, since we grep the output for linked binaries, if any"""
 		return (self._flags.split(" ") if self._flags else []) + ["-v1"]
 
 	def build_log(self,output,args,filenames):
@@ -47,14 +48,14 @@ class HaskellBuilder(Builder):
 		args = [self.compiler()] + self.flags(env) + filenames + self.libs()
 		[output,_,_,_,_]  = execute_arglist(args, env.tmpdir(),self.environment())
 
-                has_main = re.search(r"^Linking ([^ ]*) ...$",output,re.MULTILINE)
-                if has_main: self._detected_main = has_main.group(1)
+		has_main = re.search(r"^Linking ([^ ]*) ...$",output,re.MULTILINE)
+		if has_main: self._detected_main = has_main.group(1)
 
 		output = escape(output)
 		output = self.enhance_output(env, output)
 
 		# We mustn't have any warnings.
-		passed = not self.has_warnings(output)	
+		passed = not self.has_warnings(output)
 		log  = self.build_log(output,args,set(filenames).intersection([solutionfile.path() for solutionfile in env.solution().solutionfile_set.all()]))
 
 		# Now that submission was successfully built, try to find the main modules name again
@@ -66,7 +67,7 @@ class HaskellBuilder(Builder):
 
 		result.set_passed(passed)
 		result.set_log(log)
-		return result        
+		return result
 
 from checker.admin import CheckerInline, AlwaysChangedModelForm
 
@@ -78,8 +79,7 @@ class CheckerForm(AlwaysChangedModelForm):
 		self.fields["_output_flags"].initial = ""
 		#self.fields["_libs"].initial = ""
 		self.fields["_file_pattern"].initial = r"^.*\.[hH][sS]$"
-	
+
 class HaskellBuilderInline(CheckerInline):
 	model = HaskellBuilder
 	form = CheckerForm
-	

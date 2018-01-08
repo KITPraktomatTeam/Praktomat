@@ -18,5 +18,3 @@ class Migration(migrations.Migration):
             field=models.CharField(help_text='What the file will be named in the sandbox. If empty, we try to guess the right filename!', max_length=500, blank=True, default=""),
         ),
     ]
-
-

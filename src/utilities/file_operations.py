@@ -26,7 +26,7 @@ def makedirs(path):
 
 
 def create_file(path, content, override=True, binary=False):
-	""" """	
+	""" """
 	dirname = os.path.dirname(path)
 	if not os.path.exists(dirname):
 		makedirs(dirname)
@@ -43,9 +43,9 @@ def create_file(path, content, override=True, binary=False):
 			fd.write(encoding.get_utf8(encoding.get_unicode(content)))
 	if (gid):
 		# chown :praktomat <path>
-		os.chown(path, -1, gid)		
+		os.chown(path, -1, gid)
 		# rwxrwx--- 	access for praktomattester:praktomat
-		os.chmod(path, 0770)			
+		os.chmod(path, 0770)
 
 
 def copy_file(from_path, to_path, to_is_directory=False, override=True, binary=False):
@@ -62,7 +62,7 @@ def create_tempfolder(path):
 	new_tmpdir = tempfile.mkdtemp()
 	if (gid):
 		os.chown(new_tmpdir, -1, gid)
-	os.chmod(new_tmpdir, 0770)	
+	os.chmod(new_tmpdir, 0770)
 	return new_tmpdir
 
 class InvalidZipFile(Exception):
@@ -76,11 +76,11 @@ def unpack_zipfile_to(zipfilename, to_path, override_cb=None, file_cb=None):
 	with the name of the file in the archive as the parameter.
 
 	The file_cb is called for every file, after extracting it.
-	"""	
+	"""
 	if not zipfile.is_zipfile(zipfilename):
 		raise InvalidZipFile("File %s is not a zipfile." % zipfilename)
 	zip = zipfile.ZipFile(zipfilename, 'r')
-	
+
 	if zip.testzip():
 		raise InvalidZipFile("File %s is invalid." % zipfilename)
 

@@ -27,4 +27,3 @@ class Command(BaseCommand):
 			management.call_command('graph_models', all_applications = True, group_models = True, outputfile=join(export_folder,'extended_overview.svg'))
 			management.call_command('graph_models', all_applications = True, group_models = True, outputfile=join(export_folder,'extended_overview.gif'))
 			print 'Successfully updated model graph.'
-		

@@ -49,7 +49,7 @@ def line(content, match):
 		if content[i] == '\n':
 			line_number = line_number + 1
 		i = i + 1
-		
+
 	return (`line_number` + ": <tt>" +
 			escape(content[start_of_line:match.start()]) +
 			"<strong>" +
@@ -60,23 +60,23 @@ def line(content, match):
 
 
 class AnonymityChecker(Checker):
-	
+
 	def title(self):
 		"""Returns the title for this checker category."""
 		# _de("Anonymitaet sicherstellen")
 		return _("Ensure anonymous submission")
-	
+
 	@staticmethod
 	def description():
 		""" Returns a description for this Checker. """
 		#_de(u"Diese Prüfung ist bestanden, wenn alle eingereichten Dateien weder Ihren Vor- noch Ihre Nachnamen enthalten.")
 		return _("This check fails if a submitted file contains your first or last name.")
-	
+
 	def run(self, env):
 		result = self.create_result(env)
 		log = ""
 		passed = 1
-		
+
 		user = env.user()
 
 		for (fullfname, content) in env.sources():
@@ -85,11 +85,11 @@ class AnonymityChecker(Checker):
 			# search for user ID or name
 			regexp = re.compile((word(user.last_name)
 								 + "|" + word(user.first_name) ), re.I)
-			
+
 			match_iter = regexp.finditer(content)
 
 			firstrun = 1
-			
+
 			while 1:
 				try:
 					match = match_iter.next()
@@ -98,28 +98,28 @@ class AnonymityChecker(Checker):
 
 				if firstrun:
 					log += "<H4>" + escape(fullfname) + "</H4>"
-                    #_de("Die Datei enth&auml;lt Ihren Namen oder Ihre Benutzerkennung:")
+					#_de("Die Datei enth&auml;lt Ihren Namen oder Ihre Benutzerkennung:")
 					log += _("The file contains your name or user id:") + "<p>"
 					firstrun = 0
 					passed = 0
-				
+
 				log += line(content, match) + "<br>"
-				
+
 
 		if not passed:
-			# _de("""<p>Praktomat unterstützt 
+			# _de("""<p>Praktomat unterstützt
 			# <em>anonymes Bewerten</em> - der Bewerter kennt nur Ihr
 			# Programm, nicht aber Ihren Namen.  Um anonymes Bewerten zu
 			# ermöglichen, darf Ihr Name nicht im Programmtext auftreten.<p>
-			# Bitte ändern Sie den Programmtext 
+			# Bitte ändern Sie den Programmtext
 			# und versuchen Sie es noch einmal.""")
 			log += _("""<p>Praktomat supports <em>anonymous marking</em>,
 i.e. the person who marks only sees your submission, but not your name or identity.
 To allow anonymous marking, your name and user id is not allowed to appear in your submission.<p>
 Please remove your name and user id and submit again.""")
-			
+
 		result.set_log(log)
-		result.set_passed(passed) 
+		result.set_passed(passed)
 		return result
 
 
@@ -127,9 +127,8 @@ from checker.admin import CheckerInline
 class AnonymityCheckerInline(CheckerInline):
 	model = AnonymityChecker
 fieldsets = (
-        (None, {
-            'fields': ("public"),
-            'description': "This is a set of fields group into a fieldset."
-        }),
-    )
-	
+              (None, {
+                      'fields': ("public"),
+                      'description': "This is a set of fields group into a fieldset."
+              }),
+            )

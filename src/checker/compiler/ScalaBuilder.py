@@ -41,5 +41,3 @@ class CheckerForm(AlwaysChangedModelForm):
 class ScalaBuilderInline(CheckerInline):
     model = ScalaBuilder
     form = CheckerForm
-
-

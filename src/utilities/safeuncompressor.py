@@ -31,7 +31,7 @@ class SafeUncompressor(object):
 			self.format = "bz2"
 			self.bz2obj = bz2.BZ2Decompressor()
 		self.fileobj.seek(0)
-			
+
 
 	def read(self, size):
 		b = [self.buf]

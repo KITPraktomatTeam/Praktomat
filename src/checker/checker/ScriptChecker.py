@@ -19,23 +19,23 @@ class ScriptChecker(Checker):
 	remove = models.CharField(max_length=5000, blank=True, help_text=_("Regular expression describing passages to be removed from the output."))
 	returns_html = models.BooleanField(default= False, help_text=_("If the script doesn't return HTML it will be enclosed in &lt; pre &gt; tags."))
 
-	
+
 	def title(self):
 		""" Returns the title for this checker category. """
 		return self.name
-	
+
 	@staticmethod
 	def description():
 		""" Returns a description for this Checker. """
 		return u"Diese Prüfung wird bestanden, wenn das externe Programm keinen Fehlercode liefert."
-	
+
 
 	def path_relative_to_sandbox(self):
 		filename = self.filename if self.filename else self.shell_script.path
-                return os.path.basename(filename)
+		return os.path.basename(filename)
 
 	def run(self, env):
-		""" Runs tests in a special environment. Here's the actual work. 
+		""" Runs tests in a special environment. Here's the actual work.
 		This runs the check in the environment ENV, returning a CheckerResult. """
 
 		# Setup
@@ -43,7 +43,7 @@ class ScriptChecker(Checker):
 		path = os.path.join(env.tmpdir(),os.path.basename(filename))
 		copy_file(self.shell_script.path, path)
 		os.chmod(path,0750)
-		
+
 		# Run the tests -- execute dumped shell script 'script.sh'
 
 		filenames = [name for (name,content) in env.sources()]
@@ -83,9 +83,9 @@ class ScriptChecker(Checker):
 
 		result.set_log(output,timed_out=timed_out,truncated=truncated,oom_ed=oom_ed)
 		result.set_passed(not exitcode and not timed_out and not oom_ed and not truncated)
-		
+
 		return result
-	
+
 from checker.admin import	CheckerInline
 from django import forms
 from django.contrib import messages
@@ -121,7 +121,7 @@ class WarningScriptCheckerFormSet(forms.BaseInlineFormSet):
 				messages.add_message(self.request, messages.WARNING, "Script File %s does not appear to use UNIX line-endings. Instead it uses: %s" % (script.name, repr(script.newlines)))
 
 			script.close()
-		
+
 		return scriptcheckers
 
 class CopyForm(AlwaysChangedModelForm):
@@ -155,7 +155,3 @@ class ScriptCheckerInline(CheckerInline):
 				return AdminFormset(*args, **kwargs)
 
 		return AdminFormsetWithRequest
-
-
-
-

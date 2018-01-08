@@ -12,7 +12,6 @@ def activate(matfilename):
 			user.save()
 		except ObjectDoesNotExist:
 			print "not found: %d" % matnummer
-			
-#		print user.username
-	f.close()
 
+		#print user.username
+	f.close()

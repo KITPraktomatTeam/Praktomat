@@ -6,18 +6,18 @@ from shutil import rmtree
 
 class TestSuiteRunner(DiscoverRunner):
 	testSuiteUploadRoot = join(settings.UPLOAD_ROOT, 'TestSuite')
-	
+
 	def setup_test_environment(self, **kwargs):
 		""" Change the upload root to not mess up the production folder """
 		super(TestSuiteRunner, self).setup_test_environment(**kwargs)
-		settings.UPLOAD_ROOT = self.testSuiteUploadRoot	
+		settings.UPLOAD_ROOT = self.testSuiteUploadRoot
 		# storage object is lazy and is not updated by simply updating the settings
 		from django.core.files.storage import default_storage
 		default_storage.location = self.testSuiteUploadRoot
-		
+
 	def setup_databases(self, **kwargs):
 		""" Prefill database with some testdata. Rollbacks ensure that the database is in the state after create_test_data().
-		Rollbacks need to be suported by the database otherwise the db will be flushed after every test. 
+		Rollbacks need to be suported by the database otherwise the db will be flushed after every test.
 		This is much quicker than creating everything in setUp() and more flexeble than fixtures as u can use files. """
 		x = super(TestSuiteRunner, self).setup_databases(**kwargs)
 		create_test_data()
@@ -33,16 +33,16 @@ class TestSuiteRunner(DiscoverRunner):
 
 
 class TestCase(DjangoTestCase):
-	
+
 	def assertRedirectsToView(self, response, view):
 		""" Asserts whether the request was redirected to a specifivc view function. """
 		from urlparse import urlparse
 		from django.core.urlresolvers import resolve
-                self.assertTrue(hasattr(response, 'redirect_chain'),
-                    msg="Please use client.get(...,follow=True) with assertRedirectsToView")
-                self.assertTrue(len(response.redirect_chain) > 0,
-                    msg="No redirection found")
-                url = response.redirect_chain[-1][0]
+		self.assertTrue(hasattr(response, 'redirect_chain'),
+		                msg="Please use client.get(...,follow=True) with assertRedirectsToView")
+		self.assertTrue(len(response.redirect_chain) > 0,
+		                msg="No redirection found")
+		url = response.redirect_chain[-1][0]
 		self.assertEquals(resolve(urlparse(url)[2])[0].__name__, view)
 
 
@@ -81,24 +81,24 @@ from django.core.files import File
 
 def create_test_data():
 	""" Fills the test db with objects needed in the unit tests. """
-	
+
 	# Users & Tutorials
 	trainer = User.objects.create_user('trainer', 'trainer@praktomat.com', 'demo')
 	trainer.groups.add(Group.objects.get(name='Trainer'))
 	trainer.is_staff = True
 	trainer.is_superuser = True
 	trainer.save()
-	
+
 	tutor = User.objects.create_user('tutor', 'trainer@praktomat.com', 'demo')
 	tutor.groups.add(Group.objects.get(name='Tutor'))
-	
+
 	tutorial = Tutorial.objects.create(name='Tutorial 1')
 	tutorial.tutors.add(tutor)
-	
+
 	user = User.objects.create_user('user', 'user@praktomat.com', 'demo')
 	user.groups.add(Group.objects.get(name='User'))
 	user.tutorial = tutorial
-        user.mat_number = 11111
+	user.mat_number = 11111
 	user.save()
 
 	# Tasks
@@ -124,12 +124,11 @@ def create_test_data():
                 'GGT',
                 'solutions',
                 'GgT.java'))))
-			
+
 	# Attestation
 	attestation = Attestation.objects.create(solution = solution, author=tutor) # final, published
-	
+
 def dump(obj):
 	""" Kinda like obj.__meta__ but shows more, very usefull for testcase debuging. """
 	for attr in dir(obj):
 		print "obj.%s = %s" % (attr, getattr(obj, attr))
-

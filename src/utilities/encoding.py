@@ -2,7 +2,7 @@
 
 import chardet
 import re
-	
+
 def get_unicode(bytestring):
 	if bytestring:
 		""" Returns guessed unicode representation of file content. """

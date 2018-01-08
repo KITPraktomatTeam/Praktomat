@@ -7,7 +7,7 @@
 
 {% block content %}
 	<h1>{{ account|yesno:_("Activation successful,Activation unsuccessful") }}</h1>
-	
+
 	{% if account %}
 		<p>{% blocktrans %} You have successfully activated your account. You can now login.{% endblocktrans %}</p>
 		<a href="{% url "login" %}">Login ></a>

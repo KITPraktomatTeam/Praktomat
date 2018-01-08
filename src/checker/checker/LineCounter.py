@@ -23,17 +23,17 @@ class LineCounter(Checker):
 		""" Returns the title for this checker category. """
 		# _de("Lexikalische Statistik")
 		return ugettext("Lexical statistics")
-	
+
 	@staticmethod
 	def description():
 		""" Returns a description for this Checker. """
 		# _de(u"Diese Prüfung wird immer bestanden.")
 		return ugettext("This check is always passed.")
-		
+
 	def run(self, env):
 		""" Here's the actual work.	 This runs the check in the environment ENV,
 		returning a CheckerResult. """
-		
+
 		log = ""
 		passed = 1
 
@@ -42,9 +42,9 @@ class LineCounter(Checker):
 		comment_lines = 0
 		code_lines = 0
 		coco_lines = 0
-		
+
 		in_long_comment = 0
-		
+
 		# Here's how to access the sources.
 		for (name, content) in env.sources():
 			assert not in_long_comment
@@ -56,7 +56,7 @@ class LineCounter(Checker):
 			comment_lines_in_file = 0
 			code_lines_in_file = 0
 			coco_lines_in_file = 0
-			
+
 			line_has_comment = 0
 			line_has_code = 0
 
@@ -81,11 +81,11 @@ class LineCounter(Checker):
 					line_has_code = 0
 					in_short_comment = 0
 					continue
-				
+
 				if in_long_comment and la1 == '*' and la2 == "/":
 					in_long_comment = 0
 					continue
-				
+
 				if in_long_comment or in_short_comment:
 					if	la1 in string.digits or la1 in string.letters:
 						line_has_comment = 1
@@ -114,20 +114,20 @@ class LineCounter(Checker):
 				# 			 + `coco_lines_in_file*100 / lines_in_file` + "%).<br>\n")
 				l = ugettext(
 					"{0} lines, including {1} code lines ({2}%), {3} comment lines ({4}%), {5} both ({6}%)."
-					.format(lines_in_file, 
-						code_lines_in_file, 
+					.format(lines_in_file,
+						code_lines_in_file,
 						code_lines_in_file*100 / lines_in_file,
 						comment_lines_in_file,
 						comment_lines_in_file*100 / lines_in_file,
-						coco_lines_in_file, 
+						coco_lines_in_file,
 						coco_lines_in_file*100 / lines_in_file))
 				log = log + (	escape(name) + ": " + l + "<br>\n")
-				
+
 			except ZeroDivisionError:
 				# FIXME
 				log = log + "Line Width Checker (l 178): ZeroDivisionError " + \
 					  " (no comment / code / coco lines in file!)"
-			
+
 			lines = lines + lines_in_file
 			comment_lines = comment_lines + comment_lines_in_file
 			code_lines = code_lines + code_lines_in_file
@@ -161,7 +161,7 @@ class LineCounter(Checker):
 			# FIXME
 			log = log + "Line Width Checker (l 197): ZeroDivisionError " + \
 				  " (no comment / code / coco lines in file!)"
-				
+
 		# Generate the result.
 		result = self.create_result(env)
 		result.set_log(log)

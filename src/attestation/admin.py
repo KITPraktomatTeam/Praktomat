@@ -18,12 +18,12 @@ class RatingScaleAdmin(admin.ModelAdmin):
 
 	class Media:
 		js = (
-			  'frameworks/jquery/jquery.js',
-			  'frameworks/jquery/jquery-ui.js',
-			  'frameworks/jquery/jquery.tinysort.js',
-			  'script/rating_scale_sort.js',
+		      'frameworks/jquery/jquery.js',
+		      'frameworks/jquery/jquery-ui.js',
+		      'frameworks/jquery/jquery.tinysort.js',
+		      'script/rating_scale_sort.js',
 		)
-	
+
 admin.site.register(RatingScale, RatingScaleAdmin)
 
 admin.site.register(RatingAspect)
@@ -34,13 +34,13 @@ class AnnotatedSolutionFileAdminInline(admin.StackedInline):
 	fields = ('content',)
 	extra, max_num  = 0, 0
 	can_delete = False
-	
+
 class RatingResultAdminInline(admin.StackedInline):
 	model = RatingResult
 	fields = ('mark',)
 	extra, max_num  = 0, 0
 	can_delete = False
-	
+
 class AttestationAdmin(admin.ModelAdmin):
 	model = Attestation
 	readonly_fields = ('created','show_solution',)
@@ -67,13 +67,13 @@ class AttestationAdmin(admin.ModelAdmin):
 			kwargs["queryset"] = RatingScaleItem.objects.filter(scale__id=request.obj.solution.task.final_grade_rating_scale.id)
 		return super(AttestationAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
-        def show_solution(self, instance):
+	def show_solution(self, instance):
 		return format_html('<a href="{0}">{1}</a> by <a href="{2}">{3}</a>',
-                    reverse('admin:solutions_solution_change', args=(instance.solution.pk,)),
-                    instance.solution,
-                    reverse('admin:accounts_user_change', args=(instance.solution.author.pk,)),
-                    instance.solution.author,
-                    )
+		                   reverse('admin:solutions_solution_change', args=(instance.solution.pk,)),
+		                   instance.solution,
+		                   reverse('admin:accounts_user_change', args=(instance.solution.author.pk,)),
+		                   instance.solution.author,
+		                  )
 	show_solution.allow_tags = True
 	show_solution.short_description = 'Solution'
 
@@ -87,7 +87,7 @@ class AttestationAdmin(admin.ModelAdmin):
 
 
 
-	
+
 admin.site.register(Attestation, AttestationAdmin)
 
 

@@ -82,18 +82,18 @@ def access_denied(request):
 	res = render(request,
             'access_denied.html',
             {'request_path': request_path})
-        res.status_code = 403
-        return res
+	res.status_code = 403
+	return res
 
 @staff_member_required
 def import_user(request):
 	""" View in the admin """
-	if request.method == 'POST': 
+	if request.method == 'POST':
 		form = ImportForm(request.POST, request.FILES)
-		if form.is_valid(): 
+		if form.is_valid():
 			try:
 				imported_user = User.import_user(form.files['file'])
-                                messages.success(request, "The import was successfull. %i users imported." % imported_user.count())
+				messages.success(request, "The import was successfull. %i users imported." % imported_user.count())
 				if form.cleaned_data['require_reactivation']:
 					for user in [user for user in imported_user if user.is_active]:
 						user.is_active = False
@@ -118,7 +118,7 @@ def import_user(request):
 				raise
 				from django.forms.utils import ErrorList
 				msg = "An Error occured. The import file was propably malformed."
-				form._errors["file"] = ErrorList([msg]) 			
+				form._errors["file"] = ErrorList([msg])
 	else:
 		form = ImportForm()
 	return render(request, 'admin/accounts/user/import.html', {'form': form, 'title':"Import User" })
@@ -126,9 +126,9 @@ def import_user(request):
 @staff_member_required
 def import_tutorial_assignment(request):
 	""" View in the admin """
-	if request.method == 'POST': 
+	if request.method == 'POST':
 		form = ImportTutorialAssignmentForm(request.POST, request.FILES)
-		if form.is_valid(): 
+		if form.is_valid():
 			file = form.files['csv_file']
 			reader = csv.reader(file, delimiter=str(form.cleaned_data['delimiter']), quotechar=str(form.cleaned_data['quotechar']))
 			succeded = failed = 0
@@ -142,7 +142,7 @@ def import_tutorial_assignment(request):
 				except:
 					failed += 1
 			#assert False
-                        messages.warning(request, "%i assignments were imported successfully, %i failed." % (succeded, failed))
+			messages.warning(request, "%i assignments were imported successfully, %i failed." % (succeded, failed))
 			return HttpResponseRedirect(urlresolvers.reverse('admin:accounts_user_changelist'))
 	else:
 		form = ImportTutorialAssignmentForm()
@@ -198,4 +198,3 @@ def deactivated(request,user_id):
 	if user.is_active:
 		return HttpResponse(status=409)
 	return render(request, 'registration/registration_deactivated.html', { 'user': user, })
-

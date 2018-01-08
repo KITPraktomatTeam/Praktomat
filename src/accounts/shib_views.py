@@ -27,7 +27,7 @@ def parse_attributes(META):
 				value = values.split(';')[0]
 			except:
 				value = values
-				
+
 		shib_attrs[name] = value
 		if not value or value == '':
 			if required:
@@ -40,11 +40,11 @@ def render_forbidden(*args, **kwargs):
 
 @shibboleth_support_required
 def shib_hello(request):
-        context = {}
-        if 'next' in request.GET:
-            context['next'] = request.GET['next']
-        context['title'] = "Login via shibboleth"
-        context['provider'] = settings.SHIB_PROVIDER
+	context = {}
+	if 'next' in request.GET:
+		context['next'] = request.GET['next']
+	context['title'] = "Login via shibboleth"
+	context['provider'] = settings.SHIB_PROVIDER
 	return render(request, 'registration/shib_hello.html', context)
 
 @shibboleth_support_required
@@ -100,7 +100,7 @@ def shib_login(request):
 	user.first_name = attr['first_name']          if attr['first_name'] is not None else user.first_name
 	user.last_name = attr['last_name']            if attr['last_name']  is not None else user.last_name
 	user.email = attr['email']                    if attr['email']      is not None else user.email
-	user.mat_number = attr['matriculationNumber'] if attr['matriculationNumber'] is not None else user.mat_number 
+	user.mat_number = attr['matriculationNumber'] if attr['matriculationNumber'] is not None else user.mat_number
 	user.programme  = attr['programme']           if attr['programme']  is not None else user.programme
 	user.save()
 
@@ -111,4 +111,3 @@ def shib_login(request):
 		redirect_url = settings.LOGIN_REDIRECT_URL
 
 	return HttpResponseRedirect(redirect_url)
-

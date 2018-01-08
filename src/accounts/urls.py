@@ -8,7 +8,7 @@ import accounts.views
 from django.contrib import admin
 admin.autodiscover()
 
-# for some reason include('django.contrib.auth.urls') wouldn't work with {% url ... %} aka reverse() 
+# for some reason include('django.contrib.auth.urls') wouldn't work with {% url ... %} aka reverse()
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -32,4 +32,3 @@ urlpatterns = [
 	url(r'^activate/(?P<activation_key>.+)/$', accounts.views.activate, name='registration_activate'),
 	url(r'^deactivated/(?P<user_id>\d+)/$', accounts.views.deactivated, name='registration_deactivated'),
 ]
-

@@ -18,7 +18,7 @@ from configuration import get_settings
 from accounts.models import User
 
 class MyRegistrationForm(UserBaseCreationForm):
-	
+
 	def __init__(self, *args, **kwargs):
 		# post, domaine=None, use_https=None):
 		if 'domain' in kwargs:
@@ -26,23 +26,23 @@ class MyRegistrationForm(UserBaseCreationForm):
 		if 'use_https' in kwargs:
 			self.use_https = kwargs.pop('use_https')
 		super(MyRegistrationForm, self).__init__(*args, **kwargs)
-	
+
 	# overriding modelfields to ensure required fields are provided
 	first_name = forms.CharField(max_length = 30,required=True)
 	last_name = forms.CharField(max_length = 30,required=True)
 	email = forms.EmailField(required=True)
-	
+
 	# adding first and last name, email to the form
 	class Meta:
 		model = User
 		fields = ("username","first_name","last_name","email", "mat_number")
-	
+
 	def clean_email(self):
 		# cleaning the email in the form doesn't validate it in the admin (good for tutors etc.)
 		data = self.cleaned_data['email']
 		email_validation_regex = get_settings().email_validation_regex
 		if email_validation_regex and not re.match(email_validation_regex, data):
-			raise forms.ValidationError("The email you have provided is not valid. It has to be in: " + email_validation_regex)	
+			raise forms.ValidationError("The email you have provided is not valid. It has to be in: " + email_validation_regex)
 		return data
 
 	def clean_mat_number(self):
@@ -61,19 +61,19 @@ class MyRegistrationForm(UserBaseCreationForm):
 	@transaction.atomic
 	def save(self):
 		user = super(MyRegistrationForm, self).save()
-		
+
 		# default group: user
 		user.groups = Group.objects.filter(name='User')
-		 
+
 		# disable user until activated via email
 		user.is_active=False
-		
+
 		user.set_new_activation_key()
 
 		user.mat_number=self.cleaned_data.get("mat_number")
-		
+
 		user.save()
-		
+
 		# Send activation email
 		c = {
 			'email': user.email,
@@ -88,23 +88,23 @@ class MyRegistrationForm(UserBaseCreationForm):
 
 		if get_settings().account_manual_validation:
 			t = loader.get_template('registration/registration_email_manual_to_staff.html')
- 			send_mail(_("Account activation on %s for %s (%s) ") % (settings.SITE_NAME,user.username,unicode(user)), t.render(c), None, [staff.email for staff in User.objects.all().filter(is_staff=True)])
+			send_mail(_("Account activation on %s for %s (%s) ") % (settings.SITE_NAME,user.username,unicode(user)), t.render(c), None, [staff.email for staff in User.objects.all().filter(is_staff=True)])
 
 			t = loader.get_template('registration/registration_email_manual_to_user.html')
- 			send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(c), None, [user.email])
+			send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(c), None, [user.email])
 		else:
 			t = loader.get_template('registration/registration_email.html')
 			send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(c), None, [user.email])
-		
+
 		return user
 
 class UserChangeForm(forms.ModelForm):
-	
+
 	# overriding modelfields to ensure required fields are provided
 	first_name = forms.CharField(max_length = 30,required=True)
 	last_name = forms.CharField(max_length = 30,required=True)
 	#email = forms.EmailField(required=True)
-	
+
 	class Meta:
 		model = User
 		fields = ("first_name","last_name")
@@ -113,13 +113,13 @@ class UserChangeForm(forms.ModelForm):
 class AdminUserCreationForm(UserBaseCreationForm):
 	class Meta:
 		model = User
-                fields = "__all__"
+		fields = "__all__"
 
 
 class AdminUserChangeForm(UserBaseChangeForm):
 	class Meta:
 		model = User
-                fields = "__all__"
+		fields = "__all__"
 
 	def clean(self):
 		# Only if user is in group "User" require a mat number.
@@ -162,8 +162,8 @@ class ImportTutorialAssignmentForm(forms.Form):
 	quotechar = forms.CharField(required=True, max_length = 1, initial = "|", help_text = "A one-character string used to quote fields.")
 	name_coloum = forms.IntegerField(required=True, initial = 0, help_text = "The index of the field containing the name of the tutorial.")
 	mat_coloum = forms.IntegerField(required=True, initial = 1, help_text = "The index of the field containing the mat number of the user.")
-	
-	
+
+
 
 class ImportMatriculationListForm(forms.Form):
     mat_number_file = forms.FileField(required=True, help_text = "A text file consisting of one matriculatoin number per line.")

@@ -15,7 +15,7 @@ class CheckerInline(admin.StackedInline):
 	form = AlwaysChangedModelForm
 	# added checker class to inlinegroup and inlinerelated for js ordering in admin
 	# this is a copy of the django template with only minor changes - keep in sync with new django versions
-	template = "admin/tasks/stacked.html" 
+	template = "admin/tasks/stacked.html"
 
 	def get_fieldsets(self, request, obj=None):
 		""" Get the fields public, required and always on the first line without defining fieldsets in every subclass. This saves a lot of space. """
@@ -26,7 +26,7 @@ class CheckerInline(admin.StackedInline):
 		fields.remove('required')
 		fields.remove('always')
 		fields.remove('critical')
-	        return [(self.model.description(), {'fields':(('public', 'required', 'always', 'critical'),)}),
+		return [(self.model.description(), {'fields':(('public', 'required', 'always', 'critical'),)}),
 						(None, {'fields': fields })]
 
 class CheckerResultAdmin(admin.ModelAdmin):

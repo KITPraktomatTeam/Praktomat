@@ -20,17 +20,17 @@ from timeit import default_timer as timer
 
 admin.autodiscover()
 
-class MediaInline(admin.StackedInline): 
+class MediaInline(admin.StackedInline):
 	model = MediaFile
 	extra = 0
 
-class HtmlInjectorInline(admin.StackedInline): 
+class HtmlInjectorInline(admin.StackedInline):
 	model = HtmlInjector
 	extra = 0
 
 class TaskAdmin(admin.ModelAdmin):
 	model = Task
-        readonly_fields = ('useful_links',)
+	readonly_fields = ('useful_links',)
 	fieldsets = (
 		(None, {
 			'fields': (
@@ -52,7 +52,7 @@ class TaskAdmin(admin.ModelAdmin):
 	save_on_top = True
 	inlines = [MediaInline] + [HtmlInjectorInline] + CheckerInline.__subclasses__() + [ RatingAdminInline]
 	actions = ['export_tasks', 'run_all_checkers']
-	
+
 	formfield_overrides = {
         models.TextField: {'widget': TinyMCE()},
     }
@@ -64,16 +64,16 @@ class TaskAdmin(admin.ModelAdmin):
 				'frameworks/jquery/jquery.tinysort.js',
 				'script/checker-sort.js',
 		)
-	
-	
+
+
 	def export_tasks(self, request, queryset):
 		""" Export Task action """
 		from django.http import HttpResponse
 		response = HttpResponse(Task.export_Tasks(queryset).read(), content_type="application/zip")
 		response['Content-Disposition'] = 'attachment; filename=TaskExport.zip'
 		return response
-		
-	
+
+
 	def run_all_checkers(self, request, queryset):
 		""" Rerun all checker including "not always" action """
 		start = timer()
@@ -90,19 +90,19 @@ class TaskAdmin(admin.ModelAdmin):
 		my_urls = [url(r'^import/$', tasks.views.import_tasks, name='task_import')]
 		return my_urls + urls
 
-        def attestations_url(self,task):
-                return format_html ('<a href="{0}">Attestations (User site)</a>',
-                    reverse('attestation_list', kwargs={'task_id': task.id}))
-        attestations_url.allow_tags = True
-        attestations_url.short_description = 'Attestations'
+	def attestations_url(self,task):
+		return format_html ('<a href="{0}">Attestations (User site)</a>',
+		                    reverse('attestation_list', kwargs={'task_id': task.id}))
+	attestations_url.allow_tags = True
+	attestations_url.short_description = 'Attestations'
 
-        def testupload_url(self,task):
-                return format_html ('<a href="{0}">Test Submission</a>',
-                    reverse('upload_test_solution', kwargs={'task_id': task.id}))
-        testupload_url.allow_tags = True
-        testupload_url.short_description = 'Test Submission'
+	def testupload_url(self,task):
+		return format_html ('<a href="{0}">Test Submission</a>',
+		                    reverse('upload_test_solution', kwargs={'task_id': task.id}))
+	testupload_url.allow_tags = True
+	testupload_url.short_description = 'Test Submission'
 
-        def useful_links(self, instance):
+	def useful_links(self, instance):
 		if instance.id:
 			return format_html (
 			    '<a href="{0}">Attestations (including for-user-submission)</a> • ' +
@@ -112,9 +112,7 @@ class TaskAdmin(admin.ModelAdmin):
 			    )
 		else:
 			return ""
-        useful_links.allow_tags = True
+	useful_links.allow_tags = True
 
 
 admin.site.register(Task, TaskAdmin)
-
-

@@ -53,17 +53,17 @@ class DejaGnu(object):
 
 
 class DejaGnuTester(Checker, DejaGnu):
-	""" Run a test case on the program.  Requires a previous `DejaGnuSetup'. """	
-	
+	""" Run a test case on the program.  Requires a previous `DejaGnuSetup'. """
+
 	name = models.CharField(max_length=100, help_text=_("The name of the Test"))
 	test_case = CheckerFileField(help_text=_(u"In den folgenden DejaGnu-Testfällen werden typischerweise Funktionen aufgerufen, die beim vorherigen Schritt <EM>Tests einrichten</EM> definiert wurden.	 Siehe	auch den Abschnitt <EM>How to write a test case</EM> im <A TARGET=\"_blank\" HREF=\"http://www.gnu.org/manual/dejagnu/\">DejaGnu-Handbuch</A>."))
 
 	def __unicode__(self):
 		return self.name
-	
+
 	def title(self):
 		return self.name
-		
+
 	@staticmethod
 	def description():
 		return u"Diese Prüfung ist bestanden, wenn alle Testfälle zum erwarteten Ergebnis führten."
@@ -74,7 +74,7 @@ class DejaGnuTester(Checker, DejaGnu):
 	# Return 1 if the output is ok
 	def output_ok(self, output):
 		return (RXFAIL.search(output) == None and
-				string.find(output, "runtest completed") >= 0 and 
+				string.find(output, "runtest completed") >= 0 and
 				string.find(output, "non-expected failures") < 0 and
 				string.find(output, "unexpected failures") < 0)
 
@@ -89,7 +89,7 @@ class DejaGnuTester(Checker, DejaGnu):
 
 		# HTMLize it all
 		log = escape(log)
-		
+
 		# Every line that contains a passed message is to be enhanced.
 		log = re.sub(RXPASS, r'\1 <B class="passed"> \2 </B> \3', log)
 		# Every line that contains a failure message is to be enhanced.
@@ -112,8 +112,8 @@ class DejaGnuTester(Checker, DejaGnu):
 			result.set_log("<pre><b class=\"fail\">Error</b>: Path to the main() - source file contains spaces.\n\nFor Java .zip submittions, the directory hierarchy of the .zip file must excactly match the package structure.\nThe default package must correspond to the .zip root directory.</pre>")
 			result.set_passed(False)
 			return result
-		
-		cmd = [settings.DEJAGNU_RUNTEST, "--tool", program_name, "tests.exp"] 
+
+		cmd = [settings.DEJAGNU_RUNTEST, "--tool", program_name, "tests.exp"]
 
 		environ = {}
 		environ['JAVA'] = settings.JVM
@@ -193,9 +193,8 @@ class DejaGnuSetupInline(CheckerInline):
 	form = SetupForm
 	model = DejaGnuSetup
 	#exclude = ["public", "required"]
-	
-	
+
+
 
 class DejaGnuTesterInline(CheckerInline):
 	model = DejaGnuTester
-	

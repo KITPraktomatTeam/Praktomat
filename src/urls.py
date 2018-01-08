@@ -20,7 +20,7 @@ admin.autodiscover()
 urlpatterns = [
 	# Index page
 	url(r'^$', RedirectView.as_view(pattern_name='task_list', permanent=True), name="index"),
-	
+
 	# Admin
 	url(r'^admin/tasks/task/(?P<task_id>\d+)/model_solution', tasks.views.model_solution, name="model_solution"),
 	url(r'^admin/tasks/task/(?P<task_id>\d+)/final_solutions', tasks.views.download_final_solutions, name="download_final_solutions"),
@@ -30,8 +30,8 @@ urlpatterns = [
 
 	# Login and Registration
 	url(r'^accounts/', include(accounts.urls)),
-	
-	# tinyMCE 
+
+	# tinyMCE
 	url(r'^tinymce/', include(tinymce.urls)),
 
 	#Tasks

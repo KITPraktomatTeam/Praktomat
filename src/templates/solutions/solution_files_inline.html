@@ -9,9 +9,9 @@
 <div class="filetabs">
 	<ul>
 		{% for solutionfile in solutionfiles %}
-			<li><a href="#file{{forloop.counter}}">{{solutionfile}}</a></li> 
-		{%endfor%} 
-	</ul> 	
+			<li><a href="#file{{forloop.counter}}">{{solutionfile}}</a></li>
+		{%endfor%}
+	</ul>
 
 	{% for solutionfile in solutionfiles%}
 		<div class="file" id="file{{forloop.counter}}">

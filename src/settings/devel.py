@@ -6,7 +6,7 @@ from os.path import join, dirname
 SITE_NAME = 'Praktomat'
 
 # Identifie this Praktomat among multiple installation on one webserver
-PRAKTOMAT_ID = 'default' 
+PRAKTOMAT_ID = 'default'
 
 # The URL where this site is reachable. 'http://localhost:8000/' in case of the
 # developmentserver.

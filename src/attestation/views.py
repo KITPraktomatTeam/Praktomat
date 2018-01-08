@@ -26,23 +26,23 @@ from configuration import get_settings
 @login_required
 def statistics(request,task_id):
 	task = get_object_or_404(Task, pk=task_id)
-	
+
 	if not (request.user.is_trainer or request.user.is_tutor or request.user.is_superuser):
 		return access_denied(request)
-	
+
 	final_solutions = task.solution_set.filter(final=True)
 	unfinal_solutions = task.solution_set.filter(final=False)
 	user = Group.objects.get(name='User').user_set.filter(is_active=True)
-	
+
 	tutorials = request.user.tutored_tutorials.all()
-        if request.user.is_tutor:
+	if request.user.is_tutor:
 		final_solutions = final_solutions.filter(author__tutorial__in = tutorials)
 		unfinal_solutions = unfinal_solutions.filter(author__tutorial__in = tutorials)
 		user = User.objects.filter(tutorial__in = tutorials)
-		
+
 	final_solution_count = final_solutions.count()
 	user_count = user.count()
-	
+
 	submissions = []
 	submissions_final = []
 	acc_submissions = [0]
@@ -57,17 +57,17 @@ def statistics(request,task_id):
 		acc_submissions = map(lambda submissions: float(submissions)/user_count, acc_submissions)
 	else:
 		acc_submissions = 0;
-	
+
 	creation_times = map(lambda dict:[(dict['creation_date'].time().hour*3600+dict['creation_date'].time().minute*60)*1000, dict['creation_date'].weekday()], unfinal_solutions.values('creation_date'))
 	creation_times_final = map(lambda dict:[(dict['creation_date'].time().hour*3600+dict['creation_date'].time().minute*60)*1000, dict['creation_date'].weekday()], final_solutions.values('creation_date'))
-	
-        if request.user.is_trainer:
+
+	if request.user.is_trainer:
 		attestations = Attestation.objects.filter(solution__task__id=task.id, final=True, published=False).aggregate(final=Count('id'))
 		attestations.update( Attestation.objects.filter(solution__task__id=task.id, final=True, published=True).aggregate(published=Count('id')) )
 	else: # Tutor
 		attestations = Attestation.objects.filter(solution__task__id=task.id, final=True, published=False, author__tutored_tutorials__in = tutorials).aggregate(final=Count('id'))
 		attestations.update( Attestation.objects.filter(solution__task__id=task.id, final=True, published=True, author__tutored_tutorials__in = tutorials).aggregate(published=Count('id')))
-		
+
 	attestations['all'] = final_solution_count
 
 
@@ -75,91 +75,91 @@ def statistics(request,task_id):
 	final_grade_rating_scale_items = "['" + "','".join([name.strip() for (name,position) in all_items]) + "']"
 
 	all_ratings = []
-        if request.user.is_trainer:
+	if request.user.is_trainer:
 		# Each Tutorials ratings
 		for t in Tutorial.objects.all():
 			all_ratings.append({'title'   : u"Final Grades for Students in Tutorial %s" % unicode(t),
-		                        'desc'    : u"This chart shows the distribution of final grades for students from Tutorial %s. Plagiarism is excluded." % unicode(t),
-                                'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__solution__author__tutorial = t)})
-   		for t in User.objects.filter(groups__name='Tutor'):
+			                    'desc'    : u"This chart shows the distribution of final grades for students from Tutorial %s. Plagiarism is excluded." % unicode(t),
+			                    'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__solution__author__tutorial = t)})
+		for t in User.objects.filter(groups__name='Tutor'):
 			all_ratings.append({'title'   : u"Final Grades for Attestations created by %s" % unicode(t),
-	                            'desc'    : u"This chart shows the distribution of final grades for Attestations created by %s. Plagiarism is excluded." % unicode(t),
-                                'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__author__id = t.id)})
+			                    'desc'    : u"This chart shows the distribution of final grades for Attestations created by %s. Plagiarism is excluded." % unicode(t),
+			                    'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__author__id = t.id)})
 	else:
 		# The Tutorials ratings
 		all_ratings.append(        {'title'   : u"Final grades (My Tutorials)",
 		                            'desc'    : u"This chart shows the distribution of final grades for students from any your tutorials. Plagiarism is excluded.",
-                                            'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__solution__author__tutorial__in = tutorials)})
-   		all_ratings.append(        {'title'   : u"Final grades (My Attestations)",
+		                            'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__solution__author__tutorial__in = tutorials)})
+		all_ratings.append(        {'title'   : u"Final grades (My Attestations)",
 		                            'desc'    : u"This chart shows the distribution of final grades for your attestations. Plagiarism is excluded.",
-                                            'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__author__id = request.user.id)})
+		                            'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__author__id = request.user.id)})
 	# Overall ratings
-	all_ratings.append(                {'title'   : u"Final grades (overall)",
-	                                    'desc'    : u"This chart shows the distribution of final grades for all students. Plagiarism is excluded.",
-                                            'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True)})
+	all_ratings.append({'title'   : u"Final grades (overall)",
+	                    'desc'    : u"This chart shows the distribution of final grades for all students. Plagiarism is excluded.",
+	                    'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True)})
 
 	for i,r in enumerate(all_ratings):
 		all_ratings[i]['ratings'] = [list(rating) for rating in r['ratings'].annotate(Count('id')).values_list('position','id__count')]
 
 	has_runtimes = False
-        runtimes = []
-        for i, checker in enumerate(task.get_checkers()):
-            checker_runtimes = []
-            for result in checker.results.order_by('creation_date').filter(runtime__gt = 0):
-		has_runtimes = True
-                checker_runtimes.append({ 'date': result.creation_date, 'value': result.runtime})
+	runtimes = []
+	for i, checker in enumerate(task.get_checkers()):
+		checker_runtimes = []
+		for result in checker.results.order_by('creation_date').filter(runtime__gt = 0):
+			has_runtimes = True
+			checker_runtimes.append({ 'date': result.creation_date, 'value': result.runtime})
 
-            if checker_runtimes:
-                first = checker_runtimes[0]
-                last = checker_runtimes[-1]
-                n = 20 # number of buckets
-                buckets = [[] for x in range(n)]
-                span = last['date'] - first['date'] + datetime.timedelta(seconds=1)
-                for r in checker_runtimes:
-                    i = timedelta_diff((r['date'] - first['date'])*n, span)
-                    buckets[i].append(r['value'])
-                medians = []
-                for i in range(n):
-                    date = first['date'] + ((span//2)*(2*i+1) // n);
-                    if buckets[i]:
-                        buckets[i].sort()
-                        value = buckets[i][((len(buckets[i])+1)/2)-1]
-                    else:
-                        value = None
-                    medians.append({'date': date, 'value': value});
+		if checker_runtimes:
+			first = checker_runtimes[0]
+			last = checker_runtimes[-1]
+			n = 20 # number of buckets
+			buckets = [[] for x in range(n)]
+			span = last['date'] - first['date'] + datetime.timedelta(seconds=1)
+			for r in checker_runtimes:
+				i = timedelta_diff((r['date'] - first['date'])*n, span)
+				buckets[i].append(r['value'])
+			medians = []
+			for i in range(n):
+				date = first['date'] + ((span//2)*(2*i+1) // n);
+				if buckets[i]:
+					buckets[i].sort()
+					value = buckets[i][((len(buckets[i])+1)/2)-1]
+				else:
+					value = None
+				medians.append({'date': date, 'value': value});
 
-                runtimes.append({
-                    'checker': "%d: %s" % (i, checker.title()),
-                    'runtimes': checker_runtimes,
-                    'medians': medians
-                    })
+			runtimes.append({
+			                 'checker': "%d: %s" % (i, checker.title()),
+			        'runtimes': checker_runtimes,
+			        'medians': medians
+			})
 
 	return render(request, "attestation/statistics.html",
-            {'task':                           task,
-            'user_count':                      user_count,
-            'solution_count':                  final_solution_count,
-            'submissions':                     submissions,
-            'submissions_final':               submissions_final,
-            'creation_times':                  creation_times,
-            'creation_times_final':            creation_times_final,
-            'acc_submissions':                 acc_submissions,
-            'attestations':                    attestations,
-            'final_grade_rating_scale_items':  final_grade_rating_scale_items,
-            'all_ratings':                     all_ratings,
-            'runtimes':                        runtimes,
-            'has_runtime_chart':               has_runtimes,
-            })
+	        {'task':                           task,
+	        'user_count':                      user_count,
+	        'solution_count':                  final_solution_count,
+	        'submissions':                     submissions,
+	        'submissions_final':               submissions_final,
+	        'creation_times':                  creation_times,
+	        'creation_times_final':            creation_times_final,
+	        'acc_submissions':                 acc_submissions,
+	        'attestations':                    attestations,
+	        'final_grade_rating_scale_items':  final_grade_rating_scale_items,
+	        'all_ratings':                     all_ratings,
+	        'runtimes':                        runtimes,
+	        'has_runtime_chart':               has_runtimes,
+	        })
 
 def daterange(start_date, end_date):
-    for n in range((end_date - start_date).days + 1):
-        yield start_date + datetime.timedelta(n)
+	for n in range((end_date - start_date).days + 1):
+		yield start_date + datetime.timedelta(n)
 
 
 def tutor_attestation_stats(task, tutor):
 	stats = {'tutor': tutor,
-             'unattested' : Solution.objects.filter(task = task, final=True, plagiarism = False, attestation = None,author__tutorial__tutors=tutor).count(), 
-             'final': Attestation.objects.filter(solution__task = task,final=True,author=tutor).count(),
-             'nonfinal': Attestation.objects.filter(solution__task = task,final=False,author=tutor).count() }
+	         'unattested' : Solution.objects.filter(task = task, final=True, plagiarism = False, attestation = None,author__tutorial__tutors=tutor).count(),
+	         'final': Attestation.objects.filter(solution__task = task,final=True,author=tutor).count(),
+	         'nonfinal': Attestation.objects.filter(solution__task = task,final=False,author=tutor).count() }
 
 	stats['attested'] = stats['final']+stats['nonfinal']
 	stats['total']    = stats['final']+stats['nonfinal']+stats['unattested']
@@ -172,42 +172,39 @@ def tutor_attestation_stats(task, tutor):
 def attestation_list(request, task_id):
 	if not (request.user.is_tutor or request.user.is_trainer or request.user.is_superuser):
 		return access_denied(request)
-	
+
 	task = Task.objects.get(pk=task_id)
 
 	attestation_stats = []
 	no_tutorial_stats = {}
-        if request.user.is_trainer:
+	if request.user.is_trainer:
 		attestation_stats =  [ tutor_attestation_stats(task, tutor)
-	                              for tutor in User.objects.filter(groups__name="Tutor")]
+		                          for tutor in User.objects.filter(groups__name="Tutor")]
 
 		no_tutorial_stats = tutor_attestation_stats(task, None)
 
 
 	tutored_users = User.objects.filter(groups__name="User", is_active=True).order_by('last_name') if request.user.is_trainer or request.user.is_superuser else None
 
-	unattested_solutions = Solution.objects.filter(task = task, final=True, plagiarism = False, attestation = None)	
+	unattested_solutions = Solution.objects.filter(task = task, final=True, plagiarism = False, attestation = None)
 	if request.user.is_tutor: # the trainer sees them all
 		unattested_solutions = unattested_solutions.filter(author__tutorial__in = request.user.tutored_tutorials.all())
 
-        all_attestations = Attestation.objects \
-                .filter(solution__task = task) \
-                .order_by('-created') \
-                .select_related('solution', 'solution__author', 'author')
+	all_attestations = Attestation.objects \
+	    .filter(solution__task = task) \
+	    .order_by('-created') \
+	    .select_related('solution', 'solution__author', 'author')
 
-	my_attestations = \
-            all_attestations \
-            .filter(author = request.user) \
+	my_attestations = all_attestations \
+	    .filter(author = request.user) \
 
-	all_attestations_for_my_tutorials = \
-            all_attestations \
-            .filter(solution__author__tutorial__in = request.user.tutored_tutorials.all()) \
+	all_attestations_for_my_tutorials = all_attestations \
+	    .filter(solution__author__tutorial__in = request.user.tutored_tutorials.all()) \
 
-        attestations_by_others = \
-            all_attestations_for_my_tutorials \
-            .exclude(author = request.user)
+	attestations_by_others = all_attestations_for_my_tutorials \
+	    .exclude(author = request.user)
 
-        # for the warning about solutions marked as plagiarism
+	# for the warning about solutions marked as plagiarism
 	if request.user.is_trainer:
 		# show all to trainer
 		solutions_with_plagiarism = Solution.objects.filter(task = task, plagiarism = True)
@@ -215,47 +212,47 @@ def attestation_list(request, task_id):
 		# show from my turials to tutors
 		solutions_with_plagiarism = Solution.objects.filter(task = task, plagiarism = True, author__tutorial__in = request.user.tutored_tutorials.all())
 
-        # the trainer sees all
+	# the trainer sees all
 	if not request.user.is_trainer:
-            all_attestations = None
+		all_attestations = None
 
-        publishable_tutorial = all_attestations_for_my_tutorials.filter(final = True, published = False)
+	publishable_tutorial = all_attestations_for_my_tutorials.filter(final = True, published = False)
 
-        publishable_all = None
+	publishable_all = None
 	if request.user.is_trainer:
-            publishable_all = all_attestations.filter(final = True, published = False)
+		publishable_all = all_attestations.filter(final = True, published = False)
 
 	if request.method == "POST":
-            if request.POST['what'] == 'tutorial':
-                if not request.user.is_tutor:
-                        return access_denied(request)
-                if task.only_trainers_publish:
-                        return access_denied(request)
-                for attestation in publishable_tutorial:
-			attestation.publish(request, request.user)
+		if request.POST['what'] == 'tutorial':
+			if not request.user.is_tutor:
+				return access_denied(request)
+			if task.only_trainers_publish:
+				return access_denied(request)
+			for attestation in publishable_tutorial:
+				attestation.publish(request, request.user)
 		return HttpResponseRedirect(reverse('attestation_list', args=[task_id]))
 
-            if request.POST['what'] == 'all':
-                if not request.user.is_trainer:
-                        return access_denied(request)
-                for attestation in publishable_all:
-			attestation.publish(request, request.user)
+		if request.POST['what'] == 'all':
+			if not request.user.is_trainer:
+				return access_denied(request)
+			for attestation in publishable_all:
+				attestation.publish(request, request.user)
 		return HttpResponseRedirect(reverse('attestation_list', args=[task_id]))
 
 	show_author = not get_settings().anonymous_attestation or request.user.is_tutor or request.user.is_trainer or published
 
 	data = {'task':task,
-		 'tutored_users':tutored_users,
-		 'solutions_with_plagiarism':solutions_with_plagiarism,
-		 'my_attestations':my_attestations,
-		 'attestations_by_others':attestations_by_others,
-		 'all_attestations':all_attestations,
-		 'unattested_solutions':unattested_solutions,
-		 'publishable_tutorial': publishable_tutorial,
-		 'publishable_all': publishable_all,
-		 'show_author': show_author,
-		 'attestation_stats' : attestation_stats,
-		 'no_tutorial_stats' : no_tutorial_stats,}
+		    'tutored_users':tutored_users,
+		    'solutions_with_plagiarism':solutions_with_plagiarism,
+		    'my_attestations':my_attestations,
+		    'attestations_by_others':attestations_by_others,
+		    'all_attestations':all_attestations,
+		    'unattested_solutions':unattested_solutions,
+		    'publishable_tutorial': publishable_tutorial,
+		    'publishable_all': publishable_all,
+		    'show_author': show_author,
+		    'attestation_stats' : attestation_stats,
+		    'no_tutorial_stats' : no_tutorial_stats,}
 	return render(request, "attestation/attestation_list.html", data)
 
 
@@ -264,8 +261,8 @@ def new_attestation_for_task(request, task_id):
 	""" Start an attestation on a restrained random set of my tutored users """
 	if not (request.user.is_tutor or request.user.is_trainer or request.user.is_superuser):
 		return access_denied(request)
-	
-	# fetch a solution of a user i have allredy attested in the past.		
+
+	# fetch a solution of a user i have allredy attested in the past.
 	users_i_have_attestated = User.objects.filter(solution__attestation__author = request.user)
 	all_available_solutions = Solution.objects.filter(task__id = task_id, final=True, plagiarism = False, author__tutorial__in = request.user.tutored_tutorials.all(), attestation = None)
 	if (not all_available_solutions):
@@ -309,10 +306,10 @@ def withdraw_attestation(request, attestation_id):
 		return access_denied(request)
 
 	attest = get_object_or_404(Attestation, pk=attestation_id)
-        if not (attest.author == request.user or request.user.is_trainer):
+	if not (attest.author == request.user or request.user.is_trainer):
 		return access_denied(request)
 
-        if attest.solution.task.only_trainers_publish and not request.user.is_trainer:
+	if attest.solution.task.only_trainers_publish and not request.user.is_trainer:
 		return access_denied(request)
 
 	if not attest.published:
@@ -325,43 +322,43 @@ def withdraw_attestation(request, attestation_id):
 	attest.withdraw(request, by=request.user)
 	return HttpResponseRedirect(reverse('edit_attestation', args=[attestation_id]))
 
-@login_required	
+@login_required
 def edit_attestation(request, attestation_id):
 	if not (request.user.is_tutor or request.user.is_trainer or request.user.is_superuser):
 		return access_denied(request)
-	
+
 	attest = get_object_or_404(Attestation, pk=attestation_id)
-        if not (attest.author == request.user or request.user.is_trainer):
+	if not (attest.author == request.user or request.user.is_trainer):
 		return access_denied(request)
-        if attest.published:
+	if attest.published:
 		# If if this attestation is already final or not by this user redirect to view_attestation
 		return HttpResponseRedirect(reverse('view_attestation', args=[attestation_id]))
-	
+
 	solution = attest.solution
 	model_solution = solution.task.model_solution
 
 	if request.method == "POST":
-            with transaction.atomic():
-                    attestForm = AttestationForm(request.POST, instance=attest, prefix='attest')
-                    attestFileFormSet = AnnotatedFileFormSet(request.POST, instance=attest, prefix='attestfiles')
-                    ratingResultFormSet = RatingResultFormSet(request.POST, instance=attest, prefix='ratingresult')
-                    if attestForm.is_valid() and attestFileFormSet.is_valid() and ratingResultFormSet.is_valid():
-                            attestForm.save()
-                            attest.final = False
-                            attest.save()
-                            attestFileFormSet.save()
-                            ratingResultFormSet.save()
-                            return HttpResponseRedirect(reverse('view_attestation', args=[attestation_id]))
+		with transaction.atomic():
+			attestForm = AttestationForm(request.POST, instance=attest, prefix='attest')
+			attestFileFormSet = AnnotatedFileFormSet(request.POST, instance=attest, prefix='attestfiles')
+			ratingResultFormSet = RatingResultFormSet(request.POST, instance=attest, prefix='ratingresult')
+			if attestForm.is_valid() and attestFileFormSet.is_valid() and ratingResultFormSet.is_valid():
+				attestForm.save()
+				attest.final = False
+				attest.save()
+				attestFileFormSet.save()
+				ratingResultFormSet.save()
+				return HttpResponseRedirect(reverse('view_attestation', args=[attestation_id]))
 	else:
 		attestForm = AttestationForm(instance=attest, prefix='attest')
 		attestFileFormSet = AnnotatedFileFormSet(instance=attest, prefix='attestfiles')
 		ratingResultFormSet = RatingResultFormSet(instance=attest, prefix='ratingresult')
-	
-	show_author = not get_settings().anonymous_attestation 
+
+	show_author = not get_settings().anonymous_attestation
 	show_run_checkers = get_settings().attestation_allow_run_checkers
 	htmlinjectors = HtmlInjector.objects.filter(task = solution.task, inject_in_attestation_edit = True)
-	htmlinjector_snippets = [ injector.html_file.read() for injector in htmlinjectors ] 
-	
+	htmlinjector_snippets = [ injector.html_file.read() for injector in htmlinjectors ]
+
 	return render(request,
 		"attestation/attestation_edit.html",
 		 {
@@ -376,24 +373,24 @@ def edit_attestation(request, attestation_id):
 		}
 	)
 
-@login_required	
+@login_required
 def view_attestation(request, attestation_id):
 	attest = get_object_or_404(Attestation, pk=attestation_id)
-        may_modify = attest.author == request.user or request.user.is_trainer
-        may_view = attest.solution.author == request.user or request.user.is_tutor or may_modify
-        if not may_view:
+	may_modify = attest.author == request.user or request.user.is_trainer
+	may_view = attest.solution.author == request.user or request.user.is_tutor or may_modify
+	if not may_view:
 		return access_denied(request)
 
 	if request.method == "POST":
-                if not may_modify:
-                        return access_denied(request)
+		if not may_modify:
+			return access_denied(request)
 		with transaction.atomic():
 			form = AttestationPreviewForm(request.POST, instance=attest)
 			if form.is_valid():
 				form.save()
 				if 'publish' in request.POST:
-                                        if attest.solution.task.only_trainers_publish and not request.user.is_trainer:
-                                                return access_denied(request)
+					if attest.solution.task.only_trainers_publish and not request.user.is_trainer:
+						return access_denied(request)
 
 					attest.publish(request, by = request.user)
 				return HttpResponseRedirect(reverse('attestation_list', args=[attest.solution.task.id]))
@@ -403,9 +400,9 @@ def view_attestation(request, attestation_id):
 		withdrawable = may_modify and attest.published
 
 		htmlinjectors = HtmlInjector.objects.filter(task = attest.solution.task, inject_in_attestation_view = True)
-		htmlinjector_snippets = [ injector.html_file.read() for injector in htmlinjectors ] 
+		htmlinjector_snippets = [ injector.html_file.read() for injector in htmlinjectors ]
 
-                return render(request,
+		return render(request,
 			"attestation/attestation_view.html",
 			{
 				"attest": attest,
@@ -435,7 +432,7 @@ def user_task_attestation_map(users,tasks,only_published=True):
 	final_solutions_dict = {} 	#{(task_id,user_id):final solution exists?}
 	for solution in solutions:
 		final_solutions_dict[solution.task_id, solution.author_id] = True
-	
+
 	settings = get_settings()
 	arithmetic_option = settings.final_grades_arithmetic_option
 	plagiarism_option = settings.final_grades_plagiarism_option
@@ -475,10 +472,10 @@ def user_task_attestation_map(users,tasks,only_published=True):
 
 	return rating_list
 
-@login_required	
+@login_required
 def rating_overview(request):
 	full_form = request.user.is_trainer or request.user.is_superuser
-	
+
 	if not (full_form or (request.user.is_coordinator and request.method != "POST")):
 		return access_denied(request)
 
@@ -515,13 +512,13 @@ def rating_overview(request):
 	rating_list = user_task_attestation_map(users, tasks)
 
 	return render(request, "attestation/rating_overview.html", {'rating_list': rating_list, 'tasks': tasks, 'final_grade_formset': final_grade_formset, 'final_grade_option_form': final_grade_option_form, 'publish_final_grade_form': publish_final_grade_form, 'full_form': full_form})
-	
 
-@login_required	
+
+@login_required
 def tutorial_overview(request, tutorial_id=None):
 	if not (request.user.is_tutor or request.user.is_trainer or request.user.is_superuser):
 		return access_denied(request)
-		
+
 	if (tutorial_id):
 		tutorial = get_object_or_404(Tutorial, pk=tutorial_id)
 		if request.user.is_tutor and not tutorial.tutors.filter(id=request.user.id):
@@ -530,19 +527,19 @@ def tutorial_overview(request, tutorial_id=None):
 		tutorials = request.user.tutored_tutorials.all()
 		if (not tutorials):
 			return render(request, "attestation/tutorial_none.html")
- 
+
 		tutorial = request.user.tutored_tutorials.all()[0]
 
-        if request.user.is_tutor:
+	if request.user.is_tutor:
 		other_tutorials = request.user.tutored_tutorials.all()
 	else:
 		other_tutorials = Tutorial.objects.all()
 	other_tutorials = other_tutorials.exclude(id=tutorial.id)
-	
+
 	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date')
 	users = User.objects.filter(groups__name='User').filter(is_active=True, tutorial=tutorial).order_by('last_name','first_name')
 	rating_list = user_task_attestation_map(users, tasks,False)
-	
+
 	def to_float(a,default,const):
 		try:
 			return (float(str(a.final_grade)),const)
@@ -559,11 +556,11 @@ def tutorial_overview(request, tutorial_id=None):
 	nr_of_grades = [ (n if n>0 else 1) for n in nr_of_grades]
 
 	averages = [a/n for (a,n) in zip(averages,nr_of_grades)]
-	
+
 	return render(request, "attestation/tutorial_overview.html", {'other_tutorials':other_tutorials, 'tutorial':tutorial, 'rating_list':rating_list, 'tasks':tasks, 'final_grades_published': get_settings().final_grades_published, 'averages':averages})
 
 
-@login_required	
+@login_required
 def rating_export(request):
 	if not (request.user.is_trainer or request.user.is_coordinator or request.user.is_superuser):
 		return access_denied(request)
@@ -579,7 +576,7 @@ def rating_export(request):
 	#response.write(u'\ufeff') setting utf-8 BOM for Exel doesn't work
 	response.write(t.render(c))
 	return response
-	
+
 def frange(start, end, inc):
 	"A range function, that does accept float increments..."
 	L = []
@@ -595,8 +592,8 @@ def frange(start, end, inc):
 @staff_member_required
 def generate_ratingscale(request):
 	""" View in the admin """
-	if request.method == 'POST': 
-		form = GenerateRatingScaleForm(request.POST)		
+	if request.method == 'POST':
+		form = GenerateRatingScaleForm(request.POST)
 		if form.is_valid():
 			scale = RatingScale(name=form.cleaned_data['name'])
 			scale.save()
@@ -608,7 +605,7 @@ def generate_ratingscale(request):
 				item = RatingScaleItem(scale=scale, name=x, position=count)
 				item.save()
 				count += 1
-			return HttpResponseRedirect(reverse('admin:attestation_ratingscale_changelist')) 			
+			return HttpResponseRedirect(reverse('admin:attestation_ratingscale_changelist'))
 	else:
 		form = GenerateRatingScaleForm()
 	return render(request, 'admin/attestation/ratingscale/generate.html', {'form': form, 'title':"Generate RatingScale"  })
@@ -629,33 +626,33 @@ def attestation_run_checker(request,attestation_id):
 
 	if not get_settings().attestation_allow_run_checkers:
 		return access_denied(request)
- 
+
 
 
 	solution = attestation.solution
 	check_solution(solution,True)
 	return HttpResponseRedirect(reverse('edit_attestation', args=[attestation_id]))
-	
+
 class ImportForm(forms.Form):
 	file = forms.FileField()
 
 @staff_member_required
 def update_attestations(request):
 	""" View in the admin """
-	if request.method == 'POST': 
+	if request.method == 'POST':
 		form = ImportForm(request.POST, request.FILES)
-		if form.is_valid(): 
+		if form.is_valid():
 			try:
 				Attestation.update_Attestations(request, form.files['file'])
 				return render(request, 'admin/attestation/update.html', {'form': form, 'title':"Update Attestations"  })
 			except Exception, e:
 				from django.forms.utils import ErrorList
 				msg = "An Error occured. The import file was propably malformed.: %s" % str(e)
-				form._errors["file"] = ErrorList([msg]) 			
+				form._errors["file"] = ErrorList([msg])
 	else:
 		form = ImportForm()
 	return render(request, 'admin/attestation/update.html', {'form': form, 'title':"Update Attestations"  })
 
 # Can be replaced by // in python 3.2
 def timedelta_diff(td1,td2):
-    return int(td1.total_seconds() / td2.total_seconds())
+	return int(td1.total_seconds() / td2.total_seconds())

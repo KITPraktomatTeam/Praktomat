@@ -9,47 +9,47 @@ from solutions.models import Solution
 from tasks.models import Task
 
 class TestViews(TestCase):
-		def setUp(self):
-			self.client.login(username='user', password='demo')
-			self.task = Task.objects.all()[0]
+	def setUp(self):
+		self.client.login(username='user', password='demo')
+		self.task = Task.objects.all()[0]
 
-		def tearDown(self):
-			pass
-		
-		def test_get_solution_list(self):
-			response = self.client.get(reverse('solution_list', args=[self.task.id]))
-			self.failUnlessEqual(response.status_code, 200)
+	def tearDown(self):
+		pass
 
-		def test_post_solution(self):
-			path = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'AMI', 'ModelSolution(flat).zip')
-			f = open(path, 'r')
-			response = self.client.post(reverse('solution_list', args=[self.task.id]), data={
-								u'solutionfile_set-INITIAL_FORMS': u'0',
-								u'solutionfile_set-TOTAL_FORMS': u'3',
-								u'solutionfile_set-0-file': f
-							}, follow=True)
-			self.assertRedirectsToView(response, 'solution_detail')
+	def test_get_solution_list(self):
+		response = self.client.get(reverse('solution_list', args=[self.task.id]))
+		self.failUnlessEqual(response.status_code, 200)
 
-		def test_post_solution_expired(self):
-                        self.task.submission_date = datetime.now() - timedelta(hours=3)
-                        self.task.save()
+	def test_post_solution(self):
+		path = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'AMI', 'ModelSolution(flat).zip')
+		f = open(path, 'r')
+		response = self.client.post(reverse('solution_list', args=[self.task.id]), data={
+							u'solutionfile_set-INITIAL_FORMS': u'0',
+							u'solutionfile_set-TOTAL_FORMS': u'3',
+							u'solutionfile_set-0-file': f
+						}, follow=True)
+		self.assertRedirectsToView(response, 'solution_detail')
 
-			path = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'AMI', 'ModelSolution(flat).zip')
-			f = open(path, 'r')
-			response = self.client.post(reverse('solution_list', args=[self.task.id]), data={
-								u'solutionfile_set-INITIAL_FORMS': u'0',
-								u'solutionfile_set-TOTAL_FORMS': u'3',
-								u'solutionfile_set-0-file': f
-							}, follow=True)
-			self.failUnlessEqual(response.status_code, 403)
+	def test_post_solution_expired(self):
+		self.task.submission_date = datetime.now() - timedelta(hours=3)
+		self.task.save()
 
-		def test_get_solution(self):
-			response = self.client.get(reverse('solution_detail', args=[self.task.solution_set.all()[0].id]))
-			self.failUnlessEqual(response.status_code, 200)
+		path = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'AMI', 'ModelSolution(flat).zip')
+		f = open(path, 'r')
+		response = self.client.post(reverse('solution_list', args=[self.task.id]), data={
+							u'solutionfile_set-INITIAL_FORMS': u'0',
+							u'solutionfile_set-TOTAL_FORMS': u'3',
+							u'solutionfile_set-0-file': f
+						}, follow=True)
+		self.failUnlessEqual(response.status_code, 403)
+
+	def test_get_solution(self):
+		response = self.client.get(reverse('solution_detail', args=[self.task.solution_set.all()[0].id]))
+		self.failUnlessEqual(response.status_code, 200)
 
 
 def test_concurrently(times):
-    """ 
+    """
     Add this decorator to small pieces of code that you want to test
     concurrently to make sure they don't raise exceptions when run at the
     same time.  E.g., some Django views that do a SELECT and then a subsequent
@@ -85,7 +85,7 @@ def test_concurrently(times):
 		#				url = reverse('toggle_registration')
 		#				@test_concurrently(15)
 		#				def toggle_registration():
-		#						# perform the code you want to test here; it must be thread-safe 
+		#						# perform the code you want to test here; it must be thread-safe
 		#						# (e.g., each thread must have its own Django test client)
 		#						c = Client()
 		#						c.login(username='user@example.com', password='abc123')
@@ -93,7 +93,7 @@ def test_concurrently(times):
 		#				toggle_registration()
 
 
-#from unittest import TestCase as ConcurrentTestCase	
+#from unittest import TestCase as ConcurrentTestCase
 #class ConcurentTest(ConcurrentTestCase):
 		#""" Will probably result in an error as not all db connections will be closed on table destruction """
 		#def setUp(self):
@@ -116,4 +116,3 @@ def test_concurrently(times):
 							#})
 						#self.failUnlessEqual(response.status_code, 200)
 				#run()
-

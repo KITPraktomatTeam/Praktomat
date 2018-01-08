@@ -27,8 +27,7 @@ class CheckerForm(AlwaysChangedModelForm):
 		#self.fields["_output_flags"].initial = "-o %s"
 		#self.fields["_libs"].initial = ""
 		self.fields["_file_pattern"].initial = r"^[a-zA-Z0-9_]*\.(f|F|for|FOR)$"
-	
+
 class FortranBuilderInline(CheckerInline):
 	model = FortranBuilder
 	form = CheckerForm
-

@@ -7,7 +7,7 @@ from django.contrib.auth.models import User as UserBase, Group
 from django.contrib.auth.admin import UserAdmin as UserBaseAdmin, GroupAdmin as GroupBaseAdmin
 from django.db.models import Count
 from django.db.transaction import atomic
-from accounts.models import User, Tutorial 
+from accounts.models import User, Tutorial
 from accounts.forms import AdminUserCreationForm, AdminUserChangeForm
 
 import accounts.views
@@ -19,7 +19,7 @@ from django.core.urlresolvers import reverse
 
 class UserAdmin(UserBaseAdmin):
 	model = User
-	
+
 	# add active status
 	list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'is_trainer', 'is_tutor', 'is_coordinator', 'email', 'date_joined','is_failed_attempt','programme' )
 	list_filter = ('groups', 'tutorial', 'is_staff', 'is_superuser', 'is_active','programme')
@@ -35,14 +35,14 @@ class UserAdmin(UserBaseAdmin):
             (_('Groups'), {'fields': ('groups','tutorial')}),
             (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
         )
-	
+
 	form = AdminUserChangeForm
 	add_form = AdminUserCreationForm
-	
+
 	def is_trainer(self, user):
 		return user.is_trainer
 	is_trainer.boolean = True
-		
+
 	def is_tutor(self, user):
 		return user.is_tutor
 	is_tutor.boolean = True
@@ -53,14 +53,14 @@ class UserAdmin(UserBaseAdmin):
 
 	def is_failed_attempt(self,user):
 		successfull = [ u for u in User.objects.all().filter(mat_number=user.mat_number) if u.is_active]
-		return (not successfull) 	
+		return (not successfull)
 	is_failed_attempt.boolean = True
-	
+
 	def set_active(self, request, queryset):
 		""" Export Task action """
 		queryset.update(is_active=True)
 		self.message_user(request, "Users were successfully activated.")
-	
+
 	def set_inactive(self, request, queryset):
 		""" Export Task action """
 		queryset.update(is_active=False)
@@ -95,7 +95,7 @@ class UserAdmin(UserBaseAdmin):
 
 	def export_users(self, request, queryset):
 		from django.http import HttpResponse
-		data = User.export_user(queryset)		
+		data = User.export_user(queryset)
 		response = HttpResponse(data, content_type="application/xml")
 		response['Content-Disposition'] = 'attachment; filename=user_export.xml'
 		return response
@@ -108,7 +108,7 @@ class UserAdmin(UserBaseAdmin):
 		my_urls += [url(r'^import_tutorial_assignment/$', accounts.views.import_tutorial_assignment, name='import_tutorial_assignment')]
 		return my_urls + urls
 
-        def useful_links(self, instance):
+	def useful_links(self, instance):
 		if instance.pk:
 			return format_html (
 			    u'<a href="{1}">Solutions by {0}</a> • <a href="{2}">Attestations for {0}</a> • <a href="{3}">Attestations by {0}</a>',
@@ -119,13 +119,13 @@ class UserAdmin(UserBaseAdmin):
 			    )
 		else:
 			return ""
-        useful_links.allow_tags = True
+	useful_links.allow_tags = True
 
 # This should work in Django 1.4 :O
 # from django.contrib.admin import SimpleListFilter
 # class FailedRegistrationAttempts(admin.SimpleListFilter):
 #	title = _('Registration')
-#	
+#
 #	def lookups(self,request,model_admin):
 #		return ( (('failed'), _('failed')), (('successfull'), _('sucessfull')) )
 #
@@ -133,12 +133,12 @@ class UserAdmin(UserBaseAdmin):
 #		failed = User.objects.all().values('mat_number').annotate(failed=Count('mat_number')).filter(failed__gt=1)
 #		if self.value() == 'failed':
 #			return users.filter(mat_number__in=[u['mat_number'] for u in  failed])
-#		
+#
 #		if self.value() == 'successfull':
 #			return user.exclude(mat_number__in=[u['mat_number'] for u in  failed])
 
 
-admin.site.unregister(UserBase) 
+admin.site.unregister(UserBase)
 admin.site.register(User, UserAdmin)
 
 class GroupAdmin(GroupBaseAdmin):
@@ -149,13 +149,13 @@ class GroupAdmin(GroupBaseAdmin):
 		my_urls = [url(r'^(\d+)/import_matriculation_list/$', accounts.views.import_matriculation_list, name='import_matriculation_list')]
 		return my_urls + urls
 
-admin.site.unregister(Group) 
+admin.site.unregister(Group)
 admin.site.register(Group, GroupAdmin)
 
 class TutorialAdmin(admin.ModelAdmin):
 	model = Tutorial
 	list_display = ('name', 'view_url', 'tutors_flat',)
-		
+
 	class Media:
 		css = {
 			"all": ("styles/admin_style.css",)

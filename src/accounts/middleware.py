@@ -11,14 +11,14 @@ class LazyUser(object):
 			user = get_user(request)
 			try: # Anonymous user has no custom user
 				request._cached_user = user.user
-			except:	
+			except:
 				request._cached_user = user
 		return request._cached_user
 
 class AuthenticationMiddleware(object):
 	""" Get user subclass insted of baseclass in request.user"""
 	def process_request(self, request):
-		request.__class__.user = LazyUser() 
+		request.__class__.user = LazyUser()
 		return None
 
 class LogoutInactiveUserMiddleware(object):

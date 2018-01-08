@@ -30,7 +30,7 @@ class TestChecker(TestCase):
 		self.solution.check_solution()
 
 	def test_checkstyle_checker(self):
-		src = join(dirname(dirname(dirname(__file__))), 'examples', 'check style', 'check_ws.xml')	
+		src = join(dirname(dirname(dirname(__file__))), 'examples', 'check style', 'check_ws.xml')
 		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'check style', 'check_ws.xml')
 		# circumvent SuspiciousOperation exception
 		copy_file(src,dest)
@@ -42,7 +42,7 @@ class TestChecker(TestCase):
 		self.solution.check_solution()
 
 	def test_createfile_checker(self):
-		src = join(dirname(dirname(dirname(__file__))), 'examples', 'check style', 'check_ws.xml')	
+		src = join(dirname(dirname(dirname(__file__))), 'examples', 'check style', 'check_ws.xml')
 		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'check style', 'createfile.xml')
 		# circumvent SuspiciousOperation exception
 		copy_file(src,dest)
@@ -56,7 +56,7 @@ class TestChecker(TestCase):
 			self.failUnless(checkerresult.passed, checkerresult.log)
 
 	def test_createfile_override_checker(self):
-		src = join(dirname(dirname(dirname(__file__))), 'examples', 'check style', 'check_ws.xml')	
+		src = join(dirname(dirname(dirname(__file__))), 'examples', 'check style', 'check_ws.xml')
 		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'check style', 'createfile.xml')
 		# circumvent SuspiciousOperation exception
 		copy_file(src,dest)
@@ -72,8 +72,8 @@ class TestChecker(TestCase):
 					)
 		self.solution.check_solution()
 		for checkerresult in self.solution.checkerresult_set.all():
-                        if checkerresult.checker.order == 1:
-                            self.failIf(checkerresult.passed, checkerresult.log)
+			if checkerresult.checker.order == 1:
+				self.failIf(checkerresult.passed, checkerresult.log)
 
 	def test_createfile_zip_checker(self):
 		src = join(dirname(dirname(dirname(__file__))), 'examples', 'simple_zip_file.zip')
@@ -83,7 +83,7 @@ class TestChecker(TestCase):
 		CreateFileChecker.CreateFileChecker.objects.create(
 					task = self.task,
 					order = 0,
-                                        unpack_zipfile = True,
+					unpack_zipfile = True,
 					file = dest
 					)
 		self.solution.check_solution()
@@ -98,10 +98,10 @@ class TestChecker(TestCase):
 		CreateFileChecker.CreateFileChecker.objects.create(
 					task = self.task,
 					order = 0,
-                                        unpack_zipfile = True,
+					unpack_zipfile = True,
 					file = dest
 					)
-                self.assertRaises(InvalidZipFile, self.solution.check_solution)
+		self.assertRaises(InvalidZipFile, self.solution.check_solution)
 
 	def test_createfile_zip_override_checker(self):
 		src = join(dirname(dirname(dirname(__file__))), 'examples', 'simple_zip_file.zip')
@@ -111,19 +111,19 @@ class TestChecker(TestCase):
 		CreateFileChecker.CreateFileChecker.objects.create(
 					task = self.task,
 					order = 0,
-                                        unpack_zipfile = True,
+					unpack_zipfile = True,
 					file = dest
 					)
 		CreateFileChecker.CreateFileChecker.objects.create(
 					task = self.task,
 					order = 1,
-                                        unpack_zipfile = True,
+					unpack_zipfile = True,
 					file = dest
 					)
 		self.solution.check_solution()
 		for checkerresult in self.solution.checkerresult_set.all():
-                        if checkerresult.checker.order == 1:
-                            self.failIf(checkerresult.passed, checkerresult.log)
+			if checkerresult.checker.order == 1:
+				self.failIf(checkerresult.passed, checkerresult.log)
 
 
 
@@ -134,7 +134,7 @@ class TestChecker(TestCase):
 					interface1 = 'Test'
 					)
 		self.solution.check_solution()
-                # This fails (no good test data)
+		# This fails (no good test data)
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.failIf(checkerresult.passed, checkerresult.log)
 
@@ -157,7 +157,7 @@ class TestChecker(TestCase):
 			self.failUnless(checkerresult.passed, checkerresult.log)
 
 	def test_script_checker(self):
-		src = join(dirname(dirname(dirname(__file__))), 'examples', 'Power.sh')	
+		src = join(dirname(dirname(dirname(__file__))), 'examples', 'Power.sh')
 		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'Power.sh')
 		# circumvent SuspiciousOperation exception
 		copy_file(src,dest)
@@ -170,23 +170,23 @@ class TestChecker(TestCase):
 		for checkerresult in self.solution.checkerresult_set.all():
 			self.failUnless(checkerresult.passed, checkerresult.log)
 
-        def test_script_timeout(self):
+	def test_script_timeout(self):
 		src = join(dirname(dirname(dirname(__file__))), 'examples', 'loop.sh')
 		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'loop.sh')
 		# circumvent SuspiciousOperation exception
 		copy_file(src,dest)
-                with self.settings(TEST_TIMEOUT=1):
-                    ScriptChecker.ScriptChecker.objects.create(
-                                            task = self.task,
-                                            order = 0,
-                                            shell_script = dest
-                                            )
-                    self.solution.check_solution()
-                    for checkerresult in self.solution.checkerresult_set.all():
-                            self.assertIn('1', checkerresult.log, "Test did not even start?")
-                            self.assertIn('Timeout occured!', checkerresult.log, "Test result does not mention timeout")
-                            self.failIf(checkerresult.passed, "Test succeed (no timeout?)")
-                            self.assertNotIn('done', checkerresult.log, "Test did finish (no timeout?)")
+		with self.settings(TEST_TIMEOUT=1):
+			ScriptChecker.ScriptChecker.objects.create(
+			    task = self.task,
+			    order = 0,
+			    shell_script = dest
+			)
+			self.solution.check_solution()
+			for checkerresult in self.solution.checkerresult_set.all():
+				self.assertIn('1', checkerresult.log, "Test did not even start?")
+				self.assertIn('Timeout occured!', checkerresult.log, "Test result does not mention timeout")
+				self.failIf(checkerresult.passed, "Test succeed (no timeout?)")
+				self.assertNotIn('done', checkerresult.log, "Test did finish (no timeout?)")
 
 
 	@unittest.skipIf('TRAVIS' in os.environ, "ulimit doesn’t seem to work on travis")
@@ -196,18 +196,18 @@ class TestChecker(TestCase):
 		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'largefile.pl')
 		# circumvent SuspiciousOperation exception
 		copy_file(src,dest)
-                with self.settings(TEST_MAXFILESIZE=5):
-                    ScriptChecker.ScriptChecker.objects.create(
-                                            task = self.task,
-                                            order = 0,
-                                            shell_script = dest
-                                            )
-                    self.solution.check_solution()
-                    for checkerresult in self.solution.checkerresult_set.all():
-                            self.assertIn('Begin', checkerresult.log, "Test did not even start? (%s)" % checkerresult.log)
-                            self.assertNotIn('End', checkerresult.log, "Test did finish (no timeout?) (%s)" % checkerresult.log)
-                            #self.assertIn('Timeout occured!', checkerresult.log, "Test result does not mention timeout")
-                            self.failIf(checkerresult.passed, "Test succeed (no timeout?)")
+		with self.settings(TEST_MAXFILESIZE=5):
+			ScriptChecker.ScriptChecker.objects.create(
+			    task = self.task,
+			    order = 0,
+			    shell_script = dest
+			    )
+			self.solution.check_solution()
+			for checkerresult in self.solution.checkerresult_set.all():
+				self.assertIn('Begin', checkerresult.log, "Test did not even start? (%s)" % checkerresult.log)
+				self.assertNotIn('End', checkerresult.log, "Test did finish (no timeout?) (%s)" % checkerresult.log)
+				#self.assertIn('Timeout occured!', checkerresult.log, "Test result does not mention timeout")
+				self.failIf(checkerresult.passed, "Test succeed (no timeout?)")
 
 
 	@unittest.skipIf(not settings.USESAFEDOCKER, "only supported with safe-docker")
@@ -216,18 +216,18 @@ class TestChecker(TestCase):
 		dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'allocate.pl')
 		# circumvent SuspiciousOperation exception
 		copy_file(src,dest)
-                with self.settings(TEST_MAXMEM=1):
-                    ScriptChecker.ScriptChecker.objects.create(
-                                            task = self.task,
-                                            order = 0,
-                                            shell_script = dest
-                                            )
-                    self.solution.check_solution()
-                    for checkerresult in self.solution.checkerresult_set.all():
-                            self.assertIn('Begin', checkerresult.log, "Test did not even start?")
-                            self.assertNotIn('End', checkerresult.log, "Test did finish (no timeout?)")
-                            self.assertIn('Timeout occured!', checkerresult.log, "Test result does not mention timeout")
-                            self.failIf(checkerresult.passed, "Test succeed (no timeout?)")
+		with self.settings(TEST_MAXMEM=1):
+			ScriptChecker.ScriptChecker.objects.create(
+			    task = self.task,
+			    order = 0,
+			    shell_script = dest
+			    )
+			self.solution.check_solution()
+			for checkerresult in self.solution.checkerresult_set.all():
+				self.assertIn('Begin', checkerresult.log, "Test did not even start?")
+				self.assertNotIn('End', checkerresult.log, "Test did finish (no timeout?)")
+				self.assertIn('Timeout occured!', checkerresult.log, "Test result does not mention timeout")
+				self.failIf(checkerresult.passed, "Test succeed (no timeout?)")
 
 	def test_text_checker(self):
 		TextChecker.TextChecker.objects.create(
@@ -257,7 +257,7 @@ class TestChecker(TestCase):
 					_output_flags = "",
 					_file_pattern = r"^[a-zA-Z0-9_/\\]*\.[jJ][aA][vV][aA]$"
 					)
-		src = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'GGT', 'DejaGnuTestCases', 'default.exp')	
+		src = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'GGT', 'DejaGnuTestCases', 'default.exp')
 		test_defs = join(settings.UPLOAD_ROOT, 'directdeposit', 'DejaGnuTestCases', 'default.exp')
 		# circumvent SuspiciousOperation exception
 		copy_file(src,test_defs)

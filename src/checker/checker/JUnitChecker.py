@@ -29,7 +29,7 @@ class IgnoringJavaBuilder(JavaBuilder):
 
 class JUnitChecker(Checker):
 	""" New Checker for JUnit3 Unittests. """
-	
+
 	# Add fields to configure checker instances. You can use any of the Django fields. (See online documentation)
 	# The fields created, task, public, required and always will be inherited from the abstract base class Checker
 	class_name = models.CharField(
@@ -48,7 +48,7 @@ class JUnitChecker(Checker):
 
 	def runner(self):
 		return {'junit4' : 'org.junit.runner.JUnitCore', 'junit3' : 'junit.textui.TestRunner' }[self.junit_version]
-	
+
 	def title(self):
 		return u"JUnit Test: " + self.name
 
@@ -63,7 +63,7 @@ class JUnitChecker(Checker):
 		java_builder = IgnoringJavaBuilder(_flags="", _libs=self.junit_version,_file_pattern=r"^.*\.[jJ][aA][vV][aA]$",_output_flags="",_main_required=False)
 		java_builder._ignore = self.ignore.split(" ")
 
-		
+
 		build_result = java_builder.run(env)
 
 		if not build_result.passed:
@@ -76,7 +76,7 @@ class JUnitChecker(Checker):
 
 		environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
 		environ['JAVA'] = settings.JVM
-                script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
+		script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
 		environ['POLICY'] = os.path.join(script_dir,"junit.policy")
 
 		cmd = [settings.JVM_SECURE, "-cp", settings.JAVA_LIBS[self.junit_version]+":.", self.runner(), self.class_name]
@@ -100,7 +100,7 @@ class JUnitChecker(Checker):
 #		self.fields["_output_flags"].initial = ""
 #		self.fields["_libs"].initial = "junit3"
 #		self.fields["_file_pattern"].initial = r"^.*\.[jJ][aA][vV][aA]$"
-	
+
 class JavaBuilderInline(CheckerInline):
 	""" This Class defines how the the the checker is represented as inline in the task admin page. """
 	model = JUnitChecker
@@ -118,5 +118,3 @@ class JavaBuilderInline(CheckerInline):
 #class ExampleCheckerInline(CheckerInline):
 	#model = ExampleChecker
 	#form = ExampleForm
-
-	

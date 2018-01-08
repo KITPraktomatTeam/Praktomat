@@ -150,4 +150,3 @@ if match.group('tba') is not None:
 # Finally load defaults for missing setttings.
 import defaults
 defaults.load_defaults(globals())
-

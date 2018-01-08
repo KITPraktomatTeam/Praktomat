@@ -2,7 +2,7 @@
 
 from pipes import quote
 import shutil, os, re, subprocess
-from django.conf import settings 
+from django.conf import settings
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -12,7 +12,7 @@ from utilities.safeexec import execute_arglist
 from utilities.file_operations import *
 
 
-RXFAIL	   = re.compile(r"^\*\*\*",	re.MULTILINE)
+RXFAIL = re.compile(r"^\*\*\*", re.MULTILINE)
 
 
 class IsabelleChecker(Checker):
@@ -26,12 +26,12 @@ class IsabelleChecker(Checker):
 	def output_ok(self, output):
 		return (RXFAIL.search(output) == None)
 
-	
+
 	@staticmethod
 	def description():
 		""" Returns a description for this Checker. """
 		return u"Verifies that every submitted Isabelle theory can be processed without error"
-	
+
 
 	def run(self, env):
 
@@ -68,11 +68,10 @@ class IsabelleChecker(Checker):
 		result = self.create_result(env)
 		result.set_log('<pre>' + escape(output) + '</pre>')
 		result.set_passed(not timed_out and not oom_ed and self.output_ok(output))
-		
+
 		return result
-	
+
 from checker.admin import	CheckerInline
 
 class IsabelleCheckerInline(CheckerInline):
 	model = IsabelleChecker
-

@@ -53,7 +53,7 @@ class RChecker(Checker):
 			result.set_passed(False)
 			return result
 
-                if self.r_script:
+		if self.r_script:
 			if self.r_script not in R_files:
 				output = "<p>Could not find expected R script %s.</p>" % self.r_script
 				output += "<p>R scripts found: %s</p>" % ", ".join(map(escape, R_files))
@@ -116,4 +116,3 @@ from checker.admin import	CheckerInline
 
 class RCheckerInline(CheckerInline):
 	model = RChecker
-

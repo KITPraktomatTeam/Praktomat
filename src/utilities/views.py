@@ -11,16 +11,16 @@ from django.utils.encoding import smart_str
 from accounts.views import access_denied
 from solutions.models import Solution
 
-def serve_unrestricted(request, path): 
+def serve_unrestricted(request, path):
 	 return sendfile(request, path)
 
 @login_required
-def serve_staff_only(request, path): 
-	if  request.user.is_staff: 
+def serve_staff_only(request, path):
+	if  request.user.is_staff:
 		return sendfile(request, path)
-	return forbidden(request, path) 
+	return forbidden(request, path)
 
-def serve_access_denied(request, path): 
+def serve_access_denied(request, path):
 	return forbidden(request, path)
 
 @login_required
@@ -38,14 +38,14 @@ def sendfile(request, path):
 	if 'runserver' in sys.argv or 'runserver_plus' in sys.argv or 'runconcurrentserver' in sys.argv:
 		# serve with development server when not run in apache
 		return serve(request, path, document_root=settings.UPLOAD_ROOT)
-	response = HttpResponse() 
+	response = HttpResponse()
 	response['X-Sendfile'] = smart_str(filename)
-	content_type, encoding = mimetypes.guess_type(path) 
-	if not content_type: 
-		content_type = 'application/octet-stream' 
+	content_type, encoding = mimetypes.guess_type(path)
+	if not content_type:
+		content_type = 'application/octet-stream'
 	response['Content-Type'] = content_type
 	response['Content-Length'] = os.path.getsize(filename)
-	return response 
+	return response
 
 def forbidden(request, path):
 	filename = os.path.join(settings.UPLOAD_ROOT, path)

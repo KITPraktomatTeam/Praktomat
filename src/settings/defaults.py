@@ -20,9 +20,9 @@ def load_defaults(settings):
             globals()[k] = v
 
     class D(object):
-	  
+
         def __setattr__(self,k,v):
-	    object.__setattr__(self, k, v)   # assign value v to instance attribute k
+            object.__setattr__(self, k, v)   # assign value v to instance attribute k
             if k not in globals():
                 settings[k] = v
                 globals()[k] = v
@@ -38,8 +38,8 @@ def load_defaults(settings):
     # General setup
 
     # This will show debug information in the browser if an exception occurs.
-    # Note that there are always going to be sections of your debug output that 
-    # are inappropriate for public consumption. File paths, configuration options, 
+    # Note that there are always going to be sections of your debug output that
+    # are inappropriate for public consumption. File paths, configuration options,
     # and the like all give attackers extra information about your server.
     # Never deploy a site into production with DEBUG turned on.
     d.DEBUG = True
@@ -58,7 +58,7 @@ def load_defaults(settings):
     # A tuple that lists people who get code error notifications. When
     # DEBUG=False and a view raises an exception, Django will email these
     # people with the full exception information. Each member of the tuple
-    # should be a tuple of (Full name, email address). 
+    # should be a tuple of (Full name, email address).
     d.ADMINS = []
 
     # A tuple in the same format as ADMINS that specifies who should get broken
@@ -103,7 +103,7 @@ def load_defaults(settings):
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
-        'accounts.middleware.AuthenticationMiddleware',	
+        'accounts.middleware.AuthenticationMiddleware',
         'accounts.middleware.LogoutInactiveUserMiddleware',
     )
 
@@ -147,8 +147,8 @@ def load_defaults(settings):
     d.SESSION_COOKIE_PATH = BASE_PATH
 
     d.CSRF_COOKIE_NAME = 'csrftoken_' + PRAKTOMAT_ID
-        
-    # Make this unique, and don't share it with anybody.    
+
+    # Make this unique, and don't share it with anybody.
     if 'SECRET_KEY' not in globals():
         secret_keyfile = join(UPLOAD_ROOT, 'SECRET_KEY')
         if os.path.exists(secret_keyfile):
@@ -156,7 +156,7 @@ def load_defaults(settings):
             if not d.SECRET_KEY:
                 raise RuntimeError("File %s empty!" % secret_keyfile)
         else:
-            import uuid            
+            import uuid
             d.SECRET_KEY = uuid.uuid4().hex
             os.fdopen(os.open(secret_keyfile,os.O_WRONLY | os.O_CREAT,0600),'w').write(SECRET_KEY)
 
@@ -199,7 +199,7 @@ def load_defaults(settings):
     }
 
     # Email
-    
+
     # Default email address to use for various automated correspondence from
     # the site manager(s).
     d.DEFAULT_FROM_EMAIL = ""
@@ -218,7 +218,7 @@ def load_defaults(settings):
 
       'theme': "advanced",
       'theme_advanced_buttons1' : "formatselect,|,bold,italic,underline,strikethrough,|,forecolor,|,bullist,numlist,|,sub,sup,|,outdent,indent,blockquote,syntaxhl,|,visualchars,nonbreaking,|,link,unlink,anchor,image,cleanup,help,code,|,print,|,fullscreen",
-        'theme_advanced_buttons2' : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,undo,redo,|,tablecontrols,|,hr,removeformat,visualaid,|,charmap,emotions,iespell,media,advhr",				   
+        'theme_advanced_buttons2' : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,undo,redo,|,tablecontrols,|,hr,removeformat,visualaid,|,charmap,emotions,iespell,media,advhr",
         'theme_advanced_buttons3' : "",
         'theme_advanced_buttons4' : "",
         'theme_advanced_toolbar_location' : "top",
@@ -226,7 +226,7 @@ def load_defaults(settings):
         'theme_advanced_statusbar_location' : "bottom",
         'theme_advanced_resizing' : True,
         'extended_valid_elements' : "textarea[cols|rows|disabled|name|readonly|class]" ,
-        
+
         'content_css' : STATIC_URL + '/styles/style.css',
       'relative_urls': False,
     }
@@ -273,7 +273,7 @@ def load_defaults(settings):
     # "_www    		ALL=(tester)NOPASSWD:ALL"
     # "developer	ALL=(tester)NOPASSWD:ALL"
     d.USEPRAKTOMATTESTER = False
- 
+
     # Alternatively: Run everything in a docker instance, to provide higher
     # insulation. Should not be used together iwth USEPRAKTOMATTESTER.
     d.USESAFEDOCKER = False
@@ -327,7 +327,7 @@ def load_defaults(settings):
 
     # Maximal size (in kbyte) of checker logs accepted. This setting is
     # respected currently only by:
-    # JUnitChecker, ScriptChecker, 
+    # JUnitChecker, ScriptChecker,
     d.TEST_MAXLOGSIZE=64
 
     d.NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 1

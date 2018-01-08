@@ -50,7 +50,7 @@ class JavaBuilder(ClassFileGeneratingBuilder):
 		def toPath(lib):
 			if lib=="junit3":
 				 return settings.JUNIT38_JAR
-			return lib 
+			return lib
 
 		required_libs = super(JavaBuilder,self).libs()
 
@@ -74,8 +74,7 @@ class CheckerForm(AlwaysChangedModelForm):
 		self.fields["_output_flags"].initial = ""
 		#self.fields["_libs"].initial = ""
 		self.fields["_file_pattern"].initial = r"^.*\.[jJ][aA][vV][aA]$"
-	
+
 class JavaBuilderInline(CheckerInline):
 	model = JavaBuilder
 	form = CheckerForm
-	

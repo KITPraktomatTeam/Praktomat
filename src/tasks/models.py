@@ -32,8 +32,8 @@ class Task(models.Model):
 	all_checker_finished = models.BooleanField(default=False, editable=False, help_text = _("Indicates whether the checker which don't run immediately on submission have been executed."))
 	final_grade_rating_scale = models.ForeignKey('attestation.RatingScale', null=True, help_text = _("The scale used to mark the whole solution."))
 	warning_threshold = models.DecimalField(max_digits=8, decimal_places=2, default=0, help_text = _("If the student has less points in his tasks than the sum of their warning thresholds, display a warning."))
-        only_trainers_publish = models.BooleanField(default=False, help_text = _("Indicates that only trainers may publish attestations. Otherwise, tutors may publish final attestations within their tutorials."))
-        jplag_up_to_date = models.BooleanField(default=False, help_text = _("No new solution uploads since the last jPlag run"))
+	only_trainers_publish = models.BooleanField(default=False, help_text = _("Indicates that only trainers may publish attestations. Otherwise, tutors may publish final attestations within their tutorials."))
+	jplag_up_to_date = models.BooleanField(default=False, help_text = _("No new solution uploads since the last jPlag run"))
 
 	class Meta:
 		ordering = ['submission_date', 'title']
@@ -62,96 +62,96 @@ class Task(models.Model):
 		if self.expired():
 				self.all_checker_finished = True
 				self.save()
-                return final_solutions.count()
+		return final_solutions.count()
 
-        def get_checkers(self):
-            from checker.basemodels import Checker
-            checker_app = apps.get_app_config('checker')
+	def get_checkers(self):
+		from checker.basemodels import Checker
+		checker_app = apps.get_app_config('checker')
 
-            checker_classes = filter(lambda x:issubclass(x,Checker), checker_app.get_models())
-            unsorted_checker = sum(map(lambda x: list(x.objects.filter(task=self)), checker_classes),[])
-            checkers = sorted(unsorted_checker, key=lambda checker: checker.order)
-            return checkers
+		checker_classes = filter(lambda x:issubclass(x,Checker), checker_app.get_models())
+		unsorted_checker = sum(map(lambda x: list(x.objects.filter(task=self)), checker_classes),[])
+		checkers = sorted(unsorted_checker, key=lambda checker: checker.order)
+		return checkers
 
-        def jplag_dir_path(self):
-            return os.path.join(settings.UPLOAD_ROOT, 'jplag', 'Task_' + unicode(self.id))
+	def jplag_dir_path(self):
+		return os.path.join(settings.UPLOAD_ROOT, 'jplag', 'Task_' + unicode(self.id))
 
-        def jplag_index_url(self):
-            return os.path.join('jplag', 'Task_' + unicode(self.id), "index.html")
+	def jplag_index_url(self):
+		return os.path.join('jplag', 'Task_' + unicode(self.id), "index.html")
 
-        def jplag_log_url(self):
-            return os.path.join('jplag', 'Task_' + unicode(self.id), "jplag.txt")
+	def jplag_log_url(self):
+		return os.path.join('jplag', 'Task_' + unicode(self.id), "jplag.txt")
 
-        def did_jplag_run(self):
-            return os.path.isdir(self.jplag_dir_path())
+	def did_jplag_run(self):
+		return os.path.isdir(self.jplag_dir_path())
 
-        def did_jplag_succeed(self):
-            return os.path.exists(os.path.join(self.jplag_dir_path(), 'index.html'))
+	def did_jplag_succeed(self):
+		return os.path.exists(os.path.join(self.jplag_dir_path(), 'index.html'))
 
-        def need_to_re_run_jplag(self):
-            if self.jplag_up_to_date:
-                self.jplag_up_to_date = False
-                self.save()
+	def need_to_re_run_jplag(self):
+		if self.jplag_up_to_date:
+			self.jplag_up_to_date = False
+			self.save()
 
-        @staticmethod
-        def jplag_languages():
-            return { 'Java':     { 'param': 'java17', 'files': '.java,.JAVA' },
-                     'R':        { 'param': 'text',   'files': '.R' },
-                     'Python':   { 'param': 'text',   'files': '.py' },
-                     'Isabelle': { 'param': 'text',   'files': '.thy' },
-                   }
+	@staticmethod
+	def jplag_languages():
+		return { 'Java':     { 'param': 'java17', 'files': '.java,.JAVA' },
+		         'R':        { 'param': 'text',   'files': '.R' },
+		         'Python':   { 'param': 'text',   'files': '.py' },
+		         'Isabelle': { 'param': 'text',   'files': '.thy' },
+		       }
 
-        def run_jplag(self, lang):
-            # sanity check
-            if not hasattr(settings,'JPLAGJAR'):
-                    raise RuntimeError("Setting JPLAGJAR not set")
-            if not os.path.exists(settings.JPLAGJAR):
-                    raise RuntimeError("Setting JPLAGJAR points to non-existing file %s" % settings.JPLAGJAR)
-            if not lang in self.jplag_languages():
-                    raise RuntimeError("Unknown jplag settings %s" % lang)
+	def run_jplag(self, lang):
+		# sanity check
+		if not hasattr(settings,'JPLAGJAR'):
+			raise RuntimeError("Setting JPLAGJAR not set")
+		if not os.path.exists(settings.JPLAGJAR):
+			raise RuntimeError("Setting JPLAGJAR points to non-existing file %s" % settings.JPLAGJAR)
+		if not lang in self.jplag_languages():
+			raise RuntimeError("Unknown jplag settings %s" % lang)
 
-            # Remember jplag setting
-            configuration = get_settings()
-            configuration.jplag_setting = lang
-            configuration.save()
+		# Remember jplag setting
+		configuration = get_settings()
+		configuration.jplag_setting = lang
+		configuration.save()
 
-            jplag_settings = self.jplag_languages()[lang]
-            path = self.jplag_dir_path()
-            tmp = os.path.join(path,"tmp")
-            # clean out previous run
-            if self.did_jplag_run():
-                shutil.rmtree(path)
-            # create output directory
-            os.makedirs(path)
+		jplag_settings = self.jplag_languages()[lang]
+		path = self.jplag_dir_path()
+		tmp = os.path.join(path,"tmp")
+		# clean out previous run
+		if self.did_jplag_run():
+			shutil.rmtree(path)
+		# create output directory
+		os.makedirs(path)
 
-            # extract all final solutions
-            os.mkdir(tmp)
-            final_solutions = self.solution_set.filter(final=True)
-            from solutions.models import path_for_user
-            for solution in final_solutions:
-                subpath = os.path.join(tmp, path_for_user(solution.author))
-                os.mkdir(subpath)
-                solution.copySolutionFiles(subpath)
+		# extract all final solutions
+		os.mkdir(tmp)
+		final_solutions = self.solution_set.filter(final=True)
+		from solutions.models import path_for_user
+		for solution in final_solutions:
+			subpath = os.path.join(tmp, path_for_user(solution.author))
+			os.mkdir(subpath)
+			solution.copySolutionFiles(subpath)
 
-            # run jplag
-            args = [settings.JVM,
-                "-jar", settings.JPLAGJAR,
-                "-l", jplag_settings['param'],
-                "-p", jplag_settings['files'],
-                "-r", path,
-                tmp]
-            [output, error, exitcode,timed_out, oom_ed] = \
-                execute_arglist(args, path, unsafe=True)
+		# run jplag
+		args = [settings.JVM,
+		        "-jar", settings.JPLAGJAR,
+		        "-l", jplag_settings['param'],
+		        "-p", jplag_settings['files'],
+		        "-r", path,
+		        tmp]
+		[output, error, exitcode,timed_out, oom_ed] = \
+		 execute_arglist(args, path, unsafe=True)
 
-            # remove solution copies
-            shutil.rmtree(tmp)
+		# remove solution copies
+		shutil.rmtree(tmp)
 
-            # write log file
-            file(os.path.join(path,"jplag.txt"),'w').write(output)
+		# write log file
+		file(os.path.join(path,"jplag.txt"),'w').write(output)
 
-            # mark jplag as up-to-date
-            self.jplag_up_to_date = True
-            self.save()
+		# mark jplag as up-to-date
+		self.jplag_up_to_date = True
+		self.save()
 
 
 	@classmethod
@@ -164,12 +164,13 @@ class Task(models.Model):
 		media_objects = list( MediaFile.objects.filter(task__in=task_objects) )
 		model_solution_objects = list( Solution.objects.filter(model_solution_task__in=task_objects) )
 		model_solution_file_objects = list( SolutionFile.objects.filter(solution__in=model_solution_objects) )
-                from checker.basemodels import Checker
-                checker_app = apps.get_app_config('checker')
+
+		from checker.basemodels import Checker
+		checker_app = apps.get_app_config('checker')
 		checker_classes = filter(lambda x:issubclass(x,Checker), checker_app.get_models())
 		checker_objects = sum(map(lambda x: list(x.objects.filter(task__in=task_objects)), checker_classes),[])
 		data = serializers.serialize("xml", task_objects + media_objects + checker_objects + model_solution_objects + model_solution_file_objects)
-		
+
 		# fetch files
 		files = []
 		for checker_object in checker_objects:
@@ -179,19 +180,19 @@ class Task(models.Model):
 			files.append(media_object.media_file)
 		for model_solution_file_object in model_solution_file_objects:
 			files.append(model_solution_file_object.file)
-		
+
 		# zip it up
 		zip_file = tempfile.SpooledTemporaryFile()
 		zip = zipfile.ZipFile(zip_file,'w')
 		zip.writestr('data.xml', data)
 		for file in files:
 			zip.write(file.path, file.name)
-		zip.close()	
+		zip.close()
 		zip_file.seek(0)		# rewind
 		return zip_file			# return unclosed file-like object!?
 
 	@classmethod
-        @transaction.atomic
+	@transaction.atomic
 	def import_Tasks(cls, zip_file, solution_author):
 		from solutions.models import Solution, SolutionFile
 		zip = zipfile.ZipFile(zip_file,'r')
@@ -205,9 +206,9 @@ class Task(models.Model):
 			old_id = object.id
 			object.id = None
 			if isinstance(object, Task):
-				# save all tasks and their old id 
+				# save all tasks and their old id
 				object.publication_date = date.max
-				deserialized_object.save()	
+				deserialized_object.save()
 				task_id_map[old_id] = object.id
 				old_solution_to_new_task_map[object.model_solution_id] = object.id
 				object.model_solution = None
@@ -219,14 +220,14 @@ class Task(models.Model):
 					object.solution_id = solution_id_map[object.solution_id]
 				else:
 					object.task_id = task_id_map[object.task_id]
-				
+
 				from django.core.files import File
 				for file_field in filter(lambda x: isinstance(x, models.FileField) , object.__class__._meta.fields):
 					file_field_instance = object.__getattribute__(file_field.attname)
 					temp_file = tempfile.NamedTemporaryFile()						# autodeleted
 					temp_file.write(zip.open(file_field_instance.name).read())
 					file_field_instance.save(file_field_instance.name, File(temp_file))
-				
+
 				deserialized_object.save()
 
 				if isinstance(object, Solution):
@@ -257,17 +258,17 @@ class MediaFile(models.Model):
 class HtmlInjector(models.Model):
 	task = models.ForeignKey(Task)
 	inject_in_solution_view      = models.BooleanField(
-        	default=False,
+		default=False,
 		help_text = _("Indicates whether HTML code shall be injected in public  solution views, e.g.: in https://praktomat.cs.kit.edu/2016_WS_Abschluss/solutions/5710/")
-	) 
+	)
 	inject_in_solution_full_view = models.BooleanField(
 		default=False,
 		help_text = _("Indicates whether HTML code shall be injected in private solution views, e.g.: in https://praktomat.cs.kit.edu/2016_WS_Abschluss/solutions/5710/full")
-	) 
+	)
 	inject_in_attestation_edit = models.BooleanField(
 		default=True,
 		help_text = _("Indicates whether HTML code shall be injected in attestation edits, e.g.: in https://praktomat.cs.kit.edu/2016_WS_Abschluss/attestation/134/edit")
-	) 
+	)
 	inject_in_attestation_view = models.BooleanField(
 		default=False,
 		help_text = _("Indicates whether HTML code shall be injected in attestation views, e.g.: in https://praktomat.cs.kit.edu/2016_WS_Abschluss/attestation/134")

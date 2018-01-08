@@ -21,12 +21,12 @@ def do_get_chunk(parser, token):
         raise template.TemplateSyntaxError, "%r tag's argument should be in quotes" % tag_name
     # Send key without quotes and caching time
     return ChunkNode(key[1:-1], cache_time)
-    
+
 class ChunkNode(template.Node):
     def __init__(self, key, cache_time=0):
        self.key = key
        self.cache_time = cache_time
-    
+
     def render(self, context):
         Chunk = apps.get_model('configuration','chunk')
         try:
@@ -39,5 +39,5 @@ class ChunkNode(template.Node):
         except Chunk.DoesNotExist:
             content = ''
         return content
-        
+
 register.tag('chunk', do_get_chunk)

@@ -29,19 +29,19 @@ for (mimetype,extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
 
 class Solution(models.Model):
 	""" """
-	
+
 	number = models.IntegerField(null=False, editable=False, help_text = _("Id unique in task and user.Eg. Solution 1 of user X in task Y in contrast to global solution Z"))
-	
+
 	task = models.ForeignKey('tasks.task')
 	author = models.ForeignKey(User, verbose_name="solution author")
 	creation_date = models.DateTimeField(auto_now_add=True)
-	
-        testupload = models.BooleanField( default = False, help_text = _('Indicates whether this solution is a test upload.'))
+
+	testupload = models.BooleanField( default = False, help_text = _('Indicates whether this solution is a test upload.'))
 	accepted = models.BooleanField( default = False, help_text = _('Indicates whether the solution has passed all public and required tests.'))
 	warnings = models.BooleanField( default = False, help_text = _('Indicates whether the solution has at least failed one public and not required tests.'))
 	plagiarism = models.BooleanField( default = False, help_text = _('Indicates whether the solution is a rip-off of another one.'))
 	final = models.BooleanField( default = False, help_text = _('Indicates whether this solution is the last (accepted) of the author.'))
-	
+
 	def __unicode__(self):
 		return unicode(self.task) + ":" + unicode(self.author) + ":" + unicode(self.number)
 
@@ -57,8 +57,8 @@ class Solution(models.Model):
 	def copySolutionFiles(self, toTempDir):
 		for file in self.solutionfile_set.all():
 			file.copyTo(toTempDir)
-	
-        @transaction.atomic
+
+	@transaction.atomic
 	def save(self, *args, **kwargs):
 		"""Override save calculate the number on first save"""
 		if self.number == None:
@@ -66,10 +66,10 @@ class Solution(models.Model):
 		if self.final:
 			# delete old final flag if this is the new final solution
 			self.task.solutions(self.author).update(final=False)
-                        # may need to re-run jplag
-                        self.task.need_to_re_run_jplag()
-		super(Solution, self).save(*args, **kwargs) # Call the "real" save() method.	
-	
+			# may need to re-run jplag
+			self.task.need_to_re_run_jplag()
+		super(Solution, self).save(*args, **kwargs) # Call the "real" save() method.
+
 	def check_solution(self, run_secret = 0, debug_keep_tmp = False):
 		"""Builds and tests this solution."""
 		from checker.basemodels import check_solution
@@ -113,7 +113,7 @@ def sign(file):
 		return None
 	evp = EVP.load_key(settings.PRIVATE_KEY)
 	evp.sign_init()
-	file.seek(0) 
+	file.seek(0)
 	evp.sign_update(file.read())
 	# signature to log for email, so shorten it
 	s = EVP.MessageDigest('md5')
@@ -130,22 +130,22 @@ def get_solutionfile_upload_path(instance, filename):
 
 class SolutionFile(models.Model):
 	"""docstring for SolutionFile"""
-	
+
 	solution = models.ForeignKey(Solution)
-	file = models.FileField(upload_to = get_solutionfile_upload_path, max_length=500, help_text = _('Source code file as part of a solution an archive file (.zip, .tar or .tar.gz) containing multiple solution files.')) 
+	file = models.FileField(upload_to = get_solutionfile_upload_path, max_length=500, help_text = _('Source code file as part of a solution an archive file (.zip, .tar or .tar.gz) containing multiple solution files.'))
 	mime_type = models.CharField(max_length=100, help_text = _("Guessed file type. Automatically  set on save()."))
-	
-	# ignore hidden or os-specific files, etc. in zipfiles 
-	regex = r'(' + '|'.join([	
+
+	# ignore hidden or os-specific files, etc. in zipfiles
+	regex = r'(' + '|'.join([
 						r'(^|/)\..*', 		# files starting with a dot (unix hidden files)
 						r'__MACOSX/.*',
 						r'^/.*',			# path starting at the root dir
 						r'\.\..*',			# parent folder with '..'
 						r'/$',				# don't unpack folders - the zipfile package will create them on demand
 					]) + r')'
-	
+
 	ignorred_file_names_re = re.compile(regex)
-	
+
 	def save(self, force_insert=False, force_update=False, using=None):
 		""" override save method to automatically expand zip files"""
 		if self.file.name.upper().endswith('.ZIP'):
@@ -154,7 +154,7 @@ class SolutionFile(models.Model):
 				if not self.ignorred_file_names_re.search(zip_file_name):
 					new_solution_file = SolutionFile(solution=self.solution)
 					temp_file = tempfile.NamedTemporaryFile()									# autodeleted
-					temp_file.write(zip.open(zip_file_name).read()) 
+					temp_file.write(zip.open(zip_file_name).read())
 					zip_file_name = zip_file_name  if isinstance(zip_file_name, unicode) else unicode(zip_file_name,errors='replace')
 					new_solution_file.file.save(zip_file_name, File(temp_file), save=True)		# need to check for filenames begining with / or ..?
 		elif self.file.name.upper().endswith(('.TAR.GZ', '.TAR.BZ2', '.TAR')):
@@ -163,7 +163,7 @@ class SolutionFile(models.Model):
 				if not self.ignorred_file_names_re.search(member.name) and member.isfile():
 					new_solution_file = SolutionFile(solution=self.solution)
 					temp_file = tempfile.NamedTemporaryFile()									# autodeleted
-					temp_file.write(tar.extractfile(member.name).read()) 
+					temp_file.write(tar.extractfile(member.name).read())
 					zip_file_name = member.name  if isinstance(member.name, unicode) else unicode(member.name,errors='replace')
 					new_solution_file.file.save(zip_file_name, File(temp_file), save=True)		# need to check for filenames begining with / or ..?
 		else:
@@ -172,36 +172,36 @@ class SolutionFile(models.Model):
 
 	def __unicode__(self):
 		return self.file.name.rpartition('/')[2]
-	
+
 	def get_hash(self):
 		self.file.seek(0)
 		s = EVP.MessageDigest('md5')
 		s.update(self.file.read())
 		return s.digest().encode('hex')
-	
+
 	def get_signature(self):
-		return sign(self.file)			
-	
+		return sign(self.file)
+
 	def isBinary(self):
 		return self.mime_type[:4] != "text"
 
 	def isImage(self):
 		return self.mime_type[:5] == "image"
-	
+
 	def isEmbeddable(self):
 		return self.mime_type in ("application/pdf",)
 
 	def path(self):
 		""" path of file relative to the zip file, which once contained it """
 		return self.file.name[len(get_solutionfile_upload_path(self, '')):]
-		
+
 	def content(self):
 		"""docstring for content"""
 		if self.isBinary():
 			return "Binary Data"
 		else:
 			return encoding.get_unicode(self.file.read())
-					
+
 	def copyTo(self,directory):
 		""" Copies this file to the given directory """
 		new_file_path = os.path.join(directory, self.path())
@@ -233,10 +233,10 @@ def solution_file_delete(sender, instance, **kwargs):
 class DummyFile:
 	def __init__(self, path):
 		self.path = path
-	
+
 
 def get_solutions_zip(solutions,include_file_copy_checker_files=False):
-	
+
 	zip_file = tempfile.TemporaryFile()
 	zip = zipfile.ZipFile(zip_file,'w', allowZip64 = True)
 	praktomat_files_destination          = "praktomat-files/"
@@ -276,10 +276,10 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 		# TODO: make this work for anonymous attesration, too
 		if get_settings().anonymous_attestation:
 			project_path = 'User' + index
-			project_name = unicode(solution.task) + u"-" + 'User ' + index 
+			project_name = unicode(solution.task) + u"-" + 'User ' + index
 		else:
 			project_path = path_for_user(solution.author)
-			project_name = unicode(solution.task) + u"-" + solution.author.get_full_name() 
+			project_name = unicode(solution.task) + u"-" + solution.author.get_full_name()
 		base_name = path_for_task(solution.task) + '/' + project_path + '/'
 
 		# We need to pass unicode strings to ZipInfo to ensure that it sets bit
@@ -304,7 +304,7 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 			checkstyle_checker_files = [(checkstyle_checker_files_destination + os.path.basename(checker.configuration.name), checker.configuration) for checker in checkstyle_checker]
 			script_checker_files     = [(script_checker_files_destination     + checker.path_relative_to_sandbox(),    checker.shell_script)  for checker in script_checker]
 			artefact_files           = [(artefact_files_destination + os.path.basename(artefact.file.name), artefact.file) for artefact in artefacts]
-	
+
 		zip.writestr(base_name+'.project', render_to_string('solutions/eclipse/project.xml', { 'name': project_name, 'checkstyle' : checkstyle }).encode("utf-8"))
 		zip.writestr(base_name+'.settings/org.eclipse.jdt.core.prefs', render_to_string('solutions/eclipse/settings/org.eclipse.jdt.core.prefs', { }).encode("utf-8"))
 
@@ -317,7 +317,7 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 			zip.writestr(base_name+praktomat_files_destination+'AllJUnitTests.launch', render_to_string('solutions/eclipse/AllJUnitTests.launch', { 'project_name' : project_name, 'praktomat_files_destination' : praktomat_files_destination}).encode("utf-8"))
 			zip.write(os.path.dirname(__file__)+"/../checker/scripts/eclipse-junit.policy", (base_name+praktomat_files_destination+'eclipse-junit.policy'))
 
-		
+
 		solution_files  = [ (solution_files_destination+solutionfile.path(), solutionfile.file) for solutionfile in solution.solutionfile_set.all()]
 
 		for  (name,file) in solution_files + createfile_checker_files + checkstyle_checker_files + script_checker_files + artefact_files:
@@ -325,18 +325,18 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 			assert isinstance(zippath, unicode)
 			try: # Do not overwrite files from the solution by checker files
 				zip.getinfo(zippath)
-			except KeyError: 
+			except KeyError:
 				zip.write(file.path, zippath)
 				assert zip.getinfo(zippath) # file was really added under name "zippath" (not only some normalization thereof)
 
-	zip.close()	
+	zip.close()
 	zip_file.seek(0)
 
 	if include_file_copy_checker_files:
 		if (tmpdir is None) or (not os.path.isdir(tmpdir)) or (not os.path.basename(tmpdir).startswith("tmp")):
 			raise Exception("Invalid tmpdir: " + tmpdir)
 		shutil.rmtree(tmpdir)
-		
+
 
 	return zip_file
 
@@ -356,4 +356,3 @@ path_regexp = re.compile(r'[^-]*-[^-]*-(.*)')
 
 def id_for_path(path):
 	return path_regexp.match(path).group(1)
-

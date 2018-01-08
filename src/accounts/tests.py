@@ -97,4 +97,3 @@ class TestViews(TestCase):
 
         self.failUnlessEqual(set( u.mat_number for u in User.objects.filter(groups = self.testgroup)),
                              set( u.mat_number for u in [user,user3]))
-

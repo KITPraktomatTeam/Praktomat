@@ -18,7 +18,7 @@ class CheckerResultInline(admin.TabularInline):
 	can_delete = False
 	fields = ["checker", "passed", "log"]
 	readonly_fields = ["checker", "passed", "log"]
-	
+
 class SolutionFileInline(admin.TabularInline):
 	model = SolutionFile
 	extra = 0
@@ -31,8 +31,8 @@ class SolutionAdmin(admin.ModelAdmin):
 	list_display = ["edit", "view_url", "download_url", "run_checker_url", "task", "show_author", "number", "creation_date", "final", "accepted", "warnings", "latest_of_only_failed", "plagiarism"]
 	list_filter = ["task", "author", "author__groups", "creation_date", "final", "accepted", "warnings", "plagiarism"]
 	fieldsets = ((None, {
-		  			'fields': ( "task", "show_author", "creation_date", ("final", "accepted", "warnings"), "plagiarism",'useful_links')
-			  	}),)
+					'fields': ( "task", "show_author", "creation_date", ("final", "accepted", "warnings"), "plagiarism",'useful_links')
+				}),)
 	readonly_fields=["task", "show_author", "creation_date", "accepted", "final", "warnings",'useful_links']
 	inlines =  [CheckerResultInline, SolutionFileInline]
 	actions = ['run_checkers','run_checkers_all', 'mark_plagiarism', 'mark_no_plagiarism']
@@ -50,7 +50,7 @@ class SolutionAdmin(admin.ModelAdmin):
 		self.message_user(request, "Checkers (only those also run at submission) for selected solutions were successfully run.")
 
 	run_checkers.short_description = "Run Checkers (only those also run at submission) for selected solutions"
-		
+
 	def mod_plagiarism(self, queryset, value):
 		count = 0
 		for s in queryset:
@@ -58,7 +58,7 @@ class SolutionAdmin(admin.ModelAdmin):
 				s.plagiarism = value
 				s.save()
 				count += 1
- 		return count
+		return count
 
 	def mark_plagiarism(self, request, queryset):
 		count = self.mod_plagiarism(queryset, True)
@@ -69,7 +69,7 @@ class SolutionAdmin(admin.ModelAdmin):
 		count = self.mod_plagiarism(queryset, False)
 		self.message_user(request, "%d solutions marked as not plagiated" % count)
 	mark_no_plagiarism.short_description = "Mark as not plagiated"
-		
+
 
 	def edit(self,solution):
 		return 'Edit'
@@ -92,12 +92,12 @@ class SolutionAdmin(admin.ModelAdmin):
 
 	def show_author(self,instance):
 		return format_html(u'<a href="{0}">{1}</a>',
-                    reverse('admin:accounts_user_change', args=(instance.author.pk,)),
-                    instance.author)
+		                   reverse('admin:accounts_user_change', args=(instance.author.pk,)),
+		                   instance.author)
 	show_author.allow_tags = True
 	show_author.short_description = 'Solution author'
 
-        def useful_links(self, instance):
+	def useful_links(self, instance):
 		if instance.pk:
 			return format_html ('<a href="{0}">Attestations of this solution</a> • <a href="{1}">User Site view of this solution</a>',
 			    reverse('admin:attestation_attestation_changelist') + ("?solution__exact=%d" % instance.pk),
@@ -105,7 +105,7 @@ class SolutionAdmin(admin.ModelAdmin):
 			    )
 		else:
 			return ""
-        useful_links.allow_tags = True
+	useful_links.allow_tags = True
 
 
 
@@ -116,12 +116,3 @@ class SolutionAdmin(admin.ModelAdmin):
 	latest_of_only_failed.boolean = True
 
 admin.site.register(Solution, SolutionAdmin)
-	
-
-
-
-
-
-
-
-

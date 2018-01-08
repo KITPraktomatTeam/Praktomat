@@ -19,20 +19,20 @@ class Builder(Checker):
 
 	class Meta(Checker.Meta):
 		abstract = True
-	
+
 	# builder configuration. override in subclass
 	_compiler				= "gcc"						# command to invoce the compiler in the shell
 	_language				= "konfigurierbar"			# the language of the compiler eg. C++ or Java
 	_rx_warnings			= r"^([^:]*:[^:].*)$"		# Regular expression describing warings and errors in the output of the compiler
 	_env                            = {}
-	
-			
+
+
 	_flags			  = models.CharField(max_length = 1000, blank = True, default="-Wall", help_text = _('Compiler flags'))
 	_output_flags	  = models.CharField(max_length = 1000, blank = True, default ="-o %s", help_text = _('Output flags. \'%s\' will be replaced by the program name.'))
 	_libs			  = models.CharField(max_length = 1000, blank = True, default = "", help_text = _('Compiler libraries'))
 	_file_pattern	  = models.CharField(max_length = 1000, default = r"^[a-zA-Z0-9_]*$", help_text = _('Regular expression describing all source files to be passed to the compiler.'))
 	_main_required    = models.BooleanField(default = True, help_text = _('Is a submission required to provide a main method?'))
-	
+
 	def title(self):
 		return u"%s - Compiler" % self.language()
 
@@ -69,14 +69,14 @@ class Builder(Checker):
 
 	def rxarg(self):
 		""" Regexp for compile command argument.  Files that do not match this regexp will be uploaded,
-			but not passed as argument to the compiler 	(such as header files in C/C++).	
+			but not passed as argument to the compiler 	(such as header files in C/C++).
 			This also protects somewhat against options (`-foo') and metacharacters (`foo; ls') in file names. To be overloaded in subclasses. """
 		return self._file_pattern
 
 	def get_file_names(self,env):
 		rxarg = re.compile(self.rxarg())
-		return [name for (name,content) in env.sources() if rxarg.match(name)]		
-		
+		return [name for (name,content) in env.sources() if rxarg.match(name)]
+
 	def exec_file(self, tmpdir, program_name):
 		""" File of the generated executable.  To be overloaded in subclasses. """
 		return os.path.join(tmpdir, program_name)
@@ -84,7 +84,7 @@ class Builder(Checker):
 	def enhance_output(self, env, output):
 		""" Add more info to build output OUTPUT.  To be overloaded in subclasses. """
 		return re.sub(re.compile(self._rx_warnings, re.MULTILINE), r"<b>\1</b>", output)
-		
+
 	def has_warnings(self, output):
 		""" Return true if there are any warnings in OUTPUT """
 		return re.compile(self._rx_warnings, re.MULTILINE).search(output) != None
@@ -94,7 +94,7 @@ class Builder(Checker):
 				self.description = description
 			def __str__(self):
 				return self.description
-	
+
 	def main_module(self, env):
 		""" Creates the name of the main module from the (first) source file name. """
 		for module_name in self.get_file_names(env):
@@ -115,7 +115,7 @@ class Builder(Checker):
 			env.set_program(self.main_module(env))
 		except self.NotFoundError:
 			pass
-		
+
 		filenames = [name for name in self.get_file_names(env)]
 		args = [self.compiler()] + self.output_flags(env) + self.flags(env) + filenames + self.libs()
 		script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
@@ -125,7 +125,7 @@ class Builder(Checker):
 		output = self.enhance_output(env, output)
 
 		# We mustn't have any warnings.
-		passed = not self.has_warnings(output)	
+		passed = not self.has_warnings(output)
 		log  = self.build_log(output,args,set(filenames).intersection([solutionfile.path() for solutionfile in env.solution().solutionfile_set.all()]))
 
 		# Now that submission was successfully built, try to find the main modules name again
@@ -149,4 +149,3 @@ class Builder(Checker):
 			'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm,ps: parm + ' ' + ps,args[1:],''),
 			'regexp' : self.rxarg()
 		})
-

@@ -35,4 +35,3 @@ class KeepFileChecker(Checker):
 from checker.admin import	CheckerInline
 class KeepFileCheckerInline(CheckerInline):
 	model = KeepFileChecker
-
