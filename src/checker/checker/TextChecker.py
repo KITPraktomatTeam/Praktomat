@@ -111,7 +111,7 @@ class TextChecker(Checker):
         lines = text.split("\n")
         return lines
 
-from checker.admin import	CheckerInline
+from checker.admin import    CheckerInline
 
 class TextCheckerInline(CheckerInline):
     model = TextChecker

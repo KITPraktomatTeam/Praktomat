@@ -18,7 +18,7 @@ class ScalaBuilder(ClassFileGeneratingBuilder):
     _compiler = settings.SCALAC
     _language = "scala"
 
-# _rx_warnings			= r"^([^ :]*:[^:].*)$"
+# _rx_warnings            = r"^([^ :]*:[^:].*)$"
 
     def build_log(self,output,args,filenames):
         t = get_template('checker/compiler/scala_builder_report.html')

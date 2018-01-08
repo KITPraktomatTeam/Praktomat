@@ -5,18 +5,18 @@ from models import Settings, Chunk
 from tinymce.widgets import TinyMCE
 
 class ChunkInline(admin.StackedInline):
-	model = Chunk
-	fields = ('content',)
-	max_num = 0		# don't allow adds
-	can_delete = False
+    model = Chunk
+    fields = ('content',)
+    max_num = 0        # don't allow adds
+    can_delete = False
 
-	formfield_overrides = {
+    formfield_overrides = {
         models.TextField: {'widget': TinyMCE()},
     }
 
 class SettingsAdmin(admin.ModelAdmin):
 
-	fieldsets = (
+    fieldsets = (
             ('Registration', {
                 'fields': (
                     ( 'email_validation_regex',
@@ -43,6 +43,6 @@ class SettingsAdmin(admin.ModelAdmin):
                  )
             })
         )
-	inlines = [ChunkInline]
+    inlines = [ChunkInline]
 
 admin.site.register(Settings, SettingsAdmin)

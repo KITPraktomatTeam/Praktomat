@@ -135,7 +135,7 @@ def load_defaults(settings):
     # It must end in a slash if set to a non-empty value.
     d.STATIC_URL = BASE_PATH + 'static/'
 
-	# The URL prefix for admin media - CSS, JavaScript and images used by the
+    # The URL prefix for admin media - CSS, JavaScript and images used by the
     # Django administrative interface. Make sure to use a trailing slash, and to
     # have this be different from the MEDIA_URL setting (since the same URL cannot
     # be mapped onto two different sets of files). For integration with
@@ -240,7 +240,7 @@ def load_defaults(settings):
     # Private key used to sign uploded solution files in submission confirmation email
     #d.PRIVATE_KEY = '/home/praktomat/certificates/privkey.pem'
 
-	# Is this a mirror of another instance (different styling)
+    # Is this a mirror of another instance (different styling)
     d.MIRROR = False
 
     # The Compiler binarys used to compile a submitted solution
@@ -270,8 +270,8 @@ def load_defaults(settings):
     # with "sudo visudo". Add the following lines to the end of the file to
     # allow the execution of commands with the user 'tester' without requiring
     # a password:
-    # "_www    		ALL=(tester)NOPASSWD:ALL"
-    # "developer	ALL=(tester)NOPASSWD:ALL"
+    # "_www            ALL=(tester)NOPASSWD:ALL"
+    # "developer    ALL=(tester)NOPASSWD:ALL"
     d.USEPRAKTOMATTESTER = False
 
     # Alternatively: Run everything in a docker instance, to provide higher
@@ -285,12 +285,12 @@ def load_defaults(settings):
     # In order to actually get it working, you need to protec the location
     # .../accounts/shib_login in the apache configuration, e.g. with this
     # stanca:
-    #	<Location /shibtest/accounts/shib_login>
-    #		Order deny,allow
-    #		AuthType shibboleth
-    #		ShibRequireSession On
-    #		Require valid-user
-    #	</Location>
+    #    <Location /shibtest/accounts/shib_login>
+    #        Order deny,allow
+    #        AuthType shibboleth
+    #        ShibRequireSession On
+    #        Require valid-user
+    #    </Location>
     #
     # You probably want to disable REGISTRATION_POSSIBLE if you enable
     # Shibboleth support
