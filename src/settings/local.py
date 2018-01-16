@@ -20,6 +20,7 @@ match = re.match(r'''
 	(?P<tba>tba_)?
 	(?P<mlfds>mlfds_)?
 	(?P<pp>pp_)?
+	(?P<iimb>iimb_)?
 	(?P<year>\d+)_
 	(?P<semester>WS|SS)
 	(?P<abschluss>_Abschluss)?
@@ -38,6 +39,8 @@ if match:
 		SITE_NAME = 'Theorembeweiser '
 	elif match.group('pp') is not None:
 		SITE_NAME = 'Programmierparadigmen '
+	elif match.group('iimb') is not None:
+		SITE_NAME = 'Informatik im Maschinenbau '
 	else:
 		SITE_NAME = 'Programmieren '
 
