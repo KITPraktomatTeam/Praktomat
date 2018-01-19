@@ -35,6 +35,7 @@ DATABASES = {
 JPLAGJAR = join(dirname(dirname(dirname(__file__))), 'jplag.jar')
 
 PRIVATE_KEY = join(dirname(dirname(dirname(__file__))), 'examples', 'certificates', 'privkey.pem')
+CERTIFICATE = join(dirname(dirname(dirname(__file__))), 'examples', 'certificates', 'signer.pem')
 
 # Finally load defaults for missing setttings.
 import defaults

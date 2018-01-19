@@ -3,7 +3,7 @@
 # parameter, but only if it is not already defined.
 
 # The following variables have _no_ sane default, and need to be set!
-no_defaults = [ "SITE_NAME", "PRAKTOMAT_ID", "BASE_HOST", "BASE_PATH", "UPLOAD_ROOT", "PRIVATE_KEY"]
+no_defaults = [ "SITE_NAME", "PRAKTOMAT_ID", "BASE_HOST", "BASE_PATH", "UPLOAD_ROOT", "PRIVATE_KEY", "CERTIFICATE"]
 
 import os
 from os.path import dirname, join

@@ -69,7 +69,6 @@ Python 2.7
     python2.7-dev
     python-setuptools
     python-psycopg2
-    python-m2crypto
     python-virtualenv
 
 Developer setup

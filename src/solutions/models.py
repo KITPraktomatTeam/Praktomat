@@ -7,7 +7,7 @@ import mimetypes
 import shutil
 import os, re, string
 
-from M2Crypto import RSA, EVP
+from hashlib import sha256
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -18,6 +18,7 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
+from django.core.mail import EmailMessage
 
 from accounts.models import User
 from utilities import encoding, file_operations
@@ -108,22 +109,6 @@ def until_critical(l):
             break
     return res
 
-def sign(file):
-    if not settings.PRIVATE_KEY:
-        return None
-    evp = EVP.load_key(settings.PRIVATE_KEY)
-    evp.sign_init()
-    file.seek(0)
-    evp.sign_update(file.read())
-    # signature to log for email, so shorten it
-    s = EVP.MessageDigest('md5')
-    s.update(evp.sign_final())
-    return s.digest().encode('hex')
-
-def verify(file, signature):
-    return sign(file) == signature
-
-
 def get_solutionfile_upload_path(instance, filename):
     solution = instance.solution
     return 'SolutionArchive/Task_' + unicode(solution.task.id) + '/User_' + solution.author.username + '/Solution_' + unicode(solution.id) + '/' + filename
@@ -175,12 +160,9 @@ class SolutionFile(models.Model):
 
     def get_hash(self):
         self.file.seek(0)
-        s = EVP.MessageDigest('md5')
+        s = sha256()
         s.update(self.file.read())
-        return s.digest().encode('hex')
-
-    def get_signature(self):
-        return sign(self.file)
+        return s.hexdigest()
 
     def isBinary(self):
         return self.mime_type[:4] != "text"
@@ -356,3 +338,32 @@ path_regexp = re.compile(r'[^-]*-[^-]*-(.*)')
 
 def id_for_path(path):
     return path_regexp.match(path).group(1)
+
+class ConfirmationMessage(EmailMessage):
+    """
+    Special EmailMessage to combine headers set by OpenSSL S/MIME and django sendmail.
+    """
+    def __init__(self, subject='', body='', from_email=None, to=None, bcc=None,
+                 connection=None, attachments=None, headers=None, cc=None,
+                 reply_to=None):
+        super(ConfirmationMessage, self).__init__(
+            subject, body, from_email, to, bcc, connection, attachments,
+            headers, cc, reply_to,
+        )
+
+    def message(self):
+        message = super(ConfirmationMessage, self).message()
+        return MessageWrapper(message)
+
+class MessageWrapper():
+    def __init__(self, message):
+        self.message = message
+
+    def as_bytes(self, linesep='\n'):
+        # Construct the message with the full S/MIME mail as body
+        msg = self.message.as_bytes(linesep)
+        # Now, use the S/MIME headers as headers for the email
+        lines = msg.split(linesep)
+        i = lines.index('')
+        transformed = [s.replace("Content-Type: text/plain", lines[i+2]) for s in lines[0:i]] + lines[i+3:]
+        return linesep.join(transformed)

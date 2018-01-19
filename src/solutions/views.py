@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 from django.views.decorators.cache import cache_control
 from django.template import loader
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import send_mail, get_connection
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.requests import RequestSite
 
@@ -19,7 +19,7 @@ from datetime import datetime
 
 from tasks.models import Task, HtmlInjector
 from attestation.models import Attestation
-from solutions.models import Solution, SolutionFile, get_solutions_zip
+from solutions.models import Solution, SolutionFile, get_solutions_zip, ConfirmationMessage
 from solutions.forms import SolutionFormSet
 from accounts.views import access_denied
 from accounts.models import User
@@ -27,6 +27,8 @@ from configuration import get_settings
 from checker.basemodels import CheckerResult
 from checker.basemodels import check_solution
 from django.db import transaction
+
+from utilities.safeexec import execute_arglist
 
 @login_required
 @cache_control(must_revalidate=True, no_cache=True, no_store=True, max_age=0) #reload the page from the server even if the user used the back button
@@ -63,8 +65,14 @@ def solution_list(request, task_id, user_id=None):
                     'site_name': settings.SITE_NAME,
                     'solution': solution,
                 }
+                with tempfile.NamedTemporaryFile() as tmp:
+                    tmp.write(t.render(c))
+                    tmp.seek(0)
+                    [signed_mail,__,__,__,__]  = execute_arglist(["openssl", "smime", "-sign", "-signer", settings.CERTIFICATE, "-inkey", settings.PRIVATE_KEY, "-in", tmp.name], ".", unsafe=True)
+                connection = get_connection()
+                message = ConfirmationMessage(_("%s submission confirmation") % settings.SITE_NAME, signed_mail, None, [solution.author.email], connection=connection)
                 if solution.author.email:
-                    send_mail(_("%s submission confirmation") % settings.SITE_NAME, t.render(c), None, [solution.author.email])
+                    message.send()
 
             if solution.accepted or get_settings().accept_all_solutions:
                 solution.final = True

@@ -124,6 +124,7 @@ DATABASES = {
 
 # Private key used to sign uploded solution files in submission confirmation email
 PRIVATE_KEY = '/srv/praktomat/mailsign/signer_key.pem'
+CERTIFICATE = '/srv/praktomat/mailsign/signer.pem'
 
 # Enable Shibboleth:
 SHIB_ENABLED = True
