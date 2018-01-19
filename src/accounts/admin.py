@@ -21,18 +21,18 @@ class UserAdmin(UserBaseAdmin):
     model = User
 
     # add active status
-    list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'is_trainer', 'is_tutor', 'is_coordinator', 'email', 'date_joined','is_failed_attempt','programme' )
-    list_filter = ('groups', 'tutorial', 'is_staff', 'is_superuser', 'is_active','programme')
+    list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'is_trainer', 'is_tutor', 'is_coordinator', 'email', 'date_joined', 'is_failed_attempt', 'programme' )
+    list_filter = ('groups', 'tutorial', 'is_staff', 'is_superuser', 'is_active', 'programme')
     search_fields = ['username', 'first_name', 'last_name', 'mat_number', 'email']
     date_hierarchy = 'date_joined'
     actions = ['set_active', 'set_inactive', 'set_tutor', 'distribute_to_tutorials', 'export_users']
-    readonly_fields = ('last_login','date_joined','useful_links',)
+    readonly_fields = ('last_login', 'date_joined', 'useful_links',)
     # exclude user_permissions
     fieldsets = (
-            (None, {'fields': ('username', 'password','useful_links')}),
-            (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'mat_number','programme')}),
+            (None, {'fields': ('username', 'password', 'useful_links')}),
+            (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'mat_number', 'programme')}),
             (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
-            (_('Groups'), {'fields': ('groups','tutorial')}),
+            (_('Groups'), {'fields': ('groups', 'tutorial')}),
             (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
         )
 
@@ -51,7 +51,7 @@ class UserAdmin(UserBaseAdmin):
         return user.is_coordinator
     is_coordinator.boolean = True
 
-    def is_failed_attempt(self,user):
+    def is_failed_attempt(self, user):
         successfull = [ u for u in User.objects.all().filter(mat_number=user.mat_number) if u.is_active]
         return (not successfull)
     is_failed_attempt.boolean = True
@@ -87,7 +87,7 @@ class UserAdmin(UserBaseAdmin):
             user.save()
         while(users):
             # get random user an put him in the least populated tutorial
-            user = users.pop(randint(0,len(users)-1))
+            user = users.pop(randint(0, len(users)-1))
             tutorial = Tutorial.objects.annotate(Count('user')).order_by('user__count')[0]
             user.tutorial = tutorial
             user.save()
@@ -111,7 +111,7 @@ class UserAdmin(UserBaseAdmin):
     def useful_links(self, instance):
         if instance.pk:
             return format_html (
-                u'<a href="{1}">Solutions by {0}</a> • <a href="{2}">Attestations for {0}</a> • <a href="{3}">Attestations by {0}</a>',
+                '<a href="{1}">Solutions by {0}</a> • <a href="{2}">Attestations for {0}</a> • <a href="{3}">Attestations by {0}</a>',
                 instance,
                 reverse('admin:solutions_solution_changelist') + ("?author__user_ptr__exact=%d" % instance.pk),
                 reverse('admin:attestation_attestation_changelist') + ("?solution__author__user_ptr__exact=%d" % instance.pk),
@@ -161,7 +161,7 @@ class TutorialAdmin(admin.ModelAdmin):
             "all": ("styles/admin_style.css",)
         }
 
-    def view_url(self,tutorial):
+    def view_url(self, tutorial):
         return '<a href="%s">View</a>' % (reverse('tutorial_overview', args=[tutorial.id]))
     view_url.allow_tags = True
     view_url.short_description = 'View (Tutor Site)'

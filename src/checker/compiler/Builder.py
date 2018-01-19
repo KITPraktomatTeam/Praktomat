@@ -13,6 +13,7 @@ from django.template.loader import get_template
 
 from checker.basemodels import Checker
 from utilities.safeexec import execute_arglist
+from functools import reduce
 
 class Builder(Checker):
     """ Build a program. This contains the general infrastructure to build a program with a compiler.  Specialized subclass are provided for different languages and compilers. """
@@ -34,11 +35,11 @@ class Builder(Checker):
     _main_required    = models.BooleanField(default = True, help_text = _('Is a submission required to provide a main method?'))
 
     def title(self):
-        return u"%s - Compiler" % self.language()
+        return "%s - Compiler" % self.language()
 
     @staticmethod
     def description():
-        return u"Diese Prüfung ist bestanden, wenn der Compiler das Programm ohne Fehler oder Warnungen übersetzt."
+        return "Diese Prüfung ist bestanden, wenn der Compiler das Programm ohne Fehler oder Warnungen übersetzt."
 
     def compiler(self):
         """ Compiler name. To be overloaded in subclasses. """
@@ -73,9 +74,9 @@ class Builder(Checker):
             This also protects somewhat against options (`-foo') and metacharacters (`foo; ls') in file names. To be overloaded in subclasses. """
         return self._file_pattern
 
-    def get_file_names(self,env):
+    def get_file_names(self, env):
         rxarg = re.compile(self.rxarg())
-        return [name for (name,content) in env.sources() if rxarg.match(name)]
+        return [name for (name, content) in env.sources() if rxarg.match(name)]
 
     def exec_file(self, tmpdir, program_name):
         """ File of the generated executable.  To be overloaded in subclasses. """
@@ -118,15 +119,15 @@ class Builder(Checker):
 
         filenames = [name for name in self.get_file_names(env)]
         args = [self.compiler()] + self.output_flags(env) + self.flags(env) + filenames + self.libs()
-        script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
-        [output,_,_,_,_]  = execute_arglist(args, env.tmpdir(),self.environment(), extradirs=[script_dir])
+        script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'scripts')
+        [output, _, _, _, _]  = execute_arglist(args, env.tmpdir(), self.environment(), extradirs=[script_dir])
 
         output = escape(output)
         output = self.enhance_output(env, output)
 
         # We mustn't have any warnings.
         passed = not self.has_warnings(output)
-        log  = self.build_log(output,args,set(filenames).intersection([solutionfile.path() for solutionfile in env.solution().solutionfile_set.all()]))
+        log  = self.build_log(output, args, set(filenames).intersection([solutionfile.path() for solutionfile in env.solution().solutionfile_set.all()]))
 
         # Now that submission was successfully built, try to find the main modules name again
         try:
@@ -141,11 +142,11 @@ class Builder(Checker):
         result.set_log(log)
         return result
 
-    def build_log(self,output,args,filenames):
+    def build_log(self, output, args, filenames):
         t = get_template('checker/compiler/builder_report.html')
         return t.render({
             'filenames' : filenames,
             'output' : output,
-            'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm,ps: parm + ' ' + ps,args[1:],''),
+            'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm, ps: parm + ' ' + ps, args[1:], ''),
             'regexp' : self.rxarg()
         })

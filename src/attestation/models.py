@@ -32,7 +32,7 @@ class Attestation(models.Model):
 
     final = models.BooleanField(default = False, help_text = _('Indicates whether the attestation is ready to be published'))
     published = models.BooleanField(default = False, help_text = _('Indicates whether the user can see the attestation.'))
-    published_on = models.DateTimeField(blank=True,null=True,help_text = _('The Date/Time the attestation was published.'))
+    published_on = models.DateTimeField(blank=True, null=True, help_text = _('The Date/Time the attestation was published.'))
 
     def publish(self, request, by):
         """ Set attestation to published and send email to user """
@@ -52,7 +52,7 @@ class Attestation(models.Model):
             'domain': RequestSite(request).domain,
             'site_name': settings.SITE_NAME,
             'by': by,
-            'invisible_attestor' : get_settings().invisible_attestor,
+            'invisible_attestor': get_settings().invisible_attestor,
         }
         subject = _("New attestation for your solution of the task '%s'") % self.solution.task
         body = t.render(c)
@@ -109,13 +109,13 @@ class Attestation(models.Model):
             annotatedsolutionfile._meta.model_name = "annotatedsolutionfile" # *sigh*
         solutionfile_objects = list([annotatedsolutionfile.solution_file for annotatedsolutionfile in annotatedsolutionfiles_objects])
 
-        task_objects = list(set([attestation.solution.task for attestation in attestation_objects]))
+        task_objects = list({attestation.solution.task for attestation in attestation_objects})
 
         ratingresult_objects  = list(RatingResult.objects.filter(attestation__in = attestation_objects))
-        aspect_grades_objects = set([ratingresult.mark for ratingresult in ratingresult_objects])
-        final_grades_objects  = set([attestation.final_grade for attestation in attestation_objects])
-        rating_objects        = set([ratingresult.rating for ratingresult in ratingresult_objects])
-        aspect_objects        = set([rating.aspect for rating in rating_objects])
+        aspect_grades_objects = {ratingresult.mark for ratingresult in ratingresult_objects}
+        final_grades_objects  = {attestation.final_grade for attestation in attestation_objects}
+        rating_objects        = {ratingresult.rating for ratingresult in ratingresult_objects}
+        aspect_objects        = {rating.aspect for rating in rating_objects}
         ratingscale_objects = list(
               set(RatingScale.objects.filter(ratingscaleitem__in = final_grades_objects | aspect_grades_objects))
         )
@@ -190,16 +190,16 @@ class AnnotatedSolutionFile(models.Model):
     content = models.TextField(help_text = _('The content of the solution file annotated by the tutor.'), blank = True)
 
     def has_anotations(self):
-        original = self.solution_file.content().replace("\r\n","\n").replace("\r","\n")
-        anotated = self.content.replace("\r\n","\n").replace("\r","\n")
+        original = self.solution_file.content().replace("\r\n", "\n").replace("\r", "\n")
+        anotated = self.content.replace("\r\n", "\n").replace("\r", "\n")
         return not original == anotated
 
     def content_diff(self):
         d = difflib.Differ()
-        original = self.solution_file.content().replace("\r\n","\n").replace("\r","\n").splitlines(0)
-        anotated = self.content.replace("\r\n","\n").replace("\r","\n").splitlines(0)
+        original = self.solution_file.content().replace("\r\n", "\n").replace("\r", "\n").splitlines(0)
+        anotated = self.content.replace("\r\n", "\n").replace("\r", "\n").splitlines(0)
         result = list(d.compare(original, anotated))
-        return "\n".join(map(lambda l: l.strip("\n"), result))
+        return "\n".join([l.strip("\n") for l in result])
 
     def __unicode__(self):
         return self.solution_file.__unicode__()
@@ -247,7 +247,7 @@ class RatingResult(models.Model):
     mark = models.ForeignKey(RatingScaleItem, null=True) # allow for db-null so that rating results can be created programaticly without mark (blank = False !)
 
     def __unicode__(self):
-        return unicode(self.rating.aspect)
+        return str(self.rating.aspect)
 
 class Script(models.Model):
     """ save java script function of the rating overview page """
@@ -256,7 +256,7 @@ class Script(models.Model):
 
 
 
-def attributes_equal(this,that,attrs):
+def attributes_equal(this, that, attrs):
     _NOTFOUND = object()
     for attr in attrs:
         v1, v2 = [getattr(obj, attr, _NOTFOUND) for obj in [this, that]]
@@ -266,7 +266,7 @@ def attributes_equal(this,that,attrs):
             return False
     return True
 
-def model_fields_equal(this,that):
+def model_fields_equal(this, that):
     this_fields = [field.name for field in this._meta.fields]
     that_fields = [field.name for field in that._meta.fields]
     return this_fields == that_fields and attributes_equal(this, that, this_fields)

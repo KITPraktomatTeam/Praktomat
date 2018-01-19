@@ -29,7 +29,7 @@ class InterfaceChecker(Checker):
     @staticmethod
     def description():
         """ Returns a description for this Checker. """
-        s = u"Diese Prüfung ist bestanden, wenn alle vorgegebenen Interfaces implementiert wurden."
+        s = "Diese Prüfung ist bestanden, wenn alle vorgegebenen Interfaces implementiert wurden."
         return s
 
     def run(self, env):
@@ -48,7 +48,7 @@ class InterfaceChecker(Checker):
 
         # Iterate through sources and find out which interfaces were implemented
         for (name, content) in env.sources():
-            for interface in [self.interface1,self.interface2,self.interface3,self.interface4,self.interface5,self.interface6,self.interface7]: ##self.interface_set.all()
+            for interface in [self.interface1, self.interface2, self.interface3, self.interface4, self.interface5, self.interface6, self.interface7]: ##self.interface_set.all()
 
                 iname = interface ##.name
                 noComments = self._cutComments(content) # remove comments
@@ -64,13 +64,13 @@ class InterfaceChecker(Checker):
                         implemented.append(iname)
 
         # check if all interfaces were implemented
-        for interface in [self.interface1,self.interface2,self.interface3,self.interface4,self.interface5,self.interface6,self.interface7]: ##self.interface_set.all()
+        for interface in [self.interface1, self.interface2, self.interface3, self.interface4, self.interface5, self.interface6, self.interface7]: ##self.interface_set.all()
             if not interface in implemented: ## interface.name
                 passed = 0
                 log += "Interface " + escape(interface) + " wurde nicht implementiert.<BR>" ## interface.name
 
         if not passed:
-            log += u"""<p>Sie müssen alle vorgegebenen Interfaces implementieren.
+            log += """<p>Sie müssen alle vorgegebenen Interfaces implementieren.
                       Bitte ändern Sie Ihr Programm so ab, dass es den
                       Anforderungen entspricht und versuchen Sie es erneut.</p> """
 

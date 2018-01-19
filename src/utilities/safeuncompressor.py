@@ -27,7 +27,7 @@ class SafeUncompressor(object):
             self.format = "gzip"
             self.gzipobj = gzip.GzipFile(fileobj = self.fileobj, mode = 'r')
         elif magic == 'BZ':
-            raise IOError, "bzip2 support in SafeUncompressor disabled, as self.bz2obj.decompress is not safe"
+            raise IOError("bzip2 support in SafeUncompressor disabled, as self.bz2obj.decompress is not safe")
             self.format = "bz2"
             self.bz2obj = bz2.BZ2Decompressor()
         self.fileobj.seek(0)
@@ -59,7 +59,7 @@ class SafeUncompressor(object):
             if self.pos + x > self.maxsize:
                 self.buf = ""
                 self.pos = 0
-                raise SafeUncompressor.FileTooLarge, "Compressed file too large"
+                raise SafeUncompressor.FileTooLarge("Compressed file too large")
         self.buf = "".join(b)
 
         buf = self.buf[:size]
@@ -69,7 +69,7 @@ class SafeUncompressor(object):
 
     def seek(self, pos, whence=0):
         if whence != 0:
-            raise IOError, "SafeUncompressor only supports whence=0"
+            raise IOError("SafeUncompressor only supports whence=0")
         if pos < self.pos:
             self.init()
         self.read(pos - self.pos)

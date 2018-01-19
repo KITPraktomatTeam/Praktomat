@@ -28,14 +28,14 @@ class MyRegistrationForm(UserBaseCreationForm):
         super(MyRegistrationForm, self).__init__(*args, **kwargs)
 
     # overriding modelfields to ensure required fields are provided
-    first_name = forms.CharField(max_length = 30,required=True)
-    last_name = forms.CharField(max_length = 30,required=True)
+    first_name = forms.CharField(max_length = 30, required=True)
+    last_name = forms.CharField(max_length = 30, required=True)
     email = forms.EmailField(required=True)
 
     # adding first and last name, email to the form
     class Meta:
         model = User
-        fields = ("username","first_name","last_name","email", "mat_number")
+        fields = ("username", "first_name", "last_name", "email", "mat_number")
 
     def clean_email(self):
         # cleaning the email in the form doesn't validate it in the admin (good for tutors etc.)
@@ -52,7 +52,7 @@ class MyRegistrationForm(UserBaseCreationForm):
             raise forms.ValidationError("This field is required.")
         for user in User.objects.filter(mat_number=data):
             if user.is_activated():
-                trainers = map(lambda user: "<a href='mailto:%s'>%s</a>" % (user.email, user.get_full_name() or user.email), Group.objects.get(name='Trainer').user_set.all())
+                trainers = ["<a href='mailto:%s'>%s</a>" % (user.email, user.get_full_name() or user.email) for user in Group.objects.get(name='Trainer').user_set.all()]
                 trainers = ', '.join(trainers)
                 raise forms.ValidationError(mark_safe("A user with this number is already registered. Please Contact an Trainer: %s" % trainers ))
         return data
@@ -88,7 +88,7 @@ class MyRegistrationForm(UserBaseCreationForm):
 
         if get_settings().account_manual_validation:
             t = loader.get_template('registration/registration_email_manual_to_staff.html')
-            send_mail(_("Account activation on %s for %s (%s) ") % (settings.SITE_NAME,user.username,unicode(user)), t.render(c), None, [staff.email for staff in User.objects.all().filter(is_staff=True)])
+            send_mail(_("Account activation on %s for %s (%s) ") % (settings.SITE_NAME, user.username, str(user)), t.render(c), None, [staff.email for staff in User.objects.all().filter(is_staff=True)])
 
             t = loader.get_template('registration/registration_email_manual_to_user.html')
             send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(c), None, [user.email])
@@ -101,13 +101,13 @@ class MyRegistrationForm(UserBaseCreationForm):
 class UserChangeForm(forms.ModelForm):
 
     # overriding modelfields to ensure required fields are provided
-    first_name = forms.CharField(max_length = 30,required=True)
-    last_name = forms.CharField(max_length = 30,required=True)
+    first_name = forms.CharField(max_length = 30, required=True)
+    last_name = forms.CharField(max_length = 30, required=True)
     #email = forms.EmailField(required=True)
 
     class Meta:
         model = User
-        fields = ("first_name","last_name")
+        fields = ("first_name", "last_name")
 
 
 class AdminUserCreationForm(UserBaseCreationForm):

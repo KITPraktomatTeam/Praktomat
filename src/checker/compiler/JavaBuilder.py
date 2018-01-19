@@ -12,6 +12,7 @@ from django.template.loader import get_template
 from checker.basemodels import Checker
 
 from utilities.safeexec import execute_arglist
+from functools import reduce
 
 
 class ClassFileGeneratingBuilder(Builder):
@@ -29,8 +30,8 @@ class ClassFileGeneratingBuilder(Builder):
             for filename in files:
                 if filename.endswith(".class"):
                     class_files.append(filename)
-                    [classinfo,_,_,_,_]  = execute_arglist([settings.JAVAP, os.path.join(dirpath,filename)], env.tmpdir(), self.environment(), unsafe=True)
-                    if string.find(classinfo,main_method) >= 0:
+                    [classinfo, _, _, _, _]  = execute_arglist([settings.JAVAP, os.path.join(dirpath, filename)], env.tmpdir(), self.environment(), unsafe=True)
+                    if string.find(classinfo, main_method) >= 0:
                         main_class_name = class_name.search(classinfo, re.MULTILINE).group(4)
                         return main_class_name
 
@@ -52,17 +53,17 @@ class JavaBuilder(ClassFileGeneratingBuilder):
                  return settings.JUNIT38_JAR
             return lib
 
-        required_libs = super(JavaBuilder,self).libs()
+        required_libs = super(JavaBuilder, self).libs()
 
-        return ["-cp",".:"+(":".join([ settings.JAVA_LIBS[lib] for lib in required_libs if lib in settings.JAVA_LIBS ]))]
+        return ["-cp", ".:"+(":".join([ settings.JAVA_LIBS[lib] for lib in required_libs if lib in settings.JAVA_LIBS ]))]
 
     def flags(self, env):
         """ Accept unicode characters. """
         return (self._flags.split(" ") if self._flags else []) + ["-encoding", "utf-8"]
 
-    def build_log(self,output,args,filenames):
+    def build_log(self, output, args, filenames):
         t = get_template('checker/compiler/java_builder_report.html')
-        return t.render({'filenames' : filenames, 'output' : output, 'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm,ps: parm + ' ' + ps,args[1:],'')})
+        return t.render({'filenames' : filenames, 'output' : output, 'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm, ps: parm + ' ' + ps, args[1:], '')})
 
 from checker.admin import CheckerInline, AlwaysChangedModelForm
 

@@ -12,6 +12,7 @@ from django.template.loader import get_template
 from django.utils.html import escape
 
 from utilities.safeexec import execute_arglist
+from functools import reduce
 
 class HaskellBuilder(Builder):
     """ A Haskell Compiler """
@@ -29,16 +30,16 @@ class HaskellBuilder(Builder):
         raise self.NotFoundError("A module Main containing the function main :: IO () could not be found.")
 
     def libs(self):
-        required_libs = super(HaskellBuilder,self).libs()
-        return [x for l in [["-package",lib] for lib in required_libs] for x in l]
+        required_libs = super(HaskellBuilder, self).libs()
+        return [x for l in [["-package", lib] for lib in required_libs] for x in l]
 
     def flags(self, env):
         """ Always use -v1, since we grep the output for linked binaries, if any"""
         return (self._flags.split(" ") if self._flags else []) + ["-v1"]
 
-    def build_log(self,output,args,filenames):
+    def build_log(self, output, args, filenames):
         t = get_template('checker/compiler/haskell_builder_report.html')
-        return t.render({'filenames' : filenames, 'output' : output, 'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm,ps: parm + ' ' + ps,args[1:],'')})
+        return t.render({'filenames' : filenames, 'output' : output, 'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm, ps: parm + ' ' + ps, args[1:], '')})
 
     def run(self, env):
         """ Build it. """
@@ -46,9 +47,9 @@ class HaskellBuilder(Builder):
 
         filenames = [name for name in self.get_file_names(env)]
         args = [self.compiler()] + self.flags(env) + filenames + self.libs()
-        [output,_,_,_,_]  = execute_arglist(args, env.tmpdir(),self.environment())
+        [output, _, _, _, _]  = execute_arglist(args, env.tmpdir(), self.environment())
 
-        has_main = re.search(r"^Linking ([^ ]*) ...$",output,re.MULTILINE)
+        has_main = re.search(r"^Linking ([^ ]*) ...$", output, re.MULTILINE)
         if has_main: self._detected_main = has_main.group(1)
 
         output = escape(output)
@@ -56,7 +57,7 @@ class HaskellBuilder(Builder):
 
         # We mustn't have any warnings.
         passed = not self.has_warnings(output)
-        log  = self.build_log(output,args,set(filenames).intersection([solutionfile.path() for solutionfile in env.solution().solutionfile_set.all()]))
+        log  = self.build_log(output, args, set(filenames).intersection([solutionfile.path() for solutionfile in env.solution().solutionfile_set.all()]))
 
         # Now that submission was successfully built, try to find the main modules name again
         try:

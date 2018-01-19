@@ -18,9 +18,9 @@ RXFAIL       = re.compile(r"^(.*)(FAILURES!!!|your program crashed|cpu time limi
 class IgnoringJavaBuilder(JavaBuilder):
     _ignore = []
 
-    def get_file_names(self,env):
+    def get_file_names(self, env):
         rxarg = re.compile(self.rxarg())
-        return [name for (name,content) in env.sources() if rxarg.match(name) and (not name in self._ignore)]
+        return [name for (name, content) in env.sources() if rxarg.match(name) and (not name in self._ignore)]
 
     # Since this checkers instances  will not be saved(), we don't save their results, either
     def create_result(self, env):
@@ -38,29 +38,29 @@ class JUnitChecker(Checker):
         )
     test_description = models.TextField(help_text = _("Description of the Testcase. To be displayed on Checker Results page when checker is  unfolded."))
     name = models.CharField(max_length=100, help_text=_("Name of the Testcase. To be displayed as title on Checker Results page"))
-    ignore = models.CharField(max_length=4096, help_text=_("space-seperated list of files to be ignored during compilation, i.e.: these files will not be compiled."),default="", blank=True)
+    ignore = models.CharField(max_length=4096, help_text=_("space-seperated list of files to be ignored during compilation, i.e.: these files will not be compiled."), default="", blank=True)
 
     JUNIT_CHOICES = (
-      (u'junit4', u'JUnit 4'),
-      (u'junit3', u'JUnit 3'),
+      ('junit4', 'JUnit 4'),
+      ('junit3', 'JUnit 3'),
     )
-    junit_version = models.CharField(max_length=16, choices=JUNIT_CHOICES,default="junit3")
+    junit_version = models.CharField(max_length=16, choices=JUNIT_CHOICES, default="junit3")
 
     def runner(self):
         return {'junit4' : 'org.junit.runner.JUnitCore', 'junit3' : 'junit.textui.TestRunner' }[self.junit_version]
 
     def title(self):
-        return u"JUnit Test: " + self.name
+        return "JUnit Test: " + self.name
 
     @staticmethod
     def description():
-        return u"This Checker runs a JUnit Testcases existing in the sandbox. You may want to use CreateFile Checker to create JUnit .java and possibly input data files in the sandbox before running the JavaBuilder. JUnit tests will only be able to read input data files if they are placed in the data/ subdirectory."
+        return "This Checker runs a JUnit Testcases existing in the sandbox. You may want to use CreateFile Checker to create JUnit .java and possibly input data files in the sandbox before running the JavaBuilder. JUnit tests will only be able to read input data files if they are placed in the data/ subdirectory."
 
     def output_ok(self, output):
         return (RXFAIL.search(output) == None)
 
     def run(self, env):
-        java_builder = IgnoringJavaBuilder(_flags="", _libs=self.junit_version,_file_pattern=r"^.*\.[jJ][aA][vV][aA]$",_output_flags="",_main_required=False)
+        java_builder = IgnoringJavaBuilder(_flags="", _libs=self.junit_version, _file_pattern=r"^.*\.[jJ][aA][vV][aA]$", _output_flags="", _main_required=False)
         java_builder._ignore = self.ignore.split(" ")
 
 
@@ -76,19 +76,19 @@ class JUnitChecker(Checker):
 
         environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
         environ['JAVA'] = settings.JVM
-        script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
-        environ['POLICY'] = os.path.join(script_dir,"junit.policy")
+        script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'scripts')
+        environ['POLICY'] = os.path.join(script_dir, "junit.policy")
 
         cmd = [settings.JVM_SECURE, "-cp", settings.JAVA_LIBS[self.junit_version]+":.", self.runner(), self.class_name]
-        [output, error, exitcode,timed_out, oom_ed] = execute_arglist(cmd, env.tmpdir(),environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE, extradirs=[script_dir])
+        [output, error, exitcode, timed_out, oom_ed] = execute_arglist(cmd, env.tmpdir(), environment_variables=environ, timeout=settings.TEST_TIMEOUT, fileseeklimit=settings.TEST_MAXFILESIZE, extradirs=[script_dir])
 
         result = self.create_result(env)
 
-        (output,truncated) = truncated_log(output)
+        (output, truncated) = truncated_log(output)
         output = '<pre>' + escape(self.test_description) + '\n\n======== Test Results ======\n\n</pre><br/><pre>' + escape(output) + '</pre>'
 
 
-        result.set_log(output,timed_out=timed_out or oom_ed,truncated=truncated,oom_ed=oom_ed)
+        result.set_log(output, timed_out=timed_out or oom_ed, truncated=truncated, oom_ed=oom_ed)
         result.set_passed(not exitcode and not timed_out and not oom_ed and self.output_ok(output) and not truncated)
         return result
 

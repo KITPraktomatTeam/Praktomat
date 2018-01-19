@@ -27,7 +27,7 @@ from configuration import get_settings
 def taskList(request):
     now = django.utils.timezone.now()
     tasks = Task.objects.filter(publication_date__lte = now).order_by('submission_date')
-    expired_Tasks = Task.objects.filter(submission_date__lt = now).order_by('publication_date','submission_date')
+    expired_Tasks = Task.objects.filter(submission_date__lt = now).order_by('publication_date', 'submission_date')
     try:
         tutors = request.user.tutorial.tutors.all()
     except:
@@ -36,28 +36,28 @@ def taskList(request):
 
     # we only have a single user here, so the rating_list only contains a single row;
     # this row belongs to that user
-    (_,attestations,threshold,calculated_grade) = user_task_attestation_map([request.user], tasks)[0]
-    attestations = map(lambda a, b: (a,)+b, tasks, attestations)
+    (_, attestations, threshold, calculated_grade) = user_task_attestation_map([request.user], tasks)[0]
+    attestations = list(map(lambda a, b: (a,)+b, tasks, attestations))
 
     def tasksWithSolutions(tasks):
-        return map(lambda t: (t, t.final_solution(request.user)), tasks)
+        return [(t, t.final_solution(request.user)) for t in tasks]
 
     return render(request,
                   'tasks/task_list.html',
                   {
-                      'tasks':tasksWithSolutions(tasks),
+                      'tasks': tasksWithSolutions(tasks),
                       'expired_tasks': tasksWithSolutions(expired_Tasks),
-                      'attestations':attestations,
+                      'attestations': attestations,
                       'show_final_grade': get_settings().final_grades_published,
-                      'tutors':tutors,
-                      'trainers':trainers,
-                      'threshold':threshold,
-                      'calculated_grade':calculated_grade,
+                      'tutors': tutors,
+                      'trainers': trainers,
+                      'threshold': threshold,
+                      'calculated_grade': calculated_grade,
                   })
 
 @login_required
-def taskDetail(request,task_id):
-    task = get_object_or_404(Task,pk=task_id)
+def taskDetail(request, task_id):
+    task = get_object_or_404(Task, pk=task_id)
 
     if task.publication_date >= datetime.now() and not request.user.is_trainer:
         raise Http404
@@ -83,7 +83,7 @@ def import_tasks(request):
                 Task.import_Tasks(form.files['file'], request.user)
                 messages.success(request, "The import was successfull.")
                 return HttpResponseRedirect(urlresolvers.reverse('admin:tasks_task_changelist'))
-            except Exception, e:
+            except Exception as e:
                 from django.forms.utils import ErrorList
                 msg = "An Error occured. The import file was propably malformed.: %s" % str(e)
                 form._errors["file"] = ErrorList([msg])
@@ -95,7 +95,7 @@ def import_tasks(request):
 def download_final_solutions(request, task_id):
     """ download all final solutions of a task from the admin interface """
     zip_file = tempfile.SpooledTemporaryFile()
-    zip = zipfile.ZipFile(zip_file,'w')
+    zip = zipfile.ZipFile(zip_file, 'w')
     for solution_file in SolutionFile.objects.filter(solution__task=task_id):
         if solution_file.solution.final:
             zip.write(solution_file.file.path, solution_file.file.name)
@@ -109,7 +109,7 @@ def download_final_solutions(request, task_id):
 @staff_member_required
 def model_solution(request, task_id):
     """ View in the admin """
-    task = get_object_or_404(Task,pk=task_id)
+    task = get_object_or_404(Task, pk=task_id)
 
     if request.method == "POST":
         solution = Solution(task = task, author=request.user)

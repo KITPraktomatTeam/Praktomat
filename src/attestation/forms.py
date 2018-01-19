@@ -12,7 +12,7 @@ from configuration.models import Settings
 class AttestationForm(ModelForm):
     class Meta:
         model = Attestation
-        exclude = ('solution', 'author', 'final', 'published','published_on')
+        exclude = ('solution', 'author', 'final', 'published', 'published_on')
         widgets = {
             'public_comment': forms.Textarea(attrs={'cols': 80, 'rows': 10}),
             'private_comment': forms.Textarea(attrs={'cols': 80, 'rows': 10}),
@@ -35,7 +35,7 @@ class AttestationPreviewForm(ModelForm):
 class AnnotatedFileForm(ModelForm):
     class Meta:
         model = AnnotatedSolutionFile
-        fields=('content','solution_file',)
+        fields=('content', 'solution_file',)
 
     solution_file = forms.IntegerField(widget=forms.HiddenInput)
 

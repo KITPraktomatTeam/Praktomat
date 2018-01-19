@@ -25,9 +25,9 @@ RXFAIL       = re.compile(r"^(.*)(FAILURES!!!|your program crashed|cpu time limi
 class IgnoringHaskellBuilder(HaskellBuilder):
     _ignore = []
 
-    def get_file_names(self,env):
+    def get_file_names(self, env):
         rxarg = re.compile(self.rxarg())
-        return [name for (name,content) in env.sources() if rxarg.match(name) and (not name in self._ignore)]
+        return [name for (name, content) in env.sources() if rxarg.match(name) and (not name in self._ignore)]
 
     def create_result(self, env):
         assert isinstance(env.solution(), Solution)
@@ -37,7 +37,7 @@ class IgnoringHaskellBuilder(HaskellBuilder):
 class TestOnlyBuildingBuilder(HaskellBuilder):
     _testsuite_filename = ""
 
-    def get_file_names(self,env):
+    def get_file_names(self, env):
         return [self._testsuite_filename]
 
     def create_result(self, env):
@@ -50,20 +50,20 @@ class HaskellTestFrameWorkChecker(CheckerWithFile):
 
     test_description = models.TextField(help_text = _("Description of the Testcase. To be displayed on Checker Results page when checker is unfolded."))
     name = models.CharField(max_length=100, help_text=_("Name of the Testcase. To be displayed as title on Checker Results page"))
-    ignore = models.CharField(max_length=4096, help_text=_("space-seperated list of files to be ignored during compilation"),default="", blank=True)
+    ignore = models.CharField(max_length=4096, help_text=_("space-seperated list of files to be ignored during compilation"), default="", blank=True)
     require_safe = models.BooleanField(default = True, help_text=_("Is a submission required to be Safe (according to GHCs Safe-Mode)?"))
 
-    TESTCASE_CHOICES = ( ("DL", "Download-Link only"), ("NO", "Do not make the testcases source available"), ("FULL","Also copy the source into the report"))
+    TESTCASE_CHOICES = ( ("DL", "Download-Link only"), ("NO", "Do not make the testcases source available"), ("FULL", "Also copy the source into the report"))
     include_testcase_in_report = models.CharField(max_length=4, choices=TESTCASE_CHOICES, default = "DL", help_text=_("Make the cestcases source available via the checkers result report?"))
 
     _add_to_environment = False
 
     def title(self):
-        return u"Haskell test-framework test: " + self.name
+        return "Haskell test-framework test: " + self.name
 
     @staticmethod
     def description():
-        return u"This Checker runs a test-framework testcase existing in the sandbox. You may want to use CreateFile Checker to create test-framework .hs and possibly input data files in the sandbox."
+        return "This Checker runs a test-framework testcase existing in the sandbox. You may want to use CreateFile Checker to create test-framework .hs and possibly input data files in the sandbox."
 
     def output_ok(self, output):
         return (RXFAIL.search(output) == None)
@@ -72,7 +72,7 @@ class HaskellTestFrameWorkChecker(CheckerWithFile):
         if not self.filename.endswith(".hs"):
             return None
 
-        return (self.path_relative_to_sandbox().replace('/','.'))[:-3]
+        return (self.path_relative_to_sandbox().replace('/', '.'))[:-3]
 
     def module_binary_name(self):
         if not self.filename.endswith(".hs"):
@@ -108,19 +108,19 @@ class HaskellTestFrameWorkChecker(CheckerWithFile):
         environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
 
         cmd = ["./"+self.module_binary_name(), "--maximum-generated-tests=1000"]
-        [output, error, exitcode,timed_out, oom_ed] = execute_arglist(cmd, env.tmpdir(),environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE)
+        [output, error, exitcode, timed_out, oom_ed] = execute_arglist(cmd, env.tmpdir(), environment_variables=environ, timeout=settings.TEST_TIMEOUT, fileseeklimit=settings.TEST_MAXFILESIZE)
 
         result = self.create_result(env)
 
-        (output,truncated) = truncated_log(output)
+        (output, truncated) = truncated_log(output)
         output = '<pre>' + escape(self.test_description) + '\n\n======== Test Results ======\n\n</pre><br/><pre>' + escape(output) + '</pre>'
 
-        if self.include_testcase_in_report in ["FULL","DL"]:
+        if self.include_testcase_in_report in ["FULL", "DL"]:
             testsuit_template = get_template('checker/checker/haskell_test_framework_report.html')
             output += testsuit_template.render({'showSource' : (self.include_testcase_in_report=="FULL"), 'testfile' : self.file, 'testfilename' : self.path_relative_to_sandbox(), 'testfileContent': encoding.get_unicode(self.file.read())})
 
 
-        result.set_log(output,timed_out=timed_out or oom_ed,truncated=truncated)
+        result.set_log(output, timed_out=timed_out or oom_ed, truncated=truncated)
         result.set_passed(not exitcode and not timed_out and not oom_ed and self.output_ok(output) and not truncated)
         return result
 

@@ -25,8 +25,8 @@ from utilities import encoding, file_operations
 from configuration import get_settings
 
 # TODO: This is duplicated from solutions/forms.py. Where should this go?
-for (mimetype,extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
-    mimetypes.add_type(mimetype,extension,strict=True)
+for (mimetype, extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
+    mimetypes.add_type(mimetype, extension, strict=True)
 
 class Solution(models.Model):
     """ """
@@ -44,7 +44,7 @@ class Solution(models.Model):
     final = models.BooleanField( default = False, help_text = _('Indicates whether this solution is the last (accepted) of the author.'))
 
     def __unicode__(self):
-        return unicode(self.task) + ":" + unicode(self.author) + ":" + unicode(self.number)
+        return str(self.task) + ":" + str(self.author) + ":" + str(self.number)
 
     def allCheckerResults(self):
         results = self.checkerresult_set.all().prefetch_related('artefacts')
@@ -53,7 +53,7 @@ class Solution(models.Model):
     def publicCheckerResults(self):
         # return self.checkerresult_set.filter(checker__public=True) won't work, because checker is a genericForeignKey!
         results = self.checkerresult_set.all().prefetch_related('artefacts')
-        return until_critical(sorted(filter(lambda x: x.public(), self.checkerresult_set.all()), key = lambda result: result.checker.order))
+        return until_critical(sorted([x for x in self.checkerresult_set.all() if x.public()], key = lambda result: result.checker.order))
 
     def copySolutionFiles(self, toTempDir):
         for file in self.solutionfile_set.all():
@@ -111,7 +111,7 @@ def until_critical(l):
 
 def get_solutionfile_upload_path(instance, filename):
     solution = instance.solution
-    return 'SolutionArchive/Task_' + unicode(solution.task.id) + '/User_' + solution.author.username + '/Solution_' + unicode(solution.id) + '/' + filename
+    return 'SolutionArchive/Task_' + str(solution.task.id) + '/User_' + solution.author.username + '/Solution_' + str(solution.id) + '/' + filename
 
 class SolutionFile(models.Model):
     """docstring for SolutionFile"""
@@ -140,7 +140,7 @@ class SolutionFile(models.Model):
                     new_solution_file = SolutionFile(solution=self.solution)
                     temp_file = tempfile.NamedTemporaryFile()                                    # autodeleted
                     temp_file.write(zip.open(zip_file_name).read())
-                    zip_file_name = zip_file_name  if isinstance(zip_file_name, unicode) else unicode(zip_file_name,errors='replace')
+                    zip_file_name = zip_file_name  if isinstance(zip_file_name, str) else str(zip_file_name, errors='replace')
                     new_solution_file.file.save(zip_file_name, File(temp_file), save=True)        # need to check for filenames begining with / or ..?
         elif self.file.name.upper().endswith(('.TAR.GZ', '.TAR.BZ2', '.TAR')):
             tar = tarfile.open(fileobj = self.file)
@@ -149,7 +149,7 @@ class SolutionFile(models.Model):
                     new_solution_file = SolutionFile(solution=self.solution)
                     temp_file = tempfile.NamedTemporaryFile()                                    # autodeleted
                     temp_file.write(tar.extractfile(member.name).read())
-                    zip_file_name = member.name  if isinstance(member.name, unicode) else unicode(member.name,errors='replace')
+                    zip_file_name = member.name  if isinstance(member.name, str) else str(member.name, errors='replace')
                     new_solution_file.file.save(zip_file_name, File(temp_file), save=True)        # need to check for filenames begining with / or ..?
         else:
             self.mime_type = mimetypes.guess_type(self.file.name)[0]
@@ -184,11 +184,11 @@ class SolutionFile(models.Model):
         else:
             return encoding.get_unicode(self.file.read())
 
-    def copyTo(self,directory):
+    def copyTo(self, directory):
         """ Copies this file to the given directory """
         new_file_path = os.path.join(directory, self.path())
         if self.isBinary():
-            full_directory = os.path.join(directory,os.path.dirname(self.path()))
+            full_directory = os.path.join(directory, os.path.dirname(self.path()))
             if not os.path.exists(full_directory):
                 file_operations.makedirs(full_directory)
             shutil.copy(self.file.file.name, new_file_path)
@@ -220,7 +220,7 @@ class DummyFile:
 def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 
     zip_file = tempfile.TemporaryFile()
-    zip = zipfile.ZipFile(zip_file,'w', allowZip64 = True)
+    zip = zipfile.ZipFile(zip_file, 'w', allowZip64 = True)
     praktomat_files_destination          = "praktomat-files/"
     testsuite_destination                = praktomat_files_destination + "testsuite/"
     createfile_checker_files_destination = praktomat_files_destination + "other/"
@@ -235,22 +235,22 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
     createfile_checker_files = []
 
     if include_file_copy_checker_files:
-        createfile_checker = set([ checker for solution in solutions for checker in solution.task.createfilechecker_set.all().filter(include_in_solution_download=True) ])
+        createfile_checker = { checker for solution in solutions for checker in solution.task.createfilechecker_set.all().filter(include_in_solution_download=True) }
         createfile_checker_files = [(createfile_checker_files_destination + checker.path + '/' + checker.path_relative_to_sandbox(),        checker.file)          for checker in createfile_checker if not checker.unpack_zipfile]
         # Temporary build directory
         sandbox = settings.SANDBOX_DIR
         tmpdir = file_operations.create_tempfolder(sandbox)
         for zipchecker in [ checker for checker in createfile_checker if checker.unpack_zipfile ]:
-            cleanpath = string.lstrip(zipchecker.path,"/ ")
-            path = os.path.join(tmpdir,cleanpath)
+            cleanpath = string.lstrip(zipchecker.path, "/ ")
+            path = os.path.join(tmpdir, cleanpath)
             file_operations.unpack_zipfile_to(zipchecker.file.path, path,
                 lambda n: None,
                 lambda f: createfile_checker_files.append((
-                    os.path.join(createfile_checker_files_destination, os.path.join(cleanpath,f)),
-                    DummyFile(os.path.join(path,f))
+                    os.path.join(createfile_checker_files_destination, os.path.join(cleanpath, f)),
+                    DummyFile(os.path.join(path, f))
                 ))
             )
-        createfile_checker_files_destinations = set([createfile_checker_files_destination + checker.path for checker in createfile_checker if checker.is_sourcecode])
+        createfile_checker_files_destinations = {createfile_checker_files_destination + checker.path for checker in createfile_checker if checker.is_sourcecode}
 
 
 
@@ -258,15 +258,15 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
         # TODO: make this work for anonymous attesration, too
         if get_settings().anonymous_attestation:
             project_path = 'User' + index
-            project_name = unicode(solution.task) + u"-" + 'User ' + index
+            project_name = str(solution.task) + "-" + 'User ' + index
         else:
             project_path = path_for_user(solution.author)
-            project_name = unicode(solution.task) + u"-" + solution.author.get_full_name()
+            project_name = str(solution.task) + "-" + solution.author.get_full_name()
         base_name = path_for_task(solution.task) + '/' + project_path + '/'
 
         # We need to pass unicode strings to ZipInfo to ensure that it sets bit
         # 11 appropriately if the filename contains non-ascii characters.
-        assert isinstance(base_name, unicode)
+        assert isinstance(base_name, str)
 
         checkstyle_checker_files = []
         script_checker_files     = []
@@ -292,7 +292,7 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 
         zip.writestr(base_name+'.classpath', render_to_string('solutions/eclipse/classpath.xml', {'junit3' : junit3, 'junit4': junit4, 'createfile_checker_files' : include_file_copy_checker_files, 'createfile_checker_files_destinations' : createfile_checker_files_destinations, 'testsuite_destination' : testsuite_destination }).encode("utf-8"))
         if checkstyle:
-            zip.writestr(base_name+'.checkstyle', render_to_string('solutions/eclipse/checkstyle.xml', {'checkstyle_files' : [filename for (filename,_) in checkstyle_checker_files], 'createfile_checker_files_destination' : createfile_checker_files_destination, 'testsuite_destination' : testsuite_destination }).encode("utf-8"))
+            zip.writestr(base_name+'.checkstyle', render_to_string('solutions/eclipse/checkstyle.xml', {'checkstyle_files' : [filename for (filename, _) in checkstyle_checker_files], 'createfile_checker_files_destination' : createfile_checker_files_destination, 'testsuite_destination' : testsuite_destination }).encode("utf-8"))
 
         if junit4:
             zip.writestr(base_name+testsuite_destination+'AllJUnitTests.java', render_to_string('solutions/eclipse/AllJUnitTests.java', { 'testclasses' : [ j.class_name for j in junit_checker if j.junit_version == 'junit4' ]}).encode("utf-8"))
@@ -302,9 +302,9 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 
         solution_files  = [ (solution_files_destination+solutionfile.path(), solutionfile.file) for solutionfile in solution.solutionfile_set.all()]
 
-        for  (name,file) in solution_files + createfile_checker_files + checkstyle_checker_files + script_checker_files + artefact_files:
+        for  (name, file) in solution_files + createfile_checker_files + checkstyle_checker_files + script_checker_files + artefact_files:
             zippath = os.path.normpath(base_name + name)
-            assert isinstance(zippath, unicode)
+            assert isinstance(zippath, str)
             try: # Do not overwrite files from the solution by checker files
                 zip.getinfo(zippath)
             except KeyError:
@@ -323,7 +323,7 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
     return zip_file
 
 def ascii_without(chars):
-    return string.maketrans('','').translate(None,chars)
+    return string.maketrans('', '').translate(None, chars)
 
 non_ascii_letters            = ascii_without(string.ascii_letters)
 non_ascii_letters_and_digits = ascii_without(string.ascii_letters + string.digits)

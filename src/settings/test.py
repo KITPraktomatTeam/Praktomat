@@ -15,7 +15,7 @@ BASE_PATH = '/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-UPLOAD_ROOT = join(dirname(dirname(dirname(__file__))),'data')
+UPLOAD_ROOT = join(dirname(dirname(dirname(__file__))), 'data')
 
 SECRET_KEY = "not-so-secret"
 
@@ -32,5 +32,5 @@ PRIVATE_KEY = join(dirname(dirname(dirname(__file__))), 'examples', 'certificate
 CERTIFICATE = join(dirname(dirname(dirname(__file__))), 'examples', 'certificates', 'signer.pem')
 
 # Finally load defaults for missing setttings.
-import defaults
+from . import defaults
 defaults.load_defaults(globals())

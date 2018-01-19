@@ -17,12 +17,12 @@ def makedirs(path):
     if os.path.exists(path):
         return
     else:
-        (head,tail) = os.path.split(path)
+        (head, tail) = os.path.split(path)
         makedirs(head)
         os.mkdir(path)
         if (gid):
             os.chown(path, -1, gid)
-        os.chmod(path, 0770)
+        os.chmod(path, 0o770)
 
 
 def create_file(path, content, override=True, binary=False):
@@ -45,7 +45,7 @@ def create_file(path, content, override=True, binary=False):
         # chown :praktomat <path>
         os.chown(path, -1, gid)
         # rwxrwx---     access for praktomattester:praktomat
-        os.chmod(path, 0770)
+        os.chmod(path, 0o770)
 
 
 def copy_file(from_path, to_path, to_is_directory=False, override=True, binary=False):
@@ -62,7 +62,7 @@ def create_tempfolder(path):
     new_tmpdir = tempfile.mkdtemp()
     if (gid):
         os.chown(new_tmpdir, -1, gid)
-    os.chmod(new_tmpdir, 0770)
+    os.chmod(new_tmpdir, 0o770)
     return new_tmpdir
 
 class InvalidZipFile(Exception):
@@ -95,5 +95,5 @@ def unpack_zipfile_to(zipfilename, to_path, override_cb=None, file_cb=None):
         if override_cb is not None and os.path.exists(dest):
             override_cb(finfo.filename)
         zip.extract(finfo, to_path)
-        if file_cb is not None and os.path.isfile(os.path.join(to_path,finfo.filename)):
+        if file_cb is not None and os.path.isfile(os.path.join(to_path, finfo.filename)):
             file_cb(finfo.filename)

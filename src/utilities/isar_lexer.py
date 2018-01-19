@@ -3,7 +3,7 @@ from pygments.lexers.theorem import IsabelleLexer
 from pygments.lexer import RegexLexer, inherit, bygroups, words
 from pygments.token import *
 
-import encoding
+from . import encoding
 
 __all__ = ['IsarLexer']
 
@@ -16,7 +16,7 @@ class IsarLexer(IsabelleLexer):
     )
     tokens = {
         'root': [
-            (words(keyword_cartouche_text, prefix=r'\b', suffix=r'(%\w+)?(\s*\\<open>)'), bygroups(Keyword,Comment.Preproc,Comment), 'cartouche-text'),
+            (words(keyword_cartouche_text, prefix=r'\b', suffix=r'(%\w+)?(\s*\\<open>)'), bygroups(Keyword, Comment.Preproc, Comment), 'cartouche-text'),
             (r'\\<comment>.*$', Comment),
             (r'%\w+', Comment.Preproc),
             (r'\\<open>', String.Other, 'fact'),
@@ -59,9 +59,9 @@ def isar_decode(raw):
                     continue
                 m = re.match(r"^(\\<.*>)\s+code:\s+0x([0-9a-f]+).*$", line)
                 assert m, "Failed to parse " + line
-                n = int(m.group(2),16)
+                n = int(m.group(2), 16)
                 if n < 0x10000:
-                    symbol_table[m.group(1)] = unichr(n)
+                    symbol_table[m.group(1)] = chr(n)
 
     if isinstance(raw, str):
         raw = encoding.get_unicode(raw)

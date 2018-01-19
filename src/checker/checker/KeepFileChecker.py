@@ -20,7 +20,7 @@ class KeepFileChecker(Checker):
         return "Keep file %s" % self.filename
 
     def run(self, env):
-        path = os.path.join(env.tmpdir(),self.filename)
+        path = os.path.join(env.tmpdir(), self.filename)
 
         result = self.create_result(env)
         if os.path.isfile(path):

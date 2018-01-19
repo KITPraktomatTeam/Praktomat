@@ -7,11 +7,11 @@ import sys
 import os
 
 import django.contrib.admindocs.urls
-import tasks.views
-import attestation.views
-import solutions.views
-import utilities.views
-import accounts.urls
+from . import tasks.views
+from . import attestation.views
+from . import solutions.views
+from . import utilities.views
+from . import accounts.urls
 import tinymce.urls
 
 from django.contrib import admin

@@ -30,7 +30,7 @@ class IsabelleChecker(Checker):
     @staticmethod
     def description():
         """ Returns a description for this Checker. """
-        return u"Verifies that every submitted Isabelle theory can be processed without error"
+        return "Verifies that every submitted Isabelle theory can be processed without error"
 
 
     def run(self, env):
@@ -50,14 +50,14 @@ class IsabelleChecker(Checker):
             result.set_passed(False)
             return result
 
-        thys = map (lambda (name,_): ('"%s"' % os.path.splitext(name)[0]), env.sources())
-        trusted_thys = ['"%s"' % name for name in re.split(" |,",self.trusted_theories) if name]
-        untrusted_thys = filter (lambda name: name not in trusted_thys, thys)
+        thys = [('"%s"' % os.path.splitext(name__[0])[0]) for name__ in env.sources()]
+        trusted_thys = ['"%s"' % name for name in re.split(" |,", self.trusted_theories) if name]
+        untrusted_thys = [name for name in thys if name not in trusted_thys]
 
         ml_cmd = 'use_thys [%s]; Secure.set_secure (); use_thys [%s]' % \
             (','.join(trusted_thys), ','.join(untrusted_thys))
         args = [isabelle_process, "-r", "-q", "-e",  ml_cmd, self.logic]
-        (output, error, exitcode, timed_out, oom_ed) = execute_arglist(args, env.tmpdir(),timeout=settings.TEST_TIMEOUT, error_to_output=False)
+        (output, error, exitcode, timed_out, oom_ed) = execute_arglist(args, env.tmpdir(), timeout=settings.TEST_TIMEOUT, error_to_output=False)
 
         if timed_out:
             output += "\n\n---- check aborted after %d seconds ----\n" % settings.TEST_TIMEOUT

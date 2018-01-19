@@ -18,15 +18,15 @@ class TestViews(TestCase):
 
     def test_get_solution_list(self):
         response = self.client.get(reverse('solution_list', args=[self.task.id]))
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_post_solution(self):
         path = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'AMI', 'ModelSolution(flat).zip')
         f = open(path, 'r')
         response = self.client.post(reverse('solution_list', args=[self.task.id]), data={
-                            u'solutionfile_set-INITIAL_FORMS': u'0',
-                            u'solutionfile_set-TOTAL_FORMS': u'3',
-                            u'solutionfile_set-0-file': f
+                            'solutionfile_set-INITIAL_FORMS': '0',
+                            'solutionfile_set-TOTAL_FORMS': '3',
+                            'solutionfile_set-0-file': f
                         }, follow=True)
         self.assertRedirectsToView(response, 'solution_detail')
 
@@ -37,15 +37,15 @@ class TestViews(TestCase):
         path = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'AMI', 'ModelSolution(flat).zip')
         f = open(path, 'r')
         response = self.client.post(reverse('solution_list', args=[self.task.id]), data={
-                            u'solutionfile_set-INITIAL_FORMS': u'0',
-                            u'solutionfile_set-TOTAL_FORMS': u'3',
-                            u'solutionfile_set-0-file': f
+                            'solutionfile_set-INITIAL_FORMS': '0',
+                            'solutionfile_set-TOTAL_FORMS': '3',
+                            'solutionfile_set-0-file': f
                         }, follow=True)
-        self.failUnlessEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
     def test_get_solution(self):
         response = self.client.get(reverse('solution_detail', args=[self.task.solution_set.all()[0].id]))
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
 
 def test_concurrently(times):
@@ -63,7 +63,7 @@ def test_concurrently(times):
             def call_test_func():
                 try:
                     test_func(*args, **kwargs)
-                except Exception, e:
+                except Exception as e:
                     exceptions.append(e)
                     raise
             threads = []

@@ -5,7 +5,7 @@ from django.utils.html import escape
 import re
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
-from pygments.lexers import get_lexer_by_name,guess_lexer, guess_lexer_for_filename, ClassNotFound
+from pygments.lexers import get_lexer_by_name, guess_lexer, guess_lexer_for_filename, ClassNotFound
 from pygments.lexers._mapping import LEXERS
 
 # This is a hack to register our Isabelle Lexer without patching pygments or using setuptools' entry_points.
@@ -13,16 +13,16 @@ LEXERS['IsarLexer'] = ('utilities.isar_lexer', 'Isabelle/Isar', ('isabelle',), (
 
 register = template.Library()
 
-def get_lexer(value,arg):
+def get_lexer(value, arg):
     if arg is None:
         return guess_lexer(value)
-    return guess_lexer_for_filename(arg,value) #get_lexer_by_name(arg)
+    return guess_lexer_for_filename(arg, value) #get_lexer_by_name(arg)
 
 @register.filter(name='highlight')
 @stringfilter
 def colorize(value, arg=None):
     try:
-        return mark_safe(highlight(value,get_lexer(value,arg),HtmlFormatter()))
+        return mark_safe(highlight(value, get_lexer(value, arg), HtmlFormatter()))
     except ClassNotFound:
         return mark_safe("<pre>%s</pre>" % escape(value))
 
@@ -31,7 +31,7 @@ def colorize(value, arg=None):
 @stringfilter
 def colorize_table(value,arg=None):
     try:
-        return mark_safe(highlight(value,get_lexer(value,arg),HtmlFormatter(linenos='table')))
+        return mark_safe(highlight(value, get_lexer(value, arg), HtmlFormatter(linenos='table')))
     except ClassNotFound:
         return mark_safe("<pre>%s</pre>" % escape(value))
 

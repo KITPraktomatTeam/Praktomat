@@ -11,12 +11,13 @@ import mimetypes
 import re
 
 from solutions.models import Solution, SolutionFile
+from functools import reduce
 
 ziptype_re = re.compile(r'^application/(zip|x-zip|x-zip-compressed|x-compressed)$')
 tartype_re = re.compile(r'^application/(tar|x-tar|x-tar-compressed)$')
 
-for (mimetype,extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
-    mimetypes.add_type(mimetype,extension,strict=True)
+for (mimetype, extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
+    mimetypes.add_type(mimetype, extension, strict=True)
 
 class SolutionFileForm(ModelForm):
     class Meta:
@@ -86,7 +87,7 @@ class SolutionFileForm(ModelForm):
 class MyBaseInlineFormSet(BaseInlineFormSet):
     def clean(self):
         super(MyBaseInlineFormSet, self).clean()
-        if not reduce(lambda x,y: x + y.changed_data, self.forms, []):
+        if not reduce(lambda x, y: x + y.changed_data, self.forms, []):
             raise forms.ValidationError(_('You must at least choose one file.'))
 
 SolutionFormSet = inlineformset_factory(Solution, SolutionFile, form=SolutionFileForm, formset=MyBaseInlineFormSet, can_delete=False, extra=3)

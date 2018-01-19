@@ -2,7 +2,7 @@ from accounts.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
 def activate(matfilename):
-    f=open(matfilename,'r')
+    f=open(matfilename, 'r')
     matnummers=f.readlines()
     for matnummer in [int(nr) for nr in matnummers]:
         #print "ImportingMatnummer: %d\t" % matnummer
@@ -11,7 +11,7 @@ def activate(matfilename):
             user.is_active = True
             user.save()
         except ObjectDoesNotExist:
-            print "not found: %d" % matnummer
+            print("not found: %d" % matnummer)
 
         #print user.username
     f.close()

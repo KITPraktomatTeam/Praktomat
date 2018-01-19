@@ -27,7 +27,7 @@ class ScriptChecker(Checker):
     @staticmethod
     def description():
         """ Returns a description for this Checker. """
-        return u"Diese Prüfung wird bestanden, wenn das externe Programm keinen Fehlercode liefert."
+        return "Diese Prüfung wird bestanden, wenn das externe Programm keinen Fehlercode liefert."
 
 
     def path_relative_to_sandbox(self):
@@ -40,13 +40,13 @@ class ScriptChecker(Checker):
 
         # Setup
         filename = self.filename if self.filename else self.shell_script.path
-        path = os.path.join(env.tmpdir(),os.path.basename(filename))
+        path = os.path.join(env.tmpdir(), os.path.basename(filename))
         copy_file(self.shell_script.path, path)
-        os.chmod(path,0750)
+        os.chmod(path, 0o750)
 
         # Run the tests -- execute dumped shell script 'script.sh'
 
-        filenames = [name for (name,content) in env.sources()]
+        filenames = [name for (name, content) in env.sources()]
         args = [path] + filenames
 
         environ = {}
@@ -60,9 +60,9 @@ class ScriptChecker(Checker):
         environ['POLICY'] = settings.JVM_POLICY
         environ['PROGRAM'] = env.program() or ''
 
-        script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
+        script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'scripts')
 
-        [output, error, exitcode,timed_out, oom_ed] = execute_arglist(
+        [output, error, exitcode, timed_out, oom_ed] = execute_arglist(
                             args,
                             working_directory=env.tmpdir(),
                             environment_variables=environ,
@@ -74,14 +74,14 @@ class ScriptChecker(Checker):
         output = force_unicode(output, errors='replace')
 
         result = self.create_result(env)
-        (output,truncated) = truncated_log(output)
+        (output, truncated) = truncated_log(output)
 
         if self.remove:
             output = re.sub(self.remove, "", output)
         if not self.returns_html or truncated or timed_out or oom_ed:
             output = '<pre>' + escape(output) + '</pre>'
 
-        result.set_log(output,timed_out=timed_out,truncated=truncated,oom_ed=oom_ed)
+        result.set_log(output, timed_out=timed_out, truncated=truncated, oom_ed=oom_ed)
         result.set_passed(not exitcode and not timed_out and not oom_ed and not truncated)
 
         return result

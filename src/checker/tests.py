@@ -10,8 +10,8 @@ import unittest
 from solutions.models import Solution, SolutionFile
 from django.core.files import File
 from tasks.models import Task
-from compiler import *
-from checker import *
+from .compiler import *
+from .checker import *
 
 
 class TestChecker(TestCase):
@@ -33,7 +33,7 @@ class TestChecker(TestCase):
         src = join(dirname(dirname(dirname(__file__))), 'examples', 'check style', 'check_ws.xml')
         dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'check style', 'check_ws.xml')
         # circumvent SuspiciousOperation exception
-        copy_file(src,dest)
+        copy_file(src, dest)
         CheckStyleChecker.CheckStyleChecker.objects.create(
                     task = self.task,
                     order = 0,
@@ -45,7 +45,7 @@ class TestChecker(TestCase):
         src = join(dirname(dirname(dirname(__file__))), 'examples', 'check style', 'check_ws.xml')
         dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'check style', 'createfile.xml')
         # circumvent SuspiciousOperation exception
-        copy_file(src,dest)
+        copy_file(src, dest)
         CreateFileChecker.CreateFileChecker.objects.create(
                     task = self.task,
                     order = 0,
@@ -53,13 +53,13 @@ class TestChecker(TestCase):
                     )
         self.solution.check_solution()
         for checkerresult in self.solution.checkerresult_set.all():
-            self.failUnless(checkerresult.passed, checkerresult.log)
+            self.assertTrue(checkerresult.passed, checkerresult.log)
 
     def test_createfile_override_checker(self):
         src = join(dirname(dirname(dirname(__file__))), 'examples', 'check style', 'check_ws.xml')
         dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'check style', 'createfile.xml')
         # circumvent SuspiciousOperation exception
-        copy_file(src,dest)
+        copy_file(src, dest)
         CreateFileChecker.CreateFileChecker.objects.create(
                     task = self.task,
                     order = 0,
@@ -73,13 +73,13 @@ class TestChecker(TestCase):
         self.solution.check_solution()
         for checkerresult in self.solution.checkerresult_set.all():
             if checkerresult.checker.order == 1:
-                self.failIf(checkerresult.passed, checkerresult.log)
+                self.assertFalse(checkerresult.passed, checkerresult.log)
 
     def test_createfile_zip_checker(self):
         src = join(dirname(dirname(dirname(__file__))), 'examples', 'simple_zip_file.zip')
         dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'simple_zip_file.zip')
         # circumvent SuspiciousOperation exception
-        copy_file(src,dest, binary=True)
+        copy_file(src, dest, binary=True)
         CreateFileChecker.CreateFileChecker.objects.create(
                     task = self.task,
                     order = 0,
@@ -88,13 +88,13 @@ class TestChecker(TestCase):
                     )
         self.solution.check_solution()
         for checkerresult in self.solution.checkerresult_set.all():
-            self.failUnless(checkerresult.passed, checkerresult.log)
+            self.assertTrue(checkerresult.passed, checkerresult.log)
 
     def test_createfile_illegal_zip_checker(self):
         src = join(dirname(dirname(dirname(__file__))), 'examples', 'badzipfile.zip')
         dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'badzipfile.zip')
         # circumvent SuspiciousOperation exception
-        copy_file(src,dest, binary=True)
+        copy_file(src, dest, binary=True)
         CreateFileChecker.CreateFileChecker.objects.create(
                     task = self.task,
                     order = 0,
@@ -107,7 +107,7 @@ class TestChecker(TestCase):
         src = join(dirname(dirname(dirname(__file__))), 'examples', 'simple_zip_file.zip')
         dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'simple_zip_file.zip')
         # circumvent SuspiciousOperation exception
-        copy_file(src,dest, binary=True)
+        copy_file(src, dest, binary=True)
         CreateFileChecker.CreateFileChecker.objects.create(
                     task = self.task,
                     order = 0,
@@ -123,7 +123,7 @@ class TestChecker(TestCase):
         self.solution.check_solution()
         for checkerresult in self.solution.checkerresult_set.all():
             if checkerresult.checker.order == 1:
-                self.failIf(checkerresult.passed, checkerresult.log)
+                self.assertFalse(checkerresult.passed, checkerresult.log)
 
 
 
@@ -136,7 +136,7 @@ class TestChecker(TestCase):
         self.solution.check_solution()
         # This fails (no good test data)
         for checkerresult in self.solution.checkerresult_set.all():
-            self.failIf(checkerresult.passed, checkerresult.log)
+            self.assertFalse(checkerresult.passed, checkerresult.log)
 
     def test_linecounter_checker(self):
         LineCounter.LineCounter.objects.create(
@@ -145,7 +145,7 @@ class TestChecker(TestCase):
                     )
         self.solution.check_solution()
         for checkerresult in self.solution.checkerresult_set.all():
-            self.failUnless(checkerresult.passed, checkerresult.log)
+            self.assertTrue(checkerresult.passed, checkerresult.log)
 
     def test_linewidth_checker(self):
         LineWidthChecker.LineWidthChecker.objects.create(
@@ -154,13 +154,13 @@ class TestChecker(TestCase):
                     )
         self.solution.check_solution()
         for checkerresult in self.solution.checkerresult_set.all():
-            self.failUnless(checkerresult.passed, checkerresult.log)
+            self.assertTrue(checkerresult.passed, checkerresult.log)
 
     def test_script_checker(self):
         src = join(dirname(dirname(dirname(__file__))), 'examples', 'Power.sh')
         dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'Power.sh')
         # circumvent SuspiciousOperation exception
-        copy_file(src,dest)
+        copy_file(src, dest)
         ScriptChecker.ScriptChecker.objects.create(
                     task = self.task,
                     order = 0,
@@ -168,13 +168,13 @@ class TestChecker(TestCase):
                     )
         self.solution.check_solution()
         for checkerresult in self.solution.checkerresult_set.all():
-            self.failUnless(checkerresult.passed, checkerresult.log)
+            self.assertTrue(checkerresult.passed, checkerresult.log)
 
     def test_script_timeout(self):
         src = join(dirname(dirname(dirname(__file__))), 'examples', 'loop.sh')
         dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'loop.sh')
         # circumvent SuspiciousOperation exception
-        copy_file(src,dest)
+        copy_file(src, dest)
         with self.settings(TEST_TIMEOUT=1):
             ScriptChecker.ScriptChecker.objects.create(
                 task = self.task,
@@ -185,7 +185,7 @@ class TestChecker(TestCase):
             for checkerresult in self.solution.checkerresult_set.all():
                 self.assertIn('1', checkerresult.log, "Test did not even start?")
                 self.assertIn('Timeout occured!', checkerresult.log, "Test result does not mention timeout")
-                self.failIf(checkerresult.passed, "Test succeed (no timeout?)")
+                self.assertFalse(checkerresult.passed, "Test succeed (no timeout?)")
                 self.assertNotIn('done', checkerresult.log, "Test did finish (no timeout?)")
 
 
@@ -195,7 +195,7 @@ class TestChecker(TestCase):
         src = join(dirname(dirname(dirname(__file__))), 'examples', 'largefile.pl')
         dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'largefile.pl')
         # circumvent SuspiciousOperation exception
-        copy_file(src,dest)
+        copy_file(src, dest)
         with self.settings(TEST_MAXFILESIZE=5):
             ScriptChecker.ScriptChecker.objects.create(
                 task = self.task,
@@ -207,7 +207,7 @@ class TestChecker(TestCase):
                 self.assertIn('Begin', checkerresult.log, "Test did not even start? (%s)" % checkerresult.log)
                 self.assertNotIn('End', checkerresult.log, "Test did finish (no timeout?) (%s)" % checkerresult.log)
                 #self.assertIn('Timeout occured!', checkerresult.log, "Test result does not mention timeout")
-                self.failIf(checkerresult.passed, "Test succeed (no timeout?)")
+                self.assertFalse(checkerresult.passed, "Test succeed (no timeout?)")
 
 
     @unittest.skipIf(not settings.USESAFEDOCKER, "only supported with safe-docker")
@@ -215,7 +215,7 @@ class TestChecker(TestCase):
         src = join(dirname(dirname(dirname(__file__))), 'examples', 'allocate.pl')
         dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'allocate.pl')
         # circumvent SuspiciousOperation exception
-        copy_file(src,dest)
+        copy_file(src, dest)
         with self.settings(TEST_MAXMEM=1):
             ScriptChecker.ScriptChecker.objects.create(
                 task = self.task,
@@ -227,7 +227,7 @@ class TestChecker(TestCase):
                 self.assertIn('Begin', checkerresult.log, "Test did not even start?")
                 self.assertNotIn('End', checkerresult.log, "Test did finish (no timeout?)")
                 self.assertIn('Timeout occured!', checkerresult.log, "Test result does not mention timeout")
-                self.failIf(checkerresult.passed, "Test succeed (no timeout?)")
+                self.assertFalse(checkerresult.passed, "Test succeed (no timeout?)")
 
     def test_text_checker(self):
         TextChecker.TextChecker.objects.create(
@@ -237,13 +237,13 @@ class TestChecker(TestCase):
                     )
         self.solution.check_solution()
         for checkerresult in self.solution.checkerresult_set.all():
-            self.failUnless(checkerresult.passed, checkerresult.log)
+            self.assertTrue(checkerresult.passed, checkerresult.log)
 
     def test_dejagnu_checker(self):
         src = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'GGT', 'solutions', 'javagently', 'Stream.java')
         dest = join(settings.UPLOAD_ROOT, 'directdeposit',  'javagently', 'Stream.java')
         # circumvent SuspiciousOperation exception
-        copy_file(src,dest)
+        copy_file(src, dest)
         CreateFileChecker.CreateFileChecker.objects.create(
                     task = self.task,
                     order = 0,
@@ -260,7 +260,7 @@ class TestChecker(TestCase):
         src = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'GGT', 'DejaGnuTestCases', 'default.exp')
         test_defs = join(settings.UPLOAD_ROOT, 'directdeposit', 'DejaGnuTestCases', 'default.exp')
         # circumvent SuspiciousOperation exception
-        copy_file(src,test_defs)
+        copy_file(src, test_defs)
         DejaGnu.DejaGnuSetup.objects.create(
                     task = self.task,
                     order = 1,
@@ -269,7 +269,7 @@ class TestChecker(TestCase):
         src = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'GGT', 'DejaGnuTestCases', 'public.exp')
         test_case = join(settings.UPLOAD_ROOT, 'directdeposit', 'DejaGnuTestCases', 'public.exp')
         # circumvent SuspiciousOperation exception
-        copy_file(src,test_case)
+        copy_file(src, test_case)
         DejaGnu.DejaGnuTester.objects.create(
                     task = self.task,
                     order = 2,
@@ -280,13 +280,13 @@ class TestChecker(TestCase):
 
         # Check if they are all finished, or if one of the dependencies failed.
         for checkerresult in self.solution.checkerresult_set.all():
-            self.failUnless(checkerresult.passed, checkerresult.log)
+            self.assertTrue(checkerresult.passed, checkerresult.log)
 
     def test_c_checker(self):
         src = join(dirname(dirname(dirname(__file__))), 'examples', 'Hello World.c')
         dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'Hello World.c')
         # circumvent SuspiciousOperation exception
-        copy_file(src,dest)
+        copy_file(src, dest)
         CreateFileChecker.CreateFileChecker.objects.create(
                     task = self.task,
                     order = 0,
@@ -301,7 +301,7 @@ class TestChecker(TestCase):
 
         # Check if they are all finished, or if one of the dependencies failed.
         for checkerresult in self.solution.checkerresult_set.all():
-            self.failUnless(checkerresult.passed, checkerresult.log)
+            self.assertTrue(checkerresult.passed, checkerresult.log)
 
     def test_r_checker(self):
         solution_file = SolutionFile(solution = self.solution)
@@ -321,7 +321,7 @@ class TestChecker(TestCase):
             self.assertIn('2', checkerresult.log, "Test did not calculate 1 + 2 (%s)" % checkerresult.log)
             self.assertTrue(checkerresult.artefacts.exists())
             self.assertEqual(checkerresult.artefacts.get().path(), "Rplots.pdf")
-            self.failUnless(checkerresult.passed, checkerresult.log)
+            self.assertTrue(checkerresult.passed, checkerresult.log)
 
         solution_file.delete()
 
@@ -342,7 +342,7 @@ class TestChecker(TestCase):
 
         for checkerresult in self.solution.checkerresult_set.all():
             self.assertIn('2', checkerresult.log, "Test did not calculate 1 + 2 (%s)" % checkerresult.log)
-            self.failUnless(checkerresult.passed, checkerresult.log)
+            self.assertTrue(checkerresult.passed, checkerresult.log)
             self.assertTrue(checkerresult.artefacts.exists())
             self.assertEqual(checkerresult.artefacts.get().path(), "Rplots.pdf")
         solution_file.delete()
@@ -364,7 +364,7 @@ class TestChecker(TestCase):
 
         for checkerresult in self.solution.checkerresult_set.all():
             self.assertIn('Could not find expected R script', checkerresult.log, "Test did not complain (%s)" % checkerresult.log)
-            self.failIf(checkerresult.passed, checkerresult.log)
+            self.assertFalse(checkerresult.passed, checkerresult.log)
         solution_file.delete()
 
     def test_r_checker_4(self):
@@ -388,7 +388,7 @@ class TestChecker(TestCase):
 
         for checkerresult in self.solution.checkerresult_set.all():
             self.assertIn('Multiple R scripts found', checkerresult.log, "Test did not complain (%s)" % checkerresult.log)
-            self.failIf(checkerresult.passed, checkerresult.log)
+            self.assertFalse(checkerresult.passed, checkerresult.log)
         solution_file2.delete()
 
     def test_keep_file_checker(self):
@@ -401,7 +401,7 @@ class TestChecker(TestCase):
         self.solution.check_solution()
 
         for checkerresult in self.solution.checkerresult_set.all():
-            self.failUnless(checkerresult.passed, checkerresult.log)
+            self.assertTrue(checkerresult.passed, checkerresult.log)
             self.assertTrue(checkerresult.artefacts.exists())
             self.assertEqual(checkerresult.artefacts.get().path(), "GgT.java")
 
@@ -416,4 +416,4 @@ class TestChecker(TestCase):
 
         for checkerresult in self.solution.checkerresult_set.all():
             self.assertIn('Could not find file', checkerresult.log, "Test did not complain (%s)" % checkerresult.log)
-            self.failIf(checkerresult.passed, checkerresult.log)
+            self.assertFalse(checkerresult.passed, checkerresult.log)

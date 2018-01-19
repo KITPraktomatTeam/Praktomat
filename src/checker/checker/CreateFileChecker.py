@@ -29,25 +29,25 @@ class CheckerWithFile(Checker):
 
     def path_relative_to_sandbox(self):
         filename = self.filename if self.filename else self.file.path
-        return os.path.join(string.lstrip(self.path,"/ "), os.path.basename(filename))
+        return os.path.join(string.lstrip(self.path, "/ "), os.path.basename(filename))
 
     def add_to_environment(self, env, path):
         if (self._add_to_environment):
-            env.add_source(path, file(os.path.join(env.tmpdir(),path)).read())
+            env.add_source(path, file(os.path.join(env.tmpdir(), path)).read())
 
     def run_file(self, env):
         result = self.create_result(env)
         clashes = []
-        cleanpath = string.lstrip(self.path,"/ ")
+        cleanpath = string.lstrip(self.path, "/ ")
         if (self.unpack_zipfile):
-            path = os.path.join(env.tmpdir(),cleanpath)
+            path = os.path.join(env.tmpdir(), cleanpath)
             unpack_zipfile_to(self.file.path, path,
                 lambda n: clashes.append(os.path.join(cleanpath, n)),
-                lambda f: self.add_to_environment(env, os.path.join(cleanpath,f)))
+                lambda f: self.add_to_environment(env, os.path.join(cleanpath, f)))
         else:
             filename = self.filename if self.filename else self.file.path
             source_path = os.path.join(cleanpath, os.path.basename(filename))
-            path = os.path.join(env.tmpdir(),source_path)
+            path = os.path.join(env.tmpdir(), source_path)
             overridden = os.path.exists(path)
             copy_file(self.file.path, path, binary=True)
             if overridden:
@@ -56,7 +56,7 @@ class CheckerWithFile(Checker):
 
         result.set_passed(not clashes)
         if clashes:
-            result.set_log("These files already existed. Do NOT include them in your submissions:<br/><ul>\n" + "\n".join(map(lambda f: "<li>%s</li>" % escape(f), clashes)) + "</ul>")
+            result.set_log("These files already existed. Do NOT include them in your submissions:<br/><ul>\n" + "\n".join(["<li>%s</li>" % escape(f) for f in clashes]) + "</ul>")
         return result
 
 class CreateFileChecker(CheckerWithFile):
@@ -68,14 +68,14 @@ class CreateFileChecker(CheckerWithFile):
     @staticmethod
     def description():
         """ Returns a description for this Checker. """
-        return u"Diese Prüfung wird bestanden, falls die Zieldatei nicht schon vorhanden ist (z.B.: vom Studenten eingereicht wurde)!"
+        return "Diese Prüfung wird bestanden, falls die Zieldatei nicht schon vorhanden ist (z.B.: vom Studenten eingereicht wurde)!"
 
     def run(self, env):
         return self.run_file(env)
 
 
-    def show_publicly(self,passed):
-        return super(CreateFileChecker,self).show_publicly(passed) or (not passed)
+    def show_publicly(self, passed):
+        return super(CreateFileChecker, self).show_publicly(passed) or (not passed)
 
     def clean(self):
         super(CreateFileChecker, self).clean()

@@ -79,11 +79,11 @@ It is *required* - it must be passed for submission
         result.save() # otherwise we cannot attach artefacts to it
         return result
 
-    def show_publicly(self,passed):
+    def show_publicly(self, passed):
         """ Are results of this Checker to be shown publicly, given whether the result was passed? """
         return self.public
 
-    def is_critical(self,passed):
+    def is_critical(self, passed):
         """ Are results of this Checker to be shown publicly, given whether the result was passed? """
         return self.critical and not passed
 
@@ -95,12 +95,12 @@ It is *required* - it must be passed for submission
 
     def title(self):
         """ Returns the title for this checker category. To be overloaded in subclasses. """
-        return u"Prüfung"
+        return "Prüfung"
 
     @staticmethod
     def description():
         """ Returns a description for this Checker. """
-        return u" no description "
+        return " no description "
 
     def requires(self):
         """ Returns the list of passed Checkers required by this checker.
@@ -122,7 +122,7 @@ class CheckerEnvironment:
         # Sources as [(name, content)...]
         self._sources = []
         for file in solution.solutionfile_set.all().order_by('file'):
-            self._sources.append((file.path(),file.content()))
+            self._sources.append((file.path(), file.content()))
         # Submitter of this program
         self._user = solution.author
         # Executable program
@@ -145,7 +145,7 @@ class CheckerEnvironment:
 
     def add_source(self, path, content):
         """ Add source to the list of source files. [(name, content)...] """
-        self._sources.append((path,content))
+        self._sources.append((path, content))
 
 
     def user(self):
@@ -174,8 +174,8 @@ def truncated_log(log):
     log_length = len(log)
     if log_length > settings.TEST_MAXLOGSIZE*1024:
         # since we might be truncating utf8 encoded strings here, result may be erroneous, so we explicitly replace faulty byte tokens
-        return (force_unicode('======= Warning: Output too long, hence truncated ======\n' + log[0:(settings.TEST_MAXLOGSIZE*1024)/2] + "\n...\n...\n...\n...\n" + log[log_length-((settings.TEST_MAXLOGSIZE*1024)/2):],errors='replace'), True)
-    return (log,False)
+        return (force_unicode('======= Warning: Output too long, hence truncated ======\n' + log[0:(settings.TEST_MAXLOGSIZE*1024)/2] + "\n...\n...\n...\n...\n" + log[log_length-((settings.TEST_MAXLOGSIZE*1024)/2):], errors='replace'), True)
+    return (log, False)
 
 
 class CheckerResult(models.Model):
@@ -190,7 +190,7 @@ class CheckerResult(models.Model):
     solution = models.ForeignKey(Solution)
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    checker = GenericForeignKey('content_type','object_id')
+    checker = GenericForeignKey('content_type', 'object_id')
 
     passed = models.BooleanField(default=True,  help_text=_('Indicates whether the test has been passed'))
     log = models.TextField(help_text=_('Text result of the checker'))
@@ -243,10 +243,10 @@ def get_checkerresultartefact_upload_path(instance, filename):
     solution = result.solution
     return os.path.join(
         'SolutionArchive',
-        'Task_' + unicode(solution.task.id),
+        'Task_' + str(solution.task.id),
         'User_' + solution.author.username,
-        'Solution_' + unicode(solution.id),
-        'Result_' + unicode(result.id),
+        'Solution_' + str(solution.id),
+        'Result_' + str(result.id),
         filename)
 
 class CheckerResultArtefact(models.Model):
@@ -320,7 +320,7 @@ def check_multiple(solutions, run_secret = False, debug_keep_tmp = False):
         check_it = partial(check_with_own_connection_rev, run_secret, debug_keep_tmp)
 
         pool = Pool(processes=settings.NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL)  # Check n solutions at once
-        pool.map(check_it, solutions,1)
+        pool.map(check_it, solutions, 1)
         connection.close()
 
 
@@ -356,14 +356,14 @@ def run_checks(solution, env, run_all):
                         result = checker.run(env)
                     except:
                         result = checker.create_result(env)
-                        result.set_log(u"The Checker caused an unexpected internal error.")
+                        result.set_log("The Checker caused an unexpected internal error.")
                         result.set_passed(False)
                         #TODO: Email Admins
             else:
                 # make non passed result
                 # this as well as the dependency check should propably go into checker class
                 result = checker.create_result(env)
-                result.set_log(u"Checker konnte nicht ausgeführt werden, da benötigte Checker nicht bestanden wurden.")
+                result.set_log("Checker konnte nicht ausgeführt werden, da benötigte Checker nicht bestanden wurden.")
                 result.set_passed(False)
 
             elapsed_time = time.time() - start_time

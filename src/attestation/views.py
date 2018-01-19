@@ -24,7 +24,7 @@ from configuration import get_settings
 
 
 @login_required
-def statistics(request,task_id):
+def statistics(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
 
     if not (request.user.is_trainer or request.user.is_tutor or request.user.is_superuser):
@@ -46,20 +46,20 @@ def statistics(request,task_id):
     submissions = []
     submissions_final = []
     acc_submissions = [0]
-    creation_dates = map(lambda dict:dict['creation_date'].date(), unfinal_solutions.values('creation_date'))
-    creation_dates_final = map(lambda dict:dict['creation_date'].date(), final_solutions.values('creation_date'))
+    creation_dates = [dict['creation_date'].date() for dict in unfinal_solutions.values('creation_date')]
+    creation_dates_final = [dict['creation_date'].date() for dict in final_solutions.values('creation_date')]
     for date in daterange(task.publication_date.date(), min(task.submission_date.date(), datetime.date.today())):
         submissions.append(creation_dates.count(date))
         submissions_final.append(creation_dates_final.count(date))
         acc_submissions.append(acc_submissions[-1]+submissions_final[-1])
     acc_submissions.pop(0)
     if (user_count > 0):
-        acc_submissions = map(lambda submissions: float(submissions)/user_count, acc_submissions)
+        acc_submissions = [submissions/user_count for submissions in acc_submissions]
     else:
         acc_submissions = 0;
 
-    creation_times = map(lambda dict:[(dict['creation_date'].time().hour*3600+dict['creation_date'].time().minute*60)*1000, dict['creation_date'].weekday()], unfinal_solutions.values('creation_date'))
-    creation_times_final = map(lambda dict:[(dict['creation_date'].time().hour*3600+dict['creation_date'].time().minute*60)*1000, dict['creation_date'].weekday()], final_solutions.values('creation_date'))
+    creation_times = [[(dict['creation_date'].time().hour*3600+dict['creation_date'].time().minute*60)*1000, dict['creation_date'].weekday()] for dict in unfinal_solutions.values('creation_date')]
+    creation_times_final = [[(dict['creation_date'].time().hour*3600+dict['creation_date'].time().minute*60)*1000, dict['creation_date'].weekday()] for dict in final_solutions.values('creation_date')]
 
     if request.user.is_trainer:
         attestations = Attestation.objects.filter(solution__task__id=task.id, final=True, published=False).aggregate(final=Count('id'))
@@ -71,35 +71,35 @@ def statistics(request,task_id):
     attestations['all'] = final_solution_count
 
 
-    all_items = task.final_grade_rating_scale.ratingscaleitem_set.values_list('name','position')
-    final_grade_rating_scale_items = "['" + "','".join([name.strip() for (name,position) in all_items]) + "']"
+    all_items = task.final_grade_rating_scale.ratingscaleitem_set.values_list('name', 'position')
+    final_grade_rating_scale_items = "['" + "','".join([name.strip() for (name, position) in all_items]) + "']"
 
     all_ratings = []
     if request.user.is_trainer:
         # Each Tutorials ratings
         for t in Tutorial.objects.all():
-            all_ratings.append({'title'   : u"Final Grades for Students in Tutorial %s" % unicode(t),
-                                'desc'    : u"This chart shows the distribution of final grades for students from Tutorial %s. Plagiarism is excluded." % unicode(t),
+            all_ratings.append({'title'   : "Final Grades for Students in Tutorial %s" % str(t),
+                                'desc'    : "This chart shows the distribution of final grades for students from Tutorial %s. Plagiarism is excluded." % str(t),
                                 'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__solution__author__tutorial = t)})
         for t in User.objects.filter(groups__name='Tutor'):
-            all_ratings.append({'title'   : u"Final Grades for Attestations created by %s" % unicode(t),
-                                'desc'    : u"This chart shows the distribution of final grades for Attestations created by %s. Plagiarism is excluded." % unicode(t),
+            all_ratings.append({'title'   : "Final Grades for Attestations created by %s" % str(t),
+                                'desc'    : "This chart shows the distribution of final grades for Attestations created by %s. Plagiarism is excluded." % str(t),
                                 'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__author__id = t.id)})
     else:
         # The Tutorials ratings
-        all_ratings.append(        {'title'   : u"Final grades (My Tutorials)",
-                                    'desc'    : u"This chart shows the distribution of final grades for students from any your tutorials. Plagiarism is excluded.",
+        all_ratings.append(        {'title'   : "Final grades (My Tutorials)",
+                                    'desc'    : "This chart shows the distribution of final grades for students from any your tutorials. Plagiarism is excluded.",
                                     'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__solution__author__tutorial__in = tutorials)})
-        all_ratings.append(        {'title'   : u"Final grades (My Attestations)",
-                                    'desc'    : u"This chart shows the distribution of final grades for your attestations. Plagiarism is excluded.",
+        all_ratings.append(        {'title'   : "Final grades (My Attestations)",
+                                    'desc'    : "This chart shows the distribution of final grades for your attestations. Plagiarism is excluded.",
                                     'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__author__id = request.user.id)})
     # Overall ratings
-    all_ratings.append({'title'   : u"Final grades (overall)",
-                        'desc'    : u"This chart shows the distribution of final grades for all students. Plagiarism is excluded.",
+    all_ratings.append({'title'   : "Final grades (overall)",
+                        'desc'    : "This chart shows the distribution of final grades for all students. Plagiarism is excluded.",
                         'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True)})
 
-    for i,r in enumerate(all_ratings):
-        all_ratings[i]['ratings'] = [list(rating) for rating in r['ratings'].annotate(Count('id')).values_list('position','id__count')]
+    for i, r in enumerate(all_ratings):
+        all_ratings[i]['ratings'] = [list(rating) for rating in r['ratings'].annotate(Count('id')).values_list('position', 'id__count')]
 
     has_runtimes = False
     runtimes = []
@@ -123,7 +123,7 @@ def statistics(request,task_id):
                 date = first['date'] + ((span//2)*(2*i+1) // n);
                 if buckets[i]:
                     buckets[i].sort()
-                    value = buckets[i][((len(buckets[i])+1)/2)-1]
+                    value = buckets[i][((len(buckets[i])+1)//2)-1]
                 else:
                     value = None
                 medians.append({'date': date, 'value': value});
@@ -157,9 +157,9 @@ def daterange(start_date, end_date):
 
 def tutor_attestation_stats(task, tutor):
     stats = {'tutor': tutor,
-             'unattested' : Solution.objects.filter(task = task, final=True, plagiarism = False, attestation = None,author__tutorial__tutors=tutor).count(),
-             'final': Attestation.objects.filter(solution__task = task,final=True,author=tutor).count(),
-             'nonfinal': Attestation.objects.filter(solution__task = task,final=False,author=tutor).count() }
+             'unattested' : Solution.objects.filter(task = task, final=True, plagiarism = False, attestation = None, author__tutorial__tutors=tutor).count(),
+             'final': Attestation.objects.filter(solution__task = task, final=True, author=tutor).count(),
+             'nonfinal': Attestation.objects.filter(solution__task = task, final=False, author=tutor).count() }
 
     stats['attested'] = stats['final']+stats['nonfinal']
     stats['total']    = stats['final']+stats['nonfinal']+stats['unattested']
@@ -241,18 +241,18 @@ def attestation_list(request, task_id):
 
     show_author = not get_settings().anonymous_attestation or request.user.is_tutor or request.user.is_trainer or published
 
-    data = {'task':task,
-            'tutored_users':tutored_users,
-            'solutions_with_plagiarism':solutions_with_plagiarism,
-            'my_attestations':my_attestations,
-            'attestations_by_others':attestations_by_others,
-            'all_attestations':all_attestations,
-            'unattested_solutions':unattested_solutions,
+    data = {'task': task,
+            'tutored_users': tutored_users,
+            'solutions_with_plagiarism': solutions_with_plagiarism,
+            'my_attestations': my_attestations,
+            'attestations_by_others': attestations_by_others,
+            'all_attestations': all_attestations,
+            'unattested_solutions': unattested_solutions,
             'publishable_tutorial': publishable_tutorial,
             'publishable_all': publishable_all,
             'show_author': show_author,
-            'attestation_stats' : attestation_stats,
-            'no_tutorial_stats' : no_tutorial_stats,}
+            'attestation_stats': attestation_stats,
+            'no_tutorial_stats': no_tutorial_stats,}
     return render(request, "attestation/attestation_list.html", data)
 
 
@@ -408,10 +408,10 @@ def view_attestation(request, attestation_id):
                 "attest": attest,
                 "submitable": submitable,
                 "withdrawable": withdrawable,
-                "form":form,
+                "form": form,
                 "show_author": not get_settings().anonymous_attestation,
                 "show_attestor": not get_settings().invisible_attestor,
-                "htmlinjector_snippets" : htmlinjector_snippets,
+                "htmlinjector_snippets": htmlinjector_snippets,
             }
         )
 
@@ -444,10 +444,10 @@ def user_task_attestation_map(users,tasks,only_published=True):
         threshold = 0
 
         for task in tasks:
-            has_solution = (task.id,user.id) in final_solutions_dict
+            has_solution = (task.id, user.id) in final_solutions_dict
 
             try:
-                rating = attestation_dict[task.id,user.id]
+                rating = attestation_dict[task.id, user.id]
             except KeyError:
                 rating = None
             if rating or (task.expired() and not has_solution):
@@ -457,7 +457,7 @@ def user_task_attestation_map(users,tasks,only_published=True):
                 if plagiarism_option == 'WP' or (plagiarism_option == 'NP' and not rating.solution.plagiarism):
                     grade_sum += float(rating.final_grade.name)
 
-            rating_for_user_list.append((rating,has_solution))
+            rating_for_user_list.append((rating, has_solution))
 
         if arithmetic_option == 'SUM':
             calculated_grade = grade_sum
@@ -479,8 +479,8 @@ def rating_overview(request):
     if not (full_form or (request.user.is_coordinator and request.method != "POST")):
         return access_denied(request)
 
-    tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date')
-    users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name','id')
+    tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date', 'submission_date')
+    users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name', 'first_name', 'id')
     # corresponding user to user_id_list in reverse order! important for easy displaying in template
     rev_users = users.reverse()
     users = users.select_related("user_ptr", "user_ptr__groups__name", "user_ptr__is_active", "user_ptr__user_id")
@@ -536,26 +536,26 @@ def tutorial_overview(request, tutorial_id=None):
         other_tutorials = Tutorial.objects.all()
     other_tutorials = other_tutorials.exclude(id=tutorial.id)
 
-    tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date')
-    users = User.objects.filter(groups__name='User').filter(is_active=True, tutorial=tutorial).order_by('last_name','first_name')
-    rating_list = user_task_attestation_map(users, tasks,False)
+    tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date', 'submission_date')
+    users = User.objects.filter(groups__name='User').filter(is_active=True, tutorial=tutorial).order_by('last_name', 'first_name')
+    rating_list = user_task_attestation_map(users, tasks, False)
 
-    def to_float(a,default,const):
+    def to_float(a, default, const):
         try:
-            return (float(str(a.final_grade)),const)
-        except (ValueError,TypeError,AttributeError):
-            return (default,default)
+            return (float(str(a.final_grade)), const)
+        except (ValueError, TypeError, AttributeError):
+            return (default, default)
 
     averages     = [0.0 for i in range(len(tasks))]
     nr_of_grades = [0 for i in range(len(tasks))]
 
-    for (user,attestations,_,_) in rating_list:
-        averages     = [avg+to_float(att,0.0,None)[0] for (avg,(att,_)) in zip(averages,attestations)]
-        nr_of_grades = [n+to_float(att,0,1)[1] for (n,(att,_)) in zip(nr_of_grades,attestations)]
+    for (user, attestations, _, _) in rating_list:
+        averages     = [avg+to_float(att, 0.0, None)[0] for (avg, (att, _)) in zip(averages, attestations)]
+        nr_of_grades = [n+to_float(att, 0, 1)[1] for (n, (att, _)) in zip(nr_of_grades, attestations)]
 
     nr_of_grades = [ (n if n>0 else 1) for n in nr_of_grades]
 
-    averages = [a/n for (a,n) in zip(averages,nr_of_grades)]
+    averages = [a/n for (a, n) in zip(averages, nr_of_grades)]
 
     return render(request, "attestation/tutorial_overview.html", {'other_tutorials':other_tutorials, 'tutorial':tutorial, 'rating_list':rating_list, 'tasks':tasks, 'final_grades_published': get_settings().final_grades_published, 'averages':averages})
 
@@ -565,8 +565,8 @@ def rating_export(request):
     if not (request.user.is_trainer or request.user.is_coordinator or request.user.is_superuser):
         return access_denied(request)
 
-    tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date')
-    users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name')
+    tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date', 'submission_date')
+    users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name', 'first_name')
     rating_list = user_task_attestation_map(users, tasks)
 
     response = HttpResponse(content_type='text/csv')
@@ -580,7 +580,7 @@ def rating_export(request):
 def frange(start, end, inc):
     "A range function, that does accept float increments..."
     L = []
-    while 1:
+    while True:
         next = start + len(L) * inc
         if inc > 0 and next > end:
             break
@@ -613,7 +613,7 @@ def generate_ratingscale(request):
 
 
 @login_required
-def attestation_run_checker(request,attestation_id):
+def attestation_run_checker(request, attestation_id):
     if not (request.user.is_tutor or request.user.is_trainer or request.user.is_superuser):
         return access_denied(request)
 
@@ -630,7 +630,7 @@ def attestation_run_checker(request,attestation_id):
 
 
     solution = attestation.solution
-    check_solution(solution,True)
+    check_solution(solution, True)
     return HttpResponseRedirect(reverse('edit_attestation', args=[attestation_id]))
 
 class ImportForm(forms.Form):
@@ -645,7 +645,7 @@ def update_attestations(request):
             try:
                 Attestation.update_Attestations(request, form.files['file'])
                 return render(request, 'admin/attestation/update.html', {'form': form, 'title':"Update Attestations"  })
-            except Exception, e:
+            except Exception as e:
                 from django.forms.utils import ErrorList
                 msg = "An Error occured. The import file was propably malformed.: %s" % str(e)
                 form._errors["file"] = ErrorList([msg])
@@ -653,6 +653,5 @@ def update_attestations(request):
         form = ImportForm()
     return render(request, 'admin/attestation/update.html', {'form': form, 'title':"Update Attestations"  })
 
-# Can be replaced by // in python 3.2
-def timedelta_diff(td1,td2):
-    return int(td1.total_seconds() / td2.total_seconds())
+def timedelta_diff(td1, td2):
+    return td1.total_seconds() // td2.total_seconds()

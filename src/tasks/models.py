@@ -41,11 +41,11 @@ class Task(models.Model):
     def __unicode__(self):
         return self.title
 
-    def solutions(self,user):
+    def solutions(self, user):
         """ get ALL solutions of the specified user """
         return self.solution_set.filter(author=user)
 
-    def final_solution(self,user):
+    def final_solution(self, user):
         """ get FINAL solution of specified user """
         solutions = self.solution_set.filter(author=user, final=True)
         return solutions.first()
@@ -68,19 +68,19 @@ class Task(models.Model):
         from checker.basemodels import Checker
         checker_app = apps.get_app_config('checker')
 
-        checker_classes = filter(lambda x:issubclass(x,Checker), checker_app.get_models())
-        unsorted_checker = sum(map(lambda x: list(x.objects.filter(task=self)), checker_classes),[])
+        checker_classes = [x for x in checker_app.get_models() if issubclass(x, Checker)]
+        unsorted_checker = sum([list(x.objects.filter(task=self)) for x in checker_classes], [])
         checkers = sorted(unsorted_checker, key=lambda checker: checker.order)
         return checkers
 
     def jplag_dir_path(self):
-        return os.path.join(settings.UPLOAD_ROOT, 'jplag', 'Task_' + unicode(self.id))
+        return os.path.join(settings.UPLOAD_ROOT, 'jplag', 'Task_' + str(self.id))
 
     def jplag_index_url(self):
-        return os.path.join('jplag', 'Task_' + unicode(self.id), "index.html")
+        return os.path.join('jplag', 'Task_' + str(self.id), "index.html")
 
     def jplag_log_url(self):
-        return os.path.join('jplag', 'Task_' + unicode(self.id), "jplag.txt")
+        return os.path.join('jplag', 'Task_' + str(self.id), "jplag.txt")
 
     def did_jplag_run(self):
         return os.path.isdir(self.jplag_dir_path())
@@ -103,7 +103,7 @@ class Task(models.Model):
 
     def run_jplag(self, lang):
         # sanity check
-        if not hasattr(settings,'JPLAGJAR'):
+        if not hasattr(settings, 'JPLAGJAR'):
             raise RuntimeError("Setting JPLAGJAR not set")
         if not os.path.exists(settings.JPLAGJAR):
             raise RuntimeError("Setting JPLAGJAR points to non-existing file %s" % settings.JPLAGJAR)
@@ -117,7 +117,7 @@ class Task(models.Model):
 
         jplag_settings = self.jplag_languages()[lang]
         path = self.jplag_dir_path()
-        tmp = os.path.join(path,"tmp")
+        tmp = os.path.join(path, "tmp")
         # clean out previous run
         if self.did_jplag_run():
             shutil.rmtree(path)
@@ -140,14 +140,14 @@ class Task(models.Model):
                 "-p", jplag_settings['files'],
                 "-r", path,
                 tmp]
-        [output, error, exitcode,timed_out, oom_ed] = \
+        [output, error, exitcode, timed_out, oom_ed] = \
          execute_arglist(args, path, unsafe=True)
 
         # remove solution copies
         shutil.rmtree(tmp)
 
         # write log file
-        file(os.path.join(path,"jplag.txt"),'w').write(output)
+        file(os.path.join(path, "jplag.txt"), 'w').write(output)
 
         # mark jplag as up-to-date
         self.jplag_up_to_date = True
@@ -167,15 +167,15 @@ class Task(models.Model):
 
         from checker.basemodels import Checker
         checker_app = apps.get_app_config('checker')
-        checker_classes = filter(lambda x:issubclass(x,Checker), checker_app.get_models())
-        checker_objects = sum(map(lambda x: list(x.objects.filter(task__in=task_objects)), checker_classes),[])
+        checker_classes = [x for x in checker_app.get_models() if issubclass(x, Checker)]
+        checker_objects = sum([list(x.objects.filter(task__in=task_objects)) for x in checker_classes], [])
         data = serializers.serialize("xml", task_objects + media_objects + checker_objects + model_solution_objects + model_solution_file_objects)
 
         # fetch files
         files = []
         for checker_object in checker_objects:
-            file_fields = filter(lambda x: isinstance(x, models.FileField) , checker_object.__class__._meta.fields)
-            files += map(lambda file_field: checker_object.__getattribute__(file_field.attname), file_fields)
+            file_fields = [x for x in checker_object.__class__._meta.fields if isinstance(x, models.FileField)]
+            files += [checker_object.__getattribute__(file_field.attname) for file_field in file_fields]
         for media_object in media_objects:
             files.append(media_object.media_file)
         for model_solution_file_object in model_solution_file_objects:
@@ -183,7 +183,7 @@ class Task(models.Model):
 
         # zip it up
         zip_file = tempfile.SpooledTemporaryFile()
-        zip = zipfile.ZipFile(zip_file,'w')
+        zip = zipfile.ZipFile(zip_file, 'w')
         zip.writestr('data.xml', data)
         for file in files:
             zip.write(file.path, file.name)
@@ -195,7 +195,7 @@ class Task(models.Model):
     @transaction.atomic
     def import_Tasks(cls, zip_file, solution_author):
         from solutions.models import Solution, SolutionFile
-        zip = zipfile.ZipFile(zip_file,'r')
+        zip = zipfile.ZipFile(zip_file, 'r')
         data = zip.read('data.xml')
         task_id_map = {}
         solution_id_map = {}
@@ -222,7 +222,7 @@ class Task(models.Model):
                     object.task_id = task_id_map[object.task_id]
 
                 from django.core.files import File
-                for file_field in filter(lambda x: isinstance(x, models.FileField) , object.__class__._meta.fields):
+                for file_field in [x for x in object.__class__._meta.fields if isinstance(x, models.FileField)]:
                     file_field_instance = object.__getattribute__(file_field.attname)
                     temp_file = tempfile.NamedTemporaryFile()                        # autodeleted
                     temp_file.write(zip.open(file_field_instance.name).read())

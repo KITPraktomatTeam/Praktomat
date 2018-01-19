@@ -20,7 +20,7 @@ STATIC_URL = BASE_PATH + 'static/'
 # files created at runtime.
 
 # Example: "/home/media/media.lawrence.com/"
-UPLOAD_ROOT = join(dirname(dirname(dirname(__file__))),'data')
+UPLOAD_ROOT = join(dirname(dirname(dirname(__file__))), 'data')
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -38,7 +38,7 @@ PRIVATE_KEY = join(dirname(dirname(dirname(__file__))), 'examples', 'certificate
 CERTIFICATE = join(dirname(dirname(dirname(__file__))), 'examples', 'certificates', 'signer.pem')
 
 # Finally load defaults for missing setttings.
-import defaults
+from . import defaults
 defaults.load_defaults(globals())
 
 # To get exceptions logged as well:

@@ -45,7 +45,7 @@ class TaskAdmin(admin.ModelAdmin):
                         )
         }),
     )
-    list_display = ('title','attestations_url','testupload_url','publication_date','submission_date','all_checker_finished')
+    list_display = ('title', 'attestations_url', 'testupload_url', 'publication_date', 'submission_date', 'all_checker_finished')
     list_filter = ['publication_date']
     search_fields = ['title']
     date_hierarchy = 'publication_date'
@@ -90,13 +90,13 @@ class TaskAdmin(admin.ModelAdmin):
         my_urls = [url(r'^import/$', tasks.views.import_tasks, name='task_import')]
         return my_urls + urls
 
-    def attestations_url(self,task):
+    def attestations_url(self, task):
         return format_html ('<a href="{0}">Attestations (User site)</a>',
                             reverse('attestation_list', kwargs={'task_id': task.id}))
     attestations_url.allow_tags = True
     attestations_url.short_description = 'Attestations'
 
-    def testupload_url(self,task):
+    def testupload_url(self, task):
         return format_html ('<a href="{0}">Test Submission</a>',
                             reverse('upload_test_solution', kwargs={'task_id': task.id}))
     testupload_url.allow_tags = True

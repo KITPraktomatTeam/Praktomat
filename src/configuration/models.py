@@ -32,7 +32,7 @@ class Settings(models.Model):
 
     deny_registration_from = \
             models.DateTimeField(
-                default=date(2222, 01, 01),
+                default=date(2222, 1, 1),
                 help_text="After this date, registration wont be possible."
             )
 
@@ -142,4 +142,4 @@ class Chunk(models.Model):
     content = models.TextField(blank=True)
 
     def __unicode__(self):
-        return u"%s" % (self.key,)
+        return "%s" % (self.key,)

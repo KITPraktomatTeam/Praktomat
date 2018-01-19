@@ -45,8 +45,8 @@ def activate(request, activation_key):
     return render(request, 'registration/registration_activated.html', { 'account': account, 'expiration_days': get_settings().acount_activation_days })
 
 @staff_member_required
-def activation_allow(request,user_id):
-    user = get_object_or_404(User,pk=user_id)
+def activation_allow(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
     # Send activation email
     t = loader.get_template('registration/registration_email.html')
     c = {
@@ -152,7 +152,7 @@ def import_tutorial_assignment(request):
 @staff_member_required
 def import_matriculation_list(request, group_id):
     """ Set the group memembership of all users according to an uploaded list of matriculation numbers. """
-    group = get_object_or_404(Group,pk=group_id)
+    group = get_object_or_404(Group, pk=group_id)
     if request.method == 'POST':
         form = ImportMatriculationListForm(request.POST, request.FILES)
         if form.is_valid():
@@ -193,8 +193,8 @@ def import_matriculation_list(request, group_id):
         form = ImportMatriculationListForm()
     return render(request, 'admin/auth/group/import_matriculation_list.html', {'form': form, 'title':"Import matriuculation number list"})
 
-def deactivated(request,user_id):
-    user = get_object_or_404(User,pk=user_id)
+def deactivated(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
     if user.is_active:
         return HttpResponse(status=409)
     return render(request, 'registration/registration_deactivated.html', { 'user': user, })

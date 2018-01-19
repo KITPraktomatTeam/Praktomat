@@ -33,15 +33,15 @@ class RChecker(Checker):
     @staticmethod
     def description():
         """ Returns a description for this Checker. """
-        return u"Runs a submitted R script using the Rscript tool"
+        return "Runs a submitted R script using the Rscript tool"
 
 
     def run(self, env):
-        thys = map (lambda (name,_): ('"%s"' % os.path.splitext(name)[0]), env.sources())
+        thys = [('"%s"' % os.path.splitext(name__[0])[0]) for name__ in env.sources()]
 
         R_files = [
             name
-            for (name,content) in env.sources()
+            for (name, content) in env.sources()
             if os.path.splitext(name)[1] == '.R'
             ]
 

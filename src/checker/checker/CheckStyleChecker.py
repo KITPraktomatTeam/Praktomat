@@ -22,7 +22,7 @@ class CheckStyleChecker(Checker):
     @staticmethod
     def description():
         """ Returns a description for this Checker. """
-        return u"Runs checkstyle (http://checkstyle.sourceforge.net/)."
+        return "Runs checkstyle (http://checkstyle.sourceforge.net/)."
 
 
     def run(self, env):
@@ -32,11 +32,11 @@ class CheckStyleChecker(Checker):
         copy_file(self.configuration.path, config_path)
 
         # Run the tests
-        args = [settings.JVM, "-cp", settings.CHECKSTYLEALLJAR, "-Dbasedir=.", "com.puppycrawl.tools.checkstyle.Main", "-c", "checks.xml"] + [name for (name,content) in env.sources()]
-        [output, error, exitcode,timed_out, oom_ed] = execute_arglist(args, env.tmpdir())
+        args = [settings.JVM, "-cp", settings.CHECKSTYLEALLJAR, "-Dbasedir=.", "com.puppycrawl.tools.checkstyle.Main", "-c", "checks.xml"] + [name for (name, content) in env.sources()]
+        [output, error, exitcode, timed_out, oom_ed] = execute_arglist(args, env.tmpdir())
 
         # Remove Praktomat-Path-Prefixes from result:
-        output = re.sub(r"^"+re.escape(env.tmpdir())+"/+","",output,flags=re.MULTILINE)
+        output = re.sub(r"^"+re.escape(env.tmpdir())+"/+", "", output, flags=re.MULTILINE)
 
         result = self.create_result(env)
 

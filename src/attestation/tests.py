@@ -24,32 +24,32 @@ class TestViews(TestCase):
 
         def test_get_attestation_list(self):
             response = self.client.get(reverse('attestation_list', args=[self.task.id]))
-            self.failUnlessEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 200)
 
         def test_get_new_attestation(self):
             response = self.client.get(reverse('new_attestation_for_solution', args=[self.solution.id]), follow=True)
-            self.failUnlessEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 200)
 
         def test_get_edit_attestation(self):
             response = self.client.get(reverse('edit_attestation', args=[self.attestation.id]))
-            self.failUnlessEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 200)
 
         def test_post_edit_attestation(self):
             response = self.client.post(reverse('edit_attestation', args=[self.attestation.id]), data={
-                                u'attestfiles-TOTAL_FORMS': u'0',
-                                u'attestfiles-INITIAL_FORMS': u'0',
-                                u'ratingresult-TOTAL_FORMS': u'0',
-                                u'ratingresult-INITIAL_FORMS': u'0',
+                                'attestfiles-TOTAL_FORMS': '0',
+                                'attestfiles-INITIAL_FORMS': '0',
+                                'ratingresult-TOTAL_FORMS': '0',
+                                'ratingresult-INITIAL_FORMS': '0',
                             }, follow=True)
             self.assertRedirectsToView(response, 'view_attestation')
 
         def test_get_view_attestation(self):
             response = self.client.get(reverse('view_attestation', args=[self.attestation.id]))
-            self.failUnlessEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 200)
 
         def test_post_view_attestation(self):
             response = self.client.post(reverse('view_attestation', args=[self.attestation.id]),  data={
-                                u'final': True,
+                                'final': True,
                             }, follow=True)
             self.assertRedirectsToView(response, 'attestation_list')
 
@@ -62,17 +62,17 @@ class TestTrainerViews(TestCase):
 
         def test_get_raiting_overview(self):
             response = self.client.get(reverse('rating_overview'))
-            self.failUnlessEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 200)
 
         def test_post_raiting_overview(self):
             response = self.client.post(reverse('rating_overview'), data={
-                                u'form-TOTAL_FORMS': 1,
-                                u'form-INITIAL_FORMS': 1,
-                                u'form-0-user_ptr': 1,
-                                u'form-0-final_grade:': u'',
+                                'form-TOTAL_FORMS': 1,
+                                'form-INITIAL_FORMS': 1,
+                                'form-0-user_ptr': 1,
+                                'form-0-final_grade:': '',
                             })
-            self.failUnlessEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 200)
 
         def test_rating_export(self):
             response = self.client.get(reverse('rating_export'))
-            self.failUnlessEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 200)

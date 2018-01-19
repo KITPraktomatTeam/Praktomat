@@ -36,8 +36,8 @@ def solution_list(request, task_id, user_id=None):
     if (user_id and not request.user.is_trainer and not request.user.is_superuser):
         return access_denied(request)
 
-    task = get_object_or_404(Task,pk=task_id)
-    author = get_object_or_404(User,pk=user_id) if user_id else request.user
+    task = get_object_or_404(Task, pk=task_id)
+    author = get_object_or_404(User, pk=user_id) if user_id else request.user
     solutions = task.solution_set.filter(author = author).order_by('-id')
     final_solution = task.final_solution(author)
 
@@ -68,7 +68,7 @@ def solution_list(request, task_id, user_id=None):
                 with tempfile.NamedTemporaryFile() as tmp:
                     tmp.write(t.render(c))
                     tmp.seek(0)
-                    [signed_mail,__,__,__,__]  = execute_arglist(["openssl", "smime", "-sign", "-signer", settings.CERTIFICATE, "-inkey", settings.PRIVATE_KEY, "-in", tmp.name], ".", unsafe=True)
+                    [signed_mail, __, __, __, __]  = execute_arglist(["openssl", "smime", "-sign", "-signer", settings.CERTIFICATE, "-inkey", settings.PRIVATE_KEY, "-in", tmp.name], ".", unsafe=True)
                 connection = get_connection()
                 message = ConfirmationMessage(_("%s submission confirmation") % settings.SITE_NAME, signed_mail, None, [solution.author.email], connection=connection)
                 if solution.author.email:
@@ -93,7 +93,7 @@ def test_upload(request, task_id):
     if not request.user.is_trainer and not request.user.is_tutor and not request.user.is_superuser:
         return access_denied(request)
 
-    task = get_object_or_404(Task,pk=task_id)
+    task = get_object_or_404(Task, pk=task_id)
 
     if request.method == "POST":
         solution = Solution(task = task, author=request.user, testupload = True)
@@ -112,7 +112,7 @@ def test_upload(request, task_id):
 @login_required
 def test_upload_student(request, task_id):
 
-    task = get_object_or_404(Task,pk=task_id)
+    task = get_object_or_404(Task, pk=task_id)
     if task.publication_date >= datetime.now():
         raise Http404
 
@@ -131,7 +131,7 @@ def test_upload_student(request, task_id):
     return render("solutions/solution_test_upload.html", {"formset": formset, "task":task})
 
 @login_required
-def solution_detail(request,solution_id,full):
+def solution_detail(request, solution_id, full):
     solution = get_object_or_404(Solution, pk=solution_id)
     if not (solution.author == request.user or request.user.is_trainer or request.user.is_superuser or (solution.author.tutorial and solution.author.tutorial.tutors.filter(id=request.user.id))):
         return access_denied(request)
@@ -173,7 +173,7 @@ def solution_detail(request,solution_id,full):
                      )
 
 @login_required
-def solution_download(request,solution_id,full):
+def solution_download(request, solution_id, full):
     solution = get_object_or_404(Solution, pk=solution_id)
     if (not (solution.author == request.user or request.user.is_tutor or request.user.is_trainer)):
         return access_denied(request)
@@ -183,7 +183,7 @@ def solution_download(request,solution_id,full):
     return response
 
 @login_required
-def solution_download_for_task(request, task_id,full):
+def solution_download_for_task(request, task_id, full):
     if not (request.user.is_tutor or request.user.is_trainer):
         return access_denied(request)
 
@@ -191,7 +191,7 @@ def solution_download_for_task(request, task_id,full):
     solutions = task.solution_set.filter(final=True)
     if not request.user.is_trainer:
         solutions = solutions.filter(author__tutorial__id__in=request.user.tutored_tutorials.values_list('id', flat=True))
-    zip_file = get_solutions_zip(solutions,full)
+    zip_file = get_solutions_zip(solutions, full)
     response = HttpResponse(zip_file.read(), content_type="application/zip")
     response['Content-Disposition'] = 'attachment; filename=Solutions.zip'
     return response
@@ -212,22 +212,22 @@ def jplag(request, task_id):
 
 
 @login_required
-def checker_result_list(request,task_id):
+def checker_result_list(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
     if not request.user.is_trainer and not request.user.is_superuser:
         return access_denied(request)
     else:
-        users_with_checkerresults = [(user,dict(checkerresults),final_solution)              \
+        users_with_checkerresults = [(user, dict(checkerresults), final_solution)              \
         for user           in User.objects.filter(groups__name='User').order_by('mat_number')          \
-        for final_solution in Solution.objects.filter(author=user,final=True,task=task).values() \
+        for final_solution in Solution.objects.filter(author=user, final=True, task=task).values() \
         for checkerresults in [[ (result.checker, result) for result in CheckerResult.objects.all().filter(solution=final_solution['id'])]] ]
 
         checkers_seen = set([])
-        for _, results,_  in users_with_checkerresults:
+        for _, results, _  in users_with_checkerresults:
             checkers_seen |= set(results.keys())
         checkers_seen = sorted(checkers_seen, key=lambda checker: checker.order)
 
-        for i,(user,results,final_solution) in enumerate(users_with_checkerresults):
+        for i, (user, results, final_solution) in enumerate(users_with_checkerresults):
             users_with_checkerresults[i] = (user,
                                             [results[checker] if checker in results else None for (checker) in checkers_seen],
                                             final_solution)
@@ -235,7 +235,7 @@ def checker_result_list(request,task_id):
         return render(request, "solutions/checker_result_list.html", {"users_with_checkerresults": users_with_checkerresults,  'checkers_seen':checkers_seen, "task":task})
 
 @staff_member_required
-def solution_run_checker(request,solution_id):
+def solution_run_checker(request, solution_id):
     solution = Solution.objects.get(pk=solution_id)
-    check_solution(solution,True)
+    check_solution(solution, True)
     return HttpResponseRedirect(reverse('solution_detail_full', args=[solution_id]))

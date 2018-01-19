@@ -64,7 +64,7 @@ class User(BasicUser):
 
         If the user has already activated, the activation key will have been reset to the string ``ALREADY_ACTIVATED``
         """
-        return self.activation_key == u"ALREADY_ACTIVATED"
+        return self.activation_key == "ALREADY_ACTIVATED"
     is_activated.boolean = True
 
     def can_activate(self):
@@ -107,7 +107,7 @@ class User(BasicUser):
                 return False
             if user.can_activate():
                 user.is_active = True
-                user.activation_key = u"ALREADY_ACTIVATED"
+                user.activation_key = "ALREADY_ACTIVATED"
                 user.save()
                 return user
             return False
@@ -195,7 +195,7 @@ class Tutorial(models.Model):
     tutors = models.ManyToManyField('User', limit_choices_to = {'groups__name': 'Tutor'}, related_name='tutored_tutorials', help_text = _("The tutors in charge of the tutorium."))
 
     def tutors_flat(self):
-        return reduce(lambda x, y: x + ', ' + y.get_full_name(), self.tutors.all(),'')[2:]
+        return reduce(lambda x, y: x + ', ' + y.get_full_name(), self.tutors.all(), '')[2:]
     tutors_flat.short_description = _('Tutors')
 
     def __unicode__(self):

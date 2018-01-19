@@ -36,14 +36,14 @@ class TestCase(DjangoTestCase):
 
     def assertRedirectsToView(self, response, view):
         """ Asserts whether the request was redirected to a specifivc view function. """
-        from urlparse import urlparse
+        from urllib.parse import urlparse
         from django.core.urlresolvers import resolve
         self.assertTrue(hasattr(response, 'redirect_chain'),
                         msg="Please use client.get(...,follow=True) with assertRedirectsToView")
         self.assertTrue(len(response.redirect_chain) > 0,
                         msg="No redirection found")
         url = response.redirect_chain[-1][0]
-        self.assertEquals(resolve(urlparse(url)[2])[0].__name__, view)
+        self.assertEqual(resolve(urlparse(url)[2])[0].__name__, view)
 
 
 from django.test import LiveServerTestCase
@@ -131,4 +131,4 @@ def create_test_data():
 def dump(obj):
     """ Kinda like obj.__meta__ but shows more, very usefull for testcase debuging. """
     for attr in dir(obj):
-        print "obj.%s = %s" % (attr, getattr(obj, attr))
+        print("obj.%s = %s" % (attr, getattr(obj, attr)))

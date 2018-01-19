@@ -26,7 +26,7 @@ class LineWidthChecker(Checker):
     @staticmethod
     def description():
         """ Returns a description for this Checker. """
-        s = u"Diese Prüfung ist bestanden, wenn keine Zeile des Programmtext breiter als die angegebene Anyahl Zeichen ist."
+        s = "Diese Prüfung ist bestanden, wenn keine Zeile des Programmtext breiter als die angegebene Anyahl Zeichen ist."
         return s
 
     def setup_line(self, line, env):
@@ -47,8 +47,8 @@ class LineWidthChecker(Checker):
         exclude_re = re.compile(self.exclude, re.IGNORECASE)
 
         sources = env.sources()
-        if self.include: sources = filter(lambda (name, content): include_re.search(name), sources)
-        if self.exclude: sources = filter(lambda (name, content): not exclude_re.search(name), sources)
+        if self.include: sources = [name_content for name_content in sources if include_re.search(name_content[0])]
+        if self.exclude: sources = [name_content1 for name_content1 in sources if not exclude_re.search(name_content1[0])]
 
         for (name, content) in sources:
             if not name or not content:
@@ -60,8 +60,8 @@ class LineWidthChecker(Checker):
                 line = self.setup_line(line, env)
 
                 if len(line) > self.max_line_length:
-                    msg = ( escape(name) + ":" + `line_number` +
-                           ": Zeile zu breit (" + `len(line)` + " Zeichen)" + "<BR>")
+                    msg = ( escape(name) + ":" + repr(line_number) +
+                           ": Zeile zu breit (" + repr(len(line)) + " Zeichen)" + "<BR>")
                     log = log + msg
                     passed = 0
 
@@ -70,7 +70,7 @@ class LineWidthChecker(Checker):
                 line_number = line_number + 1
 
             msg = (escape(name) + ": Maximale Zeilenbreite: " +
-                   `max_line_length` + " Zeichen\n" + "<BR>")
+                   repr(max_line_length) + " Zeichen\n" + "<BR>")
             log = log + msg
 
         # At the end of each run, be sure to set LOG and PASSED.

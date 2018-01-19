@@ -8,6 +8,7 @@ no_defaults = [ "SITE_NAME", "PRAKTOMAT_ID", "BASE_HOST", "BASE_PATH", "UPLOAD_R
 import os
 from os.path import dirname, join
 import utilities.log_filter
+import collections
 
 def load_defaults(settings):
     missing = [ v for v in no_defaults if v not in settings]
@@ -15,13 +16,13 @@ def load_defaults(settings):
         raise RuntimeError("Variables without defaults not set: %s" % ", ".join(missing))
 
     # import settings so that we can conveniently use the settings here
-    for k,v in settings.iteritems():
-        if not callable(v) and not k.startswith('__'):
+    for k, v in settings.items():
+        if not isinstance(v, collections.Callable) and not k.startswith('__'):
             globals()[k] = v
 
     class D(object):
 
-        def __setattr__(self,k,v):
+        def __setattr__(self, k, v):
             object.__setattr__(self, k, v)   # assign value v to instance attribute k
             if k not in globals():
                 settings[k] = v
@@ -158,7 +159,7 @@ def load_defaults(settings):
         else:
             import uuid
             d.SECRET_KEY = uuid.uuid4().hex
-            os.fdopen(os.open(secret_keyfile,os.O_WRONLY | os.O_CREAT,0600),'w').write(SECRET_KEY)
+            os.fdopen(os.open(secret_keyfile, os.O_WRONLY | os.O_CREAT, 0o600), 'w').write(SECRET_KEY)
 
 
     # Templates
@@ -217,17 +218,17 @@ def load_defaults(settings):
       'plugins': 'safari,pagebreak,table,advhr,advimage,advlink,emotions,iespell,inlinepopups,media,searchreplace,print,contextmenu,paste,fullscreen,noneditable,visualchars,nonbreaking,syntaxhl',
 
       'theme': "advanced",
-      'theme_advanced_buttons1' : "formatselect,|,bold,italic,underline,strikethrough,|,forecolor,|,bullist,numlist,|,sub,sup,|,outdent,indent,blockquote,syntaxhl,|,visualchars,nonbreaking,|,link,unlink,anchor,image,cleanup,help,code,|,print,|,fullscreen",
-        'theme_advanced_buttons2' : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,undo,redo,|,tablecontrols,|,hr,removeformat,visualaid,|,charmap,emotions,iespell,media,advhr",
-        'theme_advanced_buttons3' : "",
-        'theme_advanced_buttons4' : "",
-        'theme_advanced_toolbar_location' : "top",
-        'theme_advanced_toolbar_align' : "left",
-        'theme_advanced_statusbar_location' : "bottom",
-        'theme_advanced_resizing' : True,
-        'extended_valid_elements' : "textarea[cols|rows|disabled|name|readonly|class]" ,
+      'theme_advanced_buttons1': "formatselect,|,bold,italic,underline,strikethrough,|,forecolor,|,bullist,numlist,|,sub,sup,|,outdent,indent,blockquote,syntaxhl,|,visualchars,nonbreaking,|,link,unlink,anchor,image,cleanup,help,code,|,print,|,fullscreen",
+        'theme_advanced_buttons2': "cut,copy,paste,pastetext,pasteword,|,search,replace,|,undo,redo,|,tablecontrols,|,hr,removeformat,visualaid,|,charmap,emotions,iespell,media,advhr",
+        'theme_advanced_buttons3': "",
+        'theme_advanced_buttons4': "",
+        'theme_advanced_toolbar_location': "top",
+        'theme_advanced_toolbar_align': "left",
+        'theme_advanced_statusbar_location': "bottom",
+        'theme_advanced_resizing': True,
+        'extended_valid_elements': "textarea[cols|rows|disabled|name|readonly|class]",
 
-        'content_css' : STATIC_URL + '/styles/style.css',
+        'content_css': STATIC_URL + '/styles/style.css',
       'relative_urls': False,
     }
     d.TINYMCE_SPELLCHECKER = False
@@ -279,7 +280,7 @@ def load_defaults(settings):
     d.USESAFEDOCKER = False
 
     # Make sure uploaded solution are not work-readable
-    d.FILE_UPLOAD_PERMISSIONS = 0640
+    d.FILE_UPLOAD_PERMISSIONS = 0o640
 
     # This enables Shibboleth-Support.
     # In order to actually get it working, you need to protec the location
@@ -301,7 +302,7 @@ def load_defaults(settings):
         "givenName": (True, "first_name"),
         "sn": (True, "last_name"),
         "matriculationNumber": (False, "matriculationNumber"),
-        "fieldOfStudyText" : (False, "programme"),
+        "fieldOfStudyText": (False, "programme"),
     }
 
     d.SHIB_USERNAME = "email"
@@ -333,9 +334,9 @@ def load_defaults(settings):
     d.NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 1
 
     d.MIMETYPE_ADDITIONAL_EXTENSIONS = \
-        [("text/plain",".properties"),
-         ("text/x-r-script",".R"),
-         ("text/x-isabelle",".thy")]
+        [("text/plain", ".properties"),
+         ("text/x-r-script", ".R"),
+         ("text/x-isabelle", ".thy")]
 
     # Subclassed TestSuitRunner to prepopulate unit test database.
     d.TEST_RUNNER = 'utilities.TestSuite.TestSuiteRunner'

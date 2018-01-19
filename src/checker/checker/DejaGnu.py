@@ -56,7 +56,7 @@ class DejaGnuTester(Checker, DejaGnu):
     """ Run a test case on the program.  Requires a previous `DejaGnuSetup'. """
 
     name = models.CharField(max_length=100, help_text=_("The name of the Test"))
-    test_case = CheckerFileField(help_text=_(u"In den folgenden DejaGnu-Testfällen werden typischerweise Funktionen aufgerufen, die beim vorherigen Schritt <EM>Tests einrichten</EM> definiert wurden.     Siehe    auch den Abschnitt <EM>How to write a test case</EM> im <A TARGET=\"_blank\" HREF=\"http://www.gnu.org/manual/dejagnu/\">DejaGnu-Handbuch</A>."))
+    test_case = CheckerFileField(help_text=_("In den folgenden DejaGnu-Testfällen werden typischerweise Funktionen aufgerufen, die beim vorherigen Schritt <EM>Tests einrichten</EM> definiert wurden.     Siehe    auch den Abschnitt <EM>How to write a test case</EM> im <A TARGET=\"_blank\" HREF=\"http://www.gnu.org/manual/dejagnu/\">DejaGnu-Handbuch</A>."))
 
     def __unicode__(self):
         return self.name
@@ -66,7 +66,7 @@ class DejaGnuTester(Checker, DejaGnu):
 
     @staticmethod
     def description():
-        return u"Diese Prüfung ist bestanden, wenn alle Testfälle zum erwarteten Ergebnis führten."
+        return "Diese Prüfung ist bestanden, wenn alle Testfälle zum erwarteten Ergebnis führten."
 
     def requires(self):
         return [ DejaGnuSetup ]
@@ -85,7 +85,7 @@ class DejaGnuTester(Checker, DejaGnu):
         # Clean the output
         log = re.sub(RXREMOVE, "", log)
 
-        log = re.sub(re.escape(settings.JVM_SECURE),os.path.basename(settings.JVM_SECURE),log)
+        log = re.sub(re.escape(settings.JVM_SECURE), os.path.basename(settings.JVM_SECURE), log)
 
         # HTMLize it all
         log = escape(log)
@@ -101,8 +101,8 @@ class DejaGnuTester(Checker, DejaGnu):
 
         # Save public test cases in `tests.exp'
         tests_exp = os.path.join(self.tests_dir(env), "tests.exp")
-        test_cases = string.replace(encoding.get_unicode(self.test_case.read()), u"PROGRAM", env.program())
-        create_file(tests_exp,test_cases)
+        test_cases = string.replace(encoding.get_unicode(self.test_case.read()), "PROGRAM", env.program())
+        create_file(tests_exp, test_cases)
 
         testsuite = self.testsuite_dir(env)
         program_name = env.program()
@@ -117,8 +117,8 @@ class DejaGnuTester(Checker, DejaGnu):
 
         environ = {}
         environ['JAVA'] = settings.JVM
-        script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
-        environ['POLICY'] = join(script_dir,"praktomat.policy")
+        script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'scripts')
+        environ['POLICY'] = join(script_dir, "praktomat.policy")
         environ['USER'] = env.user().get_full_name().encode(sys.getdefaultencoding(), 'ignore')
         environ['HOME'] = testsuite
         environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
@@ -144,7 +144,7 @@ class DejaGnuTester(Checker, DejaGnu):
         complete_output = self.htmlize_output(output + log)
 
         result = self.create_result(env)
-        result.set_log(complete_output,timed_out=timed_out or oom_ed)
+        result.set_log(complete_output, timed_out=timed_out or oom_ed)
         result.set_passed(not exitcode and not timed_out and not oom_ed and self.output_ok(complete_output))
         return result
 
@@ -157,14 +157,14 @@ DEFAULT_TEST_CASES = """# `tests.exp' template
 
 class DejaGnuSetup(Checker, DejaGnu):
 
-    test_defs = CheckerFileField(help_text=_(u"Das Setup benutzt den <A HREF=\"http://www.gnu.org/software/dejagnu/dejagnu.html\">DejaGnu-Testrahmen</A>, um die Programme zu testen. Die in dieser Datei enthaltenen Definitionen gelten für alle Testfälle dieser Aufgabe. Sie werden beim Testen in die DejaGnu-Datei <TT>default.exp</TT> geschrieben. (Vergl. hierzuden Abschnitt <EM>Target dependent procedures</EM> im    <A HREF=\"http://www.gnu.org/manual/dejagnu/\" TARGET=\"_blank\">DejaGnu-Handbuch</A>.) Die Variablen PROGRAM und JAVA werden mit dem Programmnamen bzw. dem Pfad zur Java-Runtime ersetzt."))
+    test_defs = CheckerFileField(help_text=_("Das Setup benutzt den <A HREF=\"http://www.gnu.org/software/dejagnu/dejagnu.html\">DejaGnu-Testrahmen</A>, um die Programme zu testen. Die in dieser Datei enthaltenen Definitionen gelten für alle Testfälle dieser Aufgabe. Sie werden beim Testen in die DejaGnu-Datei <TT>default.exp</TT> geschrieben. (Vergl. hierzuden Abschnitt <EM>Target dependent procedures</EM> im    <A HREF=\"http://www.gnu.org/manual/dejagnu/\" TARGET=\"_blank\">DejaGnu-Handbuch</A>.) Die Variablen PROGRAM und JAVA werden mit dem Programmnamen bzw. dem Pfad zur Java-Runtime ersetzt."))
 
     def title(self):
         return "Tests einrichten"
 
     @staticmethod
     def description():
-        return u"Dies ist keine wirkliche Prüfung.  Sie dient nur dazu, den nachfolgenden Tests Definitionen zur Verfügung zu stellen. Diese 'Prüfung' wird immer bestanden."
+        return "Dies ist keine wirkliche Prüfung.  Sie dient nur dazu, den nachfolgenden Tests Definitionen zur Verfügung zu stellen. Diese 'Prüfung' wird immer bestanden."
 
     def requires(self):
         return [ Builder ]
@@ -172,7 +172,7 @@ class DejaGnuSetup(Checker, DejaGnu):
     # Set up tests.
     def run(self, env):
         self.setup_dirs(env)
-        create_file(os.path.join(self.lib_dir(env), env.program() + ".exp"), u"")
+        create_file(os.path.join(self.lib_dir(env), env.program() + ".exp"), "")
         defs = string.replace(encoding.get_unicode(self.test_defs.read()), "PROGRAM", env.program())
 #        defs = string.replace(defs, "JAVA", join(join(dirname(dirname(__file__)),"scripts"),"java"))
         defs = string.replace(defs, "JAVA", settings.JVM_SECURE)

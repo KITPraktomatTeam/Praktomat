@@ -10,7 +10,7 @@ def do_get_chunk(parser, token):
     # split_contents() knows not to split quoted strings.
     tokens = token.split_contents()
     if len(tokens) < 2 or len(tokens) > 3:
-        raise template.TemplateSyntaxError, "%r tag should have either 2 or 3 arguments" % (tokens[0],)
+        raise template.TemplateSyntaxError("%r tag should have either 2 or 3 arguments" % (tokens[0],))
     if len(tokens) == 2:
         tag_name, key = tokens
         cache_time = 0
@@ -18,7 +18,7 @@ def do_get_chunk(parser, token):
         tag_name, key, cache_time = tokens
     # Check to see if the key is properly double/single quoted
     if not (key[0] == key[-1] and key[0] in ('"', "'")):
-        raise template.TemplateSyntaxError, "%r tag's argument should be in quotes" % tag_name
+        raise template.TemplateSyntaxError("%r tag's argument should be in quotes" % tag_name)
     # Send key without quotes and caching time
     return ChunkNode(key[1:-1], cache_time)
 
@@ -28,7 +28,7 @@ class ChunkNode(template.Node):
        self.cache_time = cache_time
 
     def render(self, context):
-        Chunk = apps.get_model('configuration','chunk')
+        Chunk = apps.get_model('configuration', 'chunk')
         try:
             cache_key = CACHE_PREFIX + self.key
             c = cache.get(cache_key)

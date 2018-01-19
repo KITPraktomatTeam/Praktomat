@@ -12,4 +12,4 @@ class Command(BaseCommand):
             if not user.is_activated() and user.activation_key_expired():
                 user.delete()
                 count += 1
-        print "%i users have been deleted." % count
+        print("%i users have been deleted." % count)

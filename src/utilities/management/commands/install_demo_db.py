@@ -11,7 +11,7 @@ class Command(BaseCommand):
     def handle_noargs(self, **options):
         try:
             application_support_folder = settings.UPLOAD_ROOT
-            demo_support_folder = join(dir(dir(dir(dir(dir(dir(__file__)))))),"examples","PraktomatSupport")
+            demo_support_folder = join(dir(dir(dir(dir(dir(dir(__file__)))))), "examples", "PraktomatSupport")
 
             # create a backup
             archive_name = join(tempfile.gettempdir(), 'backup')
@@ -26,7 +26,7 @@ class Command(BaseCommand):
             # copy backup
             shutil.copy(archive_name, application_support_folder)
 
-            print 'Successfully installed demo files and database. Backup of old files in "%s"' % join(application_support_folder, 'backup.zip')
+            print('Successfully installed demo files and database. Backup of old files in "%s"' % join(application_support_folder, 'backup.zip'))
 
         except:
             raise CommandError('An ERROR occurred. A backup of your files can be found here: ' % archive_name)

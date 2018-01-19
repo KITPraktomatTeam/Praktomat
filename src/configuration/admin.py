@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.db import models
-from models import Settings, Chunk
+from .models import Settings, Chunk
 
 from tinymce.widgets import TinyMCE
 

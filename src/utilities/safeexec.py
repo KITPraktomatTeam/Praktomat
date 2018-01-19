@@ -44,10 +44,10 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
         # ensure ulimit
         if fileseeklimit:
             # Doesn’t work yet: http://stackoverflow.com/questions/25789425
-            command += ["bash","-c", 'ulimit -f %d; exec \"$@\"' % fileseeklimit, "ulimit-helper"]
+            command += ["bash", "-c", 'ulimit -f %d; exec \"$@\"' % fileseeklimit, "ulimit-helper"]
         # add environment
         command += ["env"]
-        for k, v in environment_variables.iteritems():
+        for k, v in environment_variables.items():
             command += ["%s=%s" % (k, v)]
     else:
         command = []
@@ -61,9 +61,9 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
         # so we can later kill it and all children on timeout, taken from http://stackoverflow.com/questions/4789837/how-to-terminate-a-python-subprocess-launched-with-shell-true
         os.setsid()
         # Limit the size of files created during execution
-        resource.setrlimit(resource.RLIMIT_NOFILE,(128,128))
+        resource.setrlimit(resource.RLIMIT_NOFILE, (128, 128))
         if fileseeklimit is not None:
-            resource.setrlimit(resource.RLIMIT_FSIZE,(fileseeklimitbytes, fileseeklimitbytes))
+            resource.setrlimit(resource.RLIMIT_FSIZE, (fileseeklimitbytes, fileseeklimitbytes))
             if resource.getrlimit(resource.RLIMIT_FSIZE) != (fileseeklimitbytes, fileseeklimitbytes):
                 raise ValueError(resource.getrlimit(resource.RLIMIT_FSIZE))
     process = subprocess32.Popen(
@@ -80,8 +80,8 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
         [output, error] = process.communicate(timeout=timeout)
     except subprocess32.TimeoutExpired:
         timed_out = True
-        term_cmd = ["pkill","-TERM","-s",str(process.pid)]
-        kill_cmd = ["pkill","-KILL","-s",str(process.pid)]
+        term_cmd = ["pkill", "-TERM", "-s", str(process.pid)]
+        kill_cmd = ["pkill", "-KILL", "-s", str(process.pid)]
         if not unsafe and settings.USEPRAKTOMATTESTER:
             term_cmd = sudo_prefix + term_cmd
             kill_cmd = sudo_prefix + kill_cmd
