@@ -654,4 +654,6 @@ def update_attestations(request):
     return render(request, 'admin/attestation/update.html', {'form': form, 'title':"Update Attestations"  })
 
 def timedelta_diff(td1, td2):
-    return td1.total_seconds() // td2.total_seconds()
+    # The result of "//" is a whole number, but with type float.
+    # Since you cannot use that to index a list, we explicitly convert it to int
+    return int(td1.total_seconds() // td2.total_seconds())

@@ -38,7 +38,7 @@ class Task(models.Model):
     class Meta:
         ordering = ['submission_date', 'title']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     def solutions(self, user):

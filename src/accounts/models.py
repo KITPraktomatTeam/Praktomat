@@ -38,7 +38,7 @@ class User(BasicUser):
         super(User, self).__init__(*args, **kwargs)
         self._cached_groups = None
 
-    def __unicode__(self):
+    def __str__(self):
         return self.get_full_name() or self.username
 
     def set_new_activation_key(self):
@@ -198,5 +198,5 @@ class Tutorial(models.Model):
         return reduce(lambda x, y: x + ', ' + y.get_full_name(), self.tutors.all(), '')[2:]
     tutors_flat.short_description = _('Tutors')
 
-    def __unicode__(self):
+    def __str__(self):
         return("%s: %s" % (self.name, self.tutors_flat()))

@@ -12,7 +12,6 @@ django-extensions
 django-tinymce
 django-debug-toolbar
 docutils
-subprocess32
 psycopg2
 selenium
 

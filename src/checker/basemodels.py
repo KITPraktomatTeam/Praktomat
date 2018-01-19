@@ -13,7 +13,7 @@ from solutions.models import Solution
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.core.exceptions import ValidationError
 from django.core.files import File
 from django.db.models.signals import post_delete
@@ -68,7 +68,7 @@ It is *required* - it must be passed for submission
         abstract = True
         app_label = 'checker'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title()
 
     def create_result(self, env):
@@ -174,7 +174,7 @@ def truncated_log(log):
     log_length = len(log)
     if log_length > settings.TEST_MAXLOGSIZE*1024:
         # since we might be truncating utf8 encoded strings here, result may be erroneous, so we explicitly replace faulty byte tokens
-        return (force_unicode('======= Warning: Output too long, hence truncated ======\n' + log[0:(settings.TEST_MAXLOGSIZE*1024)/2] + "\n...\n...\n...\n...\n" + log[log_length-((settings.TEST_MAXLOGSIZE*1024)/2):], errors='replace'), True)
+        return (force_text('======= Warning: Output too long, hence truncated ======\n' + log[0:(settings.TEST_MAXLOGSIZE*1024)/2] + "\n...\n...\n...\n...\n" + log[log_length-((settings.TEST_MAXLOGSIZE*1024)/2):], errors='replace'), True)
     return (log, False)
 
 
@@ -259,7 +259,7 @@ class CheckerResultArtefact(models.Model):
         help_text = _('Artefact produced by a checker')
         )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.filename
 
     def path(self):

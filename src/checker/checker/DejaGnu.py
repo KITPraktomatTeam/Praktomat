@@ -58,7 +58,7 @@ class DejaGnuTester(Checker, DejaGnu):
     name = models.CharField(max_length=100, help_text=_("The name of the Test"))
     test_case = CheckerFileField(help_text=_("In den folgenden DejaGnu-Testfällen werden typischerweise Funktionen aufgerufen, die beim vorherigen Schritt <EM>Tests einrichten</EM> definiert wurden.     Siehe    auch den Abschnitt <EM>How to write a test case</EM> im <A TARGET=\"_blank\" HREF=\"http://www.gnu.org/manual/dejagnu/\">DejaGnu-Handbuch</A>."))
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def title(self):

@@ -43,7 +43,7 @@ class Solution(models.Model):
     plagiarism = models.BooleanField( default = False, help_text = _('Indicates whether the solution is a rip-off of another one.'))
     final = models.BooleanField( default = False, help_text = _('Indicates whether this solution is the last (accepted) of the author.'))
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.task) + ":" + str(self.author) + ":" + str(self.number)
 
     def allCheckerResults(self):
@@ -155,7 +155,7 @@ class SolutionFile(models.Model):
             self.mime_type = mimetypes.guess_type(self.file.name)[0]
             models.Model.save(self, force_insert, force_update, using)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.file.name.rpartition('/')[2]
 
     def get_hash(self):
@@ -321,12 +321,6 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 
 
     return zip_file
-
-def ascii_without(chars):
-    return string.maketrans('', '').translate(None, chars)
-
-non_ascii_letters            = ascii_without(string.ascii_letters)
-non_ascii_letters_and_digits = ascii_without(string.ascii_letters + string.digits)
 
 def path_for_user(user):
     return user.get_full_name()+'-'+str(user.mat_number)+'-'+str(user.id)

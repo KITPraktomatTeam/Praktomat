@@ -141,5 +141,5 @@ class Chunk(models.Model):
 
     content = models.TextField(blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s" % (self.key,)

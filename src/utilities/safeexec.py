@@ -3,7 +3,7 @@
 import os
 from os.path import *
 import time
-import subprocess32
+import subprocess
 import signal
 import subprocess
 import resource
@@ -66,10 +66,10 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
             resource.setrlimit(resource.RLIMIT_FSIZE, (fileseeklimitbytes, fileseeklimitbytes))
             if resource.getrlimit(resource.RLIMIT_FSIZE) != (fileseeklimitbytes, fileseeklimitbytes):
                 raise ValueError(resource.getrlimit(resource.RLIMIT_FSIZE))
-    process = subprocess32.Popen(
+    process = subprocess.Popen(
         command,
-        stdout=subprocess32.PIPE,
-        stderr=subprocess32.STDOUT if error_to_output else subprocess32.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT if error_to_output else subprocess.PIPE,
         cwd=working_directory,
         env=environment,
         preexec_fn=prepare_subprocess)
@@ -78,16 +78,16 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
     oom_ed = False
     try:
         [output, error] = process.communicate(timeout=timeout)
-    except subprocess32.TimeoutExpired:
+    except subprocess.TimeoutExpired:
         timed_out = True
         term_cmd = ["pkill", "-TERM", "-s", str(process.pid)]
         kill_cmd = ["pkill", "-KILL", "-s", str(process.pid)]
         if not unsafe and settings.USEPRAKTOMATTESTER:
             term_cmd = sudo_prefix + term_cmd
             kill_cmd = sudo_prefix + kill_cmd
-        subprocess32.call(term_cmd)
+        subprocess.call(term_cmd)
         time.sleep(5)
-        subprocess32.call(kill_cmd)
+        subprocess.call(kill_cmd)
         [output, error] = process.communicate()
         #killpg(process.pid, signal.SIGKILL)
 

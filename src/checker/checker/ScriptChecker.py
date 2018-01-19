@@ -5,7 +5,7 @@ import os, re, string
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from checker.basemodels import Checker, CheckerFileField, truncated_log
 from checker.admin import    CheckerInline, AlwaysChangedModelForm
 from utilities.safeexec import execute_arglist
@@ -71,7 +71,7 @@ class ScriptChecker(Checker):
                             fileseeklimit=settings.TEST_MAXFILESIZE,
                             extradirs = [script_dir],
                             )
-        output = force_unicode(output, errors='replace')
+        output = force_text(output, errors='replace')
 
         result = self.create_result(env)
         (output, truncated) = truncated_log(output)

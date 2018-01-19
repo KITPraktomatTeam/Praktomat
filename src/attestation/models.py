@@ -201,22 +201,22 @@ class AnnotatedSolutionFile(models.Model):
         result = list(d.compare(original, anotated))
         return "\n".join([l.strip("\n") for l in result])
 
-    def __unicode__(self):
-        return self.solution_file.__unicode__()
+    def __str__(self):
+        return self.solution_file.__str__()
 
 class RatingAspect(models.Model):
     """ describes an review aspect which the reviewer has to evaluate """
     name = models.CharField(max_length=100, help_text = _('The Name of the Aspect to be rated. E.g.: "Readabylity"'))
     description = models.TextField(help_text = _('Description of the Aspect and how it should be rated. E.w.: "How well is the code structured?"'))
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 class RatingScale(models.Model):
     """ describes a scale upone which the reviewer rates the aspect """
     name = models.CharField(max_length=100, help_text = _('The Name of the rating scale for the aspects. E.g.: "School marks"'))
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 class RatingScaleItem(models.Model):
@@ -228,7 +228,7 @@ class RatingScaleItem(models.Model):
     class Meta:
         ordering = ['position']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 class Rating(models.Model):
@@ -237,7 +237,7 @@ class Rating(models.Model):
     aspect = models.ForeignKey(RatingAspect)
     scale = models.ForeignKey(RatingScale)
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s - %s - %s" % (self.task.title, self.aspect.name, self.scale.name)
 
 class RatingResult(models.Model):
@@ -246,7 +246,7 @@ class RatingResult(models.Model):
     rating = models.ForeignKey(Rating)
     mark = models.ForeignKey(RatingScaleItem, null=True) # allow for db-null so that rating results can be created programaticly without mark (blank = False !)
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.rating.aspect)
 
 class Script(models.Model):
