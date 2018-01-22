@@ -111,7 +111,7 @@ class WarningScriptCheckerFormSet(forms.BaseInlineFormSet):
             script.file.close()
 
             # In Universal Newline mode, python will collect encountered newlines
-            script.open(mode="rU")
+            script.open(mode="r")
             # make sure self.newlines is populated
             script.readline()
             script.readline()

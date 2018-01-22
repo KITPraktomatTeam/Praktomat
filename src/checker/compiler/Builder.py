@@ -3,7 +3,6 @@
 import os
 from pipes import quote
 import re, subprocess
-import string
 import shlex
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -100,7 +99,7 @@ class Builder(Checker):
         """ Creates the name of the main module from the (first) source file name. """
         for module_name in self.get_file_names(env):
             try:
-                return module_name[:string.index(module_name, '.')]
+                return module_name[:module_name.index('.')]
             except ValueError:
                 pass
         # Module name not found

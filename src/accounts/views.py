@@ -21,6 +21,7 @@ from django.utils.translation import ugettext_lazy as _
 from configuration import get_settings
 
 import csv
+import io
 
 def register(request):
     extra_context = {}
@@ -157,7 +158,8 @@ def import_matriculation_list(request, group_id):
         form = ImportMatriculationListForm(request.POST, request.FILES)
         if form.is_valid():
             file = form.files['mat_number_file']
-            reader = csv.reader(file)
+            file.seek(0)
+            reader = csv.reader(io.StringIO(file.read().decode('utf-8')))
             mats = set(int(row[0]) for row in reader)
 
             nr_already = nr_added = nr_removed = nr_new_users = 0

@@ -37,7 +37,7 @@ class TestStaffViews(TestCase):
 
     def test_post_task_import(self):
         path = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'AMI', 'TaskExport.zip')
-        f = open(path, 'r')
+        f = open(path, 'rb')
         response = self.client.post(reverse('admin:task_import'), data={
                             'file': f
                         }, follow=True)
@@ -48,7 +48,7 @@ class TestStaffViews(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_post_model_solution(self):
-        f = open(join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'AMI', 'ModelSolution(flat).zip'), 'r')
+        f = open(join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'AMI', 'ModelSolution(flat).zip'), 'rb')
         response = self.client.post(reverse('model_solution', args=[self.task.id]), data={
                             'solutionfile_set-INITIAL_FORMS': '0',
                             'solutionfile_set-TOTAL_FORMS': '3',

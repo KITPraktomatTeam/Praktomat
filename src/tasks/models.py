@@ -196,7 +196,7 @@ class Task(models.Model):
     def import_Tasks(cls, zip_file, solution_author):
         from solutions.models import Solution, SolutionFile
         zip = zipfile.ZipFile(zip_file, 'r')
-        data = zip.read('data.xml')
+        data = zip.read('data.xml').decode('utf-8')
         task_id_map = {}
         solution_id_map = {}
         old_solution_to_new_task_map = {}

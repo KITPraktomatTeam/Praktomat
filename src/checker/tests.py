@@ -79,7 +79,7 @@ class TestChecker(TestCase):
         src = join(dirname(dirname(dirname(__file__))), 'examples', 'simple_zip_file.zip')
         dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'simple_zip_file.zip')
         # circumvent SuspiciousOperation exception
-        copy_file(src, dest, binary=True)
+        copy_file(src, dest)
         CreateFileChecker.CreateFileChecker.objects.create(
                     task = self.task,
                     order = 0,
@@ -94,7 +94,7 @@ class TestChecker(TestCase):
         src = join(dirname(dirname(dirname(__file__))), 'examples', 'badzipfile.zip')
         dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'badzipfile.zip')
         # circumvent SuspiciousOperation exception
-        copy_file(src, dest, binary=True)
+        copy_file(src, dest)
         CreateFileChecker.CreateFileChecker.objects.create(
                     task = self.task,
                     order = 0,
@@ -107,7 +107,7 @@ class TestChecker(TestCase):
         src = join(dirname(dirname(dirname(__file__))), 'examples', 'simple_zip_file.zip')
         dest = join(settings.UPLOAD_ROOT, 'directdeposit', 'simple_zip_file.zip')
         # circumvent SuspiciousOperation exception
-        copy_file(src, dest, binary=True)
+        copy_file(src, dest)
         CreateFileChecker.CreateFileChecker.objects.create(
                     task = self.task,
                     order = 0,

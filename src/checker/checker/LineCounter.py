@@ -87,10 +87,10 @@ class LineCounter(Checker):
                     continue
 
                 if in_long_comment or in_short_comment:
-                    if    la1 in string.digits or la1 in string.letters:
+                    if    la1 in string.digits or la1 in string.ascii_letters:
                         line_has_comment = 1
                 else:
-                    if la1 in string.digits or la1 in string.letters:
+                    if la1 in string.digits or la1 in string.ascii_letters:
                         line_has_code = 1
                     if la1 == "/":
                         if la2 == "*":

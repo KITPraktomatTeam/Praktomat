@@ -65,7 +65,7 @@ def solution_list(request, task_id, user_id=None):
                     'site_name': settings.SITE_NAME,
                     'solution': solution,
                 }
-                with tempfile.NamedTemporaryFile() as tmp:
+                with tempfile.NamedTemporaryFile(mode='w+') as tmp:
                     tmp.write(t.render(c))
                     tmp.seek(0)
                     [signed_mail, __, __, __, __]  = execute_arglist(["openssl", "smime", "-sign", "-signer", settings.CERTIFICATE, "-inkey", settings.PRIVATE_KEY, "-in", tmp.name], ".", unsafe=True)

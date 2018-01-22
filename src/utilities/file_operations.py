@@ -36,7 +36,7 @@ def create_file(path, content, override=True, binary=False):
                 os.remove(path)
             else: # throw exception
                 raise Exception('File already exists')
-    with open(path, 'w') as fd:
+    with open(path, 'wb') as fd:
         if binary:
             fd.write(content)
         else:
@@ -48,12 +48,12 @@ def create_file(path, content, override=True, binary=False):
         os.chmod(path, 0o770)
 
 
-def copy_file(from_path, to_path, to_is_directory=False, override=True, binary=False):
+def copy_file(from_path, to_path, to_is_directory=False, override=True):
     """ """
     if to_is_directory:
         to_path = os.path.join(to_path, os.path.basename(from_path))
-    with open(from_path) as fd:
-        create_file(to_path, fd.read(), override=override, binary=binary)
+    with open(from_path, "rb") as fd:
+        create_file(to_path, fd.read(), override=override, binary=True)
 
 
 def create_tempfolder(path):

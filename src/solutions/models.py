@@ -5,7 +5,7 @@ import tarfile
 import tempfile
 import mimetypes
 import shutil
-import os, re, string
+import os, re
 
 from hashlib import sha256
 
@@ -241,7 +241,7 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
         sandbox = settings.SANDBOX_DIR
         tmpdir = file_operations.create_tempfolder(sandbox)
         for zipchecker in [ checker for checker in createfile_checker if checker.unpack_zipfile ]:
-            cleanpath = string.lstrip(zipchecker.path, "/ ")
+            cleanpath = zipchecker.path.lstrip("/ ")
             path = os.path.join(tmpdir, cleanpath)
             file_operations.unpack_zipfile_to(zipchecker.file.path, path,
                 lambda n: None,

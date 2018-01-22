@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os, string
+import os
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -29,16 +29,16 @@ class CheckerWithFile(Checker):
 
     def path_relative_to_sandbox(self):
         filename = self.filename if self.filename else self.file.path
-        return os.path.join(string.lstrip(self.path, "/ "), os.path.basename(filename))
+        return os.path.join(self.path.lstrip("/ "), os.path.basename(filename))
 
     def add_to_environment(self, env, path):
         if (self._add_to_environment):
-            env.add_source(path, file(os.path.join(env.tmpdir(), path)).read())
+            env.add_source(path, open(os.path.join(env.tmpdir(), path), 'rb').read())
 
     def run_file(self, env):
         result = self.create_result(env)
         clashes = []
-        cleanpath = string.lstrip(self.path, "/ ")
+        cleanpath = self.path.lstrip("/ ")
         if (self.unpack_zipfile):
             path = os.path.join(env.tmpdir(), cleanpath)
             unpack_zipfile_to(self.file.path, path,
@@ -49,7 +49,7 @@ class CheckerWithFile(Checker):
             source_path = os.path.join(cleanpath, os.path.basename(filename))
             path = os.path.join(env.tmpdir(), source_path)
             overridden = os.path.exists(path)
-            copy_file(self.file.path, path, binary=True)
+            copy_file(self.file.path, path)
             if overridden:
                 clashes.append(os.path.join(self.path, os.path.basename(filename)))
             self.add_to_environment(env, source_path)

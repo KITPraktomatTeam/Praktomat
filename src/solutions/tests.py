@@ -22,7 +22,7 @@ class TestViews(TestCase):
 
     def test_post_solution(self):
         path = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'AMI', 'ModelSolution(flat).zip')
-        f = open(path, 'r')
+        f = open(path, 'rb')
         response = self.client.post(reverse('solution_list', args=[self.task.id]), data={
                             'solutionfile_set-INITIAL_FORMS': '0',
                             'solutionfile_set-TOTAL_FORMS': '3',
@@ -35,7 +35,7 @@ class TestViews(TestCase):
         self.task.save()
 
         path = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'AMI', 'ModelSolution(flat).zip')
-        f = open(path, 'r')
+        f = open(path, 'rb')
         response = self.client.post(reverse('solution_list', args=[self.task.id]), data={
                             'solutionfile_set-INITIAL_FORMS': '0',
                             'solutionfile_set-TOTAL_FORMS': '3',

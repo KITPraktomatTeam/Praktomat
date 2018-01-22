@@ -6,7 +6,6 @@ DejaGnu Tests.
 
 import os, sys
 from os.path import dirname, join
-import string
 import re
 import subprocess
 
@@ -74,9 +73,9 @@ class DejaGnuTester(Checker, DejaGnu):
     # Return 1 if the output is ok
     def output_ok(self, output):
         return (RXFAIL.search(output) == None and
-                string.find(output, "runtest completed") >= 0 and
-                string.find(output, "non-expected failures") < 0 and
-                string.find(output, "unexpected failures") < 0)
+                output.find("runtest completed") >= 0 and
+                output.find("non-expected failures") < 0 and
+                output.find("unexpected failures") < 0)
 
     def htmlize_output(self, log):
         # Always kill the author's name from the log
@@ -101,7 +100,7 @@ class DejaGnuTester(Checker, DejaGnu):
 
         # Save public test cases in `tests.exp'
         tests_exp = os.path.join(self.tests_dir(env), "tests.exp")
-        test_cases = string.replace(encoding.get_unicode(self.test_case.read()), "PROGRAM", env.program())
+        test_cases = encoding.get_unicode(self.test_case.read()).replace("PROGRAM", env.program())
         create_file(tests_exp, test_cases)
 
         testsuite = self.testsuite_dir(env)
@@ -119,7 +118,7 @@ class DejaGnuTester(Checker, DejaGnu):
         environ['JAVA'] = settings.JVM
         script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'scripts')
         environ['POLICY'] = join(script_dir, "praktomat.policy")
-        environ['USER'] = env.user().get_full_name().encode(sys.getdefaultencoding(), 'ignore')
+        environ['USER'] = env.user().get_full_name()
         environ['HOME'] = testsuite
         environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
 
@@ -135,8 +134,8 @@ class DejaGnuTester(Checker, DejaGnu):
         output = encoding.get_unicode(output)
 
         try:
-            summary = encoding.get_unicode(open(os.path.join(testsuite, program_name + ".sum")).read())
-            log        = encoding.get_unicode(open(os.path.join(testsuite, program_name + ".log")).read())
+            summary = encoding.get_unicode(open(os.path.join(testsuite, program_name + ".sum"),"rb").read())
+            log        = encoding.get_unicode(open(os.path.join(testsuite, program_name + ".log"),"rb").read())
         except:
             summary = ""
             log        = ""
@@ -173,9 +172,9 @@ class DejaGnuSetup(Checker, DejaGnu):
     def run(self, env):
         self.setup_dirs(env)
         create_file(os.path.join(self.lib_dir(env), env.program() + ".exp"), "")
-        defs = string.replace(encoding.get_unicode(self.test_defs.read()), "PROGRAM", env.program())
-#        defs = string.replace(defs, "JAVA", join(join(dirname(dirname(__file__)),"scripts"),"java"))
-        defs = string.replace(defs, "JAVA", settings.JVM_SECURE)
+        defs = encoding.get_unicode(self.test_defs.read()).replace("PROGRAM", env.program())
+#        defs = defs.replace("JAVA", join(join(dirname(dirname(__file__)),"scripts"),"java"))
+        defs = defs.replace("JAVA", settings.JVM_SECURE)
         create_file(os.path.join(self.config_dir(env), "default.exp"), defs)
 
         return self.create_result(env)

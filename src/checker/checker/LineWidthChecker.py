@@ -4,7 +4,6 @@
 Line width checker
 """
 
-import string
 import re
 
 from django.db import models
@@ -31,8 +30,8 @@ class LineWidthChecker(Checker):
 
     def setup_line(self, line, env):
         """ This is a helper procedure.     Expand tabs and likewise. """
-        line = string.replace(line, "\r", "")
-        line = string.expandtabs(line, self.tab_width)
+        line = line.replace("\r", "")
+        line = line.expandtabs(self.tab_width)
         return line
 
     def run(self, env):
@@ -56,7 +55,7 @@ class LineWidthChecker(Checker):
 
             max_line_length = 0
             line_number = 1
-            for line in string.split(content, "\n"):
+            for line in content.split("\n"):
                 line = self.setup_line(line, env)
 
                 if len(line) > self.max_line_length:
