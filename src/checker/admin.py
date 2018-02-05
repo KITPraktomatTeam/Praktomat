@@ -56,4 +56,7 @@ class CheckerResultAdmin(admin.ModelAdmin):
 		return checkerResult.solution.final
 	solution_final.boolean = True
 
+	def has_add_permission(self, request):
+		return False
+
 admin.site.register(CheckerResult, CheckerResultAdmin)

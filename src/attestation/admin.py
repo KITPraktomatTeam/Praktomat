@@ -83,9 +83,10 @@ class AttestationAdmin(admin.ModelAdmin):
 		my_urls = patterns('', url(r'^update/$', 'attestation.views.update_attestations', name='attestation_update'))
 		return my_urls + urls
 
+	def has_add_permission(self, request):
+		return False
 
 
-	
 admin.site.register(Attestation, AttestationAdmin)
 
 
