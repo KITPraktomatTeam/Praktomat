@@ -16,6 +16,11 @@ class CXXBuilder(Builder):
 	_language				= "C++"
 	#_rx_warnings			= r"^([^ :]*:[^:].*)$"
 
+	def flags(self, env):
+		if not self.is_MainRequired(env):
+			self._flags = self.add_toCompilerFlags("-c", env)
+		return super(CXXBuilder,self).flags(env)
+
 from checker.admin import CheckerInline, AlwaysChangedModelForm
 
 class CheckerForm(AlwaysChangedModelForm):
@@ -27,7 +32,10 @@ class CheckerForm(AlwaysChangedModelForm):
 		#self.fields["_libs"].initial = ""
 		# GCC accepts the following extensions for C++ files: ".cc", ".cxx", ".cpp", ".c++", ".C".
 		self.fields["_file_pattern"].initial = r"^[a-zA-Z0-9_]*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$"
-	
+		self.fields["_main_required"].label = _("Link as executable program.")
+		self.fields["_main_required"].help_text = _("if not activated, code will be compiled to object file *.o ! Compiler uses -c option")
+
+
 class CXXBuilderInline(CheckerInline):
 	model = CXXBuilder
 	form = CheckerForm

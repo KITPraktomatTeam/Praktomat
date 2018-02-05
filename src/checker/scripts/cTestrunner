@@ -1,0 +1,87 @@
+#!/bin/bash
+# set -x
+# $Id: cTestrunner,v 0.1 2017/12/27 21:27:10 R.Hartmann, Experimental $
+# Sicherheitsaspekte: 
+# javac und java sind "relativ" einfach 
+# via java.security.manager über java.security.policy einstellbar.
+# Für C bzw C++ gibt es diese Möglichkeit nicht (daher ist das native
+# interface für Java-Einreichungen auch abgeklemmt).
+# Sandboxing für C/C++ Einreichungen ohne Docker zu nutzen,
+# ist noch unklar: AppArmor ansehen.
+
+# Konfiguration:
+
+
+# This is a safeguard. Praktomat itself has a timeout (default 60s), but better
+# safe than sorry. However ,ulimit -t measures CPU time, so multi-core programs
+# can eat more than 60s in one minute. Therefore we use a much higher value
+# here.
+ulimit -t 600
+
+
+# Script dir is group writable...
+DIRS="bin lib usr/bin usr/lib home/praktomat/inst/2018s_c/Praktomat/src/checker/scripts"
+
+
+#
+# Setup und starten
+#
+
+
+function die {
+    (
+        for d in $DIRS ; do
+            echo "unmount $d..."
+            /bin/fusermount -u $d
+        done
+    ) >> /tmp/pwd.hmw 2>&1
+}
+
+trap die EXIT
+
+
+SCRIPT=`basename $0`
+if [ $# == 0 ] ; then
+    (>&2 echo "${SCRIPT}: Internal Error: Not enough parameters. Exit.")
+    exit 1
+fi
+
+
+EXEC="$1"
+shift
+
+if [ "x${EXEC}x" = "x@@x" ] ; then
+    (
+        echo "start '$(date)'"
+        echo "id: $(id -a)"
+        echo "exec: '$EXEC'"
+        echo "params: '$@'"
+        echo "pwd: '$PWD'"
+        echo "create dirs..."
+
+        mkdir -p tmp
+     
+        for d in $DIRS ; do
+            /bin/mkdir -p $d
+            echo "bind /$d...."
+            /usr/bin/bindfs -r /$d $d
+        done
+
+        echo "Rebooting into chroot next '$0' '$@'..."
+    ) >> /tmp/pwd.hmw 2>&1
+
+    fakechroot chroot . "$0" "$@"
+    exit $?
+fi
+
+
+if [ -x "${EXEC}" ] ; then
+
+    "./${EXEC}" "$@" 2>&1
+    exit $?
+else
+    (>&2 echo "${SCRIPT}: Internal error: '${EXEC}' does not seem to be an executable. Exit.")
+    exit 1
+fi
+
+exit 0

@@ -11,6 +11,7 @@ from django.utils.html import escape
 from django.template.loader import get_template
 from django.template import Context
 
+import logging
 
 from checker.basemodels import Checker
 from utilities.safeexec import execute_arglist
@@ -47,7 +48,14 @@ class Builder(Checker):
 
 	def flags(self, env):
 		""" Compiler flags.	To be overloaded in subclasses. """
-		return self._flags.split(" ") if self._flags else []
+		return self._flags.strip().split(" ") if self._flags else []
+
+	def add_toCompilerFlags(self, flagsValues, env):
+		self._flags = self._flags + " " + flagsValues if self._flags else flagsValues
+		return self._flags
+
+	def is_MainRequired(self,env):
+		return self._main_required 
 
 	def output_flags(self, env):
 		""" Output flags """
@@ -58,7 +66,7 @@ class Builder(Checker):
 
 	def libs(self):
 		""" Compiler libraries.	 To be overloaded in subclasses. """
-		return self._libs.split(" ") if self._libs else []
+		return self._libs.strip().split(" ") if self._libs else []
 
 	def environment(self):
 		""" Environment to be set on onvocation of Compiler. """
@@ -109,17 +117,39 @@ class Builder(Checker):
 
 	def run(self, env):
 		""" Build it. """
-		result = self.create_result(env)
 
+                LOGGER = logging.getLogger()
+                fmt = logging.Formatter('%(asctime)s [%(process)d] [%(levelname)s] %(funcName)s: %(message)s')
+
+                if len(LOGGER.handlers) == 0:
+                        handler = logging.FileHandler("/tmp/hmw.log",
+                                                      encoding="utf-8")
+                        handler.setFormatter(fmt)
+                        LOGGER.addHandler(handler)
+                        LOGGER.setLevel(logging.DEBUG)
+                        LOGGER.info("builder.run")
+
+	        result = self.create_result(env)
+
+                if self._main_required:
+                        LOGGER.info("main req: " + str(self._main_required))
+                else:
+                        LOGGER.info("main req is null")
+                
 		# Try to find out the main modules name with only the source files present
 		try:
 			env.set_program(self.main_module(env))
 		except self.NotFoundError:
-			pass
+                        LOGGER.info("self.main_module f* up")
+# 			pass
 		
-		filenames = [name for name in self.get_file_names(env)]
+                filenames = [name for name in self.get_file_names(env)]
 		args = [self.compiler()] + self.output_flags(env) + self.flags(env) + filenames + self.libs()
 		script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
+                LOGGER.info("lib: " + str(self.libs()))
+                LOGGER.info("flag: " + str(self.flags(env)))
+                LOGGER.info("fn: '" + str(filenames) + "' args: '" + str(args) + "'")
+                                
 		[output,_,_,_,_]  = execute_arglist(args, env.tmpdir(),self.environment(), extradirs=[script_dir])
 
 		output = escape(output)
@@ -129,12 +159,17 @@ class Builder(Checker):
 		passed = not self.has_warnings(output)	
 		log  = self.build_log(output,args,set(filenames).intersection([solutionfile.path() for solutionfile in env.solution().solutionfile_set.all()]))
 
+                LOGGER.info("passed: " + str(passed) + " " + output)
+                LOGGER.info("log: '" + log + "'")
+                LOGGER.info("alpha: " + str(env.solution().solutionfile_set.all()))
 		# Now that submission was successfully built, try to find the main modules name again
 		try:
 			if passed : env.set_program(self.main_module(env))
 		except self.NotFoundError as e:
 			# But only complain if the main method is required
+                        LOGGER.info("excep finding main")
 			if self._main_required:
+                                LOGGER.info("but main req")
 				log += "<pre>" + str(e) + "</pre>"
 				passed = False
 
@@ -148,6 +183,7 @@ class Builder(Checker):
 			'filenames' : filenames,
 			'output' : output,
 			'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm,ps: parm + ' ' + ps,args[1:],''),
-			'regexp' : self.rxarg()
+			'regexp' : self.rxarg(),
+			'debug'  : True
 		}))
 

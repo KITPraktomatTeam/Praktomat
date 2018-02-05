@@ -1,5 +1,10 @@
 {% if filenames %}
 <div>{{ filenames|length }} user-submitted files matching "{{regexp}}" found for compilation: {% for file in filenames%} {{ file }} &nbsp; {% endfor %}</div>
+{% if debug %}
+{% if cmdline %}
+<div>{{ cmdline|safe }}  </div>
+{% endif %}
+{% endif %}
 {% if output %}
 <div>Compiler output:</div>
 <pre>{{output|safe}}</pre>
