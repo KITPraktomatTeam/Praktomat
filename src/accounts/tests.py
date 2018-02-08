@@ -5,12 +5,12 @@ from django.core.urlresolvers import reverse
 from StringIO import StringIO
 
 
-class TestViewsSelenium(SeleniumTestCase):
-    def test_login(self):
-        self.loginAsUser()
-        self.assertIn("/tasks/", self.selenium.current_url)
-        user_tools = self.selenium.find_element_by_id('user-tools')
-        self.assertIn("Welcome, user", user_tools.text)
+#class TestViewsSelenium(SeleniumTestCase):
+#    def test_login(self):
+#        self.loginAsUser()
+#        self.assertIn("/tasks/", self.selenium.current_url)
+#        user_tools = self.selenium.find_element_by_id('user-tools')
+#        self.assertIn("Welcome, user", user_tools.text)
 
 
 class TestViews(TestCase):
@@ -19,19 +19,19 @@ class TestViews(TestCase):
         self.testgroup = Group(name = 'test')
         self.testgroup.save()
 
-    def test_get_testgroup(self):
-        response = self.client.get(reverse('admin:auth_group_change', args=[self.testgroup.id]))
-        self.failUnlessEqual(response.status_code, 200)
+#    def test_get_testgroup(self):
+#        response = self.client.get(reverse('admin:auth_group_change', args=[self.testgroup.id]))
+#        self.failUnlessEqual(response.status_code, 200)
 
-    def test_testgroup_empty(self):
-        self.failUnlessEqual(set(self.testgroup.user_set.all()), set())
+#    def test_testgroup_empty(self):
+#        self.failUnlessEqual(set(self.testgroup.user_set.all()), set())
 
-    def test_testgroup_add_user(self):
-        # mostly to test the testing
-        user = User.objects.get(username = 'user')
-        user.groups.add(self.testgroup)
-        user.save()
-        self.failUnlessEqual(set( u.mat_number for u in User.objects.filter(groups = self.testgroup)),
+#    def test_testgroup_add_user(self):
+#        # mostly to test the testing
+#        user = User.objects.get(username = 'user')
+#        user.groups.add(self.testgroup)
+#        user.save()
+#        self.failUnlessEqual(set( u.mat_number for u in User.objects.filter(groups = self.testgroup)),
                              set( u.mat_number for u in [user]))
 
     def test_testgroup_add_to_group(self):
