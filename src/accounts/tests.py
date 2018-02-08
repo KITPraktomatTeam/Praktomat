@@ -32,7 +32,7 @@ class TestViews(TestCase):
 #        user.groups.add(self.testgroup)
 #        user.save()
 #        self.failUnlessEqual(set( u.mat_number for u in User.objects.filter(groups = self.testgroup)),
-                             set( u.mat_number for u in [user]))
+#                             set( u.mat_number for u in [user]))
 
     def test_testgroup_add_to_group(self):
         user = User.objects.get(username = 'user')
