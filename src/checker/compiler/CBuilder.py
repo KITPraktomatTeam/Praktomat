@@ -1,14 +1,15 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 
 """
 A C compiler for construction.
 """
 
 from django.conf import settings
-from checker.compiler.Builder import Builder
+from checker.compiler.Builder import Compiler 
+from checker.compiler.Builder import IncludeHelper
 from django.utils.translation import ugettext_lazy as _
 
-class CBuilder(Builder):
+class CBuilder(Compiler, IncludeHelper):
 	""" A C compiler for construction. """
 
 	# Initialization sets attributes to default values.
@@ -17,12 +18,20 @@ class CBuilder(Builder):
 	#_rx_warnings			= r"^([^ :]*:[^:].*)$"
 
 		
-	def flags(self, env):
-		if not self.is_MainRequired(env):
-			self._flags = self.add_toCompilerFlags("-c", env)
-		return super(CBuilder,self).flags(env)
 		
+	def pre_run(self,env):
+		return self.compiler()
 
+
+
+	def post_run(self,env):
+		passed = True
+		log = ""
+		return [passed,log]p
+
+
+	def connected_flags(self, env):     		
+		return self.flags(env) + self.search_path()
 
 from checker.admin import CheckerInline, AlwaysChangedModelForm
 
@@ -30,12 +39,13 @@ class CheckerForm(AlwaysChangedModelForm):
 	""" override default values for the model fields """
 	def __init__(self, **args):
 		super(CheckerForm, self).__init__(**args)
-		#self.fields["_flags"].initial = "-Wall"
+		self.fields["_flags"].initial = "-Wall - Wextra"
 		#self.fields["_output_flags"].initial = "-o %s"
+		self.fields["_output_flags"].initial = "-c"
 		#self.fields["_libs"].initial = ""
 		self.fields["_file_pattern"].initial = r"^[a-zA-Z0-9_]*\.[cC]$"
-		self.fields["_main_required"].label = _("link as executable program")
-		self.fields["_main_required"].help_text = _("if not activated, code will be compiled to object file *.o! Compiler uses -c option")
+#		self.fields["_main_required"].label = _("link as executable program")
+#		self.fields["_main_required"].help_text = _("if not activated, code will be compiled to object file *.o! Compiler uses -c option")
 	
 
 class CBuilderInline(CheckerInline):
