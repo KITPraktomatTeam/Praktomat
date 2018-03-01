@@ -15,6 +15,7 @@ from utilities.safeexec import execute_arglist
 
 from django.utils.translation import ugettext_lazy as _
 
+
 class CLinker(Linker, LibraryHelper, MainNeedHelper):
 	""" A C compiler for construction. """
 
@@ -23,7 +24,7 @@ class CLinker(Linker, LibraryHelper, MainNeedHelper):
 	_OBJECTINSPECTOR	= "findMainInObject" # shell script name in folder scripts calling nm
 	_OBJINSPECT_PAR		= "-A -C"
 	_language		= "C"
-	#_rx_warnings			= r"^([^ :]*:[^:].*)$"
+	#_rx_warnings		= r"^([^ :]*:[^:].*)$"
 
 
 	def main_search(self,env):
@@ -109,6 +110,7 @@ class CheckerForm(AlwaysChangedModelForm):
 		self.fields["_main_required"].label = _("link as executable program")
 		self.fields["_main_required"].help_text = _("if not activated, object files code will be compiled to object file *.o! Compiler uses -c option")
 	
+
 
 class CLinkerInline(CheckerInline):
 	model = CLinker

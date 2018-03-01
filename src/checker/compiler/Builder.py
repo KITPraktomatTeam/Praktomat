@@ -78,6 +78,7 @@ class IncludeHelper(models.Model):
 class CompilerOrLinker(Checker, IncludeHelper):
 	""" Abstract class as generalisation for Compiler and Linker calls.  Specialized subclass provided for different languages and compilers, linkers. """
       
+
 	class Meta(Checker.Meta):
 		abstract = True
 
@@ -232,6 +233,7 @@ class CompilerOrLinker(Checker, IncludeHelper):
 class Compiler(CompilerOrLinker):
 	""" Abstract class as generalisation for Compiler calls.  Specialized subclass provided for different languages and compilers. """
       
+
 	class Meta(Checker.Meta):
 		abstract = True
 
@@ -258,6 +260,7 @@ class Compiler(CompilerOrLinker):
 class Linker(CompilerOrLinker):
 	""" Abstract class as generalisation for Compiler calls.  Specialized subclass provided for different languages and compilers. """
       
+
 	class Meta(Checker.Meta):
 		abstract = True
 
@@ -272,6 +275,7 @@ class Linker(CompilerOrLinker):
 	
 	_LINK_DICT = {u'out': u'-o', u'so': u'-shared -fPIC -o'}	 
 	_output_flags = models.CharField(max_length=16, choices=_LINK_CHOICES,default="-o %s", help_text = _('choose link output type. \'%s\' will replaced by output_name. '))
+
 
 	_output_name = models.CharField(max_length=16, default="%s", help_text = _('choose a outputname. \'%s\' will be replaced by an internal default name.'))
 
@@ -290,11 +294,6 @@ class Linker(CompilerOrLinker):
 		_fetch_output_flags(_LINK_DICT[self._output_flags]+ u' ' +self._output_name)
 		return super(CompilerOrLinker, self).output_flags(env)
 
-
-	
-
-
-	      
       
 # ----------------------------- #
 

@@ -21,8 +21,6 @@ class CBuilder(Compiler):
 	def pre_run(self,env):
 		return self.compiler()
 
-
-
 	def post_run(self,env):
 		passed = True
 		log = ""
@@ -31,7 +29,6 @@ class CBuilder(Compiler):
 
 	def connected_flags(self, env):     		
 		return self.flags(env) + self.search_path()
-
 
 from checker.admin import CheckerInline, AlwaysChangedModelForm
 
