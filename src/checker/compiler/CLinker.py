@@ -59,7 +59,10 @@ class CLinker(Linker, LibraryHelper, MainNeedHelper):
 
 # todo: code review	
 	def main_module(self,env):
-		return self.main_object_name if self.main_object_name else main_search(env)
+		try:
+			return self.main_object_name if self.main_object_name else self.main_search(env)
+		except AttributeError:
+			return self.main_search(env)
 
 
 
@@ -88,7 +91,7 @@ class CLinker(Linker, LibraryHelper, MainNeedHelper):
 
 
 	def connected_flags(self, env):     		
-		return self.flags(env) + self.search_path() + self.libs()
+		return self.flags() + self.search_path() + self.libs()
 
 
 
@@ -107,8 +110,8 @@ class CheckerForm(AlwaysChangedModelForm):
 		#self.fields["_output_flags"].help_text = _('\'%s\' will be replaced by the output name.')
 		self.fields["_libs"].initial = ""
 		self.fields["_file_pattern"].initial = r"^[a-zA-Z0-9_]*\.[oO]$"
-		self.fields["_main_required"].label = _("link as executable program")
-		self.fields["_main_required"].help_text = _("if not activated, object files code will be compiled to object file *.o! Compiler uses -c option")
+		#self.fields["_main_required"].label = _("link as executable program")
+		#self.fields["_main_required"].help_text = _("if not activated, object files code will be compiled to object file *.o! Compiler uses -c option")
 	
 
 

@@ -52,7 +52,7 @@ class LibraryHelper(models.Model):
 		abstract = True
 
 	# elements for using via django admin webinterface	
-	_libs		= models.CharField(max_length = 1000, blank = True, default = "", help_text = _('Compiler libraries'))
+	_libs		= models.CharField(max_length = 1000, blank = True, default = "", help_text = _('flags for libraries like \'-lm \' as math library for C'))
 	 
 	def libs(self):
 		""" returns flags for compiler or linker interaction with libraries. To be overloaded in subclasses. """
@@ -90,7 +90,7 @@ class CompilerOrLinker(Checker, IncludeHelper):
 	# do not override in subclass (dont hack name mangeling)
 	__output_flags  = ""
 	__flags		= ""
-	__runner	= ""
+	__runner	= "__runner_to_be_defined_via__fetch_runner"
 	
 	# elements for using via django admin webinterface
 	_flags		= models.CharField(max_length = 1000, blank = True, default="-Wall -Wextra", help_text = _('Compiler or Linker flags'))	
@@ -99,7 +99,7 @@ class CompilerOrLinker(Checker, IncludeHelper):
 
 
 	def _fetch_runner(self, runner):
-		__runner = runner
+		self.__runner = runner
 
 	def post_run(self,env):
 		""" default implementation of post_run throws a TypeError """
@@ -133,7 +133,7 @@ class CompilerOrLinker(Checker, IncludeHelper):
 	def run(self,env):
 		""" Build it. """
 
-		_fetch_runner(pre_run(env))
+		self._fetch_runner(self.pre_run(env))
 	
 	        result = self.create_result(env)
 
@@ -159,7 +159,7 @@ class CompilerOrLinker(Checker, IncludeHelper):
    		# Now that submission was successfully built, try to find the main modules name again
 		
 		if passed:
-                	[post_passed, post_log] = post_run(env)
+                	[post_passed, post_log] = self.post_run(env)
 			passed = passed and post_passed
 			log += "<pre>" + str(post_log) + "</pre>"
 		
@@ -181,7 +181,7 @@ class CompilerOrLinker(Checker, IncludeHelper):
 			return self.__output_flags.split(" ") if self.__output_flags else []	  
 		      
 	def _fetch_output_flags(self, oflags):
-		__output_flags = oflags
+		self.__output_flags = oflags
 
 
 	def connected_flags(self,env):
@@ -251,8 +251,8 @@ class Compiler(CompilerOrLinker):
 	      
 	      
 	def output_flags(self, env):     
-		_fetch_output_flags(self._output_flags)
-		return super(CompilerOrLinker, self).output_flags(env)
+		self._fetch_output_flags(self._output_flags)
+		return super(Compiler, self).output_flags(env)
 		
 
 # ----------------------------- #
@@ -291,8 +291,8 @@ class Linker(CompilerOrLinker):
 		return [name for (name,content) in env.sources() if rxarg.match(name)]			      
 
 	def output_flags(self, env):  		
-		_fetch_output_flags(_LINK_DICT[self._output_flags]+ u' ' +self._output_name)
-		return super(CompilerOrLinker, self).output_flags(env)
+		self._fetch_output_flags(self._LINK_DICT[self._output_flags]+ u' ' +self._output_name)
+		return super(Linker, self).output_flags(env)
 
       
 # ----------------------------- #

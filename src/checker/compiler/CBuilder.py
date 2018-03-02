@@ -28,7 +28,7 @@ class CBuilder(Compiler):
 
 
 	def connected_flags(self, env):     		
-		return self.flags(env) + self.search_path()
+		return self.flags() + self.search_path()
 
 from checker.admin import CheckerInline, AlwaysChangedModelForm
 
