@@ -22,7 +22,7 @@ class CLinker(Linker, LibraryHelper, MainNeedHelper):
 	# Initialization sets attributes to default values.
 	_linker			= settings.C_BINARY
 	_OBJECTINSPECTOR	= "findMainInObject" # shell script name in folder scripts calling nm
-	_OBJINSPECT_PAR		= "-A -C"
+	_OBJINSPECT_PAR		= "nm -A -C".split(" ")
 	_language		= "C"
 	#_rx_warnings		= r"^([^ :]*:[^:].*)$"
 
@@ -31,11 +31,11 @@ class CLinker(Linker, LibraryHelper, MainNeedHelper):
 		""" returns module name if main is found in object file """
   		main_symbol = "main"
   		#output of nm -A -C  mytest.o is: mytest.o:0000000d T main
-		nm_rx  = re.compile(r"^(.*\.)[oO]:[0-9A-Fa-f]* T (main)$", re.MULTILINE)
+		nm_rx  = re.compile(r"^(.*/)*(.*)\.[oO]:[0-9A-Fa-f]* T (main)$", re.MULTILINE)
 		obj_files = []
                 c_rx = re.compile('^(.*\.)[cC]')
 		#ToDo: code review 
-		o_solution_list = [c_rx.sub(r"\So", name)\
+		o_solution_list = [re.sub(r"\.[cC]",r".o",name)\
 			for (name,void) in env.sources()\
 			if name.endswith(('.c','.C'))]
 
@@ -48,10 +48,12 @@ class CLinker(Linker, LibraryHelper, MainNeedHelper):
 						obj_files.append(filename)
 						# Next let's shell out and search in object file for main 
 						script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
-						cmd = [os.path.join(script_dir, _OBJECTINSPECTOR), _OBJINSPECT_PAR , os.path.join(dirpath,filename)]
+						cmd = [os.path.join(script_dir, self._OBJECTINSPECTOR)] + self._OBJINSPECT_PAR + [os.path.join(dirpath,filename)]
 						[objinfo,error,exitcode,timed_out,oom_ed]  = execute_arglist(cmd , env.tmpdir(), self.environment(), timeout=settings.TEST_TIMEOUT, fileseeklimit=settings.TEST_MAXFILESIZE, extradirs=[script_dir])
-						if string.find(objinfo,main_symbol) >= 0:
-							self.main_object_name = nm_rx.search(objinfo, re.MULTILINE).group(1)
+						if exitcode != 0 :
+							raise self.NotFoundError("Internal Server Error. Processing files %s" % ",".join(obj_files)+"\n"+objinfo)
+						if objinfo.find(main_symbol) >= 0:
+							self.main_object_name = re.search(nm_rx,objinfo).group(2)
 							return self.main_object_name
 
 		raise self.NotFoundError("An object containing the main symbol (i.e. 'int main(int argc, char* argv[])' ) could not be found in the files %s" % ", ".join(obj_files))
@@ -64,6 +66,30 @@ class CLinker(Linker, LibraryHelper, MainNeedHelper):
 		except AttributeError:
 			return self.main_search(env)
 
+
+	def get_file_names(self,env):
+
+		# Get all object files corresponding to solutions C files.
+                c_rx = re.compile('^(.*\.)[cC]')
+		o_solution_list = [re.sub(r"\.[cC]", r".o", name)\
+			for (name,void) in env.sources()\
+			if name.endswith(('.c','.C'))]
+		
+
+		#ToDo: rethink if object files should add to env here - perhaps not! ...
+		# add these object files to env sources 
+                for f in o_solution_list:
+                        try:
+                                for (name, void) in env.sources():
+                                        if f == name: raise StopIteration
+                                env.add_source(f, None)
+                        except StopIteration: pass
+
+		rxarg = re.compile(self.rxarg())	
+		return [name for (name,content) in env.sources() if rxarg.match(name)]			      
+
+	def logbuilder(self,output,args,env):
+		return self.build_log(output,args,self.get_file_names(env))
 
 
 	def pre_run(self,env):

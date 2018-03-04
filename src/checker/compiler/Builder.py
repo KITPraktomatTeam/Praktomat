@@ -154,7 +154,9 @@ class CompilerOrLinker(Checker, IncludeHelper):
 
 		# We mustn't have any warnings.
 		passed = not self.has_warnings(output)	
-		log  = self.build_log(output,args,set(filenames).intersection([solutionfile.path() for solutionfile in env.solution().solutionfile_set.all()]))
+		#log  = self.build_log(output,args,set(filenames).intersection([solutionfile.path() for solutionfile in env.solution().solutionfile_set.all()]))
+		log  = self.logbuilder(output,args,env)
+
 
    		# Now that submission was successfully built, try to find the main modules name again
 		
@@ -217,7 +219,13 @@ class CompilerOrLinker(Checker, IncludeHelper):
 	def has_warnings(self, output):
 		""" Return true if there are any warnings in OUTPUT """
 		return re.compile(self._rx_warnings, re.MULTILINE).search(output) != None
-	      
+	
+	def logbuilder(self,output,args,env):
+		""" For Child classes to do additional things """
+		filenames = [name for name in self.get_file_names(env)]
+		return self.build_log(output,args,set(filenames).intersection([solutionfile.path() for solutionfile in env.solution().solutionfile_set.all()]))
+
+      
       	def build_log(self,output,args,filenames):
 		t = get_template('checker/compiler/builder_report.html')
 		return t.render(Context({
@@ -245,6 +253,10 @@ class Compiler(CompilerOrLinker):
 	def compiler(self):
 		return self._compiler
 	
+	def title(self):
+		return u"%s - Compiler" % self.language()
+
+
 	def get_file_names(self,env):
 		rxarg = re.compile(self.rxarg())
 		return [name for (name,content) in env.sources() if rxarg.match(name)]		
@@ -283,6 +295,10 @@ class Linker(CompilerOrLinker):
 	def linker(self):
 		return self._linker
 	      
+
+	def title(self):
+		return u"%s - Linker" % self.language()
+
 	
 
 	def get_file_names(self,env):
