@@ -11,7 +11,7 @@ from utilities.safeexec import execute_arglist
 from utilities.file_operations import *
 from solutions.models import Solution
 
-from checker.checker.CreateFileChecker import CreateFileChecker
+from checker.checker.CreateFileChecker import CheckerWithFile
 from checker.compiler.CBuilder import CBuilder
 from checker.compiler.CXXBuilder import CXXBuilder
 
@@ -45,7 +45,7 @@ class IgnoringCXXBuilder2(CXXBuilder):
 
 
 
-class CUnitChecker2(CreateFileChecker):
+class CUnitChecker2(CheckerWithFile):
 	""" New Checker for CUnit and CPPUnit Unittests """ # code based upon JUnitChecker
 # https://sourceforge.net/projects/cunit/
 # https://sourceforge.net/projects/cppunit/
@@ -106,8 +106,8 @@ class CUnitChecker2(CreateFileChecker):
 		return (RXFAIL.search(output) == None)
 
 	def clean(self):
-		#call grandparents clean
-		super(CreateFileChecker, self).clean()
+		#call parents clean
+		super(CUnitChecker2, self).clean()
 		
 
 	def run(self, env):
@@ -150,15 +150,19 @@ class CUnitChecker2(CreateFileChecker):
 
 		# if copying failed we can stop right here!
 		if not copyTestFileArchive_result.passed:
-			result = self.create_result(env)
+			#result = self.create_result(env)
+			result = copyTestFileArchive_result
 			result.set_passed(False)
 			result.set_log( #escape(self.CUNIT_CHOICES[self.cunit_version])   
     					""+ '<pre>' 
                                         + escape(self.test_description) 
                                         + '\n\n======== Preprocessing: Filecopy Failure-Results: ======\n\n</pre><br/>\n'
                                         + copyTestFileArchive_result.log )
+			#raise TypeError
 			return result
 			
+		result = copyTestFileArchive_result
+	
 		# now we configure build and link steps for test-code and solution-code
 		
 		
@@ -167,15 +171,16 @@ class CUnitChecker2(CreateFileChecker):
 		solution_builder = None
 
 		# if link_type is o, we have to compile and link all code with test_builder
-		if "o" == link_type:
+		if "o" == self.link_type:
 
 			#languageCompiler C or CPP 
-			if use_cppBuilder():
+			if self.use_cppBuilder():
 				#CPP
-				test_builder = IgnoringCXXBuilder2(_flags=self._flags, _libs=self.get_libs() ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+self.class_name,_main_required=True)
+				#test_builder = IgnoringCXXBuilder2(_flags=self._flags, _libs=self.get_libs() ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+self.class_name)
+				test_builder = IgnoringCXXBuilder2(_flags=self._flags ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+self.class_name)
 			else:
 				#C
-				test_builder = IgnoringCBuilder2(_flags=self._flags, _libs=self.get_libs() ,_file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+self.class_name ,_main_required=True)
+				test_builder = IgnoringCBuilder2(_flags=self._flags ,_file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+self.class_name)
 		else:
 			#ignoring all test-code filenames for solution_builder
 			#ignoring all non test-code filenames for test_builder
@@ -189,41 +194,47 @@ class CUnitChecker2(CreateFileChecker):
 			# shared object or executable
 			if "so" == link_type: 
 				#languageCompiler C or CPP 
-				if use_cppBuilder():
+				if self.use_cppBuilder():
 					#CPP
-					solution_builder = IgnoringCXXBuilder2(_flags=self._flags, _libs=self.get_libs() ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-shared -fPIC -o "+env.program()+".so",_main_required=True)
-					test_builder = IgnoringCXXBuilder2(_flags=self._flags, _libs=self.get_libs() ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+self.class_name,_main_required=True)
+					#solution_builder = IgnoringCXXBuilder2(_flags=self._flags, _libs=self.get_libs() ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-shared -fPIC -o "+env.program()+".so",_main_required=True)
+					solution_builder = IgnoringCXXBuilder2(_flags=self._flags,  _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-shared -fPIC -o "+env.program()+".so",_main_required=True)
+					test_builder = IgnoringCXXBuilder2(_flags=self._flags,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+self.class_name,_main_required=True)
 				else:
 					#C
-					solution_builder = IgnoringCBuilder2(_flags=self._flags, _libs=self.get_libs() ,_file_pattern=r"^.*\.(c|C)$",_output_flags="-shared -fPIC -o "+env.program()+".so" ,_main_required=True)
-					test_builder = IgnoringCBuilder2(_flags=self._flags, _libs=self.get_libs() ,_file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+self.class_name ,_main_required=True)
+					solution_builder = IgnoringCBuilder2(_flags=self._flags, _file_pattern=r"^.*\.(c|C)$",_output_flags="-shared -fPIC -o "+env.program()+".so" ,_main_required=True)
+					test_builder = IgnoringCBuilder2(_flags=self._flags ,_file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+self.class_name ,_main_required=True)
 			else: #executable
 				#languageCompiler C or CPP 
 				if use_cppBuilder():
 					#CPP
-					solution_builder = IgnoringCXXBuilder2(_flags=self._flags, _libs=self.get_libs() ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+env.program()+".out",_main_required=True)
-					test_builder = IgnoringCXXBuilder2(_flags=self._flags, _libs=self.get_libs() ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+self.class_name,_main_required=True)
+					solution_builder = IgnoringCXXBuilder2(_flags=self._flags ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+env.program()+".out",_main_required=True)
+					test_builder = IgnoringCXXBuilder2(_flags=self._flags ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+self.class_name,_main_required=True)
 				else:
 					#C
-					solution_builder = IgnoringCBuilder2(_flags=self._flags, _libs=self.get_libs() ,_file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+env.program()+".out",_main_required=True)
-					test_builder = IgnoringCBuilder2(_flags=self._flags, _libs=self.get_libs() ,_file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+self.class_name ,_main_required=True)
-
+					solution_builder = IgnoringCBuilder2(_flags=self._flags ,_file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+env.program()+".out",_main_required=True)
+					test_builder = IgnoringCBuilder2(_flags=self._flags ,_file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+self.class_name ,_main_required=True)
+		
 		build_solution_result = None
 		if solution_builder:
 			build_solution_result = solution_builder.run(env)
 			if not build_solution_result.passed:
-				result = self.create_result(env)
+				# result = self.create_result(env)
+				# result += build_solution_result
 				result.set_passed(False)
 				result.set_log( '<pre>' + escape(self.test_description) + '\n\n==========  Preprocessing =============\n*    Generating "Shared Object"       *\n* or "Executable" from solution files *\n======== Failure-Results ==============\n\n</pre><br/>\n'+build_solution_result.log )
+				# raise TypeError
 				return result
+		#result = build_solution_result
 
 		build_test_result = test_builder.run(env) 
 		if not build_test_result.passed:
-			result = self.create_result(env)
+			# result = self.create_result(env)
+			# result += build_test_result
 			result.set_passed(False)
 			result.set_log( escape(self.cunit_version)  + '<pre>' + escape(self.test_description) + '\n\n======== Test Results ======\n\n</pre><br/>\n'+build_test_result.log )
+			# raise TypeError
 			return result
-		
+		#result = build_test_result
 
 		environ = {}
 
@@ -236,7 +247,7 @@ class CUnitChecker2(CreateFileChecker):
 		cmd = [os.path.join(script_dir,self.runner()),self.class_name]
 		[output, error, exitcode,timed_out, oom_ed] = execute_arglist(cmd, env.tmpdir(),environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE, extradirs=[script_dir])
 
-		result = self.create_result(env)
+		#result = self.create_result(env)
 
 		(output,truncated) = truncated_log(output)
 		output = '<pre>' + escape(self.test_description) + '\n\n======== Test Results ======\n\n</pre><br/><pre>' + escape(output) + '</pre>'
@@ -244,6 +255,7 @@ class CUnitChecker2(CreateFileChecker):
 
 		result.set_log(output,timed_out=timed_out or oom_ed,truncated=truncated,oom_ed=oom_ed)
 		result.set_passed(not exitcode and not timed_out and not oom_ed and self.output_ok(output) and not truncated)
+		result.save()
 		return result
 
 #class JUnitCheckerForm(AlwaysChangedModelForm):

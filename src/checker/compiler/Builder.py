@@ -11,6 +11,8 @@ from django.utils.html import escape
 from django.template.loader import get_template
 from django.template import Context
 
+from django.core.exceptions import ValidationError
+
 import logging
 
 from checker.basemodels import Checker
@@ -225,7 +227,9 @@ class CompilerOrLinker(Checker, IncludeHelper):
 		filenames = [name for name in self.get_file_names(env)]
 		return self.build_log(output,args,set(filenames).intersection([solutionfile.path() for solutionfile in env.solution().solutionfile_set.all()]))
 
-      
+	def isLinker(self):
+		return False      
+
       	def build_log(self,output,args,filenames):
 		t = get_template('checker/compiler/builder_report.html')
 		return t.render(Context({
@@ -233,7 +237,8 @@ class CompilerOrLinker(Checker, IncludeHelper):
 			'output' : output,
 			'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm,ps: parm + ' ' + ps,args[1:],''),
 			'regexp' : self.rxarg(),
-			'debug'  : True
+			'debug'  : True,
+			'linker' : self.isLinker()
 		}))
 
 # ----------------------------- #
@@ -265,8 +270,12 @@ class Compiler(CompilerOrLinker):
 	def output_flags(self, env):     
 		self._fetch_output_flags(self._output_flags)
 		return super(Compiler, self).output_flags(env)
-		
-
+	
+	def clean(self):
+		super(Compiler, self).clean()
+		rx = re.compile(r"^.*(-c.*(-o.*|%s)).*$") 
+		if rx.match(self._output_flags)  : raise ValidationError("You cannot put flag -c in combination with -o ; -c %s doesn't fit together, too.")
+ 
 # ----------------------------- #
 
 class Linker(CompilerOrLinker):
@@ -294,7 +303,9 @@ class Linker(CompilerOrLinker):
 	
 	def linker(self):
 		return self._linker
-	      
+
+	def isLinker(self):
+		return True      
 
 	def title(self):
 		return u"%s - Linker" % self.language()
@@ -308,7 +319,9 @@ class Linker(CompilerOrLinker):
 
 	def output_flags(self, env):  		
 		self._fetch_output_flags(self._LINK_DICT[self._output_flags]+ u' ' +self._output_name)
-		return super(Linker, self).output_flags(env)
+		myOutputFlags = super(Linker, self).output_flags(env)
+		myOutputFlags[-1] = myOutputFlags[-1]+u"."+self._output_flags #append file ending
+		return myOutputFlags
 
       
 # ----------------------------- #
