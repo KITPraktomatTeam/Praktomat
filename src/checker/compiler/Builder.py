@@ -209,9 +209,17 @@ class CompilerOrLinker(Checker, IncludeHelper):
 			This also protects somewhat against options (`-foo') and metacharacters (`foo; ls') in file names. To be overloaded in subclasses. """
 		return self._file_pattern
 
+#	def get_file_names(self,env):
+#	  	""" default implementation of get_file_names throws a TypeError """
+#		raise TypeError("Can't instantiate class with abstract method get_file_names(self,env). You have to implement it using rxarg(self).")
 	def get_file_names(self,env):
-	  	""" default implementation of get_file_names throws a TypeError """
-		raise TypeError("Can't instantiate class with abstract method get_file_names(self,env). You have to implement it using rxarg(self).")
+		
+		if isinstance (self.rxarg(), basestring):
+			rxarg = re.compile(self.rxarg())
+			return [name for (name,content) in env.sources() if rxarg.match(name)]
+		else:
+			return [name for (name, content) in env.sources() if name in self.rxarg()]
+
 
 
 	def enhance_output(self, env, output):
@@ -262,9 +270,9 @@ class Compiler(CompilerOrLinker):
 		return u"%s - Compiler" % self.language()
 
 
-	def get_file_names(self,env):
-		rxarg = re.compile(self.rxarg())
-		return [name for (name,content) in env.sources() if rxarg.match(name)]		
+#	def get_file_names(self,env):
+#		rxarg = re.compile(self.rxarg())
+#		return [name for (name,content) in env.sources() if rxarg.match(name)]		
 	      
 	      
 	def output_flags(self, env):     
@@ -312,10 +320,10 @@ class Linker(CompilerOrLinker):
 
 	
 
-	def get_file_names(self,env):
-		rxarg = re.compile(self.rxarg())
-		#ToDo: think again if env.sources() fits here - perhaps not! ...		
-		return [name for (name,content) in env.sources() if rxarg.match(name)]			      
+#	def get_file_names(self,env):
+#		rxarg = re.compile(self.rxarg())
+#		#ToDo: think again if env.sources() fits here - perhaps not! ...		
+#		return [name for (name,content) in env.sources() if rxarg.match(name)]			      
 
 	def output_flags(self, env):  		
 		self._fetch_output_flags(self._LINK_DICT[self._output_flags]+ u' ' +self._output_name)

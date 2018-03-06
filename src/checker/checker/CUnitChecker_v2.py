@@ -21,6 +21,10 @@ RXFAIL	   = re.compile(r"^(.*)(FAILURES!!!|your program crashed|cpu time limit e
 class IgnoringCBuilder2(CBuilder):
 	_ignore = []
 
+	def __init__(self,_flags, _ignore, _file_pattern,_output_flags):
+		super(IgnoringCBuilder2,self).__init__(_flags=_flags, _file_pattern=_file_pattern, _output_flags=_output_flags)
+		self._ignore=_ignore
+
 	def get_file_names(self,env):
 		rxarg = re.compile(self.rxarg())
 		return [name for (name,content) in env.sources() if rxarg.match(name) and (not name in self._ignore)]
@@ -144,8 +148,10 @@ class CUnitChecker2(CheckerWithFile):
 	#	on posix-systems use fork, execvp, 
 	#	on windows CreatePipe, CreateProcess , see  https://msdn.microsoft.com/en-us/library/windows/desktop/ms682499(v=vs.85).aspx
 
+		
 
 		# first copy testfiles to sandbox
+		noUnitTestSources = env.sources()
 		copyTestFileArchive_result = super(CUnitChecker2,self).run_file(env) # Instance of Class CheckerResult in basemodel.py
 
 		# if copying failed we can stop right here!
@@ -186,33 +192,39 @@ class CUnitChecker2(CheckerWithFile):
 			#ignoring all non test-code filenames for test_builder
 			
 			#TODO: How we can get the names?
-			# import zipfile  via src/utilities/file_operations
+			import zipfile  #via src/utilities/file_operations
 			# ZipFile.namelist()	Return a list of archive members by name.		
-			# with ZipFile('*.zip') as zip_file:			
-			#	names = zip_file.namelist()
 			
+			try:
+				with zipfile.ZipFile(self.file.path()) as zip_file:
+					names = zip_file.namelist()
+			except zipfile.BadZipfile:
+					names = [self.file]
+			 
+			raise TypeError
 			# shared object or executable
-			if "so" == link_type: 
+			if "so" == self.link_type: 
 				#languageCompiler C or CPP 
 				if self.use_cppBuilder():
 					#CPP
 					#solution_builder = IgnoringCXXBuilder2(_flags=self._flags, _libs=self.get_libs() ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-shared -fPIC -o "+env.program()+".so",_main_required=True)
-					solution_builder = IgnoringCXXBuilder2(_flags=self._flags,  _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-shared -fPIC -o "+env.program()+".so",_main_required=True)
-					test_builder = IgnoringCXXBuilder2(_flags=self._flags,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+self.class_name,_main_required=True)
+					solution_builder = IgnoringCXXBuilder2(_flags=self._flags, _ignore=names, _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-shared -fPIC -o "+env.program()+".so")
+					test_builder = IgnoringCXXBuilder2(_flags=self._flags, _ignore=noUnitTestSources, _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+self.class_name)
+					#test_builder = IgnoringCXXBuilder2(_flags=self._flags,_file_pattern=names,_output_flags="-o "+self.class_name)
 				else:
 					#C
-					solution_builder = IgnoringCBuilder2(_flags=self._flags, _file_pattern=r"^.*\.(c|C)$",_output_flags="-shared -fPIC -o "+env.program()+".so" ,_main_required=True)
-					test_builder = IgnoringCBuilder2(_flags=self._flags ,_file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+self.class_name ,_main_required=True)
+					solution_builder = IgnoringCBuilder2(_flags=self._flags, _ignore=names, _file_pattern=r"^.*\.(c|C)$",_output_flags="-shared -fPIC -o "+env.program()+".so")
+					test_builder = IgnoringCBuilder2(_flags=self._flags, _ignore=noUnitTestSources, _file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+self.class_name)
 			else: #executable
 				#languageCompiler C or CPP 
-				if use_cppBuilder():
+				if self.use_cppBuilder():
 					#CPP
-					solution_builder = IgnoringCXXBuilder2(_flags=self._flags ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+env.program()+".out",_main_required=True)
-					test_builder = IgnoringCXXBuilder2(_flags=self._flags ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+self.class_name,_main_required=True)
+					solution_builder = IgnoringCXXBuilder2(_flags=self._flags, _ignore=names ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+env.program()+".out")
+					test_builder = IgnoringCXXBuilder2(_flags=self._flags, _ignore=noUnitTestSources, _file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+self.class_name)
 				else:
 					#C
-					solution_builder = IgnoringCBuilder2(_flags=self._flags ,_file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+env.program()+".out",_main_required=True)
-					test_builder = IgnoringCBuilder2(_flags=self._flags ,_file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+self.class_name ,_main_required=True)
+					solution_builder = IgnoringCBuilder2(_flags=self._flags, _ignore=names , _file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+env.program()+".out")
+					test_builder = IgnoringCBuilder2(_flags=self._flags ,_ignore=noUnitTestSources, _file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+self.class_name)
 		
 		build_solution_result = None
 		if solution_builder:

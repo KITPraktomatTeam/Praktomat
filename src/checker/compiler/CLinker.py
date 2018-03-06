@@ -85,8 +85,9 @@ class CLinker(Linker, LibraryHelper, MainNeedHelper):
                                 env.add_source(f, None)
                         except StopIteration: pass
 
-		rxarg = re.compile(self.rxarg())	
-		return [name for (name,content) in env.sources() if rxarg.match(name)]			      
+		#rxarg = re.compile(self.rxarg())	
+		#return [name for (name,content) in env.sources() if rxarg.match(name)]			      
+		return super(CLinker,self).get_file_names(env)
 
 	def logbuilder(self,output,args,env):
 		return self.build_log(output,args,self.get_file_names(env))
