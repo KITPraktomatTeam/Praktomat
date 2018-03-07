@@ -196,12 +196,18 @@ class CUnitChecker2(CheckerWithFile):
 			# ZipFile.namelist()	Return a list of archive members by name.		
 			
 			try:
-				with zipfile.ZipFile(self.file.path()) as zip_file:
+				with zipfile.ZipFile(self.file.path) as zip_file:
 					names = zip_file.namelist()
 			except zipfile.BadZipfile:
-					names = [self.file]
+					import string
+					cleanpath = string.lstrip(self.file.path,"/ ")
+					filename = self.filename if self.filename else self.file.path
+					source_path = os.path.join(cleanpath, os.path.basename(filename))
+					path = os.path.join(env.tmpdir(),source_path)
+					names =[path]
+
 			 
-			raise TypeError
+			
 			# shared object or executable
 			if "so" == self.link_type: 
 				#languageCompiler C or CPP 
@@ -243,7 +249,9 @@ class CUnitChecker2(CheckerWithFile):
 			# result = self.create_result(env)
 			# result += build_test_result
 			result.set_passed(False)
-			result.set_log( escape(self.cunit_version)  + '<pre>' + escape(self.test_description) + '\n\n======== Test Results ======\n\n</pre><br/>\n'+build_test_result.log )
+			#result.set_log( escape(self.cunit_version)  + '<pre>' + escape(self.test_description) + '\n\n======== Test Results ======\n\n</pre><br/>\n'+build_test_result.log )
+			result.set_log( '<pre>' + escape(self.test_description) + '\n\n==========  Preprocessing =============\n*    Generating  "Testing Executable"*\n======== Failure-Results ==============\n\n</pre><br/>\n'+build_solution_result.log )
+
 			# raise TypeError
 			return result
 		#result = build_test_result
