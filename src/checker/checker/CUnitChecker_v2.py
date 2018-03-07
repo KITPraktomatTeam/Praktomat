@@ -18,10 +18,13 @@ from checker.compiler.CXXBuilder import CXXBuilder
 
 RXFAIL	   = re.compile(r"^(.*)(FAILURES!!!|your program crashed|cpu time limit exceeded|ABBRUCH DURCH ZEITUEBERSCHREITUNG|Could not find class|Killed|failures)(.*)$",	re.MULTILINE)
 
+
+#TODO: okay perhaps we could merge both IgnoringBuilders while specialising from Compiler
+
 class IgnoringCBuilder2(CBuilder):
 	_ignore = []
 
-	def __init__(self,_flags, _ignore, _file_pattern,_output_flags):
+	def __init__(self,_flags, _ignore, _file_pattern, _output_flags):
 		super(IgnoringCBuilder2,self).__init__(_flags=_flags, _file_pattern=_file_pattern, _output_flags=_output_flags)
 		self._ignore=_ignore
 
@@ -55,25 +58,28 @@ class CUnitChecker2(CheckerWithFile):
 # https://sourceforge.net/projects/cppunit/
 	# Add fields to configure checker instances. You can use any of the Django fields. (See online documentation)
 	# The fields created, task, public, required and always will be inherited from the abstract base class Checker
-	class_name = models.CharField(
+	_test_name = models.CharField(
             max_length=100,
             help_text=_("The fully qualified name of the test case executable (with fileending like .exe or .out)"),
-    	    verbose_name=_("TestApp Filename")
+    	    verbose_name=_("TestApp Filename"),
+	    default=u"TestApp.out"
 	)
-	test_description = models.TextField(help_text = _("Description of the Testcase. To be displayed on Checker Results page when checker is  unfolded."))
-	name = models.CharField(max_length=100, help_text=_("Name of the Testcase. To be displayed as title on Checker Results page"))
-	_ignore = models.CharField(max_length=4096, help_text=_("Regular Expression for ignoring files while compile and link test-code.")+" Play with  RegEx at <a href=\"http://pythex.org/\" target=\"_blank\">http://pythex.org/ </a>",default="", blank=True)
-	_ignore_sol = models.CharField(max_length=4096, help_text=_("Regular Expression for ignoring files while compile and link solution-code."),default="", blank=True)
-        _flags = models.CharField(max_length = 1000, blank = True, default="-Wall -Wextra", help_text = _('Compiler flags'))
-        _libs  = models.CharField(max_length = 1000, blank = True, default = "", help_text = _('Compiler libraries except cunit, cppunit'))
-	
-	LINK_CHOICES = (
-	  ('o', u'Link Trainers Test-Code with solution objects (*.o)'),
-	  ('so', u'Link solution objects as shared object (*.so, *.dll)'),
-	  ('out', u'Link solution objects as seperate executable program (*.out, *.exe)'),
-	)
-	link_type = models.CharField(max_length=16, choices=LINK_CHOICES,default="o", help_text = _('How to use solution submission in test-code?'))
+	_test_ignore = models.CharField(max_length=4096, 
+	    help_text=_("Regular Expression for ignoring files while compile and link test-code.")+" Play with  RegEx at <a href=\"http://pythex.org/\" target=\"_blank\">http://pythex.org/ </a>",
+	    default=u"sorry, this feature doesn't work now", blank=True)
 
+	_test_flags = models.CharField(max_length = 1000, blank = True, 
+	    default=u"-Wall -Wextra -Wl,--warn-common", 
+	    help_text = _("Compiler and Linker flags for i.e. libraries used while generating TestApp. <br> Don't fill in cunit or cppunit here."))
+
+	LINK_CHOICES = (
+	  (u'o', u'Link Trainers Test-Code with solution objects (*.o)'),
+	  (u'so', u'MUT: Link solution objects as shared object (*.so, *.dll)'),
+	  (u'out', u'MUT: Link solution objects as seperate executable program (*.out, *.exe)'),
+	)
+	LINK_DICT = {u'out':u'-o' , u'so':u'-shared -fPIC -o' , u'o':u''}
+	link_type = models.CharField(max_length=16, choices=LINK_CHOICES,default="o", help_text = _('How to use solution submission in test-code?'))
+	
 
 	CUNIT_CHOICES = (
 	  ('cunit', u'CUnit 2.1-3'),
@@ -81,18 +87,67 @@ class CUnitChecker2(CheckerWithFile):
 	  ('c', u'C tests'),
 	  ('cpp', u'CPP tests'),
 	)
+	CUNIT_DICT = {u'cunit':u'-lcunit' , u'cppunit':u'-lcppunit' , u'c':u'', u'cpp':u''}
 	cunit_version = models.CharField(max_length=16, choices=CUNIT_CHOICES,default="cunit")
 
+
+	_test_par = models.CharField(max_length = 1000, 
+	    default=u"", 
+	    help_text = _("Command line parameters for running TestApp"),
+	    blank=True)
+
+	#don't change next two variable names, they are fixed in checker-hierarchie
+	test_description = models.TextField(help_text = _("Description of the Testcase. To be displayed on Checker Results page when checker is  unfolded."))
+	name = models.CharField(max_length=100, help_text=_("Name of the Testcase. To be displayed as title on Checker Results page"))
+
+	_sol_name =  models.CharField(
+            max_length=100,
+            help_text=_("Basisfilename ( = filename without fileending!) for interaction with  MUT (Module-Under-Test)<br>" 
+			+"The fileending to use gets determined by your choosen Link type.<br>"
+			),
+	    verbose_name=_("MUT Filename"),
+	    default=u"Solution"
+	)	
+	_sol_ignore = models.CharField(max_length=4096, 
+	    help_text=_("Regular Expression for ignoring files while compile CUT and link MUT.<br>"
+		      +"CUT = Code Under Test - MUT = Module Under Test <br>"
+                      +"Play with RegEx at <a href=\"http://pythex.org/\" target=\"_blank\">http://pythex.org/ </a>"
+                      ),
+	    default="sorry, this feature doesn't work now", blank=True, 
+	    verbose_name=_("MUT ignore files")
+)
+
+        _sol_flags = models.CharField(max_length = 1000, blank = True, 
+	    default=u"-Wall -Wextra -Wl,--warn-common", 
+	    help_text = _("Compiler and Linker flags used while generating MUT (Module-under-Test)."),
+	    verbose_name=_("MUT flags")
+	)
+	
 	def use_cppBuilder(self):
 		if 'pp' in self.cunit_version:
 			return True
 		else:
 			return False
 	
-	def get_libs(self):
-		if (('cunit' == self.cunit_version) or ('cppunit' == self.cunit_version)):
-			return self._libs + ' -l'+ self.cunit_version
-		return self._libs
+#	def get_libs(self):
+#		if (('cunit' == self.cunit_version) or ('cppunit' == self.cunit_version)):
+#			return self._libs + ' -l'+ self.cunit_version
+#		return self._libs
+	
+	def mut_flags(self,env):
+		return self._sol_flags if self._sol_flags else " "
+	
+
+	def mut_output_flags(self,env):
+		return self.LINK_DICT[self.link_type] +u' '+self._sol_name+u"."+self.link_type
+
+	def test_flags(self, env):
+		my_unittest_flags = self.CUNIT_DICT[self.cunit_version]
+		my_flags_str = self._test_flags +u" "+my_unittest_flags
+		return my_flags_str
+
+	def test_output_flags(self,env):
+		return u'-o '+self._test_name
 
 	def runner(self):
 		#return {'cunit' : 'cuMain.exe', 'cppunit' : 'cxxMain.exe' }[self.cunit_version]
@@ -209,28 +264,45 @@ class CUnitChecker2(CheckerWithFile):
 			 
 			
 			# shared object or executable
-			if "so" == self.link_type: 
-				#languageCompiler C or CPP 
-				if self.use_cppBuilder():
-					#CPP
-					#solution_builder = IgnoringCXXBuilder2(_flags=self._flags, _libs=self.get_libs() ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-shared -fPIC -o "+env.program()+".so",_main_required=True)
-					solution_builder = IgnoringCXXBuilder2(_flags=self._flags, _ignore=names, _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-shared -fPIC -o "+env.program()+".so")
-					test_builder = IgnoringCXXBuilder2(_flags=self._flags, _ignore=noUnitTestSources, _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+self.class_name)
-					#test_builder = IgnoringCXXBuilder2(_flags=self._flags,_file_pattern=names,_output_flags="-o "+self.class_name)
-				else:
-					#C
-					solution_builder = IgnoringCBuilder2(_flags=self._flags, _ignore=names, _file_pattern=r"^.*\.(c|C)$",_output_flags="-shared -fPIC -o "+env.program()+".so")
-					test_builder = IgnoringCBuilder2(_flags=self._flags, _ignore=noUnitTestSources, _file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+self.class_name)
-			else: #executable
-				#languageCompiler C or CPP 
-				if self.use_cppBuilder():
-					#CPP
-					solution_builder = IgnoringCXXBuilder2(_flags=self._flags, _ignore=names ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+env.program()+".out")
-					test_builder = IgnoringCXXBuilder2(_flags=self._flags, _ignore=noUnitTestSources, _file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+self.class_name)
-				else:
-					#C
-					solution_builder = IgnoringCBuilder2(_flags=self._flags, _ignore=names , _file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+env.program()+".out")
-					test_builder = IgnoringCBuilder2(_flags=self._flags ,_ignore=noUnitTestSources, _file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+self.class_name)
+
+#			if "so" == self.link_type: 
+#				#languageCompiler C or CPP 
+#				if self.use_cppBuilder():
+#					#CPP
+#					#solution_builder = IgnoringCXXBuilder2(_flags=self._flags, _libs=self.get_libs() ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-shared -fPIC -o "+env.program()+".so",_main_required=True)
+#					solution_builder = IgnoringCXXBuilder2(_flags=self._flags, _ignore=names, _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-shared -fPIC -o "+env.program()+".so")
+#					test_builder = IgnoringCXXBuilder2(_flags=self._flags, _ignore=noUnitTestSources, _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+self.class_name)
+#					#test_builder = IgnoringCXXBuilder2(_flags=self._flags,_file_pattern=names,_output_flags="-o "+self.class_name)
+#				else:
+#					#C
+#					solution_builder = IgnoringCBuilder2(_flags=self._flags, _ignore=names, _file_pattern=r"^.*\.(c|C)$",_output_flags="-shared -fPIC -o "+env.program()+".so")
+#					test_builder = IgnoringCBuilder2(_flags=self._flags, _ignore=noUnitTestSources, _file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+self.class_name)
+#			else: #executable
+#				#languageCompiler C or CPP 
+#				if self.use_cppBuilder():
+#					#CPP
+#					solution_builder = IgnoringCXXBuilder2(_flags=self._flags, _ignore=names ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+env.program()+".out")
+#					test_builder = IgnoringCXXBuilder2(_flags=self._flags, _ignore=noUnitTestSources, _file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+self.class_name)
+#				else:
+#					#C
+#					solution_builder = IgnoringCBuilder2(_flags=self._flags, _ignore=names , _file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+env.program()+".out")
+#					test_builder = IgnoringCBuilder2(_flags=self._flags ,_ignore=noUnitTestSources, _file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+self.class_name)
+
+			my_test_flags = self.test_flags(env)
+			my_mut_flags = self.mut_flags(env)
+			my_test_oflags = self.test_output_flags(env)
+			my_mut_oflags = self.mut_output_flags(env)
+
+			#languageCompiler C or CPP 
+			if self.use_cppBuilder():
+				#CPP
+				#solution_builder = IgnoringCXXBuilder2(_flags=self._flags, _libs=self.get_libs() ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-shared -fPIC -o "+env.program()+".so",_main_required=True)
+				solution_builder = IgnoringCXXBuilder2(_flags=my_mut_flags, _ignore=names, _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags=my_mut_oflags)
+				test_builder = IgnoringCXXBuilder2(_flags=my_test_flags, _ignore=noUnitTestSources, _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags=my_test_oflags)
+			else:
+				#C
+				solution_builder = IgnoringCBuilder2(_flags=my_mut_flags, _ignore=names, _file_pattern=r"^.*\.(c|C)$",_output_flags=my_mut_oflags)
+				test_builder = IgnoringCBuilder2(_flags=my_test_flags, _ignore=noUnitTestSources, _file_pattern=r"^.*\.(c|C)$",_output_flags=my_test_oflags)
 		
 		build_solution_result = None
 		if solution_builder:
