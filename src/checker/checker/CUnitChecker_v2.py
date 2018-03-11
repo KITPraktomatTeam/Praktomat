@@ -30,7 +30,13 @@ class IgnoringCBuilder2(CBuilder):
 
 	def get_file_names(self,env):
 		rxarg = re.compile(self.rxarg())
-		return [name for (name,content) in env.sources() if rxarg.match(name) and (not name in self._ignore)]
+		ret = [name for (name,content) in env.sources() if rxarg.match(name) and (not name in self._ignore)]
+		return ret
+
+	def runFail(self,env,_fail):
+		if _fail:
+			raise TypeError
+		return self.run(env)
 
 	# Since this checkers instances  will not be saved(), we don't save their results, either
 	def create_result(self, env):
@@ -38,12 +44,18 @@ class IgnoringCBuilder2(CBuilder):
 		return CheckerResult(checker=self, solution=env.solution())
 
 
+
 class IgnoringCXXBuilder2(CXXBuilder):
 	_ignore = []
 
+	def __init__(self,_flags, _ignore, _file_pattern, _output_flags):
+		super(IgnoringCXXBuilder2,self).__init__(_flags=_flags, _file_pattern=_file_pattern, _output_flags=_output_flags)
+		self._ignore=_ignore
+
 	def get_file_names(self,env):
 		rxarg = re.compile(self.rxarg())
-		return [name for (name,content) in env.sources() if rxarg.match(name) and (not name in self._ignore)]
+		ret = [name for (name,content) in env.sources() if rxarg.match(name) and (not name in self._ignore)]
+		return ret
 
 	# Since this checkers instances  will not be saved(), we don't save their results, either
 	def create_result(self, env):
@@ -129,10 +141,6 @@ class CUnitChecker2(CheckerWithFile):
 		else:
 			return False
 	
-#	def get_libs(self):
-#		if (('cunit' == self.cunit_version) or ('cppunit' == self.cunit_version)):
-#			return self._libs + ' -l'+ self.cunit_version
-#		return self._libs
 	
 	def mut_flags(self,env):
 		return self._sol_flags if self._sol_flags else " "
@@ -206,7 +214,8 @@ class CUnitChecker2(CheckerWithFile):
 		
 
 		# first copy testfiles to sandbox
-		noUnitTestSources = env.sources()
+		noUnitTest_Sources = env.sources()[:] #swallow copy because env.sources() gets manipulated by time
+		noUnitTest_Filenames = [ seq[0] for seq in noUnitTest_Sources ]
 		copyTestFileArchive_result = super(CUnitChecker2,self).run_file(env) # Instance of Class CheckerResult in basemodel.py
 
 		# if copying failed we can stop right here!
@@ -233,77 +242,51 @@ class CUnitChecker2(CheckerWithFile):
 
 		# if link_type is o, we have to compile and link all code with test_builder
 		if "o" == self.link_type:
+			my_flags = self.test_flags(env) + self.mut_flags(env)
+			my_oflags = self.test_output_flags(env) # + self.mut_output_flags(env)
 
 			#languageCompiler C or CPP 
 			if self.use_cppBuilder():
 				#CPP
-				#test_builder = IgnoringCXXBuilder2(_flags=self._flags, _libs=self.get_libs() ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+self.class_name)
-				test_builder = IgnoringCXXBuilder2(_flags=self._flags ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+self.class_name)
+				test_builder = IgnoringCXXBuilder2(_flags=my_flags ,_ignore=[], _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags=my_oflags)
 			else:
 				#C
-				test_builder = IgnoringCBuilder2(_flags=self._flags ,_file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+self.class_name)
+				test_builder = IgnoringCBuilder2(_flags=my_flags, _ignore=[], _file_pattern=r"^.*\.(c|C)$",_output_flags=my_oflags)
 		else:
 			#ignoring all test-code filenames for solution_builder
 			#ignoring all non test-code filenames for test_builder
 			
-			#TODO: How we can get the names?
 			import zipfile  #via src/utilities/file_operations
-			# ZipFile.namelist()	Return a list of archive members by name.		
 			
 			try:
 				with zipfile.ZipFile(self.file.path) as zip_file:
 					names = zip_file.namelist()
 			except zipfile.BadZipfile:
 					import string
-					cleanpath = string.lstrip(self.file.path,"/ ")
-					filename = self.filename if self.filename else self.file.path
-					source_path = os.path.join(cleanpath, os.path.basename(filename))
-					path = os.path.join(env.tmpdir(),source_path)
-					names =[path]
-
-			 
+					import re
+					cleanfilename = re.sub(r'^CheckerFiles/Task_\d*/'+self.__class__.__name__, '', self.file.name).lstrip('/')
+					names = [cleanfilename]			 
 			
 			# shared object or executable
-
-#			if "so" == self.link_type: 
-#				#languageCompiler C or CPP 
-#				if self.use_cppBuilder():
-#					#CPP
-#					#solution_builder = IgnoringCXXBuilder2(_flags=self._flags, _libs=self.get_libs() ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-shared -fPIC -o "+env.program()+".so",_main_required=True)
-#					solution_builder = IgnoringCXXBuilder2(_flags=self._flags, _ignore=names, _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-shared -fPIC -o "+env.program()+".so")
-#					test_builder = IgnoringCXXBuilder2(_flags=self._flags, _ignore=noUnitTestSources, _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+self.class_name)
-#					#test_builder = IgnoringCXXBuilder2(_flags=self._flags,_file_pattern=names,_output_flags="-o "+self.class_name)
-#				else:
-#					#C
-#					solution_builder = IgnoringCBuilder2(_flags=self._flags, _ignore=names, _file_pattern=r"^.*\.(c|C)$",_output_flags="-shared -fPIC -o "+env.program()+".so")
-#					test_builder = IgnoringCBuilder2(_flags=self._flags, _ignore=noUnitTestSources, _file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+self.class_name)
-#			else: #executable
-#				#languageCompiler C or CPP 
-#				if self.use_cppBuilder():
-#					#CPP
-#					solution_builder = IgnoringCXXBuilder2(_flags=self._flags, _ignore=names ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-o "+env.program()+".out")
-#					test_builder = IgnoringCXXBuilder2(_flags=self._flags, _ignore=noUnitTestSources, _file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+self.class_name)
-#				else:
-#					#C
-#					solution_builder = IgnoringCBuilder2(_flags=self._flags, _ignore=names , _file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+env.program()+".out")
-#					test_builder = IgnoringCBuilder2(_flags=self._flags ,_ignore=noUnitTestSources, _file_pattern=r"^.*\.(c|C)$",_output_flags="-o "+self.class_name)
 
 			my_test_flags = self.test_flags(env)
 			my_mut_flags = self.mut_flags(env)
 			my_test_oflags = self.test_output_flags(env)
 			my_mut_oflags = self.mut_output_flags(env)
 
+			#raise TypeError			
+
 			#languageCompiler C or CPP 
 			if self.use_cppBuilder():
 				#CPP
-				#solution_builder = IgnoringCXXBuilder2(_flags=self._flags, _libs=self.get_libs() ,_file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags="-shared -fPIC -o "+env.program()+".so",_main_required=True)
 				solution_builder = IgnoringCXXBuilder2(_flags=my_mut_flags, _ignore=names, _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags=my_mut_oflags)
-				test_builder = IgnoringCXXBuilder2(_flags=my_test_flags, _ignore=noUnitTestSources, _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags=my_test_oflags)
+				test_builder = IgnoringCXXBuilder2(_flags=my_test_flags, _ignore=noUnitTest_Filenames, _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags=my_test_oflags)
 			else:
 				#C
 				solution_builder = IgnoringCBuilder2(_flags=my_mut_flags, _ignore=names, _file_pattern=r"^.*\.(c|C)$",_output_flags=my_mut_oflags)
-				test_builder = IgnoringCBuilder2(_flags=my_test_flags, _ignore=noUnitTestSources, _file_pattern=r"^.*\.(c|C)$",_output_flags=my_test_oflags)
-		
+				test_builder = IgnoringCBuilder2(_flags=my_test_flags, _ignore=noUnitTest_Filenames, _file_pattern=r"^.*\.(c|C)$",_output_flags=my_test_oflags)
+
+			
 		build_solution_result = None
 		if solution_builder:
 			build_solution_result = solution_builder.run(env)
@@ -312,31 +295,23 @@ class CUnitChecker2(CheckerWithFile):
 				# result += build_solution_result
 				result.set_passed(False)
 				result.set_log( '<pre>' + escape(self.test_description) + '\n\n==========  Preprocessing =============\n*    Generating "Shared Object"       *\n* or "Executable" from solution files *\n======== Failure-Results ==============\n\n</pre><br/>\n'+build_solution_result.log )
-				# raise TypeError
 				return result
-		#result = build_solution_result
 
 		build_test_result = test_builder.run(env) 
 		if not build_test_result.passed:
 			# result = self.create_result(env)
 			# result += build_test_result
 			result.set_passed(False)
-			#result.set_log( escape(self.cunit_version)  + '<pre>' + escape(self.test_description) + '\n\n======== Test Results ======\n\n</pre><br/>\n'+build_test_result.log )
-			result.set_log( '<pre>' + escape(self.test_description) + '\n\n==========  Preprocessing =============\n*    Generating  "Testing Executable"*\n======== Failure-Results ==============\n\n</pre><br/>\n'+build_solution_result.log )
-
-			# raise TypeError
+			result.set_log( '<pre>' + escape(self.test_description) + '\n\n==========  Preprocessing =============\n*    Generating  "Testing Executable" *\n======== Failure-Results ==============\n\n</pre><br/>\n'+build_test_result.log )
 			return result
-		#result = build_test_result
 
 		environ = {}
 
 		environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
-		#environ['JAVA'] = settings.JVM
                 script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
-		#environ['POLICY'] = os.path.join(script_dir,"junit.policy")
 
-		#cmd = [u'echo ',self.class_name, u'&&' , self.runner(), self.class_name]
-		cmd = [os.path.join(script_dir,self.runner()),self.class_name]
+		cmd_par = self._test_par.split(' ') if self._test_par else []
+		cmd = [os.path.join(script_dir,self.runner()),self._test_name] + cmd_par
 		[output, error, exitcode,timed_out, oom_ed] = execute_arglist(cmd, env.tmpdir(),environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE, extradirs=[script_dir])
 
 		#result = self.create_result(env)
@@ -348,22 +323,34 @@ class CUnitChecker2(CheckerWithFile):
 		result.set_log(output,timed_out=timed_out or oom_ed,truncated=truncated,oom_ed=oom_ed)
 		result.set_passed(not exitcode and not timed_out and not oom_ed and self.output_ok(output) and not truncated)
 		result.save()
+		#raise TypeError
 		return result
 
-#class JUnitCheckerForm(AlwaysChangedModelForm):
-#	def __init__(self, **args):
-#		""" override default values for the model fields """
-#		super(JUnitCheckerForm, self).__init__(**args)
-#		self.fields["_flags"].initial = ""
-#		self.fields["_output_flags"].initial = ""
-#		self.fields["_libs"].initial = "junit3"
-#		self.fields["_file_pattern"].initial = r"^.*\.[jJ][aA][vV][aA]$"
+class UnitCheckerCopyForm(AlwaysChangedModelForm):
+	def __init__(self, **args):
+		""" override default values for the model fields """
+		super(UnitCheckerCopyForm, self).__init__(**args)
+		#self.fields["_flags"].initial = ""
+		#self.fields["_output_flags"].initial = ""
+		#self.fields["_libs"].initial = "junit3"
+		#self.fields["_file_pattern"].initial = r"^.*\.[jJ][aA][vV][aA]$"
+		
+	def clean_filename(self):
+		filename = self.cleaned_data['filename']
+		if (not filename.strip()):
+			if 'file' in self.cleaned_data:
+				file = self.cleaned_data['file']
+				return (os.path.basename(file.name))
+			else:
+				return None
+		else:
+			return filename
 	
 class CUnitChecker2Inline(CheckerInline):
 	""" This Class defines how the the the checker is represented as inline in the task admin page. """
 	model = CUnitChecker2
 	verbose_name = "C/C++ Unit Checker 2"
-#	form = JUnitCheckerForm
+	form = UnitCheckerCopyForm
 
 # A more advanced example: By overwriting the form of the checkerinline the initial values of the inherited atributes can be overritten.
 # An other example would be to validate the inputfields in the form. (See Django documentation)

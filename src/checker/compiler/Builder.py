@@ -146,6 +146,10 @@ class CompilerOrLinker(Checker, IncludeHelper):
  			pass
 		
                 filenames = [name for name in self.get_file_names(env)]
+
+#		if (issubclass(type(self), Compiler)) and ('Ignoring' in self.__class__.__name__):
+#			raise TypeError
+
 		args = [self.__runner] + self.output_flags(env) + self.connected_flags(env) + filenames
 		script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
                                 
