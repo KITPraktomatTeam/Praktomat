@@ -242,7 +242,7 @@ class CUnitChecker2(CheckerWithFile):
 
 		# if link_type is o, we have to compile and link all code with test_builder
 		if "o" == self.link_type:
-			my_flags = self.test_flags(env) + self.mut_flags(env)
+			my_flags = self.test_flags(env) +u" " + self.mut_flags(env)
 			my_oflags = self.test_output_flags(env) # + self.mut_output_flags(env)
 
 			#languageCompiler C or CPP 
