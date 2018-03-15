@@ -242,7 +242,7 @@ class CUnitChecker2(CheckerWithFile):
 
 		# if link_type is o, we have to compile and link all code with test_builder
 		if "o" == self.link_type:
-			my_flags = self.test_flags(env) +u" " + self.mut_flags(env)
+			my_flags = self.mut_flags(env) +u" " + self.test_flags(env)
 			my_oflags = self.test_output_flags(env) # + self.mut_output_flags(env)
 
 			#languageCompiler C or CPP 
@@ -323,7 +323,7 @@ class CUnitChecker2(CheckerWithFile):
 		result.set_log(output,timed_out=timed_out or oom_ed,truncated=truncated,oom_ed=oom_ed)
 		result.set_passed(not exitcode and not timed_out and not oom_ed and self.output_ok(output) and not truncated)
 		result.save()
-		#raise TypeError
+
 		return result
 
 class UnitCheckerCopyForm(AlwaysChangedModelForm):
@@ -335,6 +335,7 @@ class UnitCheckerCopyForm(AlwaysChangedModelForm):
 		#self.fields["_libs"].initial = "junit3"
 		#self.fields["_file_pattern"].initial = r"^.*\.[jJ][aA][vV][aA]$"
 		
+		
 	def clean_filename(self):
 		filename = self.cleaned_data['filename']
 		if (not filename.strip()):
@@ -343,8 +344,23 @@ class UnitCheckerCopyForm(AlwaysChangedModelForm):
 				return (os.path.basename(file.name))
 			else:
 				return None
-		else:
-			return filename
+		else:			
+			if 'file' in self.cleaned_data:
+				file = self.cleaned_data['file']
+				basename = os.path.basename(file.name)
+				force = self.cleaned_data.get('force_save')
+				
+  				if not force: 
+					if not (filename == basename):
+						from django import forms
+    						self.fields['force_save'] = forms.BooleanField(initial=True, widget=forms.HiddenInput())
+    						raise forms.ValidationError(_('You should check \"Filename\" value. The correct name could be: ')+basename)
+					else:
+						return filename
+				else:
+					return filename
+			else:
+				return filename
 	
 class CUnitChecker2Inline(CheckerInline):
 	""" This Class defines how the the the checker is represented as inline in the task admin page. """

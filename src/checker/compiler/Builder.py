@@ -150,7 +150,7 @@ class CompilerOrLinker(Checker, IncludeHelper):
 #		if (issubclass(type(self), Compiler)) and ('Ignoring' in self.__class__.__name__):
 #			raise TypeError
 
-		args = [self.__runner] + self.output_flags(env) + self.connected_flags(env) + filenames
+		args = [self.__runner] + self.output_flags(env) + filenames + self.connected_flags(env) 
 		script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
                                 
 		[output,error,exitcode,timed_out,oom_ed]  = execute_arglist(args, env.tmpdir(),self.environment(), extradirs=[script_dir])
