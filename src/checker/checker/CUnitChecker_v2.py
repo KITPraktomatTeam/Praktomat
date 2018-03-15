@@ -77,7 +77,7 @@ class CUnitChecker2(CheckerWithFile):
 	    default=u"TestApp.out"
 	)
 	_test_ignore = models.CharField(max_length=4096, 
-	    help_text=_("Regular Expression for ignoring files while compile and link test-code.")+" Play with  RegEx at <a href=\"http://pythex.org/\" target=\"_blank\">http://pythex.org/ </a>",
+	    help_text=_("Regular Expression for ignoring files while compile and link test-code.")+" <br> Play with  RegEx at <a href=\"http://pythex.org/\" target=\"_blank\">http://pythex.org/ </a>",
 	    default=u"sorry, this feature doesn't work now", blank=True)
 
 	_test_flags = models.CharField(max_length = 1000, blank = True, 
@@ -100,7 +100,7 @@ class CUnitChecker2(CheckerWithFile):
 	  ('cpp', u'CPP tests'),
 	)
 	CUNIT_DICT = {u'cunit':u'-lcunit' , u'cppunit':u'-lcppunit' , u'c':u'', u'cpp':u''}
-	cunit_version = models.CharField(max_length=16, choices=CUNIT_CHOICES,default="cunit")
+	cunit_version = models.CharField(max_length=16, choices=CUNIT_CHOICES,default="cunit", verbose_name=_("Unittest type or library"))
 
 
 	_test_par = models.CharField(max_length = 1000, 
@@ -134,6 +134,9 @@ class CUnitChecker2(CheckerWithFile):
 	    help_text = _("Compiler and Linker flags used while generating MUT (Module-under-Test)."),
 	    verbose_name=_("MUT flags")
 	)
+
+
+
 	
 	def use_cppBuilder(self):
 		if 'pp' in self.cunit_version:
@@ -327,6 +330,7 @@ class CUnitChecker2(CheckerWithFile):
 		return result
 
 class UnitCheckerCopyForm(AlwaysChangedModelForm):
+		
 	def __init__(self, **args):
 		""" override default values for the model fields """
 		super(UnitCheckerCopyForm, self).__init__(**args)
@@ -350,11 +354,11 @@ class UnitCheckerCopyForm(AlwaysChangedModelForm):
 				basename = os.path.basename(file.name)
 				force = self.cleaned_data.get('force_save')
 				
-  				if not force: 
+				if not force: 
 					if not (filename == basename):
 						from django import forms
-    						self.fields['force_save'] = forms.BooleanField(initial=True, widget=forms.HiddenInput())
-    						raise forms.ValidationError(_('You should check \"Filename\" value. The correct name could be: ')+basename)
+						self.fields['force_save'] = forms.BooleanField(initial=True, widget=forms.HiddenInput())
+						raise forms.ValidationError(_('You should check \"Filename\" value. The correct name could be: ')+basename)
 					else:
 						return filename
 				else:
@@ -362,11 +366,31 @@ class UnitCheckerCopyForm(AlwaysChangedModelForm):
 			else:
 				return filename
 	
+
 class CUnitChecker2Inline(CheckerInline):
 	""" This Class defines how the the the checker is represented as inline in the task admin page. """
 	model = CUnitChecker2
 	verbose_name = "C/C++ Unit Checker 2"
 	form = UnitCheckerCopyForm
+	# graphical layout
+	fieldsets = (
+		(None, {
+		'fields': ('order',
+			('public', 'required', 'always', 'critical'),
+			'name','test_description',
+			( 'file', 'unpack_zipfile'),
+			( 'path', 'filename'),
+			'_sol_name',
+			('_sol_ignore', '_sol_flags'),
+			'_test_name',
+			('_test_ignore', '_test_flags'),
+			'cunit_version',
+			'link_type',
+			'_test_par'),
+		}),
+	)
+
+
 
 # A more advanced example: By overwriting the form of the checkerinline the initial values of the inherited atributes can be overritten.
 # An other example would be to validate the inputfields in the form. (See Django documentation)
