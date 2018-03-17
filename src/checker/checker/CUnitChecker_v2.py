@@ -192,6 +192,13 @@ class CUnitChecker2(CheckerWithFile):
 	# (unlike in Java there can a 
 	# public static void main(String args) method 
 	# in each class.)
+	#
+	# Each Instance of this CUnitChecker has a corresponding
+	# c-File with main-function.
+	# therefor we must hide c-main functions from other 
+	# instances of this checker.
+	# 
+	# Now we have a look to interactin with students files:  
 	# => If the student have to write a program, 
 	#    that is when the students submission contains a main function,
 	#    than we cannot link student-code and test-code 
@@ -374,7 +381,7 @@ class CUnitChecker2Inline(CheckerInline):
 	form = UnitCheckerCopyForm
 	# graphical layout
 	fieldsets = (
-		(None, {
+		(CUnitChecker2.description(), {
 		'fields': ('order',
 			('public', 'required', 'always', 'critical'),
 			'name','test_description',
