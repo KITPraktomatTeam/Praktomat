@@ -5,7 +5,7 @@ import re
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from checker.basemodels import Checker, CheckerResult, CheckerFileField, truncated_log
+from checker.basemodels import Checker, CheckerResult, CheckerFileField, truncated_log, CheckerEnvironment
 from checker.admin import	CheckerInline, AlwaysChangedModelForm
 from utilities.safeexec import execute_arglist
 from utilities.file_operations import *
@@ -135,7 +135,40 @@ class CUnitChecker2(CheckerWithFile):
 	    verbose_name=_("MUT flags")
 	)
 
+	def all_own_sibling_instances_filenames(self, env):
+		assert isinstance(env, CheckerEnvironment)
+		#my_solution = env.solution()
+		my_task_sibling_checkers = [c for c in self.task.get_checkers() if isinstance(c, self.__class__ ) ]
+		my_sibling_files = []
+		import zipfile  #via src/utilities/file_operations
+		for checker in my_task_sibling_checkers:
+			if (checker != self) :						
+				try:
+					with zipfile.ZipFile(checker.file.path) as zip_file:
+						names = zip_file.namelist()
+				except zipfile.BadZipfile:
+					import string
+					import re
+					cleanfilename = re.sub(r'^CheckerFiles/Task_\d*/'+self.__class__.__name__, '', checker.filename).lstrip('/')
+					names = [cleanfilename]	
+				my_sibling_files = my_sibling_files + names
+		return my_sibling_files
 
+
+
+	def instance_filenames(self, env):
+		
+		import zipfile  #via src/utilities/file_operations
+			
+		try:
+			with zipfile.ZipFile(self.file.path) as zip_file:
+				names = zip_file.namelist()
+		except zipfile.BadZipfile:
+				import string
+				import re
+				cleanfilename = re.sub(r'^CheckerFiles/Task_\d*/'+self.__class__.__name__, '', self.filename).lstrip('/')
+				names = [cleanfilename]	
+		return names		 
 
 	
 	def use_cppBuilder(self):
@@ -223,11 +256,13 @@ class CUnitChecker2(CheckerWithFile):
 
 		
 
-		# first copy testfiles to sandbox
-		noUnitTest_Sources = env.sources()[:] #swallow copy because env.sources() gets manipulated by time
-		noUnitTest_Filenames = [ seq[0] for seq in noUnitTest_Sources ]
-		copyTestFileArchive_result = super(CUnitChecker2,self).run_file(env) # Instance of Class CheckerResult in basemodel.py
+		
+		my_env_Sources = env.sources()[:] #swallow copy because env.sources() gets manipulated by time
+		no_sibling_UnitTest_Filenames = [ seq[0] for seq in my_env_Sources if seq[0] not in self.all_own_sibling_instances_filenames(env) ]
 
+		# copy testfiles to sandbox
+		copyTestFileArchive_result = super(CUnitChecker2,self).run_file(env) # Instance of Class CheckerResult in basemodel.py
+		
 		# if copying failed we can stop right here!
 		if not copyTestFileArchive_result.passed:
 			#result = self.create_result(env)
@@ -250,6 +285,9 @@ class CUnitChecker2(CheckerWithFile):
 		test_builder = None
 		solution_builder = None
 
+		#if self.order == 5:
+		#	raise TypeError
+
 		# if link_type is o, we have to compile and link all code with test_builder
 		if "o" == self.link_type:
 			my_flags = self.mut_flags(env) +u" " + self.test_flags(env)
@@ -258,25 +296,17 @@ class CUnitChecker2(CheckerWithFile):
 			#languageCompiler C or CPP 
 			if self.use_cppBuilder():
 				#CPP
-				test_builder = IgnoringCXXBuilder2(_flags=my_flags ,_ignore=[], _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags=my_oflags)
+				test_builder = IgnoringCXXBuilder2(_flags=my_flags ,_ignore=self.all_own_sibling_instances_filenames(env), _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags=my_oflags)
 			else:
 				#C
-				test_builder = IgnoringCBuilder2(_flags=my_flags, _ignore=[], _file_pattern=r"^.*\.(c|C)$",_output_flags=my_oflags)
+				test_builder = IgnoringCBuilder2(_flags=my_flags, _ignore=self.all_own_sibling_instances_filenames(env), _file_pattern=r"^.*\.(c|C)$",_output_flags=my_oflags)
 		else:
 			#ignoring all test-code filenames for solution_builder
 			#ignoring all non test-code filenames for test_builder
 			
-			import zipfile  #via src/utilities/file_operations
 			
-			try:
-				with zipfile.ZipFile(self.file.path) as zip_file:
-					names = zip_file.namelist()
-			except zipfile.BadZipfile:
-					import string
-					import re
-					cleanfilename = re.sub(r'^CheckerFiles/Task_\d*/'+self.__class__.__name__, '', self.file.name).lstrip('/')
-					names = [cleanfilename]			 
-			
+			names = self.instance_filenames(env)
+
 			# shared object or executable
 
 			my_test_flags = self.test_flags(env)
@@ -284,17 +314,17 @@ class CUnitChecker2(CheckerWithFile):
 			my_test_oflags = self.test_output_flags(env)
 			my_mut_oflags = self.mut_output_flags(env)
 
-			#raise TypeError			
+						
 
 			#languageCompiler C or CPP 
 			if self.use_cppBuilder():
 				#CPP
-				solution_builder = IgnoringCXXBuilder2(_flags=my_mut_flags, _ignore=names, _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags=my_mut_oflags)
-				test_builder = IgnoringCXXBuilder2(_flags=my_test_flags, _ignore=noUnitTest_Filenames, _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags=my_test_oflags)
+				solution_builder = IgnoringCXXBuilder2(_flags=my_mut_flags, _ignore=names + self.all_own_sibling_instances_filenames(env) , _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags=my_mut_oflags)
+				test_builder = IgnoringCXXBuilder2(_flags=my_test_flags, _ignore=no_sibling_UnitTest_Filenames, _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags=my_test_oflags)
 			else:
 				#C
-				solution_builder = IgnoringCBuilder2(_flags=my_mut_flags, _ignore=names, _file_pattern=r"^.*\.(c|C)$",_output_flags=my_mut_oflags)
-				test_builder = IgnoringCBuilder2(_flags=my_test_flags, _ignore=noUnitTest_Filenames, _file_pattern=r"^.*\.(c|C)$",_output_flags=my_test_oflags)
+				solution_builder = IgnoringCBuilder2(_flags=my_mut_flags, _ignore=names + self.all_own_sibling_instances_filenames(env) , _file_pattern=r"^.*\.(c|C)$",_output_flags=my_mut_oflags)
+				test_builder = IgnoringCBuilder2(_flags=my_test_flags, _ignore=no_sibling_UnitTest_Filenames, _file_pattern=r"^.*\.(c|C)$",_output_flags=my_test_oflags)
 
 			
 		build_solution_result = None
@@ -382,7 +412,7 @@ class CUnitChecker2Inline(CheckerInline):
 	# graphical layout
 	fieldsets = (
 		(CUnitChecker2.description(), {
-		'fields': ('order',
+		'fields': ('created','order', 
 			('public', 'required', 'always', 'critical'),
 			'name','test_description',
 			( 'file', 'unpack_zipfile'),
