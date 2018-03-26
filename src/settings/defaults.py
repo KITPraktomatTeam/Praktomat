@@ -232,6 +232,7 @@ def load_defaults(settings):
     }
     d.TINYMCE_SPELLCHECKER = False
     d.TINYMCE_COMPRESSOR = False
+    d.TINYMCE_INCLUDE_JQUERY = False
 
     #############################################################################
     # Praktomat-specific settings                                               #
