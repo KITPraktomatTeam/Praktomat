@@ -22,20 +22,37 @@ ulimit -t 600
 # Script dir is group writable...
 DIRS="bin lib usr/bin usr/lib home/praktomat/inst/2018s_c/Praktomat/src/checker/scripts"
 
+# Some logs are produced in the chroot at
+# the moment and unfortunately get lost when
+# the sandbox is removed. As a quick workaround
+# we could add 'tmp' to the DIRS variable (if
+# you do so, check die() and remove the rm command).
+# but then customers could flood the root fs (since
+# /tmp isn't a separate volume at the current
+# installation). Maybe we should copy it after
+# leaving the chroot.
+LOGFILE="/tmp/cTestrunner.log"
+#LOGFILE="/dev/null"
+
 
 #
 # Setup und starten
 #
 
-
 function die {
+    
     (
+        rm -f tmp/*
         for d in $DIRS ; do
-            echo "unmount $d..."
+            echo "Unbind $d from sandbox..."
             /bin/fusermount -u $d
+            echo "Remove directory $d from sandbox..."
+            rmdir -p $d
         done
-    ) >> /tmp/pwd.hmw 2>&1
-}
+    ) >> $LOGFILE 2>&1
+    
+} # die
+
 
 trap die EXIT
 
@@ -47,41 +64,45 @@ if [ $# == 0 ] ; then
 fi
 
 
-EXEC="$1"
-shift
-
-if [ "x${EXEC}x" = "x@@x" ] ; then
+if [ "x${1}x" != "x@@x" ] ; then
     (
+        echo ""
         echo "start '$(date)'"
         echo "id: $(id -a)"
-        echo "exec: '$EXEC'"
         echo "params: '$@'"
-        echo "pwd: '$PWD'"
-        echo "create dirs..."
-
+        echo "cwd: '$PWD'"
+        echo "create dirs in sandbox..."
+        
         mkdir -p tmp
      
-        for d in $DIRS ; do
+        for d in $DIRS ; do            
             /bin/mkdir -p $d
-            echo "bind /$d...."
+            echo "bind /$d into sandbox..."
             /usr/bin/bindfs -r /$d $d
         done
 
         echo "Rebooting into chroot next '$0' '$@'..."
-    ) >> /tmp/pwd.hmw 2>&1
+    ) >> $LOGFILE 2>&1
 
-    fakechroot chroot . "$0" "$@"
+    fakechroot chroot . "$0" "@@" "$@"
     exit $?
-fi
-
-
-if [ -x "${EXEC}" ] ; then
-
-    "./${EXEC}" "$@" 2>&1
-    exit $?
+    
 else
-    (>&2 echo "${SCRIPT}: Internal error: '${EXEC}' does not seem to be an executable. Exit.")
-    exit 1
+
+    shift
+    EXEC="$1"
+    
+    if [ -x "${EXEC}" ] ; then
+        export LD_LIBRARY_PATH=.
+        "./${EXEC}" "$@" 2>&1
+        ret=$?
+        echo "return code: $ret" >> $LOGFILE
+        exit $ret
+    else
+       (>&2 echo "${SCRIPT}: Internal error: '${EXEC}' does not seem to be an executable. Exit.")
+        exit 1
+    fi
+
 fi
 
 exit 0

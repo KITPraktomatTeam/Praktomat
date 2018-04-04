@@ -1,5 +1,9 @@
 #!/bin/sh 
 
+#Praktomat is using this script to call nm from checker CLinker.py
+#Praktomat grap nm output from stdout and does the analyse on its own.
+
+LC_ALL=C
 ulimit -t 600
 
 echo "Running findMainInObject '$(date)'" >> /tmp/findMainInObject.log
@@ -14,7 +18,7 @@ EXEC="$1"
 shift 
 
 
-hash "${EXEC}" &> /dev/null
+#?? hash "${EXEC}" &> /dev/null
 
 if [ $? -eq 0 ] || [ -x "${EXEC}" ] ; then
 

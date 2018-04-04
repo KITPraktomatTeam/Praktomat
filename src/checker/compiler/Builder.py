@@ -155,6 +155,24 @@ class CompilerOrLinker(Checker, IncludeHelper):
                                 
 		[output,error,exitcode,timed_out,oom_ed]  = execute_arglist(args, env.tmpdir(),self.environment(), extradirs=[script_dir])
 
+
+
+
+#                import logging
+#                LOGGER = logging.getLogger()
+#                fmt = logging.Formatter('%(asctime)s [%(process)d] [%(levelname)s] %(funcName)s: %(message)s')
+#
+#                if len(LOGGER.handlers) == 0:
+#                        handler = logging.FileHandler("/tmp/hmw.log",
+#                                                      encoding="utf-8")
+#                        handler.setFormatter(fmt)
+#                        LOGGER.addHandler(handler)
+#                        LOGGER.setLevel(logging.DEBUG)
+#                        LOGGER.info("Starting")
+        
+
+                
+#               LOGGER.info("alpha: " + str(args) + str(output))
 		output = escape(output)
 		output = self.enhance_output(env, output)
 
@@ -237,7 +255,29 @@ class CompilerOrLinker(Checker, IncludeHelper):
 	def logbuilder(self,output,args,env):
 		""" For Child classes to do additional things """
 		filenames = [name for name in self.get_file_names(env)]
-		return self.build_log(output,args,set(filenames).intersection([solutionfile.path() for solutionfile in env.solution().solutionfile_set.all()]))
+
+                
+#                import logging
+#                LOGGER = logging.getLogger()
+#                fmt = logging.Formatter('%(asctime)s [%(process)d] [%(levelname)s] %(funcName)s: %(message)s')
+
+#                if len(LOGGER.handlers) == 0:
+#                        handler = logging.FileHandler("/tmp/hmw.log",
+#                                                      encoding="utf-8")
+#                        handler.setFormatter(fmt)
+#                        LOGGER.addHandler(handler)
+#                        LOGGER.setLevel(logging.DEBUG)
+#                        LOGGER.info("Starting")
+        
+
+#                LOGGER.info("fn: " + str(filenames))
+
+		foo =  self.build_log(output,args,set(filenames).intersection([solutionfile.path() for solutionfile in env.solution().solutionfile_set.all()]))
+
+#                LOGGER.info("foo: " + foo)
+#                LOGGER.info("fileset: " + str(env.solution().solutionfile_set.all()))
+                
+                return foo
 
 	def isLinker(self):
 		return False      
@@ -249,7 +289,7 @@ class CompilerOrLinker(Checker, IncludeHelper):
 			'output' : output,
 			'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm,ps: parm + ' ' + ps,args[1:],''),
 			'regexp' : self.rxarg(),
-			'debug'  : True,
+			'debug'  : False,
 			'linker' : self.isLinker()
 		}))
 
@@ -437,37 +477,37 @@ class Builder(Checker):
 	def run(self, env):
 		""" Build it. """
 
-                LOGGER = logging.getLogger()
-                fmt = logging.Formatter('%(asctime)s [%(process)d] [%(levelname)s] %(funcName)s: %(message)s')
+#                LOGGER = logging.getLogger()
+#                fmt = logging.Formatter('%(asctime)s [%(process)d] [%(levelname)s] %(funcName)s: %(message)s')
 
-                if len(LOGGER.handlers) == 0:
-                        handler = logging.FileHandler("/tmp/hmw.log",
-                                                      encoding="utf-8")
-                        handler.setFormatter(fmt)
-                        LOGGER.addHandler(handler)
-                        LOGGER.setLevel(logging.DEBUG)
-                        LOGGER.info("builder.run")
+#                if len(LOGGER.handlers) == 0:
+#                        handler = logging.FileHandler("/tmp/hmw.log",
+#                                                      encoding="utf-8")
+#                        handler.setFormatter(fmt)
+#                        LOGGER.addHandler(handler)
+#                        LOGGER.setLevel(logging.DEBUG)
+#                        LOGGER.info("builder.run")
 
 	        result = self.create_result(env)
 
-                if self._main_required:
-                        LOGGER.info("main req: " + str(self._main_required))
-                else:
-                        LOGGER.info("main req is null")
+#               if self._main_required:
+#                        LOGGER.info("main req: " + str(self._main_required))
+#               else:
+#                        LOGGER.info("main req is null")
                 
 		# Try to find out the main modules name with only the source files present
 		try:
 			env.set_program(self.main_module(env))
 		except self.NotFoundError:
-                        LOGGER.info("self.main_module f* up")
-# 			pass
+#                       LOGGER.info("self.main_module f* up")
+ 			pass
 		
                 filenames = [name for name in self.get_file_names(env)]
 		args = [self.compiler()] + self.output_flags(env) + self.flags(env) + filenames + self.libs()
 		script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
-                LOGGER.info("lib: " + str(self.libs()))
-                LOGGER.info("flag: " + str(self.flags(env)))
-                LOGGER.info("fn: '" + str(filenames) + "' args: '" + str(args) + "'")
+#                LOGGER.info("lib: " + str(self.libs()))
+#                LOGGER.info("flag: " + str(self.flags(env)))
+#                LOGGER.info("fn: '" + str(filenames) + "' args: '" + str(args) + "'")
                                 
 		[output,_,_,_,_]  = execute_arglist(args, env.tmpdir(),self.environment(), extradirs=[script_dir])
 
@@ -478,17 +518,17 @@ class Builder(Checker):
 		passed = not self.has_warnings(output)	
 		log  = self.build_log(output,args,set(filenames).intersection([solutionfile.path() for solutionfile in env.solution().solutionfile_set.all()]))
 
-                LOGGER.info("passed: " + str(passed) + " " + output)
-                LOGGER.info("log: '" + log + "'")
-                LOGGER.info("alpha: " + str(env.solution().solutionfile_set.all()))
+#                LOGGER.info("passed: " + str(passed) + " " + output)
+#                LOGGER.info("log: '" + log + "'")
+#                LOGGER.info("alpha: " + str(env.solution().solutionfile_set.all()))
 		# Now that submission was successfully built, try to find the main modules name again
 		try:
 			if passed : env.set_program(self.main_module(env))
 		except self.NotFoundError as e:
 			# But only complain if the main method is required
-                        LOGGER.info("excep finding main")
+#                        LOGGER.info("excep finding main")
 			if self._main_required:
-                                LOGGER.info("but main req")
+#                                LOGGER.info("but main req")
 				log += "<pre>" + str(e) + "</pre>"
 				passed = False
 
@@ -503,6 +543,6 @@ class Builder(Checker):
 			'output' : output,
 			'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm,ps: parm + ' ' + ps,args[1:],''),
 			'regexp' : self.rxarg(),
-			'debug'  : True
+			'debug'  : False
 		}))
 

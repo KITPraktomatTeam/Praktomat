@@ -21,10 +21,27 @@ RXFAIL	   = re.compile(r"^(.*)(FAILURES!!!|your program crashed|cpu time limit e
 
 #TODO: okay perhaps we could merge both IgnoringBuilders while specialising from Compiler
 
+####
+#import logging
+#LOGGER = logging.getLogger()
+#fmt = logging.Formatter('%(asctime)s [%(process)d] [%(levelname)s] %(funcName)s: %(message)s')
+#
+#if len(LOGGER.handlers) == 0:
+#        handler = logging.FileHandler("/tmp/hmw.log",
+#                                      encoding="utf-8")
+#        handler.setFormatter(fmt)
+#        LOGGER.addHandler(handler)
+#        LOGGER.setLevel(logging.DEBUG)
+#        LOGGER.info("Starting")
+        
+####
+
 class IgnoringCBuilder2(CBuilder):
 	_ignore = []
 
 	def __init__(self,_flags, _ignore, _file_pattern, _output_flags):
+#                LOGGER.info("in init() p:'" + str(_file_pattern) + "'" + "ig: '" + str(_ignore) +"'")
+                        
 		super(IgnoringCBuilder2,self).__init__(_flags=_flags, _file_pattern=_file_pattern, _output_flags=_output_flags)
 		self._ignore=_ignore
 
@@ -43,7 +60,13 @@ class IgnoringCBuilder2(CBuilder):
 		assert isinstance(env.solution(), Solution)
 		return CheckerResult(checker=self, solution=env.solution())
 
-
+	# override default logbuilder defined in some meta-base-class
+	def logbuilder(self,output,args,env):
+		""" Additional adding some logging for bughunting """
+		filenames = [name for name in self.get_file_names(env)]
+		solutionfiles = [solutionfile.path() for solutionfile in env.solution().solutionfile_set.all()]
+		compilationfiles = set(filenames)
+		return self.build_log(output,args,compilationfiles)
 
 class IgnoringCXXBuilder2(CXXBuilder):
 	_ignore = []
@@ -57,17 +80,33 @@ class IgnoringCXXBuilder2(CXXBuilder):
 		ret = [name for (name,content) in env.sources() if rxarg.match(name) and (not name in self._ignore)]
 		return ret
 
+	def runFail(self,env,_fail):
+		if _fail:
+			raise TypeError
+		return self.run(env)
+
+
 	# Since this checkers instances  will not be saved(), we don't save their results, either
 	def create_result(self, env):
 		assert isinstance(env.solution(), Solution)
 		return CheckerResult(checker=self, solution=env.solution())
 
+	# override default logbuilder defined in some meta-base-class
+	def logbuilder(self,output,args,env):
+		""" Additional adding some logging for bughunting """
+		filenames = [name for name in self.get_file_names(env)]
+		solutionfiles = [solutionfile.path() for solutionfile in env.solution().solutionfile_set.all()]
+		compilationfiles = set(filenames)
+		return self.build_log(output,args,compilationfiles)
 
 
 class CUnitChecker2(CheckerWithFile):
-	""" New Checker for CUnit and CPPUnit Unittests """ # code based upon JUnitChecker
+	""" New Checker for CUnit and CPPUnit Unittests """ # code based upon JUnitChecker but has changet so much to become completly independent from JUnitChecker
+# You can write testcode with 
 # https://sourceforge.net/projects/cunit/
 # https://sourceforge.net/projects/cppunit/
+# but you are not forced to write your tests with that above frameworks
+
 	# Add fields to configure checker instances. You can use any of the Django fields. (See online documentation)
 	# The fields created, task, public, required and always will be inherited from the abstract base class Checker
 	_test_name = models.CharField(
@@ -143,6 +182,7 @@ class CUnitChecker2(CheckerWithFile):
 		import zipfile  #via src/utilities/file_operations
 		for checker in my_task_sibling_checkers:
 			if (checker != self) :						
+
 				try:
 					with zipfile.ZipFile(checker.file.path) as zip_file:
 						names = zip_file.namelist()
@@ -152,6 +192,8 @@ class CUnitChecker2(CheckerWithFile):
 					cleanfilename = re.sub(r'^CheckerFiles/Task_\d*/'+self.__class__.__name__, '', checker.filename).lstrip('/')
 					names = [cleanfilename]	
 				my_sibling_files = my_sibling_files + names
+#		if self.name ==  u"Uebung14_2":
+#			raise TypeError()
 		return my_sibling_files
 
 
@@ -183,7 +225,10 @@ class CUnitChecker2(CheckerWithFile):
 	
 
 	def mut_output_flags(self,env):
-		return self.LINK_DICT[self.link_type] +u' '+self._sol_name+u"."+self.link_type
+                if self.link_type=='so':
+                        return self.LINK_DICT[self.link_type] +u' '+'lib'+self._sol_name+u"."+self.link_type
+                else:
+                        return self.LINK_DICT[self.link_type] +u' '+self._sol_name+u"."+self.link_type
 
 	def test_flags(self, env):
 		my_unittest_flags = self.CUNIT_DICT[self.cunit_version]
@@ -254,11 +299,12 @@ class CUnitChecker2(CheckerWithFile):
 	#	on posix-systems use fork, execvp, 
 	#	on windows CreatePipe, CreateProcess , see  https://msdn.microsoft.com/en-us/library/windows/desktop/ms682499(v=vs.85).aspx
 
-		
+	# TODO: How to deal with students static c-functions. Think again how to interact with scriptfile dressObjects from this Checker		
 
 		
 		my_env_Sources = env.sources()[:] #swallow copy because env.sources() gets manipulated by time
-		no_sibling_UnitTest_Filenames = [ seq[0] for seq in my_env_Sources if seq[0] not in self.all_own_sibling_instances_filenames(env) ]
+		ignore_Filenames = [ seq[0] for seq in my_env_Sources if seq[0] not in self.instance_filenames(env) ]
+		
 
 		# copy testfiles to sandbox
 		copyTestFileArchive_result = super(CUnitChecker2,self).run_file(env) # Instance of Class CheckerResult in basemodel.py
@@ -303,7 +349,8 @@ class CUnitChecker2(CheckerWithFile):
 		else:
 			#ignoring all test-code filenames for solution_builder
 			#ignoring all non test-code filenames for test_builder
-			
+
+#                        LOGGER.info("compiling non-object thingy")
 			
 			names = self.instance_filenames(env)
 
@@ -320,16 +367,21 @@ class CUnitChecker2(CheckerWithFile):
 			if self.use_cppBuilder():
 				#CPP
 				solution_builder = IgnoringCXXBuilder2(_flags=my_mut_flags, _ignore=names + self.all_own_sibling_instances_filenames(env) , _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags=my_mut_oflags)
-				test_builder = IgnoringCXXBuilder2(_flags=my_test_flags, _ignore=no_sibling_UnitTest_Filenames, _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags=my_test_oflags)
+				test_builder = IgnoringCXXBuilder2(_flags=my_test_flags, _ignore=ignore_Filenames, _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags=my_test_oflags)
 			else:
 				#C
+#                               LOGGER.info("create c sol builder")
 				solution_builder = IgnoringCBuilder2(_flags=my_mut_flags, _ignore=names + self.all_own_sibling_instances_filenames(env) , _file_pattern=r"^.*\.(c|C)$",_output_flags=my_mut_oflags)
-				test_builder = IgnoringCBuilder2(_flags=my_test_flags, _ignore=no_sibling_UnitTest_Filenames, _file_pattern=r"^.*\.(c|C)$",_output_flags=my_test_oflags)
-
+#                               LOGGER.info("create c test builder")
+				test_builder = IgnoringCBuilder2(_flags=my_test_flags, _ignore=ignore_Filenames, _file_pattern=r"^.*\.(c|C)$",_output_flags=my_test_oflags)
+#                                if self.name ==  u"Uebung14_2":
+#					raise TypeError()
 			
 		build_solution_result = None
 		if solution_builder:
+#                       LOGGER.info("run solution builder next")
 			build_solution_result = solution_builder.run(env)
+#                       LOGGER.info("yankee")
 			if not build_solution_result.passed:
 				# result = self.create_result(env)
 				# result += build_solution_result
@@ -337,7 +389,10 @@ class CUnitChecker2(CheckerWithFile):
 				result.set_log( '<pre>' + escape(self.test_description) + '\n\n==========  Preprocessing =============\n*    Generating "Shared Object"       *\n* or "Executable" from solution files *\n======== Failure-Results ==============\n\n</pre><br/>\n'+build_solution_result.log )
 				return result
 
-		build_test_result = test_builder.run(env) 
+#               LOGGER.info("run test builder next")
+                
+		build_test_result = test_builder.runFail(env, False)
+                
 		if not build_test_result.passed:
 			# result = self.create_result(env)
 			# result += build_test_result
@@ -351,6 +406,7 @@ class CUnitChecker2(CheckerWithFile):
                 script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
 
 		cmd_par = self._test_par.split(' ') if self._test_par else []
+#               LOGGER.info("xanthippe")
 		cmd = [os.path.join(script_dir,self.runner()),self._test_name] + cmd_par
 		[output, error, exitcode,timed_out, oom_ed] = execute_arglist(cmd, env.tmpdir(),environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE, extradirs=[script_dir])
 
@@ -412,7 +468,7 @@ class CUnitChecker2Inline(CheckerInline):
 	# graphical layout
 	fieldsets = (
 		(CUnitChecker2.description(), {
-		'fields': ('created','order', 
+		'fields': ('order', 
 			('public', 'required', 'always', 'critical'),
 			'name','test_description',
 			( 'file', 'unpack_zipfile'),
