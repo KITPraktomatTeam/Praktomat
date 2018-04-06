@@ -17,7 +17,7 @@ RXFAIL	   = re.compile(r"^\*\*\*",	re.MULTILINE)
 
 class IsabelleChecker(Checker):
 	logic = models.CharField(max_length=100, default="HOL", help_text=_("Default heap to use"))
-	trusted_theories = models.CharField(max_length=200, blank=True, help_text=_("Isabelle theories to be run in trusted mode (Library theories or theories uploaded using the Create File Checker). Do not include the file extensions. Separate multiple theories by space"))
+	additional_theories = models.CharField(max_length=200, blank=True, help_text=_("Isabelle theories to be run in addition to those provided by the user (Library theories or theories uploaded using the Create File Checker). Do not include the file extensions. Separate multiple theories by space"))
 
 	def title(self):
 		""" Returns the title for this checker category. """
@@ -35,28 +35,16 @@ class IsabelleChecker(Checker):
 
 	def run(self, env):
 
-		# Find out the path to isabaelle-process
-		args = [settings.ISABELLE_BINARY, "getenv", "-b", "ISABELLE_PROCESS"]
-		(output, error, exitcode, timed_out, oom_ed) = execute_arglist(args, env.tmpdir(), error_to_output=False)
-		isabelle_process = output.rstrip()
+		thys = map (lambda (name,_): ('%s' % os.path.splitext(name)[0]), env.sources())
 
-		if not isabelle_process:
-			output = "isabelle gentenv -b ISABELLE_PROCESS failed\n"
-			output += "error: " + error + "\n"
-			output += "timed_out: " + timed_out + "\n"
-			output += "oom_ed: " + oom_ed + "\n"
-			result = self.create_result(env)
-			result.set_log('<pre>' + escape(output) + '</pre>')
-			result.set_passed(False)
-			return result
+		additional_thys = ['%s' % name for name in re.split(" |,",self.additional_theories) if name]
+		user_thys = filter (lambda name: name not in additional_thys, thys)
 
-		thys = map (lambda (name,_): ('"%s"' % os.path.splitext(name)[0]), env.sources())
-		trusted_thys = ['"%s"' % name for name in re.split(" |,",self.trusted_theories) if name]
-		untrusted_thys = filter (lambda name: name not in trusted_thys, thys)
+		args = [settings.ISABELLE_BINARY,"process"]
+		for t in additional_thys + user_thys:
+			args += ["-T",  t]
+		args += ["-l", self.logic]
 
-		ml_cmd = 'use_thys [%s]; Secure.set_secure (); use_thys [%s]' % \
-			(','.join(trusted_thys), ','.join(untrusted_thys))
-		args = [isabelle_process, "-r", "-q", "-e",  ml_cmd, self.logic]
 		(output, error, exitcode, timed_out, oom_ed) = execute_arglist(args, env.tmpdir(),timeout=settings.TEST_TIMEOUT, error_to_output=False)
 
 		if timed_out:
