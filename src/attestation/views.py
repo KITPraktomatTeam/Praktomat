@@ -462,7 +462,10 @@ def user_task_attestation_map(users,tasks,only_published=True):
 
 			if rating is not None:
 				if plagiarism_option == 'WP' or (plagiarism_option == 'NP' and not rating.solution.plagiarism):
-					grade_sum += float(rating.final_grade.name)
+					try:
+						grade_sum += float(rating.final_grade.name)
+					except:
+						pass #non-numeric grade, ignore
 
 			rating_for_user_list.append((rating,has_solution))
 
