@@ -104,7 +104,7 @@ def shib_login(request):
 	user.programme  = attr['programme']           if attr['programme']  is not None else user.programme
 	user.save()
 
-	user.backend = 'django.contrib.auth.backends.ModelBackend'
+	user.backend = settings.AUTH_BACKEND
 	login(request, user)
 
 	if not redirect_url or '//' in redirect_url or ' ' in redirect_url:

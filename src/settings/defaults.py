@@ -107,6 +107,11 @@ def load_defaults(settings):
         'accounts.middleware.LogoutInactiveUserMiddleware',
     )
 
+    # needed since Django 1.11 in order to show the 'Deactivated' page
+    d.AUTH_BACKEND = 'django.contrib.auth.backends.AllowAllUsersModelBackend'
+
+    d.AUTHENTICATION_BACKENDS = (d.AUTH_BACKEND,)
+
     d.DEFAULT_FILE_STORAGE = 'utilities.storage.UploadStorage'
 
     # URL and file paths
