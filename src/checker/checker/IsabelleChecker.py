@@ -41,6 +41,7 @@ class IsabelleChecker(Checker):
 		user_thys = filter (lambda name: name not in additional_thys, thys)
 
 		args = [settings.ISABELLE_BINARY,"process"]
+		args += ["-o", "threads=1"]
 		for t in additional_thys + user_thys:
 			args += ["-T",  t]
 		args += ["-l", self.logic]
