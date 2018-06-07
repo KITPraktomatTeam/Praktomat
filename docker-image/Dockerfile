@@ -20,7 +20,7 @@ RUN apt-get install --yes python3-responses                       && apt-get cle
 RUN apt-get install --yes python3-xlrd                            && apt-get clean
 RUN apt-get install --yes python3-simplejson python-simplejson    && apt-get clean
 
-
+ENV PIP_NO_BUILD_ISOLATION=false
 RUN python3 -m pip install --upgrade pip
 RUN pip3 install numpy scipy matplotlib ipython pandas
 RUN sed -i -e 's/^backend      : \(\(TkAgg\)\|\(tkagg\)\)$/backend      : Agg/g' /usr/local/lib/python3.4/dist-packages/matplotlib/mpl-data/matplotlibrc
@@ -31,6 +31,7 @@ RUN python3 -c "from matplotlib.font_manager import FontManager"
 RUN pip3 install statsmodels
 RUN pip3 install scikit-learn
 RUN pip3 install numdifftools
+RUN pip3 install Cython
 RUN pip3 install arch
 
 # Install Isabelle2017
