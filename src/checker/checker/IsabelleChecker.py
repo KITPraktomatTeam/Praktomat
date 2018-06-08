@@ -40,8 +40,16 @@ class IsabelleChecker(Checker):
 		additional_thys = ['%s' % name for name in re.split(" |,",self.additional_theories) if name]
 		user_thys = filter (lambda name: name not in additional_thys, thys)
 
+                platform = execute_arglist([settings.ISABELLE_BINARY, "getenv", "ML_PLATFORM"], env.tmpdir(), timeout=10, error_to_output=False)[0]
+
 		args = [settings.ISABELLE_BINARY,"process"]
-		args += ["-o", "threads=1"]
+		# Depending on the underlying polyml platform (32/64 bit) we use 2 or 1 threads, resp.
+		# This is due to the default memory limit (1gb) of safe-docker and the
+		# default initial heap sizes of 500m and 1000m for 32 bit and 64 bit, resp.
+		if "x86_64-linux" in platform:
+			args += ["-o", "threads=1"]
+		else:
+			args += ["-o", "threads=2"]
 		for t in additional_thys + user_thys:
 			args += ["-T",  t]
 		args += ["-l", self.logic]
