@@ -52,7 +52,7 @@ class CLinker(Linker, LibraryHelper, MainNeedHelper):
 						[objinfo,error,exitcode,timed_out,oom_ed]  = execute_arglist(cmd , env.tmpdir(), self.environment(), timeout=settings.TEST_TIMEOUT, fileseeklimit=settings.TEST_MAXFILESIZE, extradirs=[script_dir])
 						if exitcode != 0 :
 							raise self.NotFoundError("Internal Server Error. Processing files %s" % ",".join(obj_files)+"\n"+objinfo)
-                        tmp = re.search(nm_rx, objinfo)
+						tmp = re.search(nm_rx, objinfo)
 						if tmp and len(tmp.groups(2)):
 							self.main_object_name = tmp.group(2)
 							return self.main_object_name
