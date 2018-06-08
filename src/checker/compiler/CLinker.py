@@ -33,7 +33,7 @@ class CLinker(Linker, LibraryHelper, MainNeedHelper):
   		#output of nm -A -C  mytest.o is: mytest.o:0000000d T main
 		nm_rx  = re.compile(r"^(.*/)*(.*)\.[oO]:[0-9A-Fa-f]* T (main)$", re.MULTILINE)
 		obj_files = []
-                c_rx = re.compile('^(.*\.)[cC]')
+        c_rx = re.compile('^(.*\.)[cC]')
 		#ToDo: code review 
 		o_solution_list = [re.sub(r"\.[cC]",r".o",name)\
 			for (name,void) in env.sources()\
@@ -52,8 +52,9 @@ class CLinker(Linker, LibraryHelper, MainNeedHelper):
 						[objinfo,error,exitcode,timed_out,oom_ed]  = execute_arglist(cmd , env.tmpdir(), self.environment(), timeout=settings.TEST_TIMEOUT, fileseeklimit=settings.TEST_MAXFILESIZE, extradirs=[script_dir])
 						if exitcode != 0 :
 							raise self.NotFoundError("Internal Server Error. Processing files %s" % ",".join(obj_files)+"\n"+objinfo)
-						if objinfo.find(main_symbol) >= 0:
-							self.main_object_name = re.search(nm_rx,objinfo).group(2)
+                        tmp = re.search(nm_rx, objinfo)
+						if tmp and len(tmp.groups(2)):
+							self.main_object_name = tmp.group(2)
 							return self.main_object_name
 
 		raise self.NotFoundError("An object containing the main symbol (i.e. 'int main(int argc, char* argv[])' ) could not be found in the files %s" % ", ".join(obj_files))
