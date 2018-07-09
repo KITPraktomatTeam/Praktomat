@@ -45,6 +45,7 @@ def shib_hello(request):
             context['next'] = request.GET['next']
         context['title'] = "Login via shibboleth"
         context['provider'] = settings.SHIB_PROVIDER
+        context['motd_url'] = settings.SYSADMIN_MOTD_URL
 	return render(request, 'registration/shib_hello.html', context)
 
 @shibboleth_support_required

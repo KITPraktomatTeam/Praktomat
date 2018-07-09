@@ -11,6 +11,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from datetime import datetime
 from django import forms
 from django.core import urlresolvers
+from django.conf import settings
 from django.contrib import messages
 import django.utils.timezone
 
@@ -53,6 +54,7 @@ def taskList(request):
                         'trainers':trainers,
                         'threshold':threshold,
                         'calculated_grade':calculated_grade,
+                        'motd_url':settings.SYSADMIN_MOTD_URL,
                 })
 
 @login_required

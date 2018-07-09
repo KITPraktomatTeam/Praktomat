@@ -1,11 +1,34 @@
 {% extends "base.html" %}
 {% load i18n %} {% load chunks %}
 
+{% block extrahead %}{{ block.super }}
+<script type="application/javascript">
+
+function resize(id) {
+    var iFrame = document.getElementById(id);
+    // First, make place for horizontal scrollbar
+    // so that we don't need a vertical scrollbar.
+    // Then, setting the width eliminates the vertical scrollbar,
+    // so that we can set the height to the value we want
+    // (without introducing more scrollbars)
+    iFrame.height = iFrame.contentWindow.document.body.scrollHeight+50;
+    iFrame.width = iFrame.contentWindow.document.body.scrollWidth;
+    iFrame.height = iFrame.contentWindow.document.body.scrollHeight;
+};
+
+</script>
+{% endblock %}
+
 {% block breadcrumbs %}
 	{{ block.super }} &gt; {% trans 'Login' %}
 {% endblock %}
 
 {% block content %}<div id="login">
+
+{% if motd_url %}
+	<iframe src="{{motd_url}}" id="motd" onLoad="resize('motd')"> </iframe>
+{% endif %}
+
 {% chunk "Login Message" %}	
 
 <div id="form">	

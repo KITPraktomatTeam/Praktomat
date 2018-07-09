@@ -134,6 +134,8 @@ PRIVATE_KEY = '/srv/praktomat/mailsign/signer_key.pem'
 SHIB_ENABLED = True
 REGISTRATION_POSSIBLE = False
 
+SYSADMIN_MOTD_URL = "https://praktomat.cs.kit.edu/sysadmin_motd.html"
+
 # Use a dedicated user to test submissions
 USEPRAKTOMATTESTER = False
 
