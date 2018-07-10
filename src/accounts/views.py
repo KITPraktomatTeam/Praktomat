@@ -75,7 +75,7 @@ def change(request):
 
 @login_required
 def view(request):
-	return render(request, 'registration/registration_view.html', {'user':request.user, 'motd_url':settings.SYSADMIN_MOTD_URL})
+	return render(request, 'registration/registration_view.html', {'user':request.user})
 
 def access_denied(request):
 	request_path = request.META.get('HTTP_HOST', '') + request.get_full_path()

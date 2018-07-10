@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %} {% load chunks %}
+{% load i18n %} {% load chunks %} {% load motd %}
 {% block extrahead %}{{ block.super }}
 <script type="application/javascript">
 
@@ -18,9 +18,7 @@ function resize(id) {
 
 <div id="welcome">
 	
-	{% if motd_url %}
-		<iframe src="{{motd_url}}" id="motd" onLoad="resize('motd')" width="100%"> </iframe>
-	{% endif %}
+	{% motd %}
 	
 	{% chunk "Welcome Message" %}
 	

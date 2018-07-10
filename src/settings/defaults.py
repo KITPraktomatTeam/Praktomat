@@ -94,6 +94,7 @@ def load_defaults(settings):
         'attestation',
         'checker',
         'utilities',
+        'settings',
         #'sessionprofile', #phpBB integration
     )
 

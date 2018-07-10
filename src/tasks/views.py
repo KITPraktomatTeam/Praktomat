@@ -54,7 +54,6 @@ def taskList(request):
                         'trainers':trainers,
                         'threshold':threshold,
                         'calculated_grade':calculated_grade,
-                        'motd_url':settings.SYSADMIN_MOTD_URL,
                 })
 
 @login_required
