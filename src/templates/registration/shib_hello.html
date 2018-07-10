@@ -5,15 +5,11 @@
 <script type="application/javascript">
 
 function resize(id) {
-    var iFrame = document.getElementById(id);
-    // First, make place for horizontal scrollbar
-    // so that we don't need a vertical scrollbar.
-    // Then, setting the width eliminates the vertical scrollbar,
-    // so that we can set the height to the value we want
-    // (without introducing more scrollbars)
-    iFrame.height = iFrame.contentWindow.document.body.scrollHeight+50;
-    iFrame.width = iFrame.contentWindow.document.body.scrollWidth;
-    iFrame.height = iFrame.contentWindow.document.body.scrollHeight;
+    var iframe = document.getElementById(id);
+    var height = iframe.contentWindow.document.body.scrollHeight;
+    // if we have content, we need to extend the iframe
+    // because we need to include space for the invisible scrollbar
+    iframe.height = (height == 0) ? 0 : height + 35;
 };
 
 </script>
@@ -26,7 +22,7 @@ function resize(id) {
 {% block content %}<div id="login">
 
 {% if motd_url %}
-	<iframe src="{{motd_url}}" id="motd" onLoad="resize('motd')"> </iframe>
+	<iframe src="{{motd_url}}" id="motd" onLoad="resize('motd')" width="100%"> </iframe>
 {% endif %}
 
 {% chunk "Login Message" %}	
