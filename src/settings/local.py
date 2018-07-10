@@ -105,6 +105,8 @@ ADMINS = [
   ('Praktomat', 'praktomat@ipd.info.uni-karlsruhe.de')
 ]
 
+SERVER_EMAIL = 'praktomat@i44vm3.info.uni-karlsruhe.de'
+
 
 if MIRROR:
 	EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
