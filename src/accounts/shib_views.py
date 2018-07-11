@@ -35,8 +35,8 @@ def parse_attributes(META):
 	return shib_attrs, error
 
 
-def render_forbidden(*args, **kwargs):
-	return HttpResponseForbidden(loader.render_to_string(*args, **kwargs))
+def render_forbidden(request, template_name, context):
+	return HttpResponseForbidden(loader.render_to_string(template_name, context, request))
 
 @shibboleth_support_required
 def shib_hello(request):
