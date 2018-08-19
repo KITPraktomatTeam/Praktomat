@@ -6,7 +6,7 @@
 LC_ALL=C
 ulimit -t 600
 
-echo "Running findMainInObject '$(date)'" >> /tmp/findMainInObject.log
+echo "Running findMainInObject '$(date)'" >> /tmp/findMainInObject_$(date '+%s').log
 
 SCRIPT=`basename $0`
 if [ $# -eq 0 ] ; then

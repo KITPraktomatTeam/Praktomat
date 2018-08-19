@@ -27,11 +27,11 @@ DIRS="bin lib usr/bin usr/lib home/praktomat/inst/2018s_c/Praktomat/src/checker/
 # the sandbox is removed. As a quick workaround
 # we could add 'tmp' to the DIRS variable (if
 # you do so, check die() and remove the rm command).
-# but then customers could flood the root fs (since
-# /tmp isn't a separate volume at the current
-# installation). Maybe we should copy it after
+# but then customers can flood the root fs (since
+# /tmp isn't a separate volume in the current
+# installation). Maybe we should copy the log after
 # leaving the chroot.
-LOGFILE="/tmp/cTestrunner.log"
+LOGFILE="/tmp/cTestrunner_$(date '+%s').log"
 #LOGFILE="/dev/null"
 
 
@@ -72,9 +72,9 @@ if [ "x${1}x" != "x@@x" ] ; then
         echo "params: '$@'"
         echo "cwd: '$PWD'"
         echo "create dirs in sandbox..."
-        
+
         mkdir -p tmp
-     
+
         for d in $DIRS ; do            
             /bin/mkdir -p $d
             echo "bind /$d into sandbox..."

@@ -54,6 +54,7 @@ class CLinker(Linker, LibraryHelper, MainNeedHelper):
 							raise self.NotFoundError("Internal Server Error. Processing files %s" % ",".join(obj_files)+"\n"+objinfo)
 						tmp = re.search(nm_rx, objinfo)
 						if tmp and len(tmp.groups(2)):
+							self.main_object_name = re.search(nm_rx,objinfo).group(2)
 							self.main_object_name = tmp.group(2)
 							return self.main_object_name
 
