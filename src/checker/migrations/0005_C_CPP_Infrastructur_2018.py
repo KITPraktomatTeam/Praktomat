@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
+import checker.basemodels
 
 
 class Migration(migrations.Migration):
@@ -23,7 +24,7 @@ class Migration(migrations.Migration):
                 ('always', models.BooleanField(default=True, help_text='The test will run on submission time.')),
                 ('critical', models.BooleanField(default=False, help_text='If this test fails, do not display further test results.')),
                 ('_main_required', models.BooleanField(default=True, help_text='Is a submission required to provide a main method or function?')),
-                ('_libs', models.CharField(default=b'', help_text='Compiler libraries', max_length=1000, blank=True)),
+                ('_libs', models.CharField(default=b'', help_text="flags for libraries like '-lm ' as math library for C", max_length=1000, blank=True)),
                 ('_search_path', models.CharField(default=b'', help_text='flags for additional search path for compiler or linker ', max_length=1000, blank=True)),
                 ('_flags', models.CharField(default=b'-Wall -Wextra', help_text='Compiler or Linker flags', max_length=1000, blank=True)),
                 ('_file_pattern', models.CharField(default=b'^[a-zA-Z0-9_]*$', help_text='Regular expression describing all source files to be passed to the compiler or linker. (Play with  RegEx at <a href="http://pythex.org/" target="_blank">http://pythex.org/ </a>', max_length=1000)),
@@ -36,50 +37,8 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='CUnitChecker',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('order', models.IntegerField(help_text='Determines the order in wich the checker will start. Not necessary continuously!')),
-                ('public', models.BooleanField(default=True, help_text='Test results are displayed to the submitter.')),
-                ('required', models.BooleanField(default=False, help_text='The test must be passed to submit the solution.')),
-                ('always', models.BooleanField(default=True, help_text='The test will run on submission time.')),
-                ('critical', models.BooleanField(default=False, help_text='If this test fails, do not display further test results.')),
-                ('class_name', models.CharField(help_text='The fully qualified name of the test case executable (with fileending like .exe or .out)', max_length=100)),
-                ('test_description', models.TextField(help_text='Description of the Testcase. To be displayed on Checker Results page when checker is  unfolded.')),
-                ('name', models.CharField(help_text='Name of the Testcase. To be displayed as title on Checker Results page', max_length=100)),
-                ('ignore', models.CharField(default=b'', help_text='space-seperated list of files to be ignored during compilation, i.e.: these files will not be compiled.', max_length=4096, blank=True)),
-                ('_flags', models.CharField(default=b'-Wall -Wextra', help_text='Compiler flags', max_length=1000, blank=True)),
-                ('_libs', models.CharField(default=b'', help_text='Compiler libraries except cunit, cppunit', max_length=1000, blank=True)),
-                ('cunit_version', models.CharField(default=b'cunit', max_length=16, choices=[(b'cunit', 'CUnit 2.1-3'), (b'cppunit', 'CppUnit 1.12.1')])),
-                ('task', models.ForeignKey(to='tasks.Task')),
-            ],
-            options={
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
             name='CUnitChecker2',
             fields=[
-                ('createfilechecker_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='checker.CreateFileChecker')),
-                ('class_name', models.CharField(help_text='The fully qualified name of the test case executable (with fileending like .exe or .out)', max_length=100, verbose_name='TestApp Filename')),
-                ('test_description', models.TextField(help_text='Description of the Testcase. To be displayed on Checker Results page when checker is  unfolded.')),
-                ('name', models.CharField(help_text='Name of the Testcase. To be displayed as title on Checker Results page', max_length=100)),
-                ('_ignore', models.CharField(default=b'', help_text='Regular Expression for ignoring files while compile and link test-code. Play with  RegEx at <a href="http://pythex.org/" target="_blank">http://pythex.org/ </a>', max_length=4096, blank=True)),
-                ('_ignore_sol', models.CharField(default=b'', help_text='Regular Expression for ignoring files while compile and link solution-code.', max_length=4096, blank=True)),
-                ('_flags', models.CharField(default=b'-Wall -Wextra', help_text='Compiler flags', max_length=1000, blank=True)),
-                ('_libs', models.CharField(default=b'', help_text='Compiler libraries except cunit, cppunit', max_length=1000, blank=True)),
-                ('link_type', models.CharField(default=b'o', help_text='How to use solution submission in test-code?', max_length=16, choices=[(b'o', 'Link Trainers Test-Code with solution objects (*.o)'), (b'so', 'Link solution objects as shared object (*.so, *.dll)'), (b'out', 'Link solution objects as seperate executable program (*.out, *.exe)')])),
-                ('cunit_version', models.CharField(default=b'cunit', max_length=16, choices=[(b'cunit', 'CUnit 2.1-3'), (b'cppunit', 'CppUnit 1.12.1'), (b'c', 'C tests'), (b'cpp', 'CPP tests')])),
-            ],
-            options={
-                'abstract': False,
-            },
-            bases=('checker.createfilechecker',),
-        ),
-        migrations.CreateModel(
-            name='CUnitChecker3',
-            fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('order', models.IntegerField(help_text='Determines the order in wich the checker will start. Not necessary continuously!')),
@@ -87,30 +46,26 @@ class Migration(migrations.Migration):
                 ('required', models.BooleanField(default=False, help_text='The test must be passed to submit the solution.')),
                 ('always', models.BooleanField(default=True, help_text='The test will run on submission time.')),
                 ('critical', models.BooleanField(default=False, help_text='If this test fails, do not display further test results.')),
-                ('name', models.CharField(help_text='Name of the Testcase. To be displayed as title on Checker Results page', max_length=100)),
+                ('file', checker.basemodels.CheckerFileField(help_text='The file that is copied into the sandbox', max_length=500, upload_to=checker.basemodels.get_checkerfile_storage_path)),
+                ('filename', models.CharField(help_text='What the file will be named in the sandbox. If empty, we try to guess the right filename!', max_length=500, blank=True)),
+                ('path', models.CharField(help_text='Subfolder in the sandbox which shall contain the file.', max_length=500, blank=True)),
+                ('unpack_zipfile', models.BooleanField(default=False, help_text='Unpack the zip file into the given subfolder. (It will be an error if the file is not a zip file; the filename is ignored.)')),
+                ('_test_name', models.CharField(default='TestApp.out', help_text='The fully qualified name of the test case executable (with fileending like .exe or .out)', max_length=100, verbose_name='TestApp Filename')),
+                ('_test_ignore', models.CharField(default="sorry, this feature doesn't work now", help_text='Regular Expression for ignoring files while compile and link test-code. <br> Play with  RegEx at <a href="http://pythex.org/" target="_blank">http://pythex.org/ </a>', max_length=4096, blank=True)),
+                ('_test_flags', models.CharField(default='-Wall -Wextra -Wl,--warn-common', help_text="Compiler and Linker flags for i.e. libraries used while generating TestApp. <br> Don't fill in cunit or cppunit here.", max_length=1000, blank=True)),
+                ('link_type', models.CharField(default=b'o', help_text='How to use solution submission in test-code?', max_length=16, choices=[('o', 'Link Trainers Test-Code with solution objects (*.o)'), ('so', 'MUT: Link solution objects as shared object (*.so, *.dll)'), ('out', 'MUT: Link solution objects as seperate executable program (*.out, *.exe)')])),
+                ('cunit_version', models.CharField(default=b'cunit', max_length=16, verbose_name='Unittest type or library', choices=[(b'cunit', 'CUnit 2.1-3'), (b'cppunit', 'CppUnit 1.12.1'), (b'c', 'C tests'), (b'cpp', 'CPP tests')])),
+                ('_test_par', models.CharField(default='', help_text='Command line parameters for running TestApp', max_length=1000, blank=True)),
                 ('test_description', models.TextField(help_text='Description of the Testcase. To be displayed on Checker Results page when checker is  unfolded.')),
-                ('class_name', models.CharField(help_text='The fully qualified name of the test case executable (with fileending like .exe or .out)', max_length=100, verbose_name='TestApp Filename')),
-                ('_ignore', models.CharField(default=b'', help_text='Regular Expression for ignoring files while compile and link test-code.', max_length=4096, blank=True)),
-                ('_ignore_sol', models.CharField(default=b'', help_text='Regular Expression for ignoring files while compile and link solution-code.', max_length=4096, blank=True)),
-                ('_flags', models.CharField(default=b'-Wall -Wextra', help_text='Compiler flags', max_length=1000, blank=True)),
-                ('_libs', models.CharField(default=b'', help_text='Compiler libraries except cunit, cppunit', max_length=1000, blank=True)),
-                ('link_type', models.CharField(default=b'o', help_text='How to use solution submission in test-code?', max_length=16, choices=[(b'o', 'Link Trainers Test-Code with solution objects (*.o)'), (b'so', 'Link solution objects as shared object (*.so, *.dll)'), (b'out', 'Link solution objects as seperate executable program (*.out, *.exe)')])),
-                ('cunit_version', models.CharField(default=b'cunit', max_length=16, choices=[(b'cunit', 'CUnit 2.1-3'), (b'cppunit', 'CppUnit 1.12.1'), (b'c', 'C tests'), (b'cpp', 'CPP tests')])),
+                ('name', models.CharField(help_text='Name of the Testcase. To be displayed as title on Checker Results page', max_length=100)),
+                ('_sol_name', models.CharField(default='Solution', help_text='Basisfilename ( = filename without fileending!) for interaction with  MUT (Module-Under-Test)<br>The fileending to use gets determined by your choosen Link type.<br>', max_length=100, verbose_name='MUT Filename')),
+                ('_sol_ignore', models.CharField(default=b"sorry, this feature doesn't work now", help_text='Regular Expression for ignoring files while compile CUT and link MUT.<br>CUT = Code Under Test - MUT = Module Under Test <br>Play with RegEx at <a href="http://pythex.org/" target="_blank">http://pythex.org/ </a>', max_length=4096, verbose_name='MUT ignore files', blank=True)),
+                ('_sol_flags', models.CharField(default='-Wall -Wextra -Wl,--warn-common', help_text='Compiler and Linker flags used while generating MUT (Module-under-Test).', max_length=1000, verbose_name='MUT flags', blank=True)),
                 ('task', models.ForeignKey(to='tasks.Task')),
             ],
             options={
                 'abstract': False,
             },
-        ),
-        migrations.CreateModel(
-            name='IgnoringCBuilder',
-            fields=[
-                ('cbuilder_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='checker.CBuilder')),
-            ],
-            options={
-                'abstract': False,
-            },
-            bases=('checker.cbuilder',),
         ),
         migrations.CreateModel(
             name='IgnoringCBuilder2',
@@ -123,37 +78,7 @@ class Migration(migrations.Migration):
             bases=('checker.cbuilder',),
         ),
         migrations.CreateModel(
-            name='IgnoringCBuilder3',
-            fields=[
-                ('cbuilder_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='checker.CBuilder')),
-            ],
-            options={
-                'abstract': False,
-            },
-            bases=('checker.cbuilder',),
-        ),
-        migrations.CreateModel(
-            name='IgnoringCXXBuilder',
-            fields=[
-                ('cxxbuilder_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='checker.CXXBuilder')),
-            ],
-            options={
-                'abstract': False,
-            },
-            bases=('checker.cxxbuilder',),
-        ),
-        migrations.CreateModel(
             name='IgnoringCXXBuilder2',
-            fields=[
-                ('cxxbuilder_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='checker.CXXBuilder')),
-            ],
-            options={
-                'abstract': False,
-            },
-            bases=('checker.cxxbuilder',),
-        ),
-        migrations.CreateModel(
-            name='IgnoringCXXBuilder3',
             fields=[
                 ('cxxbuilder_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='checker.CXXBuilder')),
             ],
