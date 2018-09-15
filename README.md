@@ -14,6 +14,19 @@ General setup
 You need Python 2.7 and a recent version of pip. I also highly recommend to
 use virtualenv so your system Python installation remains clean.
 
+If you are having trouble with 
+
+    pip install 
+and get a **No matching distribution found** or **Could not fetch URL** error, 
+try adding -v to the command to get more information:
+
+    pip install --upgrade -v pip
+
+If you see an error like **There was a problem confirming the ssl certificate** or **tlsv1 alert protocol version or TLSV1_ALERT_PROTOCOL_VERSION**, you need to be connecting to PyPI with a newer TLS support library.
+
+Reason: PyPI turned off support for TLS versions 1.0 and 1.1 in April 2018
+   https://pyfound.blogspot.com/2017/01/time-to-upgrade-your-python-tls-v12.html
+
 Prerequisites
 ============
   We recommend to run Praktomat within Apache, using Postgresql as
@@ -83,6 +96,7 @@ The following describes a recommended setup using virtualenv.
 git clone --recursive git://github.com/KITPraktomatTeam/Praktomat.git
 virtualenv --system-site-packages env/
 . env/bin/activate
+pip install -U pip virtualenv setuptools wheel urllib3[secure]
 pip install -r Praktomat/requirements.txt
 ```
 
@@ -111,6 +125,7 @@ Like for the development version, clone the Praktomat and install its dependenci
 git clone --recursive git://github.com/KITPraktomatTeam/Praktomat.git
 virtualenv --system-site-packages env/
 . env/bin/activate
+pip install -U pip virtualenv setuptools wheel urllib3[secure]
 pip install -r Praktomat/requirements.txt
 ```
 
@@ -145,7 +160,7 @@ Adding the first user
 If you use django for authentification, you might want to add a first user using
 
 ```bash
-./Praktomat/src/manage-local.py createsuperuser -
+./Praktomat/src/manage-local.py createsuperuser
 ```
 
 If you use single-sign-on via Shibboleth, you can already log in. After you have logged in, you can assign super user rights to yourself using
