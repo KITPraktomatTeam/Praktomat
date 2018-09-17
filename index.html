@@ -21,7 +21,13 @@
 			});
 	       });
 
-
+	       function resize(id) {
+	                var iframe = document.getElementById(id);
+                        var height = iframe.contentWindow.document.body.scrollHeight;
+                        // if we have content, we need to extend the iframe
+                        // because we need to include space for the invisible scrollbar
+                        iframe.height = (height == 0) ? 0 : height + 35;
+               };
         </script>
 
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -110,6 +116,8 @@ div.important {
 <!--
 <div class="important">Am 22.04.2016 wird Praktomat aufgrund von Wartungsarbeiten für einige Zeit nicht erreichbar sein.</div>
 -->
+
+<iframe src="https://praktomat.cs.kit.edu/sysadmin_motd.html" id="motd" onLoad="resize('motd')" width="100%"></iframe>
 
 <h2>Aktuelle Praktomaten</h2>
 
