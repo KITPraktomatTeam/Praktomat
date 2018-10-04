@@ -97,6 +97,18 @@ Just for Deguging... </br>
 						
 				{% endif %}		
 			{% elif task.submission_waitdelta > 0 and dnow < upload_next_possible_time %}
+
+
+			    {% if task.submission_free_uploads|uploadsleft:solutions > 0 %}
+			    <br><h3>
+			    {%trans "Uploads with no wait time left" %} {{ task.submission_free_uploads|uploadsleft:solutions }} 
+			    </h3>
+			    <form enctype="multipart/form-data" method="post" action="" > {% csrf_token %}
+			          {% include "forms/formset_as_div.html" %}
+			          <input type="submit" value="upload" />
+			    </form>
+			
+			    {% else %}			
 				{% if user.is_tutor or user.is_trainer %}
 					<h2>{%trans "Upload solution" %}</h2>	  
 						<strong> {%trans "A student couldn't upload now because:" %} </strong></br>
@@ -118,6 +130,7 @@ Just for Deguging... </br>
 						{%trans "Your current wait-time is:" %} <strong> {{ upload_next_possible_time|timeuntil }} </strong></br>
 						{%trans "But you can resubmit a former accepted upload out of Solution History." %}
 				  {% endif %}
+			    {% endif %}				  
 			{% else %}									
 				<h2>{%trans "Upload solution" %}
 				    {% if task.submission_maxpossible > 0 %}
