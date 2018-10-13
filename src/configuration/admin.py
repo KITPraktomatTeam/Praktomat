@@ -32,6 +32,8 @@ class SettingsAdmin(admin.ModelAdmin):
                     'accept_all_solutions',
                     'anonymous_attestation',
                     'attestation_allow_run_checkers',
+                    ('final_grades_arithmetic_option',
+                     'final_grades_plagiarism_option')
                 )
             }),
             ('Attestation Publishing/Viewing', {
@@ -42,5 +44,8 @@ class SettingsAdmin(admin.ModelAdmin):
 			})
         )
 	inlines = [ChunkInline]
+
+	def has_add_permission(self, request):
+		return False
 
 admin.site.register(Settings, SettingsAdmin)
