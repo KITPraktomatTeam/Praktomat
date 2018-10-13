@@ -65,7 +65,32 @@ class Settings(models.Model):
                 help_text="If enabeld, all users can see their final grades."
             )
 
-	
+	SUM = 'SUM'
+	AVERAGE = 'AVG'
+	ARITHMETIC_CHOICES = (
+		(SUM, 'Sum'),
+		(AVERAGE, 'Average'),
+	)
+	final_grades_arithmetic_option = \
+		    models.CharField(
+		    	max_length=3,
+		    	choices=ARITHMETIC_CHOICES,
+		    	default=SUM,
+		    )
+
+	WITH_PLAGIARISM = 'WP'
+	NO_PLAGIARISM = 'NP'
+	PLAGIARISM_CHOICES = (
+		(NO_PLAGIARISM, 'Without'),
+		(WITH_PLAGIARISM, 'Including'),
+    )
+	final_grades_plagiarism_option = \
+		    models.CharField(
+		    	max_length=2,
+		    	choices=PLAGIARISM_CHOICES,
+		    	default=NO_PLAGIARISM,
+		    )
+
 	invisible_attestor = \
             models.BooleanField(
                 default=False,
