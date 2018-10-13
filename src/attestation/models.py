@@ -1,17 +1,22 @@
-from django.db import models
+from django.db import models, transaction
 from django.conf import settings
 from tasks.models import Task
 from solutions.models import Solution, SolutionFile
 from django.utils.translation import ugettext_lazy as _
 from django.core.mail import EmailMessage
-from django.template import Context, loader
+from django.core import serializers
+from django.template import loader
 from django.contrib.sites.requests import RequestSite
+from django.contrib import messages
 from datetime import datetime
 from utilities.nub import nub
 import difflib
+import tempfile
+import zipfile
 
 from accounts.models import User
 from configuration import get_settings
+
 
 
 class Attestation(models.Model):
@@ -50,7 +55,7 @@ class Attestation(models.Model):
                         'invisible_attestor' : get_settings().invisible_attestor,
                         }
                 subject = _("New attestation for your solution of the task '%s'") % self.solution.task
-                body = t.render(Context(c))
+                body = t.render(c)
                 reply_to = ([self.author.email]                    if self.author.email and (not get_settings().invisible_attestor) else []) \
                          + ([get_settings().attestation_reply_to]  if get_settings().attestation_reply_to else [])
                 headers = {'Reply-To': ', '.join(reply_to)} if reply_to else None
@@ -84,11 +89,99 @@ class Attestation(models.Model):
                         'by': by,
                         }
                 subject = _("Attestation for your solution of the task '%s' withdrawn") % self.solution.task
-                body = t.render(Context(c))
+                body = t.render(c)
                 recipients = emails[0:1]
                 bcc_recipients = emails[1:]
                 email = EmailMessage(subject, body, None, recipients, bcc_recipients)
                 email.send()
+
+	@classmethod
+	def export_Attestation(cls, qureyset):
+		""" Serializes an Attestation queryset to xml """
+		from solutions.models import Solution
+
+		# fetch tasks, media objects, checker and serialize
+		attestation_objects = list(qureyset)
+		solution_objects = list([attestation.solution for attestation in attestation_objects])
+		annotatedsolutionfiles_objects = list(AnnotatedSolutionFile.objects.filter(attestation__in = attestation_objects).defer('content'))
+		for annotatedsolutionfile in annotatedsolutionfiles_objects:
+			annotatedsolutionfile.content = ""
+			annotatedsolutionfile._meta.model_name = "annotatedsolutionfile" # *sigh*
+		solutionfile_objects = list([annotatedsolutionfile.solution_file for annotatedsolutionfile in annotatedsolutionfiles_objects])
+
+		task_objects = list(set([attestation.solution.task for attestation in attestation_objects]))
+		
+		ratingresult_objects  = list(RatingResult.objects.filter(attestation__in = attestation_objects))
+		aspect_grades_objects = set([ratingresult.mark for ratingresult in ratingresult_objects])
+		final_grades_objects  = set([attestation.final_grade for attestation in attestation_objects])
+		rating_objects        = set([ratingresult.rating for ratingresult in ratingresult_objects])
+ 		aspect_objects        = set([rating.aspect for rating in rating_objects])
+		ratingscale_objects = list(
+			  set(RatingScale.objects.filter(ratingscaleitem__in = final_grades_objects | aspect_grades_objects))
+		)
+		ratingscaleitems_objects = list(RatingScaleItem.objects.filter(scale__in = ratingscale_objects))
+
+		data = serializers.serialize("xml", attestation_objects + solution_objects + ratingscale_objects + ratingscaleitems_objects + ratingresult_objects + list(rating_objects) + list(aspect_objects) + annotatedsolutionfiles_objects + solutionfile_objects)
+		
+		return data
+
+	@classmethod
+	@transaction.atomic
+	def update_Attestations(cls, request, xml_file):
+		from solutions.models import Solution, SolutionFile
+		data = xml_file.read()
+		deserialized = list(serializers.deserialize("xml", data))
+
+		tosave_attestation = []
+		tosave_ratingresult = []
+		
+
+		for deserialized_object in deserialized:
+			new_object = deserialized_object.object
+
+			if isinstance(new_object, Attestation):
+				old_object = Attestation.objects.get(id = new_object.id)
+				
+				if not(attributes_equal(new_object, old_object, ["solution"])):
+					messages.error(request, "1Invalid change from " + str(old_object) + " to " + str(new_object) + ". Nothing was imported.")
+					return
+				tosave_attestation.append(deserialized_object)
+
+			elif isinstance(new_object, RatingResult):
+				old_object = RatingResult.objects.get(id = new_object.id)
+				if not(attributes_equal(new_object, old_object, ["attestation", "rating"])):
+					messages.error(request, "2Invalid change from " + str(old_object) + " to " + str(new_object) + ". Nothing was imported.")
+					return
+				tosave_ratingresult.append(deserialized_object)
+
+			elif isinstance(new_object, AnnotatedSolutionFile):
+				old_object = AnnotatedSolutionFile.objects.get(id = new_object.id)
+				if not(attributes_equal(new_object, old_object, ["attestation", "solutionfile"])):
+					messages.error(request, "4Invalid change from " + str(old_object) + " to " + str(new_object) + ". Nothing was imported.")
+					return
+
+			elif ( isinstance(new_object, Solution)
+                            or isinstance(new_object, Rating)
+                            or isinstance(new_object, RatingAspect)
+                            or isinstance(new_object, RatingScale)
+                            or isinstance(new_object, SolutionFile)
+                            or isinstance(new_object, RatingScaleItem)):
+				old_object = new_object.__class__.objects.get(id = new_object.id)
+				if not(model_fields_equal(new_object, old_object)):
+					messages.error(request, "3Invalid change from " + str(old_object) + " to " + str(new_object) + ". Nothing was imported.")
+					return
+			else:
+				messages.error(request, "Invalid model class for: " + str(new_object) + ". Nothing was imported.")
+				return
+
+		for object in (tosave_attestation + tosave_ratingresult):
+			object.save()
+		
+		messages.success(request, "Updated %d attestations, and %d rating results." % (len(tosave_attestation), len(tosave_ratingresult)))
+
+		return
+			
+
 
 class AnnotatedSolutionFile(models.Model):
 	""""""
@@ -160,4 +253,20 @@ class Script(models.Model):
 	""" save java script function of the rating overview page """
 	script = models.TextField(blank=True, help_text = _("This JavaScript will calculate a recommend end note for every user based on final grade of every task."), default="""var sum = 0.0;\nfor (x = 0; x != grades.length; ++x) {\n    grade = parseFloat(grades[x]);\n    if (!isNaN(grade)) {\n        sum += grade;\n    }\n}\nresult=sum;""")
 	
-	
+
+
+
+def attributes_equal(this,that,attrs):
+	_NOTFOUND = object()
+        for attr in attrs:
+            v1, v2 = [getattr(obj, attr, _NOTFOUND) for obj in [this, that]]
+            if (v1 is _NOTFOUND) != (v2 is _NOTFOUND):
+		return False
+            elif v1 != v2:
+                return False
+        return True
+
+def model_fields_equal(this,that):
+	this_fields = [field.name for field in this._meta.fields]
+	that_fields = [field.name for field in that._meta.fields]
+	return this_fields == that_fields and attributes_equal(this, that, this_fields)

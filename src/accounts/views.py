@@ -1,10 +1,10 @@
 #from accounts.forms import MyRegistrationForm
 from datetime import datetime
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
-from django.template import RequestContext, Template, Context, loader
+from django.template import Template, loader
 from django.conf import settings
 from accounts.forms import MyRegistrationForm, UserChangeForm, ImportForm, ImportTutorialAssignmentForm, ImportMatriculationListForm
 from accounts.models import User, Tutorial
@@ -37,12 +37,12 @@ def register(request):
 		else:
 			form = MyRegistrationForm()
 		extra_context['form'] = form
-	return render_to_response('registration/registration_form.html', extra_context, context_instance=RequestContext(request))
+	return render(request, 'registration/registration_form.html', extra_context)
 
 
 def activate(request, activation_key):
 	account = User.activate_user(activation_key)
-	return render_to_response('registration/registration_activated.html', { 'account': account, 'expiration_days': get_settings().acount_activation_days }, context_instance=RequestContext(request))
+	return render(request, 'registration/registration_activated.html', { 'account': account, 'expiration_days': get_settings().acount_activation_days })
 
 @staff_member_required
 def activation_allow(request,user_id):
@@ -59,8 +59,8 @@ def activation_allow(request,user_id):
 		'activation_key': user.activation_key,
 		'expiration_days': get_settings().acount_activation_days,
 	}
-	send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(Context(c)), None, [user.email])
-	return render_to_response('registration/registration_activation_allowed.html', { 'new_user': user, }, context_instance=RequestContext(request))
+	send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(c), None, [user.email])
+	return render(request, 'registration/registration_activation_allowed.html', { 'new_user': user, })
 
 @local_user_required
 def change(request):
@@ -71,18 +71,17 @@ def change(request):
 			return HttpResponseRedirect(reverse('task_list'))
 	else:
 		form = UserChangeForm(instance=request.user)
-	return render_to_response('registration/registration_change.html', {'form':form, 'user':request.user}, context_instance=RequestContext(request))
+	return render(request, 'registration/registration_change.html', {'form':form, 'user':request.user})
 
 @login_required
 def view(request):
-	return render_to_response('registration/registration_view.html', {'user':request.user}, context_instance=RequestContext(request))
+	return render(request, 'registration/registration_view.html', {'user':request.user})
 
 def access_denied(request):
 	request_path = request.META.get('HTTP_HOST', '') + request.get_full_path()
-	res = render_to_response(
+	res = render(request,
             'access_denied.html',
-            {'request_path': request_path},
-            context_instance=RequestContext(request))
+            {'request_path': request_path})
         res.status_code = 403
         return res
 
@@ -113,7 +112,7 @@ def import_user(request):
 								'activation_key': user.activation_key,
 								'expiration_days': get_settings().acount_activation_days,
 							}
-							send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(Context(c)), None, [user.email])
+							send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(c), None, [user.email])
 				return HttpResponseRedirect(urlresolvers.reverse('admin:accounts_user_changelist'))
 			except:
 				raise
@@ -122,7 +121,7 @@ def import_user(request):
 				form._errors["file"] = ErrorList([msg]) 			
 	else:
 		form = ImportForm()
-	return render_to_response('admin/accounts/user/import.html', {'form': form, 'title':"Import User"  }, RequestContext(request))
+	return render(request, 'admin/accounts/user/import.html', {'form': form, 'title':"Import User" })
 
 @staff_member_required
 def import_tutorial_assignment(request):
@@ -147,7 +146,7 @@ def import_tutorial_assignment(request):
 			return HttpResponseRedirect(urlresolvers.reverse('admin:accounts_user_changelist'))
 	else:
 		form = ImportTutorialAssignmentForm()
-	return render_to_response('admin/accounts/user/import_tutorial_assignment.html', {'form': form, 'title':"Import tutorial assignment"  }, RequestContext(request))
+	return render(request, 'admin/accounts/user/import_tutorial_assignment.html', {'form': form, 'title':"Import tutorial assignment"  })
 
 
 @staff_member_required
@@ -192,11 +191,11 @@ def import_matriculation_list(request, group_id):
             return HttpResponseRedirect(urlresolvers.reverse('admin:auth_group_change', args=[group_id]))
     else:
         form = ImportMatriculationListForm()
-    return render_to_response('admin/auth/group/import_matriculation_list.html', {'form': form, 'title':"Import matriuculation number list"}, RequestContext(request))
+    return render(request, 'admin/auth/group/import_matriculation_list.html', {'form': form, 'title':"Import matriuculation number list"})
 
 def deactivated(request,user_id):
 	user = get_object_or_404(User,pk=user_id)
 	if user.is_active:
 		return HttpResponse(status=409)
-	return render_to_response('registration/registration_deactivated.html', { 'user': user, }, context_instance=RequestContext(request))
+	return render(request, 'registration/registration_deactivated.html', { 'user': user, })
 

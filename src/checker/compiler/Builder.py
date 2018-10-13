@@ -9,7 +9,6 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
 from django.template.loader import get_template
-from django.template import Context
 
 
 from checker.basemodels import Checker
@@ -144,10 +143,10 @@ class Builder(Checker):
 
 	def build_log(self,output,args,filenames):
 		t = get_template('checker/compiler/builder_report.html')
-		return t.render(Context({
+		return t.render({
 			'filenames' : filenames,
 			'output' : output,
 			'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm,ps: parm + ' ' + ps,args[1:],''),
 			'regexp' : self.rxarg()
-		}))
+		})
 
