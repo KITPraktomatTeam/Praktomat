@@ -25,7 +25,7 @@
 
  <select name="lang">
    {% for opt in task.jplag_languages.keys %}
-	<option value="{{ opt }}" {% if opt = jplag_lang %} selected="selected" {% endif %}>{{opt}}</option>
+	<option value="{{ opt }}" {% if opt == jplag_lang %} selected="selected" {% endif %}>{{opt}}</option>
    {% endfor %}
  </select>
 
