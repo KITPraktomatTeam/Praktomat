@@ -1,11 +1,11 @@
-from django.core.management.base import NoArgsCommand, CommandError
+from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 
 from os.path import join, dirname as dir
 import shutil
 import tempfile
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
 	help = 'Copies the demo database into the application support folder'
 
 	def handle_noargs(self, **options):

@@ -4,7 +4,7 @@ $(document).ready(function(){
 	// hide all checkergroups
 	$(".inline-group.checker").hide();
 	// create new a group for ALL checkers
-	$("#mediafile_set-group").after("<div class='inline-group checker-group'><h2>Checker</h2></div>");
+	$("#htmlinjector_set-group").after("<div class='inline-group checker-group'><h2>Checker</h2></div>");
 	var addrows = $(".inline-group.checker .add-row");
 	// move the links to create new checkers
 	$(".checker-group").append(addrows);

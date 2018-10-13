@@ -1,0 +1,40 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_modify %}
+
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript" src="../../../jsi18n/"></script>
+{{ media }}
+{% endblock %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}admin/css/forms.css" />{% endblock %}
+
+{% block breadcrumbs %}{% if not is_popup %}
+<div class="breadcrumbs">
+     <a href="../../../">{% trans "Home" %}</a> &rsaquo;
+     <a href="../../">Attestation</a> &rsaquo; 
+     <a href="../">Attestations</a> &rsaquo; 
+     {% trans "Update Attestations" %}
+</div>
+{% endif %}{% endblock %}
+
+{% block content %}<div id="content-main">
+
+<form enctype="multipart/form-data" action="." method="post">{% csrf_token %}
+<div>
+{% if form.errors %}
+    <p class="errornote">
+    {% blocktrans count form.errors|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
+    </p>
+    <ul class="errorlist">{% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul>
+{% endif %}
+
+<fieldset class="module aligned ">
+	{% include "forms/form_as_div.html" %}
+</fieldset>
+
+<div class="submit-row">
+<input type="submit" value="{% trans 'Save' %}" class="default" name="_save" {{ onclick_attrib }}/></div>
+
+</div>
+</form></div>
+{% endblock %}

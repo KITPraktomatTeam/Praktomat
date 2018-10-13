@@ -131,7 +131,9 @@ class User(BasicUser):
         @property
         def is_trainer(self):
             return 'Trainer' in self.cached_groups()
-
+        @property
+        def is_coordinator(self):
+            return 'Coordinator' in self.cached_groups()
 
 	@classmethod
 	def export_user(cls, queryset):
