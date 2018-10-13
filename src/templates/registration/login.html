@@ -1,11 +1,28 @@
 {% extends "base.html" %}
-{% load i18n %} {% load chunks %}
+{% load i18n %} {% load chunks %} {% load motd %}
+
+{% block extrahead %}{{ block.super }}
+<script type="application/javascript">
+
+function resize(id) {
+    var iframe = document.getElementById(id);
+    var height = iframe.contentWindow.document.body.scrollHeight;
+    // if we have content, we need to extend the iframe
+    // because we need to include space for the invisible scrollbar
+    iframe.height = (height == 0) ? 0 : height + 35;
+};
+
+</script>
+{% endblock %}
 
 {% block breadcrumbs %}
 	{{ block.super }} &gt; {% trans 'Login' %}
 {% endblock %}
 
 {% block content %}<div id="login">
+
+{% motd %}
+
 {% chunk "Login Message" %}	
 
 <div id="form">	
