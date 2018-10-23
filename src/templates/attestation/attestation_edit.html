@@ -199,6 +199,11 @@
 		</div>
 	</div>
 </form>
+{% for snippet in htmlinjector_snippets %}
+		<div class="snippet">
+			{{snippet|safe}}
+		</div>
+{% endfor %}
 </div>
 
 

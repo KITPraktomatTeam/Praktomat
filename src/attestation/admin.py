@@ -3,6 +3,9 @@ from attestation.models import *
 from django.core.urlresolvers import reverse
 from django.utils.html import format_html
 
+import attestation.views
+
+admin.autodiscover()
 
 class RatingScaleItemInline(admin.TabularInline):
 	model = RatingScaleItem
@@ -45,6 +48,14 @@ class AttestationAdmin(admin.ModelAdmin):
 	list_display = ('solution', 'author', 'created', 'final', 'published','published_on')
 	list_filter = ('final', 'published', 'author', 'solution__author', 'solution__task')
 	inlines = (RatingResultAdminInline, AnnotatedSolutionFileAdminInline)
+	actions = ['export_attestations']
+
+	def export_attestations(self, request, queryset):
+		""" Export Attestation action """
+		from django.http import HttpResponse
+		response = HttpResponse(Attestation.export_Attestation(queryset), content_type="application/xml")
+		response['Content-Disposition'] = 'attachment; filename=AttestationExport.xml'
+		return response
 
 	def get_form(self, request, obj=None, **kwargs):
 		request.obj = obj
@@ -67,10 +78,17 @@ class AttestationAdmin(admin.ModelAdmin):
 	show_solution.short_description = 'Solution'
 
 
+	def get_urls(self):
+		""" Add URL to Attestation update """
+		urls = super(AttestationAdmin, self).get_urls()
+		from django.conf.urls import url
+		my_urls = [url(r'^update/$', attestation.views.update_attestations, name='attestation_update')]
+		return my_urls + urls
+
+	def has_add_permission(self, request):
+		return False
 
 
-
-	
 admin.site.register(Attestation, AttestationAdmin)
 
 
