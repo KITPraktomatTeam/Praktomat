@@ -16,8 +16,11 @@ match = re.match(r'''
 	(?:praktomat_)?
 	(?P<algo1>algo1_)?
 	(?P<cram>cram_)?
+	(?P<birap>birap_)?
 	(?P<tba>tba_)?
 	(?P<mlfds>mlfds_)?
+	(?P<pp>pp_)?
+	(?P<iimb>iimb_)?
 	(?P<year>\d+)_
 	(?P<semester>WS|SS)
 	(?P<abschluss>_Abschluss)?
@@ -28,10 +31,16 @@ if match:
 		SITE_NAME = 'Algorithmen I '
 	elif match.group('cram') is not None:
 		SITE_NAME = 'CRAM '
+	elif match.group('birap') is not None:
+		SITE_NAME = 'BIRAP '
 	elif match.group('mlfds') is not None:
 		SITE_NAME = 'MLFDS '
 	elif match.group('tba') is not None:
 		SITE_NAME = 'Theorembeweiser '
+	elif match.group('pp') is not None:
+		SITE_NAME = 'Programmierparadigmen '
+	elif match.group('iimb') is not None:
+		SITE_NAME = 'Informatik im Maschinenbau '
 	else:
 		SITE_NAME = 'Programmieren '
 
@@ -65,7 +74,17 @@ STATIC_URL = BASE_PATH + 'static/'
 
 STATIC_ROOT = join(dirname(PRAKTOMAT_PATH), "static")
 
+TEST_MAXLOGSIZE=512
+
+TEST_MAXFILESIZE=512
+
+TEST_TIMEOUT=180
+
 if "cram" in PRAKTOMAT_ID:
+  TEST_TIMEOUT=600
+  TEST_MAXMEM=200
+
+if "birap" in PRAKTOMAT_ID:
   TEST_TIMEOUT=600
 
 if "tba" in PRAKTOMAT_ID:
@@ -77,11 +96,16 @@ if "tba" in PRAKTOMAT_ID:
 # Example: "/home/media/media.lawrence.com/"
 UPLOAD_ROOT = join(dirname(PRAKTOMAT_PATH), "PraktomatSupport/")
 
-SANDBOX_DIR = join('/srv/praktomat/sandbox/', PRAKTOMAT_ID)
+if MIRROR:
+	SANDBOX_DIR = join('/srv/praktomat/sandbox_Mirror/', PRAKTOMAT_ID)
+else:
+	SANDBOX_DIR = join('/srv/praktomat/sandbox/', PRAKTOMAT_ID)
 
 ADMINS = [
   ('Praktomat', 'praktomat@ipd.info.uni-karlsruhe.de')
 ]
+
+SERVER_EMAIL = 'praktomat@i44vm3.info.uni-karlsruhe.de'
 
 
 if MIRROR:
@@ -109,6 +133,8 @@ PRIVATE_KEY = '/srv/praktomat/mailsign/signer_key.pem'
 # Enable Shibboleth:
 SHIB_ENABLED = True
 REGISTRATION_POSSIBLE = False
+
+SYSADMIN_MOTD_URL = "https://praktomat.cs.kit.edu/sysadmin_motd.html"
 
 # Use a dedicated user to test submissions
 USEPRAKTOMATTESTER = False

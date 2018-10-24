@@ -1,27 +1,25 @@
+from django.conf import settings   # for switching via ACCOUNT_CHANGE_POSSIBLE
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
-from django.template.context import RequestContext
 from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
-from django.db.models import Count, Max, Sum
+from django.db.models import Count
 from django.db import transaction
 from django.contrib.auth.models import Group
 from django.views.decorators.cache import cache_control
 from django.http import HttpResponse
-from django.template import loader, Context
-from django.conf import settings
-from collections import Counter
+from django.template import loader
+from django import forms
 import datetime
-import codecs
 
-from tasks.models import Task
-from solutions.models import Solution, SolutionFile
-from solutions.forms import SolutionFormSet
-from checker.basemodels import CheckerResult, check_solution
-from attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, Script, RatingScale, RatingScaleItem
-from attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm, ScriptForm, PublishFinalGradeForm, GenerateRatingScaleForm
+from tasks.models import Task, HtmlInjector
+from solutions.models import Solution
+from checker.basemodels import check_solution
+from attestation.models import Attestation, AnnotatedSolutionFile, RatingResult, RatingScale, RatingScaleItem
+from attestation.forms import AnnotatedFileFormSet, RatingResultFormSet, AttestationForm, AttestationPreviewForm, PublishFinalGradeForm, GenerateRatingScaleForm, FinalGradeOptionForm
 from accounts.models import User, Tutorial
 from accounts.views import access_denied
 from configuration import get_settings
@@ -138,7 +136,7 @@ def statistics(request,task_id):
                     'medians': medians
                     })
 
-	return render_to_response("attestation/statistics.html",
+	return render(request, "attestation/statistics.html",
             {'task':                           task,
             'user_count':                      user_count,
             'solution_count':                  final_solution_count,
@@ -152,12 +150,25 @@ def statistics(request,task_id):
             'all_ratings':                     all_ratings,
             'runtimes':                        runtimes,
             'has_runtime_chart':               has_runtimes,
-            }, context_instance=RequestContext(request))
+            })
 
 def daterange(start_date, end_date):
     for n in range((end_date - start_date).days + 1):
         yield start_date + datetime.timedelta(n)
-	
+
+
+def tutor_attestation_stats(task, tutor):
+	stats = {'tutor': tutor,
+             'unattested' : Solution.objects.filter(task = task, final=True, plagiarism = False, attestation = None,author__tutorial__tutors=tutor).count(), 
+             'final': Attestation.objects.filter(solution__task = task,final=True,author=tutor).count(),
+             'nonfinal': Attestation.objects.filter(solution__task = task,final=False,author=tutor).count() }
+
+	stats['attested'] = stats['final']+stats['nonfinal']
+	stats['total']    = stats['final']+stats['nonfinal']+stats['unattested']
+
+	return stats
+
+
 @login_required
 @cache_control(must_revalidate=True, no_cache=True, no_store=True, max_age=0) #reload the page from the server even if the user used the back button
 def attestation_list(request, task_id):
@@ -167,16 +178,12 @@ def attestation_list(request, task_id):
 	task = Task.objects.get(pk=task_id)
 
 	attestation_stats = []
+	no_tutorial_stats = {}
         if request.user.is_trainer:
-		attestation_stats =  [ {'tutor': tutor,
-        	                        'unattested' : Solution.objects.filter(task = task, final=True, plagiarism = False, attestation = None,author__tutorial__tutors=tutor).count(), 
-                	                'final': Attestation.objects.filter(solution__task = task,final=True,author=tutor).count(),
-                        	        'nonfinal': Attestation.objects.filter(solution__task = task,final=False,author=tutor).count() }
+		attestation_stats =  [ tutor_attestation_stats(task, tutor)
 	                              for tutor in User.objects.filter(groups__name="Tutor")]
 
-		for entry in attestation_stats:
-			entry['attested'] = entry['final']+entry['nonfinal']
-			entry['total']    = entry['final']+entry['nonfinal']+entry['unattested']
+		no_tutorial_stats = tutor_attestation_stats(task, None)
 
 
 	tutored_users = User.objects.filter(groups__name="User", is_active=True).order_by('last_name') if request.user.is_trainer or request.user.is_superuser else None
@@ -249,8 +256,9 @@ def attestation_list(request, task_id):
 		 'publishable_tutorial': publishable_tutorial,
 		 'publishable_all': publishable_all,
 		 'show_author': show_author,
-		 'attestation_stats' : attestation_stats}
-	return render_to_response("attestation/attestation_list.html", data, context_instance=RequestContext(request))
+		 'attestation_stats' : attestation_stats,
+		 'no_tutorial_stats' : no_tutorial_stats,}
+	return render(request, "attestation/attestation_list.html", data)
 
 
 @login_required
@@ -284,7 +292,7 @@ def new_attestation_for_solution(request, solution_id, force_create = False):
 
 	attestations = Attestation.objects.filter(solution = solution)
 	if ((not force_create) and attestations):
-		return render_to_response("attestation/attestation_already_exists_for_solution.html", { 'task' : solution.task, 'attestations' : attestations, 'solution' : solution, 'show_author': not get_settings().anonymous_attestation }, context_instance=RequestContext(request))
+		return render(request, "attestation/attestation_already_exists_for_solution.html", { 'task' : solution.task, 'attestations' : attestations, 'solution' : solution, 'show_author': not get_settings().anonymous_attestation })
 
 	attest = Attestation(solution = solution, author = request.user)
 	attest.save()
@@ -353,8 +361,22 @@ def edit_attestation(request, attestation_id):
 	
 	show_author = not get_settings().anonymous_attestation 
 	show_run_checkers = get_settings().attestation_allow_run_checkers
+	htmlinjectors = HtmlInjector.objects.filter(task = solution.task, inject_in_attestation_edit = True)
+	htmlinjector_snippets = [ injector.html_file.read() for injector in htmlinjectors ] 
 	
-	return render_to_response("attestation/attestation_edit.html", {"attestForm": attestForm, "attestFileFormSet": attestFileFormSet, "ratingResultFormSet":ratingResultFormSet, "solution": solution, "model_solution":model_solution, "show_author":show_author, "show_run_checkers":show_run_checkers},	context_instance=RequestContext(request))
+	return render(request,
+		"attestation/attestation_edit.html",
+		 {
+			"attestForm": attestForm,
+			"attestFileFormSet": attestFileFormSet,
+			"ratingResultFormSet": ratingResultFormSet,
+			"solution": solution,
+			"model_solution": model_solution,
+			"show_author": show_author,
+			"show_run_checkers": show_run_checkers,
+			"htmlinjector_snippets": htmlinjector_snippets,
+		}
+	)
 
 @login_required	
 def view_attestation(request, attestation_id):
@@ -381,7 +403,22 @@ def view_attestation(request, attestation_id):
 		form = AttestationPreviewForm(instance=attest)
 		submitable = may_modify and not attest.published
 		withdrawable = may_modify and attest.published
-                return render_to_response("attestation/attestation_view.html", {"attest": attest, 'submitable':submitable, 'withdrawable': withdrawable, 'form':form, 'show_author': not get_settings().anonymous_attestation, 'show_attestor': not get_settings().invisible_attestor},	context_instance=RequestContext(request))
+
+		htmlinjectors = HtmlInjector.objects.filter(task = attest.solution.task, inject_in_attestation_view = True)
+		htmlinjector_snippets = [ injector.html_file.read() for injector in htmlinjectors ] 
+
+                return render(request,
+			"attestation/attestation_view.html",
+			{
+				"attest": attest,
+				"submitable": submitable,
+				"withdrawable": withdrawable,
+				"form":form,
+				"show_author": not get_settings().anonymous_attestation,
+				"show_attestor": not get_settings().invisible_attestor,
+				"htmlinjector_snippets" : htmlinjector_snippets,
+			}
+		)
 
 
 def user_task_attestation_map(users,tasks,only_published=True):
@@ -389,57 +426,105 @@ def user_task_attestation_map(users,tasks,only_published=True):
 		attestations = Attestation.objects.filter( published=True )
 	else:
 		attestations = Attestation.objects.all()
-	
+
+	attestations = attestations.select_related("solution", "final_grade")
+	attestations = attestations.prefetch_related("ratingresult_set")
 	attestation_dict = {} 	#{(task_id,user_id):attestation}
 	for attestation in attestations:
 		attestation_dict[attestation.solution.task_id, attestation.solution.author_id] = attestation
+
+	solutions = Solution.objects.filter( final=True )
+	final_solutions_dict = {} 	#{(task_id,user_id):final solution exists?}
+	for solution in solutions:
+		final_solutions_dict[solution.task_id, solution.author_id] = True
 	
-	task_id_list = tasks.values_list('id', flat=True)
-	user_id_list = users.values_list('id', flat=True)
-	
+	settings = get_settings()
+	arithmetic_option = settings.final_grades_arithmetic_option
+	plagiarism_option = settings.final_grades_plagiarism_option
+
 	rating_list = []
-	for user_id in user_id_list:
+	for user in users:
 		rating_for_user_list = []
-		for task_id in task_id_list:
+		grade_sum = 0
+		threshold = 0
+
+		for task in tasks:
+			has_solution = (task.id,user.id) in final_solutions_dict
+
 			try:
-				rating = attestation_dict[task_id,user_id]
+				rating = attestation_dict[task.id,user.id]
+				if rating.final_grade is None:
+					# rating has no grade, so it is shown as if there was no rating
+					# should only be relevant for unfinished attestations
+					rating = None
 			except KeyError:
 				rating = None
-			rating_for_user_list.append(rating)
-		rating_list.append((User.objects.get(id=user_id),rating_for_user_list))
-	
-	return rating_list
+			if rating or (task.expired() and not has_solution):
+				threshold += task.warning_threshold
 
+			if rating is not None:
+				if plagiarism_option == 'WP' or (plagiarism_option == 'NP' and not rating.solution.plagiarism):
+					try:
+						grade_sum += float(rating.final_grade.name)
+					except:
+						pass #non-numeric grade, ignore
+
+			rating_for_user_list.append((rating,has_solution))
+
+		if arithmetic_option == 'SUM':
+			calculated_grade = grade_sum
+		else:
+			# in this case: arithmetic_option == 'AVG'
+			if len(rating_for_user_list) == 0:
+				calculated_grade = 0
+			else:
+				calculated_grade = grade_sum / len(rating_for_user_list)
+
+		rating_list.append((user, rating_for_user_list, threshold, calculated_grade))
+
+	return rating_list
 
 @login_required	
 def rating_overview(request):
-	if not (request.user.is_trainer or request.user.is_superuser):
+	full_form = request.user.is_trainer or request.user.is_superuser
+	
+	if not (full_form or (request.user.is_coordinator and request.method != "POST")):
 		return access_denied(request)
-	
+
 	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date')
-	users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name')
-	rating_list = user_task_attestation_map(users, tasks)
-		
-	FinalGradeFormSet = modelformset_factory(User, fields=('final_grade',), extra=0)
+	users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name','id')
 	# corresponding user to user_id_list in reverse order! important for easy displaying in template
-	user = User.objects.filter(groups__name='User').filter(is_active=True).order_by('-last_name','-first_name')
-	
-	script = Script.objects.get_or_create(id=1)[0]
-	
+	rev_users = users.reverse()
+	users = users.select_related("user_ptr", "user_ptr__groups__name", "user_ptr__is_active", "user_ptr__user_id")
+
+	FinalGradeFormSet = modelformset_factory(User, fields=('final_grade',), extra=0)
+
 	if request.method == "POST":
-		final_grade_formset = FinalGradeFormSet(request.POST, request.FILES, queryset = user)
-		script_form = ScriptForm(request.POST, instance=script)
-		publish_final_grade_form = PublishFinalGradeForm(request.POST, instance=get_settings())
-		if final_grade_formset.is_valid() and script_form.is_valid() and publish_final_grade_form.is_valid():
-			final_grade_formset.save()
-			script_form.save()
-			publish_final_grade_form.save()
+		final_grade_option_form = FinalGradeOptionForm(request.POST, instance=get_settings())
+		if final_grade_option_form.is_valid():
+			final_grade_option_form.save()
+
+		if 'save' in request.POST:
+			# also save final grades
+			final_grade_formset = FinalGradeFormSet(request.POST, request.FILES, queryset=rev_users)
+			publish_final_grade_form = PublishFinalGradeForm(request.POST, instance=get_settings())
+			if final_grade_formset.is_valid() and publish_final_grade_form.is_valid():
+				final_grade_formset.save()
+				publish_final_grade_form.save()
+		else:
+			final_grade_formset = FinalGradeFormSet(queryset=rev_users)
+			publish_final_grade_form = PublishFinalGradeForm(instance=get_settings())
+
 	else:
-		final_grade_formset = FinalGradeFormSet(queryset = user)
-		script_form = ScriptForm(instance=script)
+		# all 3 forms are created without request input
+		final_grade_option_form = FinalGradeOptionForm(instance=get_settings())
+		final_grade_formset = FinalGradeFormSet(queryset=rev_users)
 		publish_final_grade_form = PublishFinalGradeForm(instance=get_settings())
+
+	rating_list = user_task_attestation_map(users, tasks)
+
+	return render(request, "attestation/rating_overview.html", {'rating_list': rating_list, 'tasks': tasks, 'final_grade_formset': final_grade_formset, 'final_grade_option_form': final_grade_option_form, 'publish_final_grade_form': publish_final_grade_form, 'full_form': full_form})
 	
-	return render_to_response("attestation/rating_overview.html", {'rating_list':rating_list, 'tasks':tasks, 'final_grade_formset':final_grade_formset, 'script_form':script_form, 'publish_final_grade_form':publish_final_grade_form},	context_instance=RequestContext(request))
 
 @login_required	
 def tutorial_overview(request, tutorial_id=None):
@@ -453,7 +538,7 @@ def tutorial_overview(request, tutorial_id=None):
 	else:
 		tutorials = request.user.tutored_tutorials.all()
 		if (not tutorials):
-			return render_to_response("attestation/tutorial_none.html",context_instance=RequestContext(request))
+			return render(request, "attestation/tutorial_none.html")
  
 		tutorial = request.user.tutored_tutorials.all()[0]
 
@@ -475,58 +560,42 @@ def tutorial_overview(request, tutorial_id=None):
 
 	averages     = [0.0 for i in range(len(tasks))]
 	nr_of_grades = [0 for i in range(len(tasks))]
-	for (user,attestations) in rating_list:
-		averages     = [avg+to_float(att,0.0,None)[0] for (avg,att) in zip(averages,attestations)]
-		nr_of_grades = [n+to_float(att,0,1)[1] for (n,att) in zip(nr_of_grades,attestations)]
+
+	for (user,attestations,_,_) in rating_list:
+		averages     = [avg+to_float(att,0.0,None)[0] for (avg,(att,_)) in zip(averages,attestations)]
+		nr_of_grades = [n+to_float(att,0,1)[1] for (n,(att,_)) in zip(nr_of_grades,attestations)]
 
 	nr_of_grades = [ (n if n>0 else 1) for n in nr_of_grades]
 
 	averages = [a/n for (a,n) in zip(averages,nr_of_grades)]
-	script = Script.objects.get_or_create(id=1)[0]
 	
-	return render_to_response("attestation/tutorial_overview.html", {'other_tutorials':other_tutorials, 'tutorial':tutorial, 'rating_list':rating_list, 'tasks':tasks, 'final_grades_published': get_settings().final_grades_published, 'script':script, 'averages':averages},	context_instance=RequestContext(request))
+	return render(request, "attestation/tutorial_overview.html", {'other_tutorials':other_tutorials, 'tutorial':tutorial, 'rating_list':rating_list, 'tasks':tasks, 'final_grades_published': get_settings().final_grades_published, 'averages':averages})
 
 
 @login_required	
 def rating_export(request):
-	if not (request.user.is_trainer or request.user.is_superuser):
+	if not (request.user.is_trainer or request.user.is_coordinator or request.user.is_superuser):
 		return access_denied(request)
-	
-	attestations = Attestation.objects.filter(published=True, solution__plagiarism=False)
-	
-	attestation_dict = {} 	#{(task_id,user_id):rating}
-	for attestation in attestations:
-			attestation_dict[attestation.solution.task_id, attestation.solution.author_id] = attestation
-	
-	task_id_list = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date').values_list('id', flat=True)
-	user_id_list = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name').values_list('id', flat=True)
-	
-	task_list = map(lambda task_id:Task.objects.get(id=task_id), task_id_list)	
-	
-	rating_list = []
-	for user_id in user_id_list:
-		rating_for_user_list = [User.objects.get(id=user_id)]
-		for task_id in task_id_list:
-			try:
-				rating = attestation_dict[task_id,user_id]
-			except KeyError:
-				rating = None
-			rating_for_user_list.append(rating)
-		rating_list.append(rating_for_user_list)
-	
-	response = HttpResponse(content_type='text/csv')
-	response['Content-Disposition'] = 'attachment; rating_export.csv'
 
+	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date')
+	users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name')
+	rating_list = user_task_attestation_map(users, tasks)
+
+	response = HttpResponse(content_type='text/csv')
 	if settings.LDAP_ENABLED:
+		response['Content-Disposition'] = 'attachment; filename=rating_export_ldap.csv'
 		t = loader.get_template('attestation/rating_export_ldap.csv')
-		c = Context({'rating_list':rating_list, 'task_list':task_list})
+		c = {'rating_list': rating_list, 'tasks': tasks}
 		#response.write(u'\ufeff') setting utf-8 BOM for Exel doesn't work
 		response.write(t.render(c))
 	else:
+		response['Content-Disposition'] = 'attachment; filename=rating_export.csv'
 		t = loader.get_template('attestation/rating_export.csv')
-		c = Context({'rating_list':rating_list, 'task_list':task_list})
+		c = {'rating_list': rating_list, 'tasks': tasks}
 		#response.write(u'\ufeff') setting utf-8 BOM for Exel doesn't work
 		response.write(t.render(c))
+	response = HttpResponse(content_type='text/csv')
+
 	return response
 	
 def frange(start, end, inc):
@@ -560,7 +629,7 @@ def generate_ratingscale(request):
 			return HttpResponseRedirect(reverse('admin:attestation_ratingscale_changelist')) 			
 	else:
 		form = GenerateRatingScaleForm()
-	return render_to_response('admin/attestation/ratingscale/generate.html', {'form': form, 'title':"Generate RatingScale"  }, RequestContext(request))
+	return render(request, 'admin/attestation/ratingscale/generate.html', {'form': form, 'title':"Generate RatingScale"  })
 
 
 
@@ -585,6 +654,26 @@ def attestation_run_checker(request,attestation_id):
 	check_solution(solution,True)
 	return HttpResponseRedirect(reverse('edit_attestation', args=[attestation_id]))
 	
+class ImportForm(forms.Form):
+	file = forms.FileField()
+
+@staff_member_required
+def update_attestations(request):
+	""" View in the admin """
+	if request.method == 'POST': 
+		form = ImportForm(request.POST, request.FILES)
+		if form.is_valid(): 
+			try:
+				Attestation.update_Attestations(request, form.files['file'])
+				return render(request, 'admin/attestation/update.html', {'form': form, 'title':"Update Attestations"  })
+			except Exception, e:
+				from django.forms.utils import ErrorList
+				msg = "An Error occured. The import file was propably malformed.: %s" % str(e)
+				form._errors["file"] = ErrorList([msg]) 			
+	else:
+		form = ImportForm()
+	return render(request, 'admin/attestation/update.html', {'form': form, 'title':"Update Attestations"  })
+
 # Can be replaced by // in python 3.2
 def timedelta_diff(td1,td2):
     return int(td1.total_seconds() / td2.total_seconds())
