@@ -280,7 +280,7 @@ def solution_file_delete(sender, instance, **kwargs):
     except OSError:
         pass
 
-def check_solution(solution, run_all = 0): 
+def check_solution(solution, run_all = 0, debug_keep_tmp = True): 
 	"""Builds and tests this solution."""
 	
 	# Delete previous results if the checker have already been run
@@ -292,28 +292,32 @@ def check_solution(solution, run_all = 0):
 	run_checks(solution, env, run_all)
 	
 	# Delete temporary directory
-	if not settings.DEBUG:
+	if not(debug_keep_tmp and settings.DEBUG):
 		try:
 			shutil.rmtree(env.tmpdir())
 		except:
 			pass
 
 # Assumes to be called from within a @transaction.autocommit Context!!!!
-def check_with_own_connection(solution,run_all = True):
+def check_with_own_connection(solution,run_all = True, debug_keep_tmp = True):
 	# Close the current db connection - will cause Django to create a new connection (not shared with other processes)
 	# when one is needed, see https://groups.google.com/forum/#!msg/django-users/eCAIY9DAfG0/6DMyz3YuQDgJ
 	connection.close()
-	solution.check_solution(run_all)
+	check_solution(solution, run_all, debug_keep_tmp)
 
 	# Don't leave idle connections behind
 	connection.close()
 
-def check_multiple(solutions, run_secret = False):
+def check_with_own_connection_rev(run_all, debug_keep_tmp, solution):
+	return check_with_own_connection(solution, run_all, debug_keep_tmp)
+
+
+def check_multiple(solutions, run_secret = False, debug_keep_tmp = False):
 	if settings.NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL <= 1:
 		for solution in solutions:
-			solution.check_solution(run_secret)
+			solution.check_solution(run_secret, debug_keep_tmp)
 	else:
-		check_it = partial(check_with_own_connection,run_all=run_secret)
+		check_it = partial(check_with_own_connection_rev, run_secret, debug_keep_tmp)
 
 		pool = Pool(processes=settings.NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL)  # Check n solutions at once 
 		pool.map(check_it, solutions,1)

@@ -1,9 +1,9 @@
-from django.core.management.base import NoArgsCommand, CommandError
+from django.core.management.base import BaseCommand, CommandError
 from accounts.models import User
 
 from os.path import join, dirname as dir
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
 	help = 'Delete all users which have not activated their account.'
 	
 	def handle_noargs(self, **options):

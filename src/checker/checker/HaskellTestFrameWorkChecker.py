@@ -7,7 +7,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
 from django.contrib import admin
 from django.template.loader import get_template
-from django.template import Context
 from checker.basemodels import Checker, CheckerFileField, truncated_log
 from checker.admin import	CheckerInline, AlwaysChangedModelForm
 from solutions.models import Solution
@@ -119,7 +118,7 @@ class HaskellTestFrameWorkChecker(CheckerWithFile):
                 
                 if self.include_testcase_in_report in ["FULL","DL"]:
                         testsuit_template = get_template('checker/checker/haskell_test_framework_report.html')
-                        output += testsuit_template.render(Context({'showSource' : (self.include_testcase_in_report=="FULL"), 'testfile' : self.file, 'testfilename' : self.path_relative_to_sandbox(), 'testfileContent': encoding.get_unicode(self.file.read())}))
+                        output += testsuit_template.render({'showSource' : (self.include_testcase_in_report=="FULL"), 'testfile' : self.file, 'testfilename' : self.path_relative_to_sandbox(), 'testfileContent': encoding.get_unicode(self.file.read())})
 
 
 		result.set_log(output,timed_out=timed_out or oom_ed,truncated=truncated)
