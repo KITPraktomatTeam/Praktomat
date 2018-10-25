@@ -37,8 +37,12 @@ class Task(models.Model):
 			null=True, related_name='model_solution_task')
 	all_checker_finished = models.BooleanField(default=False, editable=False, help_text = _("Indicates whether the checker which don't run immediately on submission have been executed."))
 	final_grade_rating_scale = models.ForeignKey('attestation.RatingScale', null=True, help_text = _("The scale used to mark the whole solution."))
+	warning_threshold = models.DecimalField(max_digits=8, decimal_places=2, default=0, help_text = _("If the student has less points in his tasks than the sum of their warning thresholds, display a warning."))
         only_trainers_publish = models.BooleanField(default=False, help_text = _("Indicates that only trainers may publish attestations. Otherwise, tutors may publish final attestations within their tutorials."))
         jplag_up_to_date = models.BooleanField(default=False, help_text = _("No new solution uploads since the last jPlag run"))
+
+	class Meta:
+		ordering = ['submission_date', 'title']
 
 	def __unicode__(self):
 		return self.title
@@ -246,8 +250,32 @@ class Task(models.Model):
 def get_mediafile_storage_path(instance, filename):
     return 'TaskMediaFiles/Task_%s/%s' % (instance.task.pk, filename)
 
+def get_htmlinjectorfile_storage_path(instance, filename):
+    return 'TaskHtmlInjectorFiles/Task_%s/%s' % (instance.task.pk, filename)
+
 
 class MediaFile(models.Model):
 
 	task = models.ForeignKey(Task)
 	media_file = DeletingFileField(upload_to=get_mediafile_storage_path, max_length=500)
+
+
+class HtmlInjector(models.Model):
+	task = models.ForeignKey(Task)
+	inject_in_solution_view      = models.BooleanField(
+        	default=False,
+		help_text = _("Indicates whether HTML code shall be injected in public  solution views, e.g.: in https://praktomat.cs.kit.edu/2016_WS_Abschluss/solutions/5710/")
+	) 
+	inject_in_solution_full_view = models.BooleanField(
+		default=False,
+		help_text = _("Indicates whether HTML code shall be injected in private solution views, e.g.: in https://praktomat.cs.kit.edu/2016_WS_Abschluss/solutions/5710/full")
+	) 
+	inject_in_attestation_edit = models.BooleanField(
+		default=True,
+		help_text = _("Indicates whether HTML code shall be injected in attestation edits, e.g.: in https://praktomat.cs.kit.edu/2016_WS_Abschluss/attestation/134/edit")
+	) 
+	inject_in_attestation_view = models.BooleanField(
+		default=False,
+		help_text = _("Indicates whether HTML code shall be injected in attestation views, e.g.: in https://praktomat.cs.kit.edu/2016_WS_Abschluss/attestation/134")
+	)
+	html_file = DeletingFileField(upload_to=get_htmlinjectorfile_storage_path, max_length=500)

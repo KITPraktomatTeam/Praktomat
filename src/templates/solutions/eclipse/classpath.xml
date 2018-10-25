@@ -2,9 +2,11 @@
 <classpath>
 	<classpathentry kind="src" path="solution/"/>
 	{% if createfile_checker_files %}
+	{% for createfile_checker_files_destination in createfile_checker_files_destinations %} 
 	<classpathentry kind="src" path="{{createfile_checker_files_destination}}"/>
+	{% endfor %}
 	{% endif  %}
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="output" path="bin"/>
 	{% if junit3 %}
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
