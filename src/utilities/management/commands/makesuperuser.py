@@ -11,11 +11,11 @@ from django.core.management.base import BaseCommand, CommandError
 from django.utils.translation import ugettext as _
 
 class Command(BaseCommand):
-	option_list = BaseCommand.option_list + (
-		make_option('--username', dest='username', default=None,
-			help='Specifies the username of the existing user (mail address for shibboleth users).'),
-	)
 	help = 'Make a user a superuser.'
+
+	def add_arguments(self, parser):
+		parser.add_argument('--username', dest='username', default=None,
+                        help='Specifies the username of the existing user (mail address for shibboleth users).')
 
 	def handle(self, *args, **options):
 		username = options.get('username', None)

@@ -78,4 +78,10 @@
 	{% include "solutions/solution_files_inline.html" %}
 {% endwith %}
 
+{% for snippet in htmlinjector_snippets %}
+		<div class="snippet">
+			{{snippet|safe}}
+		</div>
+{% endfor %}
+
 </div>{% endblock %}
