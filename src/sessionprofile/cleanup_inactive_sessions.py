@@ -4,13 +4,13 @@ Created on Dec 14, 2009
 @author: russn
 '''
 import datetime
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 from django.contrib.sessions.models import Session
 from django.db import transaction
 
 from sessionprofile.models import SessionProfile
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
     help = """
     This purges inactive sessions from both the django session table and the 
     sessionprofile table used by the django-phpBB single sign-on code. 
