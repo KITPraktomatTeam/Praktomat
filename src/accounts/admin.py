@@ -10,6 +10,8 @@ from django.db.transaction import atomic
 from accounts.models import User, Tutorial 
 from accounts.forms import AdminUserCreationForm, AdminUserChangeForm
 
+import accounts.views
+
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
@@ -19,7 +21,7 @@ class UserAdmin(UserBaseAdmin):
 	model = User
 	
 	# add active status
-	list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'is_trainer', 'is_tutor', 'email', 'date_joined','is_failed_attempt','programme' )
+	list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'is_trainer', 'is_tutor', 'is_coordinator', 'email', 'date_joined','is_failed_attempt','programme' )
 	list_filter = ('groups', 'tutorial', 'is_staff', 'is_superuser', 'is_active','programme')
 	search_fields = ['username', 'first_name', 'last_name', 'mat_number', 'email']
 	date_hierarchy = 'date_joined'
@@ -44,6 +46,10 @@ class UserAdmin(UserBaseAdmin):
 	def is_tutor(self, user):
 		return user.is_tutor
 	is_tutor.boolean = True
+
+	def is_coordinator(self, user):
+		return user.is_coordinator
+	is_coordinator.boolean = True
 
 	def is_failed_attempt(self,user):
 		successfull = [ u for u in User.objects.all().filter(mat_number=user.mat_number) if u.is_active]
@@ -97,9 +103,9 @@ class UserAdmin(UserBaseAdmin):
 	def get_urls(self):
 		""" Add URL to user import """
 		urls = super(UserAdmin, self).get_urls()
-		from django.conf.urls import url, patterns
-		my_urls = patterns('', url(r'^import/$', 'accounts.views.import_user', name='user_import')) 
-		my_urls += patterns('', url(r'^import_tutorial_assignment/$', 'accounts.views.import_tutorial_assignment', name='import_tutorial_assignment')) 
+		from django.conf.urls import url
+		my_urls = [url(r'^import/$', accounts.views.import_user, name='user_import')]
+		my_urls += [url(r'^import_tutorial_assignment/$', accounts.views.import_tutorial_assignment, name='import_tutorial_assignment')]
 		return my_urls + urls
 
         def useful_links(self, instance):
@@ -139,8 +145,8 @@ class GroupAdmin(GroupBaseAdmin):
 	def get_urls(self):
 		""" Add URL to user import """
 		urls = super(GroupAdmin, self).get_urls()
-		from django.conf.urls import url, patterns
-		my_urls = patterns('', url(r'^(\d+)/import_matriculation_list/$', 'accounts.views.import_matriculation_list', name='import_matriculation_list')) 
+		from django.conf.urls import url
+		my_urls = [url(r'^(\d+)/import_matriculation_list/$', accounts.views.import_matriculation_list, name='import_matriculation_list')]
 		return my_urls + urls
 
 admin.site.unregister(Group) 
@@ -148,11 +154,16 @@ admin.site.register(Group, GroupAdmin)
 
 class TutorialAdmin(admin.ModelAdmin):
 	model = Tutorial
-	list_display = ('name', 'tutors_flat',)
+	list_display = ('name', 'view_url', 'tutors_flat',)
 		
 	class Media:
 		css = {
 			"all": ("styles/admin_style.css",)
 		}
-		
+
+	def view_url(self,tutorial):
+		return '<a href="%s">View</a>' % (reverse('tutorial_overview', args=[tutorial.id]))
+	view_url.allow_tags = True
+	view_url.short_description = 'View (Tutor Site)'
+
 admin.site.register(Tutorial, TutorialAdmin)
