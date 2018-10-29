@@ -131,10 +131,14 @@ def import_tutorial_assignment(request):
 		if form.is_valid(): 
 			file = form.files['csv_file']
 			reader = csv.reader(file, delimiter=str(form.cleaned_data['delimiter']), quotechar=str(form.cleaned_data['quotechar']))
-			succeded = failed = 0
+			succeded = not_present = failed = 0
 			for row in reader:
 				try:
-					user = User.objects.get(mat_number = row[form.cleaned_data['mat_coloum']])
+					matching_users = User.objects.filter(mat_number = row[form.cleaned_data['mat_coloum']])
+					if not matching_users.exists():
+						not_present += 1
+						continue
+					user = matching_users.get()
 					tutorial = Tutorial.objects.get(name = row[form.cleaned_data['name_coloum']])
 					user.tutorial = tutorial
 					user.save()
@@ -142,7 +146,7 @@ def import_tutorial_assignment(request):
 				except:
 					failed += 1
 			#assert False
-                        messages.warning(request, "%i assignments were imported successfully, %i failed." % (succeded, failed))
+                        messages.warning(request, "%i assignments were imported successfully, %i users not found, %i failed." % (succeded, not_present, failed))
 			return HttpResponseRedirect(urlresolvers.reverse('admin:accounts_user_changelist'))
 	else:
 		form = ImportTutorialAssignmentForm()
