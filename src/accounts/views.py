@@ -201,5 +201,5 @@ def deactivated(request,user_id):
 	user = get_object_or_404(User,pk=user_id)
 	if user.is_active:
 		return HttpResponse(status=409)
-	return render(request, 'registration/registration_deactivated.html', { 'user': user, })
+	return render(request, 'registration/registration_deactivated.html')
 
