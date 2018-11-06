@@ -197,9 +197,6 @@ def import_matriculation_list(request, group_id):
         form = ImportMatriculationListForm()
     return render(request, 'admin/auth/group/import_matriculation_list.html', {'form': form, 'title':"Import matriuculation number list"})
 
-def deactivated(request,user_id):
-	user = get_object_or_404(User,pk=user_id)
-	if user.is_active:
-		return HttpResponse(status=409)
+def deactivated(request):
 	return render(request, 'registration/registration_deactivated.html')
 
