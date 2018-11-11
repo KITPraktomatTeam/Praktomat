@@ -143,7 +143,7 @@ def import_ldap_user(request):
                                        unknown_uids.append(uid)
                        if unknown_uids:
                                messages.add_message(request, messages.ERROR, "ERROR! Import cancelled. Unknown UIDs: %s" % (", ".join(unknown_uids)))
-                               return render_to_response('admin/accounts/user/import_ldap.html', {'form':form, 'title':"Import LDAP Users"  }, RequestContext(request))
+                               return render(request,'admin/accounts/user/import_ldap.html', {'form':form, 'title':"Import LDAP Users"  })
                        for uid in udict:
                                u = create_localuser_from_ldapuser(username=uid, ldapUser=udict[uid])
 
@@ -153,7 +153,7 @@ def import_ldap_user(request):
                return HttpResponseRedirect(urlresolvers.reverse('admin:accounts_user_changelist'))
        else:
                form = ImportLDAPForm()
-       return render_to_response('admin/accounts/user/import_ldap.html', {'form':form, 'title':"Import LDAP Users"  }, RequestContext(request))
+       return render(request,'admin/accounts/user/import_ldap.html', {'form':form, 'title':"Import LDAP Users"  })
 
 
 @staff_member_required
