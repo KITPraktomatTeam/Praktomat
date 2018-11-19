@@ -29,11 +29,11 @@ class AutoAttestChecker(Checker):
 
     def __init__(self, *args, **kwargs):
         super(AutoAttestChecker, self).__init__(*args, **kwargs)
-        self._meta.get_field_by_name('always')[0].default = False
-        self._meta.get_field_by_name('public')[0].default = False
-        self._meta.get_field_by_name('required')[0].default = False
-        self._meta.get_field_by_name('final')[0].default = True
-        self._meta.get_field_by_name('published')[0].default = True
+        self._meta.get_field('always').default = False
+        self._meta.get_field('public').default = False
+        self._meta.get_field('required').default = False
+        self._meta.get_field('final').default = True
+        self._meta.get_field('published').default = True
         
     def clean(self):
 	super(AutoAttestChecker, self).clean()
