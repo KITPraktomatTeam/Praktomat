@@ -489,7 +489,7 @@ def rating_overview(request):
 	if not (full_form or (request.user.is_coordinator and request.method != "POST")):
 		return access_denied(request)
 
-	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date','submission_date')
+	tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now())
 	users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name','first_name','id')
 	# corresponding user to user_id_list in reverse order! important for easy displaying in template
 	rev_users = users.reverse()
