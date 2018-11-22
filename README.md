@@ -58,6 +58,8 @@ Prerequisites
     gcj-jdk (jcf-dump, for checking Submissions for use of javax.* etc)
 
     git-core
+    
+    libldap2-dev (if you want to use python-ldap==2.3.13 for connecting to ldap)
 
   If youre going to use Praktomat to check Haskell submissions, you will also require the packages:
 

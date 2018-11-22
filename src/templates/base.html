@@ -34,7 +34,7 @@
 					Welcome, {% firstof user.get_full_name user.username %} 
 					{% if user.is_shibboleth_user %}
 					/ <a href="{% url "registration_view" %}">View Account</a>
-					{% else %}
+					{% elif ACCOUNT_CHANGE_POSSIBLE %}
 					/ <a href="{% url "registration_change" %}">Change Account</a>
                     {% endif %}
 					/ <a href="{% url "logout" %}">Log-out</a><br/>
