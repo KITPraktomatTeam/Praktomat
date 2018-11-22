@@ -53,7 +53,9 @@ class TaskAdmin(admin.ModelAdmin):
 	save_on_top = True
 
 	inlines = [MediaInline] + [HtmlInjectorInline] + CheckerInline.__subclasses__() + [ RatingAdminInline]
+
 	actions = ['export_tasks', 'run_all_checkers', 'run_all_checkers_on_finals', 'run_all_checkers_on_latest_only_failed', 'delete_attestations', 'unset_all_checker_finished', 'run_all_uploadtime_checkers_on_all']
+
 	
 	formfield_overrides = {
         models.TextField: {'widget': TinyMCE()},
@@ -116,6 +118,7 @@ class TaskAdmin(admin.ModelAdmin):
 		""" Rerun all checker including "not always" action for students with final or latest of only failed solutions """
 		self.run_all_checkers_on_finals(request, queryset)
 		self.run_all_checkers_on_latest_only_failed(request, queryset)
+
 	
 	def delete_attestations(self, request, queryset):
 		""" delete given attestations for task solutions """
@@ -222,7 +225,6 @@ class TaskAdmin(admin.ModelAdmin):
 		self.message_user(request, "State of attribute \"all_checker_finished\" at %d Tasks resetted to \"FALSE\": LoopTimer: %d " % (count, end-start),"warning")
 		
 		
-
 
 	def get_urls(self):
 		""" Add URL to task import """
