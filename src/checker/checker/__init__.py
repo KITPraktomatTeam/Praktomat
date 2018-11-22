@@ -13,6 +13,8 @@ __all__ = [	"AnonymityChecker",
 			"HaskellTestFrameWorkChecker",
 			"RChecker",
 			"KeepFileChecker",
+			"DiffChecker",
 			"CUnitChecker_v2",
 			"AutoAttestChecker",
 		]
+
