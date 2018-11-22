@@ -14,6 +14,7 @@ from django.core import urlresolvers
 from django.conf import settings
 from django.contrib import messages
 import django.utils.timezone
+from django.conf import settings
 
 from tasks.models import Task
 from solutions.forms import ModelSolutionFormSet
@@ -27,8 +28,10 @@ from configuration import get_settings
 @login_required
 def taskList(request):
 	now = django.utils.timezone.now()
-	tasks = Task.objects.filter(publication_date__lte = now).order_by('submission_date')
-	expired_Tasks = Task.objects.filter(submission_date__lt = now).order_by('publication_date','submission_date')
+
+	tasks = Task.objects.filter(publication_date__lte = now).order_by('submission_date', 'title')
+	expired_Tasks = Task.objects.filter(submission_date__lt = now).order_by('publication_date','submission_date','title')
+
 	try:
 		tutors = request.user.tutorial.tutors.all()
 	except:
@@ -54,6 +57,7 @@ def taskList(request):
                         'trainers':trainers,
                         'threshold':threshold,
                         'calculated_grade':calculated_grade,
+                        'show_contact_link':settings.SHOW_CONTACT_LINK,
                 })
 
 @login_required

@@ -15,7 +15,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.requests import RequestSite
 
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from tasks.models import Task, HtmlInjector
 from attestation.models import Attestation
@@ -41,6 +41,25 @@ def solution_list(request, task_id, user_id=None):
 
         if task.publication_date >= datetime.now() and not request.user.is_trainer:
 		raise Http404
+
+	# TODO: Code Refactoring: move code to own function: say linear_waiting
+	# linear waiting function
+	uploads_left = task.submission_maxpossible - solutions.count()
+	
+	minutes_to_wait_for_next_upload = task.submission_waitdelta * ( solutions.count() - task.submission_free_uploads )
+	
+	upload_next_possible_time = datetime.now()
+	if solutions.count() > 0 :
+		upload_next_possible_time = solutions[0].creation_date + timedelta(minutes=minutes_to_wait_for_next_upload)
+	
+	dnow = datetime.now()	
+
+	# TODO: Code Refactoring: move code to own function: say const_waiting
+	#after some time Prof. wish ... don't use a linear waiting function but a constant therefor quick and dirty overwriting "minutes_to_wait_for_next_upload"
+	minutes_to_wait_for_next_upload = 1 * task.submission_waitdelta #multiply with one, to be sure getting an integer ...
+	if solutions.count() > 0 :
+		upload_next_possible_time = solutions[0].creation_date + timedelta(minutes=minutes_to_wait_for_next_upload)
+
 	
 	if request.method == "POST":
                 if task.expired() and not request.user.is_trainer:
@@ -51,7 +70,7 @@ def solution_list(request, task_id, user_id=None):
 		if formset.is_valid():
 			solution.save()
 			formset.save()
-                        run_all_checker = bool(User.objects.filter(id=user_id, tutorial__tutors__pk=request.user.id) or request.user.is_trainer)
+                        run_all_checker = bool(User.objects.filter(id=user_id, tutorial__tutors__pk=request.user.id) and task.expired() or request.user.is_trainer and task.expired() )
 			solution.check_solution(run_all_checker)
 			
 			if solution.accepted:  
@@ -77,8 +96,10 @@ def solution_list(request, task_id, user_id=None):
 	attestations = Attestation.objects.filter(solution__task=task, author__tutored_tutorials=request.user.tutorial)
 	attestationsPublished = attestations[0].published if attestations else False
 
+
 	return render(request, "solutions/solution_list.html",
-                {"formset": formset, "task":task, "solutions": solutions, "final_solution":final_solution, "attestationsPublished":attestationsPublished, "author":author, "invisible_attestor":get_settings().invisible_attestor})
+                {"formset": formset, "task":task, "solutions": solutions, "final_solution":final_solution,  "uploads_left":uploads_left,  "upload_next_possible_time":upload_next_possible_time,  "dnow":dnow, "attestationsPublished":attestationsPublished, "author":author, "invisible_attestor":get_settings().invisible_attestor})
+
 
 @login_required
 def test_upload(request, task_id):

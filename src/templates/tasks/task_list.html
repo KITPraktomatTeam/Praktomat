@@ -22,7 +22,7 @@ function resize(id) {
 	
 	{% chunk "Welcome Message" %}
 	
-	{% if not user.is_trainer and not user.is_superuser %}
+	{% if show_contact_link and not user.is_trainer and not user.is_superuser %}
 		{% if tutors or trainers %}
 			<div id="contact"><a> Got Problems? </a>
 			{% if tutors %}

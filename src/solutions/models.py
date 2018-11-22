@@ -193,7 +193,22 @@ class SolutionFile(models.Model):
 
 	def path(self):
 		""" path of file relative to the zip file, which once contained it """
-		return self.file.name[len(get_solutionfile_upload_path(self, '')):]
+		# dont use length of filename as in original Code but use reg-expression!!
+		# Original Code was:
+		# return self.file.name[len(get_solutionfile_upload_path(self, '')):]
+		
+		# Fix for: https://github.com/KITPraktomatTeam/Praktomat/issues/232
+		# It is realy saver not to use the length, i.e. if someone resubmit a solution via button and the new solution-number switched 
+		# from xxxx to yyyyy, the first letter of filename get lost if here only the length was used!!
+		
+		# TODO: Refactoring at the end of file there is a regexpr-based function "id_for_path(path)"
+		#       should or could we used that function here?
+		#
+		# This fix for https://github.com/KITPraktomatTeam/Praktomat/issues/232
+		# is used at H-BRS since May 2016 (Robert Hartmann)
+		mytmpPattern = r'^SolutionArchive/Task_\d+/User_\S+/Solution_\d+/(.+)'
+		return re.match(mytmpPattern, self.file.name).group(1) # for playing with reg see:  http://pythex.org/               
+		 
 		
 	def content(self):
 		"""docstring for content"""

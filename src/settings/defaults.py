@@ -164,7 +164,7 @@ def load_defaults(settings):
         else:
             import uuid            
             d.SECRET_KEY = uuid.uuid4().hex
-            os.fdopen(os.open(secret_keyfile,os.O_WRONLY | os.O_CREAT,0600),'w').write(SECRET_KEY)
+            os.fdopen(os.open(secret_keyfile,os.O_WRONLY | os.O_CREAT,0600),'w').write(d.SECRET_KEY)
 
 
     # Templates
@@ -282,8 +282,23 @@ def load_defaults(settings):
     d.USEPRAKTOMATTESTER = False
  
     # Alternatively: Run everything in a docker instance, to provide higher
-    # insulation. Should not be used together iwth USEPRAKTOMATTESTER.
+    # insulation. Should not be used together with USEPRAKTOMATTESTER.
+    
+    # It is recomendet to use DOCKER and not a tester account
+    # for using Docker from https://github.com/nomeata/safe-docker
+    # Use docker to test submission
+    
+    # To allow Praktomat the execution of scriptfile  safe-docker  without requiring a password:
+    # "praktomat	ALL= NOPASSWD: /usr/local/bin/safe-docker"
+    
     d.USESAFEDOCKER = False
+    
+    
+    # be sure that you change file permission 
+    # sudo chown praktomat:tester praktomat/src/checker/scripts/java
+    # sudo chown praktomat:tester praktomat/src/checker/scripts/javac
+    # sudo chmod u+x,g+x,o-x praktomat/src/checker/scripts/java
+    # sudo chmod u+x,g+x,o-x praktomat/src/checker/scripts/javac 
 
     # Make sure uploaded solution are not work-readable
     d.FILE_UPLOAD_PERMISSIONS = 0640
@@ -321,10 +336,14 @@ def load_defaults(settings):
     # Single Sign On is used
     d.REGISTRATION_POSSIBLE = True
 
+
+    # Set this to False to disable "Got Problems?"-link in task list
+    d.SHOW_CONTACT_LINK = True
+
     # Length of timeout applied whenever an external check that runs a students
     # submission is executed,
-    # for example: JUnitChecker, DejaGnuChecker
-    d.TEST_TIMEOUT=60
+    # for example: JUnitChecker, DejaGnuChecker    
+    d.TEST_TIMEOUT=60  # but make sure to use ulimit -t 60 inside shell scripts!
 
     # Amount of memory available to the checker, in megabytes
     # (this is currently only supported with USESAFEDOCKER=True)
