@@ -8,7 +8,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('checker', '0006_merge'),
+        ('checker', '0006_HBRSmerge_C_CPP_Java'),
         ('checker', '0009_isabelle_checker_trusted_to_additional_theories'),
     ]
 

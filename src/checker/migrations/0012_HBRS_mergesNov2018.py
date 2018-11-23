@@ -8,6 +8,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('checker', '0010_isabelle_checker_additional_theories_helptext'),
         ('checker', '0010_activateAutoAttestChecker'),
         ('checker', '0011_C_CPP_Unitchecker'),
         ('checker', '0010_reactivateDiffChecker'),
