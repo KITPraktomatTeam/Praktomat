@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.contrib.auth.admin import UserAdmin
 from django.db import models
 from django.db import transaction
@@ -9,9 +9,11 @@ from django.core.urlresolvers import reverse
 from tinymce.widgets import TinyMCE
 from django.utils.html import format_html
 
-from tasks.models import Task, MediaFile
+from tasks.models import Task, MediaFile, HtmlInjector
 from solutions.models import Solution, SolutionFile
 from attestation.admin import RatingAdminInline
+
+import tasks.views
 
 from checker.admin import CheckerInline
 from timeit import default_timer as timer
@@ -20,6 +22,10 @@ admin.autodiscover()
 
 class MediaInline(admin.StackedInline): 
 	model = MediaFile
+	extra = 0
+
+class HtmlInjectorInline(admin.StackedInline): 
+	model = HtmlInjector
 	extra = 0
 
 class TaskAdmin(admin.ModelAdmin):
@@ -35,6 +41,7 @@ class TaskAdmin(admin.ModelAdmin):
                             ('submission_free_uploads', 'submission_waitdelta', 'submission_maxpossible'),
                             'final_grade_rating_scale',
                             'only_trainers_publish',
+                            'warning_threshold',
                             'useful_links',
                         )
 		}),
@@ -44,7 +51,8 @@ class TaskAdmin(admin.ModelAdmin):
 	search_fields = ['title']
 	date_hierarchy = 'publication_date'
 	save_on_top = True
-	inlines = [MediaInline] + CheckerInline.__subclasses__() + [ RatingAdminInline]
+
+	inlines = [MediaInline] + [HtmlInjectorInline] + CheckerInline.__subclasses__() + [ RatingAdminInline]
 	actions = ['export_tasks', 'run_all_checkers', 'run_all_checkers_on_finals', 'run_all_checkers_on_latest_only_failed', 'delete_attestations', 'unset_all_checker_finished', 'run_all_uploadtime_checkers_on_all']
 	
 	formfield_overrides = {
@@ -214,13 +222,11 @@ class TaskAdmin(admin.ModelAdmin):
 		self.message_user(request, "State of attribute \"all_checker_finished\" at %d Tasks resetted to \"FALSE\": LoopTimer: %d " % (count, end-start),"warning")
 		
 		
-
-
 	def get_urls(self):
 		""" Add URL to task import """
 		urls = super(TaskAdmin, self).get_urls()
-		from django.conf.urls import url, patterns
-		my_urls = patterns('', url(r'^import/$', 'tasks.views.import_tasks', name='task_import')) 
+		from django.conf.urls import url
+		my_urls = [url(r'^import/$', tasks.views.import_tasks, name='task_import')]
 		return my_urls + urls
 
         def attestations_url(self,task):

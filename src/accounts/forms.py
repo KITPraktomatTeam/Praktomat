@@ -5,7 +5,7 @@ import re
 
 from django.conf import settings
 from django.db import models, transaction
-from django.template import Context, loader
+from django.template import loader
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import Group
 from django import forms
@@ -88,13 +88,13 @@ class MyRegistrationForm(UserBaseCreationForm):
 
 		if get_settings().account_manual_validation:
 			t = loader.get_template('registration/registration_email_manual_to_staff.html')
- 			send_mail(_("Account activation on %s for %s (%s) ") % (settings.SITE_NAME,user.username,unicode(user)), t.render(Context(c)), None, [staff.email for staff in User.objects.all().filter(is_staff=True)])
+ 			send_mail(_("Account activation on %s for %s (%s) ") % (settings.SITE_NAME,user.username,unicode(user)), t.render(c), None, [staff.email for staff in User.objects.all().filter(is_staff=True)])
 
 			t = loader.get_template('registration/registration_email_manual_to_user.html')
- 			send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(Context(c)), None, [user.email])
+ 			send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(c), None, [user.email])
 		else:
 			t = loader.get_template('registration/registration_email.html')
-			send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(Context(c)), None, [user.email])
+			send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(c), None, [user.email])
 		
 		return user
 

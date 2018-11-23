@@ -123,11 +123,19 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
 		timed_out = True
 		# http://bencane.com/2014/04/01/understanding-the-kill-command-and-how-to-terminate-processes-in-linux/
 		term_cmd = ["pkill","-TERM","-s",str(process.pid)]
+		int_cmd  = ["pkill","-INT","-s",str(process.pid)] 
+		hup_cmd  = ["pkill","-HUP","-s",str(process.pid)]
 		kill_cmd = ["pkill","-KILL","-s",str(process.pid)]
 		if not unsafe and settings.USEPRAKTOMATTESTER:
 			term_cmd = sudo_prefix + term_cmd
+			int_cmd = sudo_prefix + int_cmd
+			hup_cmd = sudo_prefix + hup_cmd
 			kill_cmd = sudo_prefix + kill_cmd
 		subprocess32.call(term_cmd)
+		time.sleep(5)
+		subprocess32.call(int_cmd)
+		time.sleep(9)
+		subprocess32.call(hup_cmd)
 		time.sleep(5)
 		subprocess32.call(kill_cmd)
 		time.sleep(5)

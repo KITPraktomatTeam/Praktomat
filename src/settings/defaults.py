@@ -94,6 +94,7 @@ def load_defaults(settings):
         'attestation',
         'checker',
         'utilities',
+        'settings',
         #'sessionprofile', #phpBB integration
     )
 
@@ -107,13 +108,15 @@ def load_defaults(settings):
         'accounts.middleware.LogoutInactiveUserMiddleware',
     )
 
+    # needed since Django 1.11 in order to show the 'Deactivated' page
+    d.AUTH_BACKEND = 'django.contrib.auth.backends.AllowAllUsersModelBackend'
+
+    d.AUTHENTICATION_BACKENDS = (d.AUTH_BACKEND,)
+
     d.DEFAULT_FILE_STORAGE = 'utilities.storage.UploadStorage'
 
     # URL and file paths
-
-    d.TEMPLATE_DIRS = (
-        join(PRAKTOMAT_ROOT, "src", "templates"),
-    )
+    # Template file path is set in template section
 
     d.STATICFILES_DIRS = (
         join(PRAKTOMAT_ROOT, "media"),
@@ -166,28 +169,31 @@ def load_defaults(settings):
 
     # Templates
 
-    # A boolean that turns on/off template debug mode. If this is True, the fancy 
-    # error page will display a detailed report for any TemplateSyntaxError. 
-    # Note that Django only displays fancy error pages if DEBUG is True.
-    d.TEMPLATE_DEBUG = True
-
-    # List of callables that know how to import templates from various sources.
-    d.TEMPLATE_LOADERS = (
-        'django.template.loaders.filesystem.Loader',
-        'django.template.loaders.app_directories.Loader',
-    )
-
-    d.TEMPLATE_CONTEXT_PROCESSORS = (
-        'context_processors.settings.from_settings',
-        'django.contrib.auth.context_processors.auth',
-        'django.core.context_processors.debug',
-        'django.core.context_processors.i18n',
-        'django.core.context_processors.media',
-        'django.core.context_processors.request',
-        'django.core.context_processors.static',
-        'django.contrib.messages.context_processors.messages',
-    )
-
+    d.TEMPLATES = [
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'DIRS': [
+                join(PRAKTOMAT_ROOT, "src", "templates"),
+            ],
+            'APP_DIRS': True,
+            'OPTIONS': {
+                'context_processors': [
+                    'context_processors.settings.from_settings',
+                    'django.contrib.auth.context_processors.auth',
+                    'django.template.context_processors.debug',
+                    'django.template.context_processors.i18n',
+                    'django.template.context_processors.media',
+                    'django.template.context_processors.request',
+                    'django.template.context_processors.static',
+                    'django.contrib.messages.context_processors.messages',
+                ],
+                # A boolean that turns on/off template debug mode. If this is True, the fancy
+                # error page will display a detailed report for any TemplateSyntaxError.
+                # Note that Django only displays fancy error pages if DEBUG is True.
+                'debug': True
+            },
+        },
+    ]
 
     # Database
 
@@ -232,6 +238,7 @@ def load_defaults(settings):
     }
     d.TINYMCE_SPELLCHECKER = False
     d.TINYMCE_COMPRESSOR = False
+    d.TINYMCE_INCLUDE_JQUERY = False
 
     #############################################################################
     # Praktomat-specific settings                                               #
@@ -255,7 +262,7 @@ def load_defaults(settings):
     d.FORTRAN_BINARY = 'g77'
     d.ISABELLE_BINARY = 'isabelle' # Isabelle should be in PATH
     d.DEJAGNU_RUNTEST = '/usr/bin/runtest'
-    d.CHECKSTYLEALLJAR = '/home/praktomat/contrib/checkstyle-all-4.4.jar'
+    d.CHECKSTYLEALLJAR = '/home/praktomat/contrib/checkstyle-8.14-all.jar'
     d.JUNIT38='junit'
     d.JAVA_LIBS = { 'junit3' : '/usr/share/java/junit.jar', 'junit4' : '/usr/share/java/junit4.jar' }
     d.JCFDUMP='jcf-dump'
@@ -321,6 +328,9 @@ def load_defaults(settings):
 
     d.SHIB_USERNAME = "email"
     d.SHIB_PROVIDER = "kit.edu"
+    
+    # URL to the MOTD page which will be shown on login page and task list
+    d.SYSADMIN_MOTD_URL = None
 
     # Set this to False to disable registration via the website, e.g. when
     # Single Sign On is used
@@ -328,7 +338,7 @@ def load_defaults(settings):
 
     # Set this to False to disable "Got Problems?"-link in task list
     d.SHOW_CONTACT_LINK = True
-    
+
     # Set this to False to disable account changes via the website
     d.ACCOUNT_CHANGE_POSSIBLE = True
 
@@ -347,8 +357,9 @@ def load_defaults(settings):
 	'accounts.ldap_auth.LDAPBackend',
 	'django.contrib.auth.backends.ModelBackend',
     )
-    d.LDAP_URI="ldap://ldap.DAMANENAME.TOPLEVEL" 
-    d.LDAP_BASE="dc=DAMANENAME,dc=TOPLEVEL"
+    d.LDAP_URI="ldap://ldap.DomainNAME.TOPLEVEL" 
+    d.LDAP_BASE="dc=DomainNAME,dc=TOPLEVEL"
+
 
 
     # Length of timeout applied whenever an external check that runs a students

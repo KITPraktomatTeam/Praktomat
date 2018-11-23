@@ -9,7 +9,6 @@ import string
 from checker.compiler.Builder import Builder
 from django.conf import settings
 from django.template.loader import get_template
-from django.template import Context
 from checker.basemodels import Checker
 
 from utilities.safeexec import execute_arglist
@@ -24,14 +23,15 @@ class ClassFileGeneratingBuilder(Builder):
 	def main_module(self, env):
 		""" find the first class file containing a main method """
 		main_method = "public static void main(java.lang.String[])"
-		class_name  = re.compile(r"^(public )?(abstract )?(final )?class ([^ ]*)( extends .*)? \{$", re.MULTILINE)
+		main_method_varargs = "public static void main(java.lang.String...)"
+		class_name  = re.compile(r"^(public )?(abstract )?(final )?class ([^ ]*)( extends .*)?( implements .*)? \{$", re.MULTILINE)
 		class_files = []
 		for dirpath, dirs, files in os.walk(env.tmpdir()):
 			for filename in files:
 				if filename.endswith(".class"):
 					class_files.append(filename)
 					[classinfo,_,_,_,_]  = execute_arglist([settings.JAVAP, os.path.join(dirpath,filename)], env.tmpdir(), self.environment(), unsafe=True)
-					if string.find(classinfo,main_method) >= 0:
+					if string.find(classinfo,main_method) >= 0 or string.find(classinfo,main_method_varargs) >= 0:
 						main_class_name = class_name.search(classinfo, re.MULTILINE).group(4)
 						return main_class_name
 
@@ -63,7 +63,7 @@ class JavaBuilder(ClassFileGeneratingBuilder):
 
 	def build_log(self,output,args,filenames):
 		t = get_template('checker/compiler/java_builder_report.html')
-		return t.render(Context({'filenames' : filenames, 'output' : output, 'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm,ps: parm + ' ' + ps,args[1:],'')}))
+		return t.render({'filenames' : filenames, 'output' : output, 'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm,ps: parm + ' ' + ps,args[1:],'')})
 
 from checker.admin import CheckerInline, AlwaysChangedModelForm
 

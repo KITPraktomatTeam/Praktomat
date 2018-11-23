@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # SB HBRS
 from accounts.models import User
-from django.contrib.auth.models import check_password, Group
+from django.contrib.auth.models import Group
+from django.contrib.auth.hashers import check_password
 from django.conf import settings
 import ldap
 
