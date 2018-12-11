@@ -447,7 +447,7 @@ def user_task_attestation_map(users,tasks,only_published=True):
 		threshold = 0
 
 		for task in tasks:
-			has_solution = (task.id,user.id) in final_solutions_dict
+			solution = final_solutions_dict.get((task.id,user.id), None)
 
 			try:
 				rating = attestation_dict[task.id,user.id]
@@ -457,7 +457,7 @@ def user_task_attestation_map(users,tasks,only_published=True):
 					rating = None
 			except KeyError:
 				rating = None
-			if rating or (task.expired() and not has_solution):
+			if rating or (task.expired() and not solution):
 				threshold += task.warning_threshold
 
 			if rating is not None:
@@ -467,7 +467,7 @@ def user_task_attestation_map(users,tasks,only_published=True):
 					except:
 						pass #non-numeric grade, ignore
 
-			rating_for_user_list.append((rating,has_solution))
+			rating_for_user_list.append((rating,solution))
 
 		if arithmetic_option == 'SUM':
 			calculated_grade = grade_sum

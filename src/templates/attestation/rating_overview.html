@@ -72,21 +72,23 @@
 				<td>{{user.mat_number}}</td>
 				<td>{{user.programme}}</td>
 
-				{% for attestation, has_solution in attestations %}
-				    {% if attestation.solution.plagiarism %}
-						<td class="grade_cell"><span class="icon ui-icon-alert icon-red" title="Marked as plagiarism"></span></td>
+				{% for attestation, solution in attestations %}
+					{% if attestation.final_grade %}
+						<td class="grade_cell">
+							<a href="{% url "view_attestation" attestation_id=attestation.id%}">{{attestation.final_grade}}</a>
+						</td>
 					{% else %}
-						{% if attestation.final_grade %}
+						{% if has_solution %}
 							<td class="grade_cell">
-                                <a href="{% url "view_attestation" attestation_id=attestation.id%}">{{attestation.final_grade}}</a>
+								<a href="{% url "solution_detail" solution_id=solution.id%}">?</a>
 							</td>
 						{% else %}
-							{% if has_solution %}
-								<td class="grade_cell">?</td>
-							{% else %}
-								<td class="grade_cell">-</td>
-							{% endif %}
+							<td class="grade_cell">-</td>
 						{% endif %}
+					{% endif %}
+					{% if solution.plagiarism %}
+						<td class="grade_cell"><span class="icon ui-icon-alert icon-red" title="Marked as plagiarism"></span></td>
+					{% else %}
 					{% endif %}
 				{% endfor %}
 				<td class="calculated_grade_cell">
