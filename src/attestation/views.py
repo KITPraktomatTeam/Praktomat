@@ -432,9 +432,9 @@ def user_task_attestation_map(users,tasks,only_published=True):
 		attestation_dict[attestation.solution.task_id, attestation.solution.author_id] = attestation
 
 	solutions = Solution.objects.filter( final=True )
-	final_solutions_dict = {} 	#{(task_id,user_id):final solution exists?}
+	final_solutions_dict = {}
 	for solution in solutions:
-		final_solutions_dict[solution.task_id, solution.author_id] = True
+		final_solutions_dict[solution.task_id, solution.author_id] = solution
 	
 	settings = get_settings()
 	arithmetic_option = settings.final_grades_arithmetic_option
