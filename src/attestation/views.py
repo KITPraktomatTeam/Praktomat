@@ -186,7 +186,7 @@ def attestation_list(request, task_id):
 
 	tutored_users = User.objects.filter(groups__name="User", is_active=True).order_by('last_name') if request.user.is_trainer or request.user.is_superuser else None
 
-	unattested_solutions = Solution.objects.filter(task = task, final=True, plagiarism = False, attestation = None)	
+	unattested_solutions = Solution.objects.filter(task = task, final=True, attestation = None)	
 	if request.user.is_tutor: # the trainer sees them all
 		unattested_solutions = unattested_solutions.filter(author__tutorial__in = request.user.tutored_tutorials.all())
 
@@ -267,7 +267,7 @@ def new_attestation_for_task(request, task_id):
 	
 	# fetch a solution of a user i have allredy attested in the past.		
 	users_i_have_attestated = User.objects.filter(solution__attestation__author = request.user)
-	all_available_solutions = Solution.objects.filter(task__id = task_id, final=True, plagiarism = False, author__tutorial__in = request.user.tutored_tutorials.all(), attestation = None)
+	all_available_solutions = Solution.objects.filter(task__id = task_id, final=True, author__tutorial__in = request.user.tutored_tutorials.all(), attestation = None)
 	if (not all_available_solutions):
 		# if an other tutor just grabed the last solution just go back to the list
 		return HttpResponseRedirect(reverse('attestation_list', args=[task_id]))
