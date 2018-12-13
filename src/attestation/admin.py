@@ -68,7 +68,7 @@ class AttestationAdmin(admin.ModelAdmin):
 		return super(AttestationAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
         def show_solution(self, instance):
-		return format_html('<a href="{0}">{1}</a> by <a href="{2}">{3}</a>',
+		return format_html(u'<a href="{0}">{1}</a> by <a href="{2}">{3}</a>',
                     reverse('admin:solutions_solution_change', args=(instance.solution.pk,)),
                     instance.solution,
                     reverse('admin:accounts_user_change', args=(instance.solution.author.pk,)),

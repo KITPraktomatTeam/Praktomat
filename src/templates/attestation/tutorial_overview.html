@@ -34,7 +34,7 @@
 			<tr class="{% cycle 'odd' 'even' %} user_row">
 				<td><a href="mailto:{{user.email}}">{{user.get_full_name}}</a></td>
 
-				{% for attestation, has_solution in attestations %}
+				{% for attestation, solution in attestations %}
 				<td class="grade_cell">
 					{% if attestation.id %}
 						<a href="{% url "view_attestation" attestation_id=attestation.id%}">
@@ -43,14 +43,14 @@
 					{% if attestation.final_grade %}
 						{{attestation.final_grade}}
 					{% else %}
-						{% if has_solution %}
+						{% if solution %}
 							?
 						{% else %}
 							-
 						{% endif %}
 					{% endif %}
 
-					{% if attestation.solution.plagiarism %}
+					{% if solution.plagiarism %}
 						<span class="icon ui-icon-alert icon-red" title="Marked as plagiarism"></span>
 					{% endif %}
 
