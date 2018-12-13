@@ -90,6 +90,11 @@ if "birap" in PRAKTOMAT_ID:
 if "tba" in PRAKTOMAT_ID:
   TEST_TIMEOUT=600
 
+if "Programmieren" in SITE_NAME:
+  # Rating overview needs one POST parameter per student
+  # and the default value (1000) might be too low
+  DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
+
 # Absolute path to the directory that shall hold all uploaded files as well as
 # files created at runtime.
 
