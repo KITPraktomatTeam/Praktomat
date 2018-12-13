@@ -27,6 +27,5 @@ class LogoutInactiveUserMiddleware(object):
 		if not request.user.is_authenticated():
 			return
 		if not request.user.is_active:
-			userid = request.user.id
 			logout(request)
-			return HttpResponseRedirect(reverse('registration_deactivated', kwargs={ 'user_id' : userid }))
+			return HttpResponseRedirect(reverse('registration_deactivated'))
