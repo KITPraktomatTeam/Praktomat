@@ -28,12 +28,12 @@ class SolutionFileInline(admin.TabularInline):
 
 class SolutionAdmin(admin.ModelAdmin):
 	model = Solution
-	list_display = ["edit", "view_url", "download_url", "run_checker_url", "task", "show_author", "number", "creation_date", "final", "accepted", "warnings", "latest_of_only_failed", "plagiarism"]
+	list_display = ["edit", "view_url", "download_url", "run_checker_url", "task", "show_author", "number", "creation_date", "final", "accepted", "tests_failed", "latest_of_only_failed", "plagiarism"]
 	list_filter = ["task", "author", "author__groups", "creation_date", "final", "accepted", "warnings", "plagiarism"]
 	fieldsets = ((None, {
 		  			'fields': ( "task", "show_author", "creation_date", ("final", "accepted", "warnings"), "plagiarism",'useful_links')
 			  	}),)
-	readonly_fields=["task", "show_author", "creation_date", "accepted", "final", "warnings",'useful_links']
+	readonly_fields=["task", "show_author", "creation_date", "accepted", "final", "tests_failed", "useful_links"]
 	inlines =  [CheckerResultInline, SolutionFileInline]
 	actions = ['run_checkers','run_checkers_all', 'mark_plagiarism', 'mark_no_plagiarism']
 
@@ -107,7 +107,9 @@ class SolutionAdmin(admin.ModelAdmin):
 			return ""
         useful_links.allow_tags = True
 
-
+	def tests_failed(self,solution):
+		return CheckerResult.objects.filter(solution=solution,passed=False).exists();
+	tests_failed.boolean = True
 
 	def latest_of_only_failed(self,solution):
 		successfull_solution_from_user_for_task_available = solution.final or  [ s for s in Solution.objects.all().filter(author=solution.author,task=solution.task) if s.final]
