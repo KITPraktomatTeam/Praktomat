@@ -5,7 +5,7 @@ from solutions.models import Solution, SolutionFile
 from django.utils.translation import ugettext_lazy as _
 from django.core.mail import EmailMessage
 from django.core import serializers
-from django.template import Context, loader
+from django.template import loader
 from django.contrib.sites.requests import RequestSite
 from django.contrib import messages
 from datetime import datetime
@@ -55,7 +55,7 @@ class Attestation(models.Model):
                         'invisible_attestor' : get_settings().invisible_attestor,
                         }
                 subject = _("New attestation for your solution of the task '%s'") % self.solution.task
-                body = t.render(Context(c))
+                body = t.render(c)
                 reply_to = ([self.author.email]                    if self.author.email and (not get_settings().invisible_attestor) else []) \
                          + ([get_settings().attestation_reply_to]  if get_settings().attestation_reply_to else [])
                 headers = {'Reply-To': ', '.join(reply_to)} if reply_to else None
@@ -89,7 +89,7 @@ class Attestation(models.Model):
                         'by': by,
                         }
                 subject = _("Attestation for your solution of the task '%s' withdrawn") % self.solution.task
-                body = t.render(Context(c))
+                body = t.render(c)
                 recipients = emails[0:1]
                 bcc_recipients = emails[1:]
                 email = EmailMessage(subject, body, None, recipients, bcc_recipients)

@@ -3,6 +3,8 @@ from attestation.models import *
 from django.core.urlresolvers import reverse
 from django.utils.html import format_html
 
+import attestation.views
+
 admin.autodiscover()
 
 class RatingScaleItemInline(admin.TabularInline):
@@ -66,7 +68,7 @@ class AttestationAdmin(admin.ModelAdmin):
 		return super(AttestationAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
         def show_solution(self, instance):
-		return format_html('<a href="{0}">{1}</a> by <a href="{2}">{3}</a>',
+		return format_html(u'<a href="{0}">{1}</a> by <a href="{2}">{3}</a>',
                     reverse('admin:solutions_solution_change', args=(instance.solution.pk,)),
                     instance.solution,
                     reverse('admin:accounts_user_change', args=(instance.solution.author.pk,)),
@@ -79,13 +81,14 @@ class AttestationAdmin(admin.ModelAdmin):
 	def get_urls(self):
 		""" Add URL to Attestation update """
 		urls = super(AttestationAdmin, self).get_urls()
-		from django.conf.urls import url, patterns
-		my_urls = patterns('', url(r'^update/$', 'attestation.views.update_attestations', name='attestation_update'))
+		from django.conf.urls import url
+		my_urls = [url(r'^update/$', attestation.views.update_attestations, name='attestation_update')]
 		return my_urls + urls
 
+	def has_add_permission(self, request):
+		return False
 
 
-	
 admin.site.register(Attestation, AttestationAdmin)
 
 

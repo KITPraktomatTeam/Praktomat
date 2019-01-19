@@ -20,6 +20,7 @@ match = re.match(r'''
 	(?P<tba>tba_)?
 	(?P<mlfds>mlfds_)?
 	(?P<pp>pp_)?
+	(?P<iimb>iimb_)?
 	(?P<year>\d+)_
 	(?P<semester>WS|SS)
 	(?P<abschluss>_Abschluss)?
@@ -38,6 +39,8 @@ if match:
 		SITE_NAME = 'Theorembeweiser '
 	elif match.group('pp') is not None:
 		SITE_NAME = 'Programmierparadigmen '
+	elif match.group('iimb') is not None:
+		SITE_NAME = 'Informatik im Maschinenbau '
 	else:
 		SITE_NAME = 'Programmieren '
 
@@ -87,6 +90,11 @@ if "birap" in PRAKTOMAT_ID:
 if "tba" in PRAKTOMAT_ID:
   TEST_TIMEOUT=600
 
+if "Programmieren" in SITE_NAME:
+  # Rating overview needs one POST parameter per student
+  # and the default value (1000) might be too low
+  DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
+
 # Absolute path to the directory that shall hold all uploaded files as well as
 # files created at runtime.
 
@@ -101,6 +109,8 @@ else:
 ADMINS = [
   ('Praktomat', 'praktomat@ipd.info.uni-karlsruhe.de')
 ]
+
+SERVER_EMAIL = 'praktomat@i44vm3.info.uni-karlsruhe.de'
 
 
 if MIRROR:
@@ -128,6 +138,8 @@ PRIVATE_KEY = '/srv/praktomat/mailsign/signer_key.pem'
 # Enable Shibboleth:
 SHIB_ENABLED = True
 REGISTRATION_POSSIBLE = False
+
+SYSADMIN_MOTD_URL = "https://praktomat.cs.kit.edu/sysadmin_motd.html"
 
 # Use a dedicated user to test submissions
 USEPRAKTOMATTESTER = False

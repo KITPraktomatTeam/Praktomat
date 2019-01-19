@@ -10,6 +10,8 @@ from django.db.transaction import atomic
 from accounts.models import User, Tutorial 
 from accounts.forms import AdminUserCreationForm, AdminUserChangeForm
 
+import accounts.views
+
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
@@ -101,9 +103,9 @@ class UserAdmin(UserBaseAdmin):
 	def get_urls(self):
 		""" Add URL to user import """
 		urls = super(UserAdmin, self).get_urls()
-		from django.conf.urls import url, patterns
-		my_urls = patterns('', url(r'^import/$', 'accounts.views.import_user', name='user_import')) 
-		my_urls += patterns('', url(r'^import_tutorial_assignment/$', 'accounts.views.import_tutorial_assignment', name='import_tutorial_assignment')) 
+		from django.conf.urls import url
+		my_urls = [url(r'^import/$', accounts.views.import_user, name='user_import')]
+		my_urls += [url(r'^import_tutorial_assignment/$', accounts.views.import_tutorial_assignment, name='import_tutorial_assignment')]
 		return my_urls + urls
 
         def useful_links(self, instance):
@@ -143,8 +145,8 @@ class GroupAdmin(GroupBaseAdmin):
 	def get_urls(self):
 		""" Add URL to user import """
 		urls = super(GroupAdmin, self).get_urls()
-		from django.conf.urls import url, patterns
-		my_urls = patterns('', url(r'^(\d+)/import_matriculation_list/$', 'accounts.views.import_matriculation_list', name='import_matriculation_list')) 
+		from django.conf.urls import url
+		my_urls = [url(r'^(\d+)/import_matriculation_list/$', accounts.views.import_matriculation_list, name='import_matriculation_list')]
 		return my_urls + urls
 
 admin.site.unregister(Group) 

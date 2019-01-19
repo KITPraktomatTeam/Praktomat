@@ -19,8 +19,6 @@ class CheckerInline(admin.StackedInline):
 
 	def get_fieldsets(self, request, obj=None):
 		""" Get the fields public, required and always on the first line without defining fieldsets in every subclass. This saves a lot of space. """
-		if self.declared_fieldsets:
-				return self.declared_fieldsets
 
 		form = self.get_formset(request, obj, fields=None).form
 		fields = form.base_fields.keys() + list(self.get_readonly_fields(request, obj))
@@ -39,7 +37,7 @@ class CheckerResultAdmin(admin.ModelAdmin):
 
 	def get_queryset(self,request):
 		qs = super(CheckerResultAdmin,self).get_queryset(request)
-		qs = qs.select_related("solution__final", "solution__task", "solution__author")
+		qs = qs.select_related("solution", "solution__task", "solution__author")
 		qs = qs.prefetch_related("checker")
 		return qs
 
@@ -55,5 +53,8 @@ class CheckerResultAdmin(admin.ModelAdmin):
 	def solution_final(self,checkerResult):
 		return checkerResult.solution.final
 	solution_final.boolean = True
+
+	def has_add_permission(self, request):
+		return False
 
 admin.site.register(CheckerResult, CheckerResultAdmin)
