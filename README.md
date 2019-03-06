@@ -27,7 +27,7 @@ If you see an error like **There was a problem confirming the ssl certificate** 
 Reason: PyPI turned off support for TLS versions 1.0 and 1.1 in April 2018
    https://pyfound.blogspot.com/2017/01/time-to-upgrade-your-python-tls-v12.html
 
-Prerequisites
+Prerequisites: Database and Webserver 
 ============
   We recommend to run Praktomat within Apache, using Postgresql as
   database.
@@ -35,10 +35,35 @@ Prerequisites
   On a Debian or Ubuntu System, install the packages
 
     postgresql
-    apache2-mpm-worker
+    apache2-mpm-worker         (<= Ubuntu 14)
+    apache2
+    libapache2-mod-macro       (<= Ubuntu 14, removed in Ubuntu 16)
+    libapache2-mod-wsgi        
+    libapache2-mod-xsendfile   
 
-  In ubuntu 16 the package `apache2-mpm-worker` has been merged into `apache2`.
+Pitfalls while Systemupgrades
+============
+  In Ubuntu 16 the package `apache2-mpm-worker` has been merged into `apache2`.
+  Before upgrading to Ubuntu 16 or higher and you are in Ubuntu 14 or lower versions, than you have to edit
 
+    /var/lib/apt/extended_state 
+    
+  there change entry
+  
+    Package: apache2
+    Architecture: amd64
+    Auto-Installed: 1
+    
+  to
+  
+    Auto-Installed: 0
+    
+  If you don't change that value, apache2 package becomes deleted while upgrading Ubuntu.
+
+  
+Prerequisites: 3rd-Party libraries and programms
+============
+  
   Praktomat requires some 3rd-Party libraries programs to run.
   On a Ubuntu/Debian System, these can be installed by installing the following packages:
 
@@ -48,14 +73,12 @@ Prerequisites
     libsasl2-dev
     libssl-dev
     swig
-    libapache2-mod-xsendfile
-    libapache2-mod-wsgi
 
     sun-java6-jdk (from the "Canonical Parner" Repository)
     junit
     junit4
     dejagnu
-    gcj-jdk (jcf-dump, for checking Submissions for use of javax.* etc)
+    gcj-jdk (jcf-dump, for checking Submissions for use of javax.* etc) 
 
     git-core
 

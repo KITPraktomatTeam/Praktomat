@@ -1,6 +1,9 @@
 # workaround for debug-toolbar/sqlparse incompatibility, see http://stackoverflow.com/questions/38479063/django-debug-toolbar-breaking-on-admin-while-getting-sql-stats
 sqlparse
+
+#Fix CVE-2018-14574 , CVE-2019-3498 , CVE-2019-6975
 Django~=1.11.19,<2.0
+
 M2Crypto
 Markdown
 Pygments
