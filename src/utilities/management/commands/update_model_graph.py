@@ -8,7 +8,7 @@ import shutil
 import tempfile
 
 class Command(BaseCommand):
-    help = 'Updates the vector images in documentation/modelgraph. Requires instalation of graphviz and pygraphviz.'
+    help = 'Updates the vector images in documentation/modelgraph. Requires installation of graphviz and pygraphviz.'
 
     def handle_noargs(self, **options):
             export_folder = join(dir(dir(dir(dir(dir(__file__))))), "documentation", "model_graph")

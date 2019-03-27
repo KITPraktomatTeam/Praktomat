@@ -130,8 +130,8 @@ def statistics(request, task_id):
 
             runtimes.append({
                              'checker': "%d: %s" % (i, checker.title()),
-                    'runtimes': checker_runtimes,
-                    'medians': medians
+                             'runtimes': checker_runtimes,
+                             'medians': medians
             })
 
     return render(request, "attestation/statistics.html",
@@ -186,7 +186,7 @@ def attestation_list(request, task_id):
 
     tutored_users = User.objects.filter(groups__name="User", is_active=True).order_by('last_name') if request.user.is_trainer or request.user.is_superuser else None
 
-    unattested_solutions = Solution.objects.filter(task = task, final=True, plagiarism = False, attestation = None)
+    unattested_solutions = Solution.objects.filter(task = task, final=True, attestation = None)
     if request.user.is_tutor: # the trainer sees them all
         unattested_solutions = unattested_solutions.filter(author__tutorial__in = request.user.tutored_tutorials.all())
 
@@ -262,9 +262,9 @@ def new_attestation_for_task(request, task_id):
     if not (request.user.is_tutor or request.user.is_trainer or request.user.is_superuser):
         return access_denied(request)
 
-    # fetch a solution of a user i have allredy attested in the past.
+    # fetch a solution of a user I have already attested in the past.
     users_i_have_attestated = User.objects.filter(solution__attestation__author = request.user)
-    all_available_solutions = Solution.objects.filter(task__id = task_id, final=True, plagiarism = False, author__tutorial__in = request.user.tutored_tutorials.all(), attestation = None)
+    all_available_solutions = Solution.objects.filter(task__id = task_id, final=True, author__tutorial__in = request.user.tutored_tutorials.all(), attestation = None)
     if (not all_available_solutions):
         # if an other tutor just grabed the last solution just go back to the list
         return HttpResponseRedirect(reverse('attestation_list', args=[task_id]))
@@ -415,7 +415,6 @@ def view_attestation(request, attestation_id):
             }
         )
 
-
 def user_task_attestation_map(users,tasks,only_published=True):
     if only_published:
         attestations = Attestation.objects.filter( published=True )
@@ -429,9 +428,9 @@ def user_task_attestation_map(users,tasks,only_published=True):
         attestation_dict[attestation.solution.task_id, attestation.solution.author_id] = attestation
 
     solutions = Solution.objects.filter( final=True )
-    final_solutions_dict = {}     #{(task_id,user_id):final solution exists?}
+    final_solutions_dict = {}
     for solution in solutions:
-        final_solutions_dict[solution.task_id, solution.author_id] = True
+        final_solutions_dict[solution.task_id, solution.author_id] = solution
 
     settings = get_settings()
     arithmetic_option = settings.final_grades_arithmetic_option
@@ -444,20 +443,27 @@ def user_task_attestation_map(users,tasks,only_published=True):
         threshold = 0
 
         for task in tasks:
-            has_solution = (task.id, user.id) in final_solutions_dict
+            solution = final_solutions_dict.get((task.id, user.id), None)
 
             try:
                 rating = attestation_dict[task.id, user.id]
+                if rating.final_grade is None:
+                    # rating has no grade, so it is shown as if there was no rating
+                    # should only be relevant for unfinished attestations
+                    rating = None
             except KeyError:
                 rating = None
-            if rating or (task.expired() and not has_solution):
+            if rating or (task.expired() and not solution):
                 threshold += task.warning_threshold
 
             if rating is not None:
                 if plagiarism_option == 'WP' or (plagiarism_option == 'NP' and not rating.solution.plagiarism):
-                    grade_sum += float(rating.final_grade.name)
+                    try:
+                        grade_sum += float(rating.final_grade.name)
+                    except:
+                        pass #non-numeric grade, ignore
 
-            rating_for_user_list.append((rating, has_solution))
+            rating_for_user_list.append((rating, solution))
 
         if arithmetic_option == 'SUM':
             calculated_grade = grade_sum
@@ -479,7 +485,7 @@ def rating_overview(request):
     if not (full_form or (request.user.is_coordinator and request.method != "POST")):
         return access_denied(request)
 
-    tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now()).order_by('publication_date', 'submission_date')
+    tasks = Task.objects.filter(submission_date__lt = datetime.datetime.now())
     users = User.objects.filter(groups__name='User').filter(is_active=True).order_by('last_name', 'first_name', 'id')
     # corresponding user to user_id_list in reverse order! important for easy displaying in template
     rev_users = users.reverse()
@@ -573,7 +579,7 @@ def rating_export(request):
     response['Content-Disposition'] = 'attachment; filename=rating_export.csv'
     t = loader.get_template('attestation/rating_export.csv')
     c = {'rating_list': rating_list, 'tasks': tasks}
-    #response.write(u'\ufeff') setting utf-8 BOM for Exel doesn't work
+    #response.write(u'\ufeff') setting utf-8 BOM for Excel doesn't work
     response.write(t.render(c))
     return response
 
@@ -609,7 +615,6 @@ def generate_ratingscale(request):
     else:
         form = GenerateRatingScaleForm()
     return render(request, 'admin/attestation/ratingscale/generate.html', {'form': form, 'title':"Generate RatingScale"  })
-
 
 
 @login_required

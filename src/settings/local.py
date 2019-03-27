@@ -20,11 +20,13 @@ match = re.match(r'''
     (?P<tba>tba_)?
     (?P<mlfds>mlfds_)?
     (?P<pp>pp_)?
+    (?P<iimb>iimb_)?
     (?P<year>\d+)_
     (?P<semester>WS|SS)
     (?P<abschluss>_Abschluss)?
     (?P<mirror>_Mirror)?
     ''', PRAKTOMAT_ID, flags=re.VERBOSE)
+
 if match:
     if match.group('algo1') is not None:
         SITE_NAME = 'Algorithmen I '
@@ -38,6 +40,8 @@ if match:
         SITE_NAME = 'Theorembeweiser '
     elif match.group('pp') is not None:
         SITE_NAME = 'Programmierparadigmen '
+    elif match.group('iimb') is not None:
+        SITE_NAME = 'Informatik im Maschinenbau '
     else:
         SITE_NAME = 'Programmieren '
 
@@ -55,12 +59,13 @@ if match:
         MIRROR = True
     else:
         MIRROR = False
+
 else:
     raise NotImplementedError("Autoconfig for PRAKTOMAT_ID %s not possible", PRAKTOMAT_ID)
 
 
 # The URL where this site is reachable. 'http://localhost:8000/' in case of the
-# developmentserver.
+# development server.
 BASE_HOST = 'https://praktomat.cs.kit.edu'
 BASE_PATH = '/' + PRAKTOMAT_ID + '/'
 
@@ -87,6 +92,11 @@ if "birap" in PRAKTOMAT_ID:
 if "tba" in PRAKTOMAT_ID:
   TEST_TIMEOUT=600
 
+if "Programmieren" in SITE_NAME:
+  # Rating overview needs one POST parameter per student
+  # and the default value (1000) might be too low
+  DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
+
 # Absolute path to the directory that shall hold all uploaded files as well as
 # files created at runtime.
 
@@ -101,6 +111,8 @@ else:
 ADMINS = [
   ('Praktomat', 'praktomat@ipd.info.uni-karlsruhe.de')
 ]
+
+SERVER_EMAIL = 'praktomat@i44vm3.info.uni-karlsruhe.de'
 
 
 if MIRROR:
@@ -130,6 +142,8 @@ CERTIFICATE = '/srv/praktomat/mailsign/signer.pem'
 SHIB_ENABLED = True
 REGISTRATION_POSSIBLE = False
 
+SYSADMIN_MOTD_URL = "https://praktomat.cs.kit.edu/sysadmin_motd.html"
+
 # Use a dedicated user to test submissions
 USEPRAKTOMATTESTER = False
 
@@ -148,6 +162,6 @@ NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 6
 if match.group('tba') is not None:
     NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 1
 
-# Finally load defaults for missing setttings.
+# Finally load defaults for missing settings.
 from . import defaults
 defaults.load_defaults(globals())

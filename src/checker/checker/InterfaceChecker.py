@@ -13,14 +13,14 @@ from checker.basemodels import Checker
 
 class InterfaceChecker(Checker):
 
-    ## use interface model class insted as soon as nested admin inlines are possible (see below)
-    interface1 = models.CharField(max_length=100, help_text=_("The name of the interface that must be implemeted."))
-    interface2 = models.CharField(max_length=100, blank = True, help_text=_("The name of the interface that must be implemeted."))
-    interface3 = models.CharField(max_length=100, blank = True, help_text=_("The name of the interface that must be implemeted."))
-    interface4 = models.CharField(max_length=100, blank = True, help_text=_("The name of the interface that must be implemeted."))
-    interface5 = models.CharField(max_length=100, blank = True, help_text=_("The name of the interface that must be implemeted."))
-    interface6 = models.CharField(max_length=100, blank = True, help_text=_("The name of the interface that must be implemeted."))
-    interface7 = models.CharField(max_length=100, blank = True, help_text=_("The name of the interface that must be implemeted."))
+    ## use interface model class instead as soon as nested admin inlines are possible (see below)
+    interface1 = models.CharField(max_length=100, help_text=_("The name of the interface that must be implemented."))
+    interface2 = models.CharField(max_length=100, blank = True, help_text=_("The name of the interface that must be implemented."))
+    interface3 = models.CharField(max_length=100, blank = True, help_text=_("The name of the interface that must be implemented."))
+    interface4 = models.CharField(max_length=100, blank = True, help_text=_("The name of the interface that must be implemented."))
+    interface5 = models.CharField(max_length=100, blank = True, help_text=_("The name of the interface that must be implemented."))
+    interface6 = models.CharField(max_length=100, blank = True, help_text=_("The name of the interface that must be implemented."))
+    interface7 = models.CharField(max_length=100, blank = True, help_text=_("The name of the interface that must be implemented."))
 
     def title(self):
         """ Returns the title for this checker category. """

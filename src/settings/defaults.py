@@ -95,6 +95,7 @@ def load_defaults(settings):
         'attestation',
         'checker',
         'utilities',
+        'settings',
         #'sessionprofile', #phpBB integration
     )
 
@@ -107,6 +108,11 @@ def load_defaults(settings):
         'accounts.middleware.AuthenticationMiddleware',
         'accounts.middleware.LogoutInactiveUserMiddleware',
     )
+
+    # needed since Django 1.11 in order to show the 'Deactivated' page
+    d.AUTH_BACKEND = 'django.contrib.auth.backends.AllowAllUsersModelBackend'
+
+    d.AUTHENTICATION_BACKENDS = (d.AUTH_BACKEND,)
 
     d.DEFAULT_FILE_STORAGE = 'utilities.storage.UploadStorage'
 
@@ -233,6 +239,7 @@ def load_defaults(settings):
     }
     d.TINYMCE_SPELLCHECKER = False
     d.TINYMCE_COMPRESSOR = False
+    d.TINYMCE_INCLUDE_JQUERY = False
 
     #############################################################################
     # Praktomat-specific settings                                               #
@@ -276,14 +283,14 @@ def load_defaults(settings):
     d.USEPRAKTOMATTESTER = False
 
     # Alternatively: Run everything in a docker instance, to provide higher
-    # insulation. Should not be used together iwth USEPRAKTOMATTESTER.
+    # insulation. Should not be used together with USEPRAKTOMATTESTER.
     d.USESAFEDOCKER = False
 
     # Make sure uploaded solution are not work-readable
     d.FILE_UPLOAD_PERMISSIONS = 0o640
 
-    # This enables Shibboleth-Support.
-    # In order to actually get it working, you need to protec the location
+    # This enables Shibboleth support.
+    # In order to actually get it working, you need to protect the location
     # .../accounts/shib_login in the apache configuration, e.g. with this
     # stanca:
     #    <Location /shibtest/accounts/shib_login>
@@ -307,6 +314,9 @@ def load_defaults(settings):
 
     d.SHIB_USERNAME = "email"
     d.SHIB_PROVIDER = "kit.edu"
+    
+    # URL to the MOTD page which will be shown on login page and task list
+    d.SYSADMIN_MOTD_URL = None
 
     # Set this to False to disable registration via the website, e.g. when
     # Single Sign On is used

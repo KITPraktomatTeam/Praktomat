@@ -32,26 +32,27 @@ def get_checkerfile_storage_path(instance, filename):
 
 
 class CheckerFileField(DeletingFileField):
-    """ Custom filefield with with greater path length and default upload location. Use this in all checker subclasses!"""
+    """ Custom filefield with greater path length and default upload location. Use this in all checker subclasses!"""
 
     def __init__(self, verbose_name=None, name=None, upload_to=get_checkerfile_storage_path, storage=None, **kwargs):
-        # increment filename legth from 100 to 500
+        # increment filename length from 100 to 500
         kwargs['max_length'] = kwargs.get('max_length', 500)
         super(CheckerFileField, self).__init__(verbose_name, name, upload_to, storage, **kwargs)
 
 class Checker(models.Model):
     """ A Checker implements some quality assurance.
 
-    A Checker has three indicators:
-        1. It is *public* - the results are presented to the user
-It is *required* - it must be passed for submission
-        3. It is run .
+    A Checker has four indicators:
+        1. Whether it is *public* - the results are presented to the user
+        2. Whether it is *required* - it must be passed for submission
+        3. Whether it is *critical* - prevents further results from being displayed if it fails
+        3. Whether it is *always* run on submission.
 
-    If a Checker is not run always, it is only run if a *task_maker*
+    If a Checker is not always run, it is only run if a *task_maker*
     starts the complete rerun of all Checkers. """
 
     created = models.DateTimeField(auto_now_add=True)
-    order = models.IntegerField(help_text = _('Determines the order in wich the checker will start. Not necessary continuously!'))
+    order = models.IntegerField(help_text = _('Determines the order in which the checker will start. Not necessary continuously!'))
 
     task = models.ForeignKey(Task)
 
@@ -82,7 +83,7 @@ It is *required* - it must be passed for submission
         return self.public
 
     def is_critical(self, passed):
-        """ Are results of this Checker to be shown publicly, given whether the result was passed? """
+        """ Checks if further results should not be shown, given whether the result was passed? """
         return self.critical and not passed
 
     def run(self, env):
@@ -97,7 +98,8 @@ It is *required* - it must be passed for submission
 
     @staticmethod
     def description():
-        """ Returns a description for this Checker. """
+        """ Returns a description for this Checker.
+        Overloaded by subclasses """
         return " no description "
 
     def requires(self):
@@ -106,7 +108,7 @@ It is *required* - it must be passed for submission
         return []
 
     def clean(self):
-        if self.required and (not self.show_publicly(False)): raise ValidationError("Checker is required, but Failure isn't publicly reported to student during submission")
+        if self.required and (not self.show_publicly(False)): raise ValidationError("Checker is required, but failure isn't publicly reported to student during submission")
 
 
 class CheckerEnvironment:
@@ -126,11 +128,11 @@ class CheckerEnvironment:
         # Executable program
         self._program = None
 
-        # The Solution
+        # The solution
         self._solution = solution
 
     def solution(self):
-        """ Returns the Solution being checked """
+        """ Returns the solution being checked """
         return self._solution
 
     def tmpdir(self):
@@ -281,7 +283,7 @@ def solution_file_delete(sender, instance, **kwargs):
 def check_solution(solution, run_all = 0, debug_keep_tmp = True):
     """Builds and tests this solution."""
 
-    # Delete previous results if the checker have already been run
+    # Delete previous results if the checkers have already been run
     solution.checkerresult_set.all().delete()
     # set up environment
     env = CheckerEnvironment(solution)

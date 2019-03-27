@@ -7,7 +7,7 @@ RUN apt-get --yes update
 RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
 RUN apt-get install --yes -t jessie-backports ca-certificates-java
 RUN apt-get install --yes openjdk-8-jdk junit junit4 dejagnu gcj-jdk && apt-get clean
-RUN update-java-alternatives -s java-1.8.0-openjdk
+RUN update-java-alternatives -s java-1.8.0-openjdk-amd64
 
 # Python-Stuff
 RUN apt-get update -y
@@ -20,7 +20,7 @@ RUN apt-get install --yes python3-responses                       && apt-get cle
 RUN apt-get install --yes python3-xlrd                            && apt-get clean
 RUN apt-get install --yes python3-simplejson python-simplejson    && apt-get clean
 
-
+ENV PIP_NO_BUILD_ISOLATION=false
 RUN python3 -m pip install --upgrade pip
 RUN pip3 install numpy scipy matplotlib ipython pandas
 RUN sed -i -e 's/^backend      : \(\(TkAgg\)\|\(tkagg\)\)$/backend      : Agg/g' /usr/local/lib/python3.4/dist-packages/matplotlib/mpl-data/matplotlibrc
@@ -28,15 +28,12 @@ RUN sed -i -e 's/^backend      : \(\(TkAgg\)\|\(tkagg\)\)$/backend      : Agg/g'
 # set up some font cache once and for all
 RUN python3 -c "from matplotlib.font_manager import FontManager"
 
-RUN pip3 install statsmodels
-RUN pip3 install scikit-learn
-RUN pip3 install numdifftools
-RUN pip3 install arch
+RUN pip3 install statsmodels scikit-learn numdifftools Cython arch
 
-# Install Isabelle2016
-RUN apt-get install --yes -t jessie-backports curl                && apt-get clean
-RUN curl http://isabelle.in.tum.de/dist/Isabelle2017_app.tar.gz | tar -C /opt -xz
-RUN ln -s /opt/Isabelle2017/bin/isabelle /usr/local/bin
+# Install Isabelle2018
+RUN apt-get install --yes -t jessie-backports curl libc6-i386 lib32stdc++6  && apt-get clean
+RUN curl http://isabelle.in.tum.de/dist/Isabelle2018_app.tar.gz | tar -C /opt -xz
+RUN ln -s /opt/Isabelle2018/bin/isabelle /usr/local/bin
 RUN isabelle build -sbv HOL
 
 

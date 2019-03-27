@@ -1,11 +1,25 @@
 {% extends "base.html" %}
-{% load i18n %} {% load chunks %}
-{% block extrahead %}{{ block.super }}{% endblock %}
+{% load i18n %} {% load chunks %} {% load motd %}
+{% block extrahead %}{{ block.super }}
+<script type="application/javascript">
+
+function resize(id) {
+    var iframe = document.getElementById(id);
+    var height = iframe.contentWindow.document.body.scrollHeight;
+    // if we have content, we need to extend the iframe
+    // because we need to include space for the invisible scrollbar
+    iframe.height = (height == 0) ? 0 : height + 35;
+};
+
+</script>
+{% endblock %}
 {% block breadcrumbs %}<span class="icon icon-white ui-icon-home"></span>Home{% endblock %}
 {% block content %}<div id='task_list'>
 
 <div id="welcome">
-
+	
+	{% motd %}
+	
 	{% chunk "Welcome Message" %}
 
 	{% if not user.is_trainer and not user.is_superuser %}

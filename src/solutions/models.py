@@ -31,7 +31,7 @@ for (mimetype, extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
 class Solution(models.Model):
     """ """
 
-    number = models.IntegerField(null=False, editable=False, help_text = _("Id unique in task and user.Eg. Solution 1 of user X in task Y in contrast to global solution Z"))
+    number = models.IntegerField(null=False, editable=False, help_text = _("Id unique in task and user. E.g. Solution 1 of user X in task Y in contrast to global solution Z"))
 
     task = models.ForeignKey('tasks.task')
     author = models.ForeignKey(User, verbose_name="solution author")
@@ -39,7 +39,7 @@ class Solution(models.Model):
 
     testupload = models.BooleanField( default = False, help_text = _('Indicates whether this solution is a test upload.'))
     accepted = models.BooleanField( default = False, help_text = _('Indicates whether the solution has passed all public and required tests.'))
-    warnings = models.BooleanField( default = False, help_text = _('Indicates whether the solution has at least failed one public and not required tests.'))
+    warnings = models.BooleanField( default = False, help_text = _('Indicates whether the solution has at least failed one public and not required test.'))
     plagiarism = models.BooleanField( default = False, help_text = _('Indicates whether the solution is a rip-off of another one.'))
     final = models.BooleanField( default = False, help_text = _('Indicates whether this solution is the last (accepted) of the author.'))
 
@@ -100,6 +100,7 @@ class Solution(models.Model):
 
     def textSolutionFiles(self):
         return [file for file in self.solutionfile_set.all() if (not file.isBinary()) ]
+
 
 def until_critical(l):
     res = []
@@ -218,7 +219,6 @@ class DummyFile:
 
 
 def get_solutions_zip(solutions,include_file_copy_checker_files=False):
-
     zip_file = tempfile.TemporaryFile()
     zip = zipfile.ZipFile(zip_file, 'w', allowZip64 = True)
     praktomat_files_destination          = "praktomat-files/"
@@ -255,7 +255,7 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 
 
     for solution in solutions:
-        # TODO: make this work for anonymous attesration, too
+        # TODO: make this work for anonymous attestation, too
         if get_settings().anonymous_attestation:
             project_path = 'User' + index
             project_name = str(solution.task) + "-" + 'User ' + index
@@ -318,7 +318,6 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
         if (tmpdir is None) or (not os.path.isdir(tmpdir)) or (not os.path.basename(tmpdir).startswith("tmp")):
             raise Exception("Invalid tmpdir: " + tmpdir)
         shutil.rmtree(tmpdir)
-
 
     return zip_file
 

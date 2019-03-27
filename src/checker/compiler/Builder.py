@@ -21,9 +21,9 @@ class Builder(Checker):
         abstract = True
 
     # builder configuration. override in subclass
-    _compiler                = "gcc"                        # command to invoce the compiler in the shell
-    _language                = "konfigurierbar"            # the language of the compiler eg. C++ or Java
-    _rx_warnings            = r"^([^:]*:[^:].*)$"        # Regular expression describing warings and errors in the output of the compiler
+    _compiler                = "gcc"                        # command to invoke the compiler in the shell
+    _language                = "konfigurierbar"            # the language of the compiler, e.g. C++ or Java
+    _rx_warnings            = r"^([^:]*:[^:].*)$"        # Regular expression describing warnings and errors in the output of the compiler
     _env                            = {}
 
 

@@ -21,7 +21,7 @@ from utilities.safeexec import execute_arglist
 
 
 class Task(models.Model):
-    title = models.CharField(max_length=100, help_text = _("The name of the Task"))
+    title = models.CharField(max_length=100, help_text = _("The name of the task"))
     description = models.TextField(help_text = _("Description of the assignment."))
     publication_date = models.DateTimeField(help_text = _("The time on which the user will see the task."))
     submission_date = models.DateTimeField(help_text = _("The time up until the user has time to complete the task. This time will be extended by one hour for those who yust missed the deadline."))
@@ -51,7 +51,7 @@ class Task(models.Model):
         return solutions.first()
 
     def expired(self):
-        """docstring for expired"""
+        """returns whether the task has expired"""
         return self.submission_date + timedelta(hours=1) < datetime.now()
 
     def check_all_final_solutions(self):

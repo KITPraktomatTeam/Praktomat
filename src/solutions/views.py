@@ -111,7 +111,6 @@ def test_upload(request, task_id):
 
 @login_required
 def test_upload_student(request, task_id):
-
     task = get_object_or_404(Task, pk=task_id)
     if task.publication_date >= datetime.now():
         raise Http404
@@ -209,7 +208,6 @@ def jplag(request, task_id):
     jplag_lang = get_settings().jplag_setting
 
     return render(request, "solutions/jplag.html", {"task":task, "jplag_lang": jplag_lang})
-
 
 @login_required
 def checker_result_list(request, task_id):

@@ -77,7 +77,6 @@ urlpatterns = [
     url(r'^upload/(?P<path>jplag.*)$', utilities.views.serve_staff_only, name='jplag_download'),
     url(r'^upload/(?P<path>CheckerFiles.*)$', utilities.views.serve_staff_only),
     url(r'^upload/(?P<path>.*)$', utilities.views.serve_access_denied),
-
 ]
 
 if settings.DEBUG:

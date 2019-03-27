@@ -22,11 +22,10 @@ class AuthenticationMiddleware(object):
         return None
 
 class LogoutInactiveUserMiddleware(object):
-    """ Logout users who have been set to inactive so they cant use their sessions to operate on the site. """
+    """ Logout users who have been set to inactive so they can't use their sessions to operate on the site. """
     def process_request(self, request):
         if not request.user.is_authenticated():
             return
         if not request.user.is_active:
-            userid = request.user.id
             logout(request)
-            return HttpResponseRedirect(reverse('registration_deactivated', kwargs={ 'user_id' : userid }))
+            return HttpResponseRedirect(reverse('registration_deactivated'))

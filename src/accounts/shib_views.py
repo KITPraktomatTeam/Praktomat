@@ -35,8 +35,8 @@ def parse_attributes(META):
     return shib_attrs, error
 
 
-def render_forbidden(*args, **kwargs):
-    return HttpResponseForbidden(loader.render_to_string(*args, **kwargs))
+def render_forbidden(request, template_name, context):
+    return HttpResponseForbidden(loader.render_to_string(template_name, context, request))
 
 @shibboleth_support_required
 def shib_hello(request):
@@ -72,28 +72,28 @@ def shib_login(request):
     try:
         user = User.objects.get(username=attr[settings.SHIB_USERNAME])
     except User.DoesNotExist:
-            try:
-                if attr['matriculationNumber'] is not None:
-                    user = User.objects.get(mat_number=attr['matriculationNumber'])
-                else:
-                    raise User.DoesNotExist
-            except:
-                if get_settings().new_users_via_sso:
-                    if get_settings().deny_registration_from < datetime.datetime.now():
-                        extra_context = {}
-                        extra_context['deny_registration_from'] = get_settings().deny_registration_from
-                        extra_context['admins'] = User.objects.filter(is_superuser=True)
-                        extra_context['trainers'] = Group.objects.get(name="Trainer").user_set.all()
-                        return render(request, 'registration/registration_form.html', extra_context)
-                    user = User.objects.create_user(
-            attr[settings.SHIB_USERNAME], '',
-            last_login=datetime.datetime.now())
-                    user_group = Group.objects.get(name='User')
-                    user.groups.add(user_group)
-                    if get_settings().account_manual_validation:
-                        user.is_active = False
-                else:
-                    return render_forbidden(request, 'registration/shib_not_allowed.html', context)
+        try:
+            if attr['matriculationNumber'] is not None:
+                user = User.objects.get(mat_number=attr['matriculationNumber'])
+            else:
+                raise User.DoesNotExist
+        except:
+            if get_settings().new_users_via_sso:
+                if get_settings().deny_registration_from < datetime.datetime.now():
+                    extra_context = {}
+                    extra_context['deny_registration_from'] = get_settings().deny_registration_from
+                    extra_context['admins'] = User.objects.filter(is_superuser=True)
+                    extra_context['trainers'] = Group.objects.get(name="Trainer").user_set.all()
+                    return render(request, 'registration/registration_form.html', extra_context)
+                user = User.objects.create_user(
+                    attr[settings.SHIB_USERNAME], '',
+                    last_login=datetime.datetime.now())
+                user_group = Group.objects.get(name='User')
+                user.groups.add(user_group)
+                if get_settings().account_manual_validation:
+                    user.is_active = False
+            else:
+                return render_forbidden(request, 'registration/shib_not_allowed.html', context)
 
 
     # This needs to be made more general smarter
@@ -104,7 +104,7 @@ def shib_login(request):
     user.programme  = attr['programme']           if attr['programme']  is not None else user.programme
     user.save()
 
-    user.backend = 'django.contrib.auth.backends.ModelBackend'
+    user.backend = settings.AUTH_BACKEND
     login(request, user)
 
     if not redirect_url or '//' in redirect_url or ' ' in redirect_url:

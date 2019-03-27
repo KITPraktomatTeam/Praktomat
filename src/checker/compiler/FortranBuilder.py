@@ -8,7 +8,7 @@ from django.conf import settings
 from checker.compiler.Builder import Builder
 
 class FortranBuilder(Builder):
-    """ A C compiler for construction. """
+    """ A FORTRAN compiler for construction. """
 
     # Initialization sets attributes to default values.
     _compiler        = settings.FORTRAN_BINARY

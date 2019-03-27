@@ -54,7 +54,7 @@ class MyRegistrationForm(UserBaseCreationForm):
             if user.is_activated():
                 trainers = ["<a href='mailto:%s'>%s</a>" % (user.email, user.get_full_name() or user.email) for user in Group.objects.get(name='Trainer').user_set.all()]
                 trainers = ', '.join(trainers)
-                raise forms.ValidationError(mark_safe("A user with this number is already registered. Please Contact an Trainer: %s" % trainers ))
+                raise forms.ValidationError(mark_safe("A user with this number is already registered. Please contact an Trainer: %s" % trainers ))
         return data
 
 
@@ -122,7 +122,7 @@ class AdminUserChangeForm(UserBaseChangeForm):
         fields = "__all__"
 
     def clean(self):
-        # Only if user is in group "User" require a mat number.
+        # Require a mat number only if user is in group "User".
         cleaned_data = super(AdminUserChangeForm, self).clean()
         groups = cleaned_data.get("groups")
         if not groups:
@@ -134,9 +134,8 @@ class AdminUserChangeForm(UserBaseChangeForm):
                 del cleaned_data["mat_number"]
         return cleaned_data
 
-
 reactivation_message_text = """ {% autoescape off %}
-You're receiving this e-mail because you have been registerd at {{ site_name }}.
+You're receiving this e-mail because you have been registered at {{ site_name }}.
 
 Please go to the following page to activate your account within {{ expiration_days }} days.
 
@@ -151,21 +150,20 @@ The {{ site_name }} team
 {% endautoescape %} """
 
 class ImportForm(forms.Form):
-    file = forms.FileField(required=True, help_text = "The file exported from the list view. Allready existing users will be ignorred.")
+    file = forms.FileField(required=True, help_text = "The file exported from the list view. Already existing users will be ignored.")
     require_reactivation = forms.BooleanField(initial=True, required=False, help_text = "Deactivate all imported users")
     send_reactivation_email = forms.BooleanField(initial=False, required=False, help_text = "Send activation email to imported users (if deactivated during import)")
     meassagetext = forms.CharField(required=False, widget=forms.Textarea, initial = reactivation_message_text, help_text = "Message to be embedded into activation mail if reactivation is required.")
 
 class ImportTutorialAssignmentForm(forms.Form):
-    csv_file = forms.FileField(required=True, help_text = "The csv file containing the tutorial name and the students mat number.")
+    csv_file = forms.FileField(required=True, help_text = "The csv file containing the tutorial name and the students' mat number.")
     delimiter = forms.CharField(required=True, max_length = 1, initial = ";", help_text = "A one-character string used to separate fields.")
     quotechar = forms.CharField(required=True, max_length = 1, initial = "|", help_text = "A one-character string used to quote fields.")
     name_coloum = forms.IntegerField(required=True, initial = 0, help_text = "The index of the field containing the name of the tutorial.")
     mat_coloum = forms.IntegerField(required=True, initial = 1, help_text = "The index of the field containing the mat number of the user.")
 
 
-
 class ImportMatriculationListForm(forms.Form):
-    mat_number_file = forms.FileField(required=True, help_text = "A text file consisting of one matriculatoin number per line.")
+    mat_number_file = forms.FileField(required=True, help_text = "A text file consisting of one matriculation number per line.")
     remove_others = forms.BooleanField(required=False, initial = True, help_text = "Also remove all users from the group if they are not listed here.")
     create_users = forms.BooleanField(required=False, initial = False, help_text = "If a matriculation number is not known yet, create a stub user object")

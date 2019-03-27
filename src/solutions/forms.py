@@ -38,9 +38,9 @@ class SolutionFileForm(ModelForm):
                 try:
                     zip = zipfile.ZipFile(data)
                     if zip.testzip():
-                        raise forms.ValidationError(_('The zip file seams to be corrupt.'))
+                        raise forms.ValidationError(_('The zip file seems to be corrupt.'))
                     if sum(fileinfo.file_size for fileinfo in zip.infolist()) > 1000000:
-                        raise forms.ValidationError(_('The zip file is to big.'))
+                        raise forms.ValidationError(_('The zip file is too big.'))
                     for fileinfo in zip.infolist():
                         (type, encoding) = mimetypes.guess_type(fileinfo.filename)
                         ignorred = SolutionFile.ignorred_file_names_re.search(fileinfo.filename)
@@ -59,9 +59,9 @@ class SolutionFileForm(ModelForm):
                     uncompressed = SafeUncompressor(data, max_file_size);
                     tar = tarfile.open(mode = 'r:', fileobj = uncompressed)
                     #if tar.testtar():
-                    #    raise forms.ValidationError(_('The tar file seams to be corrupt.'))
+                    #    raise forms.ValidationError(_('The tar file seems to be corrupt.'))
                     if sum(fileinfo.size for fileinfo in tar.getmembers()) > 1000000:
-                        raise forms.ValidationError(_('The tar file is to big.'))
+                        raise forms.ValidationError(_('The tar file is too big.'))
                     for fileinfo in tar.getmembers():
                         if not fileinfo.isfile():
                             continue
@@ -72,12 +72,12 @@ class SolutionFileForm(ModelForm):
                             raise forms.ValidationError(_("The file '%(file)s' of guessed mime type '%(type)s' in this tar file is not supported." %{'file':fileinfo.name, 'type':type}))
                         # check whole tar instead of contained files
                         #if fileinfo.file_size > max_file_size:
-                        #    raise forms.ValidationError(_("The file '%(file)s' is bigger than %(size)iKB which is not suported." %{'file':fileinfo.name, 'size':max_file_size_kb}))
+                        #    raise forms.ValidationError(_("The file '%(file)s' is bigger than %(size)KiB which is not suported." %{'file':fileinfo.name, 'size':max_file_size_kb}))
                     data.seek(0)
                 except forms.ValidationError:
                     raise
                 except SafeUncompressor.FileTooLarge:
-                    raise forms.ValidationError(_('The tar file is to big.'))
+                    raise forms.ValidationError(_('The tar file is too big.'))
                 except:
                     raise forms.ValidationError(_('Uhoh - something unexpected happened.'))
             if data.size > max_file_size:
@@ -88,7 +88,7 @@ class MyBaseInlineFormSet(BaseInlineFormSet):
     def clean(self):
         super(MyBaseInlineFormSet, self).clean()
         if not reduce(lambda x, y: x + y.changed_data, self.forms, []):
-            raise forms.ValidationError(_('You must at least choose one file.'))
+            raise forms.ValidationError(_('You must choose at least one file.'))
 
 SolutionFormSet = inlineformset_factory(Solution, SolutionFile, form=SolutionFileForm, formset=MyBaseInlineFormSet, can_delete=False, extra=3)
 ModelSolutionFormSet = inlineformset_factory(Solution, SolutionFile, form=SolutionFileForm, formset=MyBaseInlineFormSet, can_delete=False, extra=1)

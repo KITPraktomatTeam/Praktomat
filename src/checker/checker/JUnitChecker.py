@@ -38,7 +38,7 @@ class JUnitChecker(Checker):
         )
     test_description = models.TextField(help_text = _("Description of the Testcase. To be displayed on Checker Results page when checker is  unfolded."))
     name = models.CharField(max_length=100, help_text=_("Name of the Testcase. To be displayed as title on Checker Results page"))
-    ignore = models.CharField(max_length=4096, help_text=_("space-seperated list of files to be ignored during compilation, i.e.: these files will not be compiled."), default="", blank=True)
+    ignore = models.CharField(max_length=4096, help_text=_("space-separated list of files to be ignored during compilation, i.e.: these files will not be compiled."), default="", blank=True)
 
     JUNIT_CHOICES = (
       ('junit4', 'JUnit 4'),
