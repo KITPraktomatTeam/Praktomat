@@ -353,11 +353,14 @@ class MessageWrapper():
     def __init__(self, message):
         self.message = message
 
-    def as_bytes(self, linesep='\n'):
+    def as_bytes(self, linesep=b'\n'):
         # Construct the message with the full S/MIME mail as body
         msg = self.message.as_bytes(linesep)
         # Now, use the S/MIME headers as headers for the email
         lines = msg.split(linesep)
-        i = lines.index('')
-        transformed = [s.replace("Content-Type: text/plain", lines[i+2]) for s in lines[0:i]] + lines[i+3:]
+        i = lines.index(b'')
+        transformed = [s.replace(b"Content-Type: text/plain", lines[i+2]) for s in lines[0:i]] + lines[i+3:]
         return linesep.join(transformed)
+
+    def get_charset(self):
+        return None

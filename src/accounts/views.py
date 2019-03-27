@@ -131,7 +131,8 @@ def import_tutorial_assignment(request):
         form = ImportTutorialAssignmentForm(request.POST, request.FILES)
         if form.is_valid():
             file = form.files['csv_file']
-            reader = csv.reader(file, delimiter=str(form.cleaned_data['delimiter']), quotechar=str(form.cleaned_data['quotechar']))
+            file.seek(0)
+            reader = csv.reader(io.StringIO(file.read().decode('utf-8')), delimiter=str(form.cleaned_data['delimiter']), quotechar=str(form.cleaned_data['quotechar']))
             succeded = failed = 0
             for row in reader:
                 try:

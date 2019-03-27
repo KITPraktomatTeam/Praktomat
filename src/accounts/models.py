@@ -3,6 +3,8 @@ import re
 import hashlib
 import random
 
+from functools import reduce
+
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.db import models, utils
