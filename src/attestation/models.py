@@ -20,7 +20,7 @@ from configuration import get_settings
 
 
 class Attestation(models.Model):
-	""""""
+	"""An attestation for a student's solution."""
 
 	created = models.DateTimeField(auto_now_add=True)
 	solution = models.ForeignKey(Solution)
@@ -35,7 +35,7 @@ class Attestation(models.Model):
 	published_on = models.DateTimeField(blank=True,null=True,help_text = _('The Date/Time the attestation was published.'))
 	
 	def publish(self, request, by):
-		""" Set attestation to published and send email to user """
+		""" Publish attestation and send email to user """
 		self.published = True
 		self.published_on = datetime.now()
 		self.save()
@@ -205,15 +205,15 @@ class AnnotatedSolutionFile(models.Model):
 		return self.solution_file.__unicode__()
 	
 class RatingAspect(models.Model):
-	""" describes an review aspect which the reviewer has to evaluate """	
-	name = models.CharField(max_length=100, help_text = _('The Name of the Aspect to be rated. E.g.: "Readabylity"'))
+	""" describes a review aspect which the reviewer has to evaluate """	
+	name = models.CharField(max_length=100, help_text = _('The Name of the Aspect to be rated. E.g.: "Readability"'))
 	description = models.TextField(help_text = _('Description of the Aspect and how it should be rated. E.w.: "How well is the code structured?"'))
 	
 	def __unicode__(self):
 		return self.name
 
 class RatingScale(models.Model):
-	""" describes a scale upone which the reviewer rates the aspect """
+	""" describes a scale upon which the reviewer rates the aspect """
 	name = models.CharField(max_length=100, help_text = _('The Name of the rating scale for the aspects. E.g.: "School marks"'))
 	
 	def __unicode__(self):

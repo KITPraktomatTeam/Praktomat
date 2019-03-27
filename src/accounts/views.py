@@ -117,7 +117,7 @@ def import_user(request):
 			except:
 				raise
 				from django.forms.utils import ErrorList
-				msg = "An Error occured. The import file was propably malformed."
+				msg = "An Error occured. The import file was probably malformed."
 				form._errors["file"] = ErrorList([msg]) 			
 	else:
 		form = ImportForm()
@@ -155,7 +155,7 @@ def import_tutorial_assignment(request):
 
 @staff_member_required
 def import_matriculation_list(request, group_id):
-    """ Set the group memembership of all users according to an uploaded list of matriculation numbers. """
+    """ Set the group membership of all users according to an uploaded list of matriculation numbers. """
     group = get_object_or_404(Group,pk=group_id)
     if request.method == 'POST':
         form = ImportMatriculationListForm(request.POST, request.FILES)

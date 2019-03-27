@@ -109,7 +109,7 @@ class DejaGnuTester(Checker, DejaGnu):
 
 		if " " in program_name:
 			result = self.create_result(env)
-			result.set_log("<pre><b class=\"fail\">Error</b>: Path to the main() - source file contains spaces.\n\nFor Java .zip submittions, the directory hierarchy of the .zip file must excactly match the package structure.\nThe default package must correspond to the .zip root directory.</pre>")
+			result.set_log("<pre><b class=\"fail\">Error</b>: Path to the main() - source file contains spaces.\n\nFor Java .zip submittions, the directory hierarchy of the .zip file must exactly match the package structure.\nThe default package must correspond to the .zip root directory.</pre>")
 			result.set_passed(False)
 			return result
 		

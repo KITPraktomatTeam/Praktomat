@@ -30,7 +30,7 @@ for (mimetype,extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
 class Solution(models.Model):
 	""" """
 	
-	number = models.IntegerField(null=False, editable=False, help_text = _("Id unique in task and user.Eg. Solution 1 of user X in task Y in contrast to global solution Z"))
+	number = models.IntegerField(null=False, editable=False, help_text = _("Id unique in task and user. E.g. Solution 1 of user X in task Y in contrast to global solution Z"))
 	
 	task = models.ForeignKey('tasks.task')
 	author = models.ForeignKey(User, verbose_name="solution author")
@@ -38,7 +38,7 @@ class Solution(models.Model):
 	
         testupload = models.BooleanField( default = False, help_text = _('Indicates whether this solution is a test upload.'))
 	accepted = models.BooleanField( default = False, help_text = _('Indicates whether the solution has passed all public and required tests.'))
-	warnings = models.BooleanField( default = False, help_text = _('Indicates whether the solution has at least failed one public and not required tests.'))
+	warnings = models.BooleanField( default = False, help_text = _('Indicates whether the solution has at least failed one public and not required test.'))
 	plagiarism = models.BooleanField( default = False, help_text = _('Indicates whether the solution is a rip-off of another one.'))
 	final = models.BooleanField( default = False, help_text = _('Indicates whether this solution is the last (accepted) of the author.'))
 	
@@ -115,7 +115,7 @@ def sign(file):
 	evp.sign_init()
 	file.seek(0) 
 	evp.sign_update(file.read())
-	# signature to log for email, so shorten it
+	# signature to long for email, so shorten it
 	s = EVP.MessageDigest('md5')
 	s.update(evp.sign_final())
 	return s.digest().encode('hex')
@@ -273,7 +273,7 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 
 
 	for solution in solutions:
-		# TODO: make this work for anonymous attesration, too
+		# TODO: make this work for anonymous attestation, too
 		if get_settings().anonymous_attestation:
 			project_path = 'User' + index
 			project_name = unicode(solution.task) + u"-" + 'User ' + index 

@@ -57,12 +57,12 @@ class UserAdmin(UserBaseAdmin):
 	is_failed_attempt.boolean = True
 	
 	def set_active(self, request, queryset):
-		""" Export Task action """
+		""" Set active action """
 		queryset.update(is_active=True)
 		self.message_user(request, "Users were successfully activated.")
 	
 	def set_inactive(self, request, queryset):
-		""" Export Task action """
+		""" Set inactive action """
 		queryset.update(is_active=False)
 		self.message_user(request, "Users were successfully inactivated.")
 
@@ -79,14 +79,14 @@ class UserAdmin(UserBaseAdmin):
 
 	@atomic
 	def distribute_to_tutorials(self, request, queryset):
-		""" Distribute selectet users evenly to all tutorials """
+		""" Distribute selected users evenly to all tutorials """
 		users = list(queryset)
 		for user in users:
 			# remove tutorial from users so we can find the tutorial with the least amount of users
 			user.tutorial = None
 			user.save()
 		while(users):
-			# get random user an put him in the least populated tutorial
+			# get random user and put him in the least populated tutorial
 			user = users.pop(randint(0,len(users)-1))
 			tutorial = Tutorial.objects.annotate(Count('user')).order_by('user__count')[0]
 			user.tutorial = tutorial

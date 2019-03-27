@@ -34,7 +34,6 @@ class IsabelleChecker(Checker):
 	
 
 	def run(self, env):
-
 		thys = map (lambda (name,_): ('%s' % os.path.splitext(name)[0]), env.sources())
 
 		additional_thys = ['%s' % name for name in re.split(" |,",self.additional_theories) if name]

@@ -22,7 +22,7 @@ class IgnoringJavaBuilder(JavaBuilder):
 		rxarg = re.compile(self.rxarg())
 		return [name for (name,content) in env.sources() if rxarg.match(name) and (not name in self._ignore)]
 
-	# Since this checkers instances  will not be saved(), we don't save their results, either
+	# Since this checkers instances will not be saved(), we don't save their results, either
 	def create_result(self, env):
 		assert isinstance(env.solution(), Solution)
 		return CheckerResult(checker=self, solution=env.solution())
@@ -36,9 +36,9 @@ class JUnitChecker(Checker):
             max_length=100,
             help_text=_("The fully qualified name of the test case class (without .class)")
         )
-	test_description = models.TextField(help_text = _("Description of the Testcase. To be displayed on Checker Results page when checker is  unfolded."))
+	test_description = models.TextField(help_text = _("Description of the Testcase. To be displayed on Checker Results page when checker is unfolded."))
 	name = models.CharField(max_length=100, help_text=_("Name of the Testcase. To be displayed as title on Checker Results page"))
-	ignore = models.CharField(max_length=4096, help_text=_("space-seperated list of files to be ignored during compilation, i.e.: these files will not be compiled."),default="", blank=True)
+	ignore = models.CharField(max_length=4096, help_text=_("space-separated list of files to be ignored during compilation, i.e.: these files will not be compiled."),default="", blank=True)
 
 	JUNIT_CHOICES = (
 	  (u'junit4', u'JUnit 4'),

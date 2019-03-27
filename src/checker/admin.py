@@ -4,9 +4,9 @@ from django.core.urlresolvers import reverse
 from basemodels import CheckerResult
 
 class AlwaysChangedModelForm(ModelForm):
-	""" This fixes the creation of inlines without modifing any of it's values. The standart ModelForm would just ignore these inlines. """
+	""" This fixes the creation of inlines without modifying any of it's values. The standart ModelForm would just ignore these inlines. """
 	def has_changed(self):
-		""" Should returns True if data differs from initial. By always returning true even unchanged inlines will get validated and saved."""
+		""" Should return True if data differs from initial. By always returning true even unchanged inlines will get validated and saved."""
 		return True
 
 class CheckerInline(admin.StackedInline):
@@ -18,7 +18,7 @@ class CheckerInline(admin.StackedInline):
 	template = "admin/tasks/stacked.html" 
 
 	def get_fieldsets(self, request, obj=None):
-		""" Get the fields public, required and always on the first line without defining fieldsets in every subclass. This saves a lot of space. """
+		""" Get the fields public, required, always and critical on the first line without defining fieldsets in every subclass. This saves a lot of space. """
 
 		form = self.get_formset(request, obj, fields=None).form
 		fields = form.base_fields.keys() + list(self.get_readonly_fields(request, obj))

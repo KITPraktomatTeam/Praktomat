@@ -88,7 +88,7 @@ def statistics(request,task_id):
 	else:
 		# The Tutorials ratings
 		all_ratings.append(        {'title'   : u"Final grades (My Tutorials)",
-		                            'desc'    : u"This chart shows the distribution of final grades for students from any your tutorials. Plagiarism is excluded.",
+		                            'desc'    : u"This chart shows the distribution of final grades for students from any of your tutorials. Plagiarism is excluded.",
                                             'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__solution__author__tutorial__in = tutorials)})
    		all_ratings.append(        {'title'   : u"Final grades (My Attestations)",
 		                            'desc'    : u"This chart shows the distribution of final grades for your attestations. Plagiarism is excluded.",
@@ -265,7 +265,7 @@ def new_attestation_for_task(request, task_id):
 	if not (request.user.is_tutor or request.user.is_trainer or request.user.is_superuser):
 		return access_denied(request)
 	
-	# fetch a solution of a user i have allredy attested in the past.		
+	# fetch a solution of a user i have already attested in the past.		
 	users_i_have_attestated = User.objects.filter(solution__attestation__author = request.user)
 	all_available_solutions = Solution.objects.filter(task__id = task_id, final=True, author__tutorial__in = request.user.tutored_tutorials.all(), attestation = None)
 	if (not all_available_solutions):
@@ -583,7 +583,7 @@ def rating_export(request):
 	response['Content-Disposition'] = 'attachment; filename=rating_export.csv'
 	t = loader.get_template('attestation/rating_export.csv')
 	c = {'rating_list': rating_list, 'tasks': tasks}
-	#response.write(u'\ufeff') setting utf-8 BOM for Exel doesn't work
+	#response.write(u'\ufeff') setting utf-8 BOM for Excel doesn't work
 	response.write(t.render(c))
 	return response
 	

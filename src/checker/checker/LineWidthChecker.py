@@ -16,8 +16,8 @@ class LineWidthChecker(Checker):
 
 	max_line_length = models.IntegerField(default = 80, help_text=_("The maximum length of a line of code."))
 	tab_width =  models.IntegerField(default = 4, help_text=_("The amount of characters a tab represents."))
-	include = models.CharField(max_length=100, blank = True, default=".*", help_text=_("Regular expression describing the filenames to be checked. Case Insensetive. Blank: use all files."))
-	exclude = models.CharField(max_length=100, blank = True, default=".*\.txt$", help_text=_("Regular expression describing included filenames, which shall be excluded. Case Insensetive. Blank: use all files."))
+	include = models.CharField(max_length=100, blank = True, default=".*", help_text=_("Regular expression describing the filenames to be checked. Case insensitive. Blank: use all files."))
+	exclude = models.CharField(max_length=100, blank = True, default=".*\.txt$", help_text=_("Regular expression describing included filenames, which shall be excluded. Case insensitive. Blank: use all files."))
 	
 	def title(self):
 		""" Returns the title for this checker category. """
@@ -26,7 +26,7 @@ class LineWidthChecker(Checker):
 	@staticmethod
 	def description():
 		""" Returns a description for this Checker. """
-		s = u"Diese Prüfung ist bestanden, wenn keine Zeile des Programmtext breiter als die angegebene Anyahl Zeichen ist."
+		s = u"Diese Prüfung ist bestanden, wenn keine Zeile des Programmtext breiter als die angegebene Anzahl Zeichen ist."
 		return s
 	
 	def setup_line(self, line, env):

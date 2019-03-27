@@ -63,7 +63,7 @@ else:
 
 
 # The URL where this site is reachable. 'http://localhost:8000/' in case of the
-# developmentserver.
+# development server.
 BASE_HOST = 'https://praktomat.cs.kit.edu'
 BASE_PATH = '/' + PRAKTOMAT_ID + '/'
 
@@ -159,7 +159,7 @@ NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 6
 if match.group('tba') is not None:
     NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 1
 
-# Finally load defaults for missing setttings.
+# Finally load defaults for missing settings.
 import defaults
 defaults.load_defaults(globals())
 

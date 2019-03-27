@@ -282,14 +282,14 @@ def load_defaults(settings):
     d.USEPRAKTOMATTESTER = False
  
     # Alternatively: Run everything in a docker instance, to provide higher
-    # insulation. Should not be used together iwth USEPRAKTOMATTESTER.
+    # insulation. Should not be used together with USEPRAKTOMATTESTER.
     d.USESAFEDOCKER = False
 
     # Make sure uploaded solution are not work-readable
     d.FILE_UPLOAD_PERMISSIONS = 0640
 
-    # This enables Shibboleth-Support.
-    # In order to actually get it working, you need to protec the location
+    # This enables Shibboleth support.
+    # In order to actually get it working, you need to protect the location
     # .../accounts/shib_login in the apache configuration, e.g. with this
     # stanca:
     #	<Location /shibtest/accounts/shib_login>

@@ -60,7 +60,7 @@ class User(BasicUser):
 
 	def is_activated(self):
 		"""
-		Determine whether the user is allredy activated, returning a boolean -- ``True`` if he is.
+		Determine whether the user is already activated, returning a boolean -- ``True`` if he is.
 		
 		If the user has already activated, the activation key will have been reset to the string ``ALREADY_ACTIVATED``
 		"""
@@ -71,9 +71,9 @@ class User(BasicUser):
 		"""
 		Determine whether the user can activate his account, returning a boolean.
 		
-		This is determined by a two-step process:
+		This is determined by a three-step process:
 		
-		1. 	If the user has already activated, re-activating is not permitted, and so this method returns ``False`` in this case.
+		1. 	If the user is already activated, re-activating is not permitted, and so this method returns ``False`` in this case.
 		
 		2. 	If the activation key has expired this method returns ``False``.
 		
@@ -157,7 +157,7 @@ class User(BasicUser):
 					deserialized_object.save()
 					imported_user_ids.append(object.pk)
 				except KeyError:
-					pass # basicUser_id_map key not found because user allredy existed
+					pass # basicUser_id_map key not found because user already existed
 			else: # brach BasicUser
 				try:
 					old_id = object.id
@@ -166,7 +166,7 @@ class User(BasicUser):
 					deserialized_object.save()
 					basicUser_id_map[old_id] = object
 				except utils.IntegrityError:
-					pass # unique username validation - user allredy existed
+					pass # unique username validation - user already existed
 		return User.objects.filter(id__in = imported_user_ids) 	# get them fresh from the db, otherwise the user object won't have basicUser attributes set
 				
 				
@@ -182,7 +182,7 @@ class User(BasicUser):
 #		super(User, self).save(force_insert=False, force_update=force_update, *args, **kwargs)
 	
 def create_user_for_basicuser(sender, **kwargs):
-	""" Model inheritance is archived through joining of the base- and subclass's tables. to prevent inconsistencies a User is created every time a BaseUser is created. (ex. manage.py create_superuser)"""
+	""" Model inheritance is archived through joining of the base- and subclass's tables. To prevent inconsistencies a User is created every time a BaseUser is created. (ex. manage.py create_superuser)"""
 	if kwargs['created']:
 		u = User() 
 		u.__dict__.update(kwargs['instance'].__dict__)
@@ -192,7 +192,7 @@ signals.post_save.connect(create_user_for_basicuser, sender=BasicUser)
 class Tutorial(models.Model):
 	name = models.CharField(max_length=100, blank=True, help_text=_("The name of the tutorial"))
 	# A Tutorial may have many tutors as well as a Tutor may have multiple tutorials
-	tutors = models.ManyToManyField('User', limit_choices_to = {'groups__name': 'Tutor'}, related_name='tutored_tutorials', help_text = _("The tutors in charge of the tutorium."))
+	tutors = models.ManyToManyField('User', limit_choices_to = {'groups__name': 'Tutor'}, related_name='tutored_tutorials', help_text = _("The tutors in charge of the tutorial."))
 
 	def tutors_flat(self):
 		return reduce(lambda x, y: x + ', ' + y.get_full_name(), self.tutors.all(),'')[2:]

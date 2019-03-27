@@ -36,7 +36,7 @@ def taskList(request):
 	trainers = User.objects.filter(groups__name="Trainer")
 
     # we only have a single user here, so the rating_list only contains a single row;
-    # this row belongs to that user
+    # this row belongs to the given user
 	(_,attestations,threshold,calculated_grade) = user_task_attestation_map([request.user], tasks)[0]
 	attestations = map(lambda a, b: (a,)+b, tasks, attestations)
 
@@ -82,11 +82,11 @@ def import_tasks(request):
 		if form.is_valid(): 
 			try:
 				Task.import_Tasks(form.files['file'], request.user)
-                                messages.success(request, "The import was successfull.")
+                                messages.success(request, "The import was successful.")
 				return HttpResponseRedirect(urlresolvers.reverse('admin:tasks_task_changelist'))
 			except Exception, e:
 				from django.forms.utils import ErrorList
-                                msg = "An Error occured. The import file was propably malformed.: %s" % str(e)
+                                msg = "An Error occured. The import file was probably malformed.: %s" % str(e)
 				form._errors["file"] = ErrorList([msg]) 			
 	else:
 		form = ImportForm()
@@ -127,7 +127,7 @@ def model_solution(request, task_id):
 				task.save()
 			except:
 				solution.delete()	# delete files 
-				raise				# dont commit db changes
+				raise				# don't commit db changes
 	else:
 		formset = ModelSolutionFormSet()
 	context = {"formset": formset, "task": task, 'title': "Model Solution", 'is_popup': True, }

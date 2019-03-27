@@ -16,7 +16,7 @@ def shibboleth_support_required(the_func):
 
 def shibboleth_user_required(login_url=None):
     """
-    Decorator for views that checks that the user is logged in and a
+    Decorator for views that checks that the user is logged in and is a
     shibboleth user.
     """
     return user_passes_test(lambda u: u.is_shibboleth_user(), login_url=login_url)

@@ -54,7 +54,7 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
 	command += args[:]
 
 
-	# TODO: Dont even read in output longer than fileseeklimit. This might be most conveniently done by supplying a file like object instead of PIPE
+	# TODO: Don't even read in output longer than fileseeklimit. This might be most conveniently done by supplying a file like object instead of PIPE
 
 	def prepare_subprocess():
 		# create a new session for the spawned subprocess using os.setsid,

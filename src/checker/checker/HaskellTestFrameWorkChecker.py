@@ -50,11 +50,11 @@ class HaskellTestFrameWorkChecker(CheckerWithFile):
 	
 	test_description = models.TextField(help_text = _("Description of the Testcase. To be displayed on Checker Results page when checker is unfolded."))
 	name = models.CharField(max_length=100, help_text=_("Name of the Testcase. To be displayed as title on Checker Results page"))
-	ignore = models.CharField(max_length=4096, help_text=_("space-seperated list of files to be ignored during compilation"),default="", blank=True)
+	ignore = models.CharField(max_length=4096, help_text=_("space-separated list of files to be ignored during compilation"),default="", blank=True)
         require_safe = models.BooleanField(default = True, help_text=_("Is a submission required to be Safe (according to GHCs Safe-Mode)?"))
         
         TESTCASE_CHOICES = ( ("DL", "Download-Link only"), ("NO", "Do not make the testcases source available"), ("FULL","Also copy the source into the report"))
-        include_testcase_in_report = models.CharField(max_length=4, choices=TESTCASE_CHOICES, default = "DL", help_text=_("Make the cestcases source available via the checkers result report?"))
+        include_testcase_in_report = models.CharField(max_length=4, choices=TESTCASE_CHOICES, default = "DL", help_text=_("Make the testcases source available via the checkers result report?"))
 
         _add_to_environment = False
 

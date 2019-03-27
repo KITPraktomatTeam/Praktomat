@@ -75,7 +75,7 @@ class TaskAdmin(admin.ModelAdmin):
 		
 	
 	def run_all_checkers(self, request, queryset):
-		""" Rerun all checker including "not always" action """
+		""" Rerun all checkers including "not always" action """
 		start = timer()
 		count = 0
 		for task in queryset:
