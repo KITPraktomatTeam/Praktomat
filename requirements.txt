@@ -12,6 +12,6 @@ django-extensions
 django-tinymce
 django-debug-toolbar
 docutils
-psycopg2
+psycopg2-binary
 selenium
 
