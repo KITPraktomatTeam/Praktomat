@@ -30,7 +30,7 @@ def parse_attributes(META):
             except:
                 value = values
 
-        shib_attrs[name] = codecs.decode(codecs.encode(value,"latin-1"), "utf8")
+        shib_attrs[name] = decode(encode(value,"latin-1"), "utf8")
         if not value or value == '':
             if required:
                 error = True
