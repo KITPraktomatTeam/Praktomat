@@ -1,5 +1,7 @@
 import datetime
 
+from codecs import decode, encode
+
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.template import loader
 from django.shortcuts import render, resolve_url
@@ -28,7 +30,7 @@ def parse_attributes(META):
             except:
                 value = values
 
-        shib_attrs[name] = value
+        shib_attrs[name] = codecs.decode(codecs.encode(value,"latin-1"), "utf8")
         if not value or value == '':
             if required:
                 error = True
