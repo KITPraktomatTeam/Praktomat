@@ -81,7 +81,7 @@ class SolutionFileForm(ModelForm):
                 except:
                     raise forms.ValidationError(_('Uhoh - something unexpected happened.'))
             if data.size > max_file_size:
-                raise forms.ValidationError(_("The file '%(file)s' is bigger than %(size)iKB which is not suported." %{'file':data.name, 'size':max_file_size_kb}))
+                raise forms.ValidationError(_("The file '%(file)s' is bigger than %(size)KiB which is not suported." %{'file':data.name, 'size':max_file_size_kb}))
             return data
 
 class MyBaseInlineFormSet(BaseInlineFormSet):

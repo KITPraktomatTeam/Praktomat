@@ -88,7 +88,7 @@ def statistics(request, task_id):
     else:
         # The Tutorials ratings
         all_ratings.append(        {'title'   : "Final grades (My Tutorials)",
-                                    'desc'    : "This chart shows the distribution of final grades for students from any your tutorials. Plagiarism is excluded.",
+                                    'desc'    : "This chart shows the distribution of final grades for students from any of your tutorials. Plagiarism is excluded.",
                                     'ratings' : RatingScaleItem.objects.filter(attestation__solution__task=task_id, attestation__solution__plagiarism=False, attestation__final=True, attestation__solution__author__tutorial__in = tutorials)})
         all_ratings.append(        {'title'   : "Final grades (My Attestations)",
                                     'desc'    : "This chart shows the distribution of final grades for your attestations. Plagiarism is excluded.",
@@ -266,7 +266,7 @@ def new_attestation_for_task(request, task_id):
     users_i_have_attestated = User.objects.filter(solution__attestation__author = request.user)
     all_available_solutions = Solution.objects.filter(task__id = task_id, final=True, author__tutorial__in = request.user.tutored_tutorials.all(), attestation = None)
     if (not all_available_solutions):
-        # if an other tutor just grabed the last solution just go back to the list
+        # if an other tutor just grabbed the last solution just go back to the list
         return HttpResponseRedirect(reverse('attestation_list', args=[task_id]))
     solutions = all_available_solutions.filter(author__in = users_i_have_attestated)
     if (solutions):

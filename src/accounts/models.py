@@ -177,7 +177,7 @@ class User(BasicUser):
 
 #    def save(self, force_insert=False, force_update=False, *args, **kwargs):
 #        """ prevent redundancy: staff iff. superuser or trainer """
-#        # the the instance needs to have a primary key value before a many-to-many relationship groups can be used so save it twice
+#        # the instance needs to have a primary key value before a many-to-many relationship groups can be used so save it twice
 #        super(User, self).save(force_insert=force_insert, force_update=force_update, *args, **kwargs)
 #        # Bug: groups are not saved at this point!
 #        self.is_staff = (self.is_superuser or self.is_trainer)

@@ -24,7 +24,7 @@ class Task(models.Model):
     title = models.CharField(max_length=100, help_text = _("The name of the task"))
     description = models.TextField(help_text = _("Description of the assignment."))
     publication_date = models.DateTimeField(help_text = _("The time on which the user will see the task."))
-    submission_date = models.DateTimeField(help_text = _("The time up until the user has time to complete the task. This time will be extended by one hour for those who yust missed the deadline."))
+    submission_date = models.DateTimeField(help_text = _("The time up until the user has time to complete the task. This time will be extended by one hour for those who just missed the deadline."))
     supported_file_types = models.CharField(max_length=1000, default ="^(text/.*|image/.*|application/pdf)$", help_text = _("Regular Expression describing the mime types of solution files that the user is allowed to upload."))
     max_file_size = models.IntegerField(default=1000, help_text = _("The maximum size of an uploaded solution file in kilobyte."))
     model_solution = models.ForeignKey('solutions.Solution', blank=True,
