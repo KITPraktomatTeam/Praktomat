@@ -368,6 +368,7 @@ def run_checks(solution, env, run_all):
 
             elapsed_time = time.time() - start_time
             result.runtime = int(elapsed_time*1000)
+            result.log = result.log.replace("\x00", "")
             result.save()
 
             if not result.passed and checker.show_publicly(result.passed):
