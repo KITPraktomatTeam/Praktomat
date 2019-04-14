@@ -4,7 +4,7 @@ from django.db import models
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy as _
 
-from JUnitChecker import RXFAIL
+from . JUnitChecker import RXFAIL
 from checker.admin import CheckerInline
 from checker.basemodels import Checker, truncated_log
 from utilities.file_operations import *
