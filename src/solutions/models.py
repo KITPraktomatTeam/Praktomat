@@ -352,14 +352,17 @@ class MessageWrapper():
     def __init__(self, message):
         self.message = message
 
-    def as_bytes(self, linesep=b'\n'):
+    # Django supplies Strings as "linesep" (and not Bytes)
+    def as_bytes(self, linesep='\n'):
+        # byte version of linesep
+        linesep_bytes = linesep.encode('ascii')
         # Construct the message with the full S/MIME mail as body
-        msg = self.message.as_bytes(linesep)
+        msg = self.message.as_bytes(linesep=linesep)
         # Now, use the S/MIME headers as headers for the email
-        lines = msg.split(linesep)
+        lines = msg.split(linesep_bytes)
         i = lines.index(b'')
         transformed = [s.replace(b"Content-Type: text/plain", lines[i+2]) for s in lines[0:i]] + lines[i+3:]
-        return linesep.join(transformed)
+        return linesep_bytes.join(transformed)
 
     def get_charset(self):
         return None
