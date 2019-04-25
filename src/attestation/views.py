@@ -230,14 +230,14 @@ def attestation_list(request, task_id):
                 return access_denied(request)
             for attestation in publishable_tutorial:
                 attestation.publish(request, request.user)
-        return HttpResponseRedirect(reverse('attestation_list', args=[task_id]))
+            return HttpResponseRedirect(reverse('attestation_list', args=[task_id]))
 
         if request.POST['what'] == 'all':
             if not request.user.is_trainer:
                 return access_denied(request)
             for attestation in publishable_all:
                 attestation.publish(request, request.user)
-        return HttpResponseRedirect(reverse('attestation_list', args=[task_id]))
+            return HttpResponseRedirect(reverse('attestation_list', args=[task_id]))
 
     show_author = not get_settings().anonymous_attestation or request.user.is_tutor or request.user.is_trainer or published
 
