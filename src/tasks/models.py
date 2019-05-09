@@ -147,7 +147,7 @@ class Task(models.Model):
         shutil.rmtree(tmp)
 
         # write log file
-        file(os.path.join(path, "jplag.txt"), 'w').write(output)
+        open(os.path.join(path, "jplag.txt"), 'w').write(output)
 
         # mark jplag as up-to-date
         self.jplag_up_to_date = True
