@@ -95,7 +95,7 @@ class Task(models.Model):
 
     @staticmethod
     def jplag_languages():
-        return { 'Java':     { 'param': 'java17', 'files': '.java,.JAVA' },
+        return { 'Java':     { 'param': 'java19', 'files': '.java,.JAVA' },
                  'R':        { 'param': 'text',   'files': '.R' },
                  'Python':   { 'param': 'text',   'files': '.py' },
                  'Isabelle': { 'param': 'text',   'files': '.thy' },
