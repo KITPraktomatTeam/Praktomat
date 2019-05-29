@@ -136,6 +136,7 @@ class Task(models.Model):
         # run jplag
         args = [settings.JVM,
                 "-jar", settings.JPLAGJAR,
+                "-s",
                 "-l", jplag_settings['param'],
                 "-p", jplag_settings['files'],
                 "-r", path,
