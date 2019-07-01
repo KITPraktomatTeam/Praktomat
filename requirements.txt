@@ -10,7 +10,7 @@ django-extensions
 # loaded in admin-sites. Using an old version of django-tinymce (2.3.x) is not possible because it uses methods removed between Django 1.8 and 1.11.
 # We might want to use the django-admin provieded jquery in our admin-site jquery snippets?!?!?
 django-tinymce
-django-debug-toolbar
+django-debug-toolbar==1.11
 docutils
 psycopg2-binary
 selenium
