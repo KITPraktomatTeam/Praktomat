@@ -36,7 +36,11 @@ class TestCase(DjangoTestCase):
 
     def assertRedirectsToView(self, response, view):
         """ Asserts whether the request was redirected to a specifivc view function. """
-        from urllib.parse import urlparse
+        from six import PY2
+        if PY2:
+            from urlparse import urlparse
+        else:
+            from urllib.parse import urlparse
         from django.core.urlresolvers import resolve
         self.assertTrue(hasattr(response, 'redirect_chain'),
                         msg="Please use client.get(...,follow=True) with assertRedirectsToView")
@@ -50,21 +54,21 @@ from django.test import LiveServerTestCase
 from selenium.webdriver.phantomjs.webdriver import WebDriver
 
 class SeleniumTestCase(LiveServerTestCase):
-        def setUp(self):
-            super(SeleniumTestCase, self).setUp()
-            self.selenium = WebDriver()
+    def setUp(self):
+        super(SeleniumTestCase, self).setUp()
+        self.selenium = WebDriver()
 
-        def tearDown(self):
-            self.selenium.quit()
-            super(SeleniumTestCase, self).tearDown()
+    def tearDown(self):
+        self.selenium.quit()
+        super(SeleniumTestCase, self).tearDown()
 
-        def loginAsUser(self):
-            self.selenium.get('%s%s' % (self.live_server_url, '/accounts/login/'))
-            username_input = self.selenium.find_element_by_name("username")
-            username_input.send_keys('user')
-            password_input = self.selenium.find_element_by_name("password")
-            password_input.send_keys('demo')
-            self.selenium.find_element_by_xpath('//input[@value="Login"]').click()
+    def loginAsUser(self):
+        self.selenium.get('%s%s' % (self.live_server_url, '/accounts/login/'))
+        username_input = self.selenium.find_element_by_name("username")
+        username_input.send_keys('user')
+        password_input = self.selenium.find_element_by_name("password")
+        password_input.send_keys('demo')
+        self.selenium.find_element_by_xpath('//input[@value="Login"]').click()
 
 
 

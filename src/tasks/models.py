@@ -1,3 +1,8 @@
+# -*- encoding: utf-8 -*-
+
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
+
 from datetime import date, datetime, timedelta
 import tempfile
 import zipfile
@@ -60,8 +65,8 @@ class Task(models.Model):
         count = check_multiple(final_solutions, True)
 
         if self.expired():
-                self.all_checker_finished = True
-                self.save()
+            self.all_checker_finished = True
+            self.save()
         return final_solutions.count()
 
     def get_checkers(self):
@@ -207,7 +212,7 @@ class Task(models.Model):
             old_id = object.id
             object.id = None
             if isinstance(object, Task):
-                # save all tasks and their old id
+            # save all tasks and their old id
                 object.publication_date = date.max
                 deserialized_object.save()
                 task_id_map[old_id] = object.id
