@@ -11,7 +11,7 @@ praktomat-users@lists.kit.edu.
 General setup
 =============
 
-You need Python 2.7 and a recent version of pip. I also highly recommend to
+You need Python 3.5 and a recent version of pip. I also highly recommend to
 use virtualenv so your system Python installation remains clean.
 
 Prerequisites
@@ -59,17 +59,15 @@ Prerequisites
 
     text/x-isabelle thy
 
-Python 2.7
+Python 3.5
 ==========
-  The Praktomat currently requires Python 2.7
+  The Praktomat currently requires Python 3.5
 
-  On Ubuntu 11.04, Python2.7 is installed by default,
+  On Ubuntu 16.04, Python3.5 is installed by default,
   but you may need to install the packages
 
-    python2.7-dev
     python-setuptools
     python-psycopg2
-    python-m2crypto
     python-virtualenv
 
 Developer setup
@@ -81,7 +79,7 @@ The following describes a recommended setup using virtualenv.
 
 ```bash
 git clone --recursive git://github.com/KITPraktomatTeam/Praktomat.git
-virtualenv --system-site-packages env/
+virtualenv -p python3 --system-site-packages env/
 . env/bin/activate
 pip install -r Praktomat/requirements.txt
 ```
@@ -109,7 +107,7 @@ Like for the development version, clone the Praktomat and install its dependenci
 
 ```bash
 git clone --recursive git://github.com/KITPraktomatTeam/Praktomat.git
-virtualenv --system-site-packages env/
+virtualenv -p python3 --system-site-packages env/
 . env/bin/activate
 pip install -r Praktomat/requirements.txt
 ```
