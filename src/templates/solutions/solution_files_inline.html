@@ -1,5 +1,5 @@
 {% comment %}
-	include the folowing depenencies once in the including pages head:
+	include the following dependencies once in the including pages head:
 	<script type="text/javascript" src="{{STATIC_URL}}script/solution_inlines.js"></script>
 	<link type="text/css" rel="stylesheet" href="{{STATIC_URL}}styles/pygments_friendly.css" />
 {% endcomment %}
@@ -9,9 +9,9 @@
 <div class="filetabs">
 	<ul>
 		{% for solutionfile in solutionfiles %}
-			<li><a href="#file{{forloop.counter}}">{{solutionfile}}</a></li> 
-		{%endfor%} 
-	</ul> 	
+			<li><a href="#file{{forloop.counter}}">{{solutionfile}}</a></li>
+		{%endfor%}
+	</ul>
 
 	{% for solutionfile in solutionfiles%}
 		<div class="file" id="file{{forloop.counter}}">

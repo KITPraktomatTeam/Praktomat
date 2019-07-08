@@ -6,10 +6,10 @@ You can view your solution here: {{protocol}}://{{ domain }}{% url "solution_det
 
 Your upload included these files:
 {% for file in solution.solutionfile_set.all %}
-	{% with file.get_signature as signature %}{{file}} [MD5:{{file.get_hash}}] {% if signature %}[SIGNATURE:{{signature}}]{% endif %} {% endwith%}
+	{{file}} [SHA256:{{file.get_hash}}]
 {% endfor %}
 
-Please keep this email and the files you have uploded to verify that you've completed the task.
+Please keep this email and the files you have uploaded to verify that you've completed the task.
 
 {% trans "Thanks for using our site!" %}
 

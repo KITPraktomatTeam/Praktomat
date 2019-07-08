@@ -9,7 +9,7 @@ public class Stream {
 
   /* The Stream class     by J M Bishop and B Worrall May 2000
    *                      based on the Text class Aug 1996
-   *                      on suggestion from Jens Kaasbøll
+   *                      on suggestion from Jens KaasbÃ¸ll
    *
    * Provides simple input from the keyboard and files.
    * And formatted output to the screen and files.
