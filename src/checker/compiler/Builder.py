@@ -111,10 +111,11 @@ class Builder(Checker):
         result = self.create_result(env)
 
         # Try to find out the main modules name with only the source files present
-        try:
-            env.set_program(self.main_module(env))
-        except self.NotFoundError:
-            pass
+        if self._main_required:
+            try:
+                env.set_program(self.main_module(env))
+            except self.NotFoundError:
+                pass
 
         filenames = [name for name in self.get_file_names(env)]
         args = [self.compiler()] + self.output_flags(env) + self.flags(env) + filenames + self.libs()
@@ -129,11 +130,10 @@ class Builder(Checker):
         log  = self.build_log(output, args, set(filenames).intersection([solutionfile.path() for solutionfile in env.solution().solutionfile_set.all()]))
 
         # Now that submission was successfully built, try to find the main modules name again
-        try:
-            if passed : env.set_program(self.main_module(env))
-        except self.NotFoundError as e:
-            # But only complain if the main method is required
-            if self._main_required:
+        if self._main_required and passed:
+            try:
+                env.set_program(self.main_module(env))
+            except self.NotFoundError as e:
                 log += "<pre>" + str(e) + "</pre>"
                 passed = False
 
