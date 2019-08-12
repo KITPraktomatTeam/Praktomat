@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 
 import datetime
 from django.db import migrations, models
-import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
@@ -22,7 +21,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='chunk',
             name='settings',
-            field=models.ForeignKey(default=1, help_text='Makes it easy to display chunks as inlines in Settings.', on_delete=django.db.models.deletion.CASCADE, to='configuration.Settings'),
+            field=models.ForeignKey(default=1, help_text='Makes it easy to display chunks as inlines in Settings.', on_delete=models.CASCADE, to='configuration.Settings'),
         ),
         migrations.AlterField(
             model_name='settings',
