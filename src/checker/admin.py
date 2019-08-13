@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.forms.models import BaseInlineFormSet, ModelForm
-from django.core.urlresolvers import reverse
+from django.urls import reverse
+from django.utils.html import format_html
 from .basemodels import CheckerResult
 
 class AlwaysChangedModelForm(ModelForm):
@@ -46,8 +47,7 @@ class CheckerResultAdmin(admin.ModelAdmin):
     edit.short_description = 'Edit (Admin Site)'
 
     def view_solution(self, checkerResult):
-        return '<a href="%s">%s</a>' % (reverse('solution_detail_full', args=[checkerResult.solution.id]), checkerResult.solution)
-    view_solution.allow_tags = True
+        return format_html('<a href="{0}">{1}</a>', reverse('solution_detail_full', args=[checkerResult.solution.id]), checkerResult.solution)
     view_solution.short_description = 'View Solution (User Site)'
 
     def solution_final(self, checkerResult):

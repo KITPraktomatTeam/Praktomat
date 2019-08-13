@@ -1,6 +1,6 @@
 from django.contrib import admin
 from attestation.models import *
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.html import format_html
 
 import attestation.views
@@ -74,7 +74,6 @@ class AttestationAdmin(admin.ModelAdmin):
                            reverse('admin:accounts_user_change', args=(instance.solution.author.pk,)),
                            instance.solution.author,
                           )
-    show_solution.allow_tags = True
     show_solution.short_description = 'Solution'
 
 

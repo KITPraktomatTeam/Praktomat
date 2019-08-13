@@ -6,7 +6,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 from django.http import HttpResponseRedirect, HttpResponse
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.views.decorators.cache import cache_control
 from django.template import loader
 from django.conf import settings

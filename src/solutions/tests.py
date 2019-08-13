@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from utilities.TestSuite import TestCase
 from django.test.client import Client
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from solutions.models import Solution
 from tasks.models import Task

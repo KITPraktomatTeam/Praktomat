@@ -99,7 +99,7 @@ def load_defaults(settings):
         #'sessionprofile', #phpBB integration
     )
 
-    d.MIDDLEWARE_CLASSES = (
+    d.MIDDLEWARE = [
         'django.middleware.common.CommonMiddleware',
         #'sessionprofile.middleware.SessionProfileMiddleware', #phpBB integration
         'django.contrib.sessions.middleware.SessionMiddleware',
@@ -107,7 +107,7 @@ def load_defaults(settings):
         'django.middleware.csrf.CsrfViewMiddleware',
         'accounts.middleware.AuthenticationMiddleware',
         'accounts.middleware.LogoutInactiveUserMiddleware',
-    )
+    ]
 
     # needed since Django 1.11 in order to show the 'Deactivated' page
     d.AUTH_BACKEND = 'django.contrib.auth.backends.AllowAllUsersModelBackend'
@@ -159,7 +159,8 @@ def load_defaults(settings):
     if 'SECRET_KEY' not in globals():
         secret_keyfile = join(UPLOAD_ROOT, 'SECRET_KEY')
         if os.path.exists(secret_keyfile):
-            d.SECRET_KEY = open(secret_keyfile).read()
+            with open(secret_keyfile) as f:
+                d.SECRET_KEY = f.read()
             if not d.SECRET_KEY:
                 raise RuntimeError("File %s empty!" % secret_keyfile)
         else:
@@ -360,9 +361,9 @@ def load_defaults(settings):
     if DEBUG:
         # Setup for the debug toolbar
         settings['INSTALLED_APPS'] = ('debug_toolbar',) + settings['INSTALLED_APPS']
-        settings['MIDDLEWARE_CLASSES'] = (
+        settings['MIDDLEWARE'] = [
             'debug_toolbar.middleware.DebugToolbarMiddleware',
-        ) + settings['MIDDLEWARE_CLASSES']
+        ] + settings['MIDDLEWARE']
 
     d.DEBUG_TOOLBAR_PATCH_SETTINGS = False
     d.DEBUG_TOOLBAR_CONFIG = {

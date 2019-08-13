@@ -37,7 +37,7 @@ class TestCase(DjangoTestCase):
     def assertRedirectsToView(self, response, view):
         """ Asserts whether the request was redirected to a specifivc view function. """
         from urllib.parse import urlparse
-        from django.core.urlresolvers import resolve
+        from django.urls import resolve
         self.assertTrue(hasattr(response, 'redirect_chain'),
                         msg="Please use client.get(...,follow=True) with assertRedirectsToView")
         self.assertTrue(len(response.redirect_chain) > 0,
