@@ -1,6 +1,6 @@
 # workaround for debug-toolbar/sqlparse incompatibility, see http://stackoverflow.com/questions/38479063/django-debug-toolbar-breaking-on-admin-while-getting-sql-stats
 sqlparse
-Django~=1.11.0
+Django~=2.2.0
 Markdown
 Pygments
 chardet
@@ -10,7 +10,7 @@ django-extensions
 # loaded in admin-sites. Using an old version of django-tinymce (2.3.x) is not possible because it uses methods removed between Django 1.8 and 1.11.
 # We might want to use the django-admin provieded jquery in our admin-site jquery snippets?!?!?
 django-tinymce
-django-debug-toolbar==1.11
+django-debug-toolbar
 docutils
 psycopg2-binary
 selenium
