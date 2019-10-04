@@ -49,7 +49,7 @@ class SolutionFileForm(ModelForm):
                             raise forms.ValidationError(_("The file '%(file)s' of guessed mime type '%(type)s' in this zip file is not supported." %{'file':fileinfo.filename, 'type':type}))
                         # check whole zip instead of contained files
                         #if fileinfo.file_size > max_file_size:
-                        #    raise forms.ValidationError(_("The file '%(file)s' is bigger than %(size)iKB which is not suported." %{'file':fileinfo.filename, 'size':max_file_size_kb}))
+                        #    raise forms.ValidationError(_("The file '%(file)s' is bigger than %(size)KiB which is not suported." %{'file':fileinfo.filename, 'size':max_file_size_kb}))
                 except forms.ValidationError:
                     raise
                 except:
@@ -72,7 +72,7 @@ class SolutionFileForm(ModelForm):
                             raise forms.ValidationError(_("The file '%(file)s' of guessed mime type '%(type)s' in this tar file is not supported." %{'file':fileinfo.name, 'type':type}))
                         # check whole tar instead of contained files
                         #if fileinfo.file_size > max_file_size:
-                        #    raise forms.ValidationError(_("The file '%(file)s' is bigger than %(size)iKB which is not suported." %{'file':fileinfo.name, 'size':max_file_size_kb}))
+                        #    raise forms.ValidationError(_("The file '%(file)s' is bigger than %(size)KiB which is not suported." %{'file':fileinfo.name, 'size':max_file_size_kb}))
                     data.seek(0)
                 except forms.ValidationError:
                     raise
@@ -81,7 +81,7 @@ class SolutionFileForm(ModelForm):
                 except:
                     raise forms.ValidationError(_('Uhoh - something unexpected happened.'))
             if data.size > max_file_size:
-                raise forms.ValidationError(_("The file '%(file)s' is bigger than %(size)iKB which is not suported." %{'file':data.name, 'size':max_file_size_kb}))
+                raise forms.ValidationError(_("The file '%(file)s' is bigger than %(size)KiB which is not suported." %{'file':data.name, 'size':max_file_size_kb}))
             return data
 
 class MyBaseInlineFormSet(BaseInlineFormSet):
