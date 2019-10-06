@@ -3,7 +3,6 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
@@ -16,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='attestation',
             name='author',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='accounts.User', verbose_name='attestation author'),
+            field=models.ForeignKey(on_delete=models.CASCADE, to='accounts.User', verbose_name='attestation author'),
         ),
         migrations.AlterField(
             model_name='script',

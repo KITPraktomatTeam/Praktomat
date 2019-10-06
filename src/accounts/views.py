@@ -3,7 +3,7 @@ from datetime import datetime
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.template import Template, loader
 from django.conf import settings
 from accounts.forms import MyRegistrationForm, UserChangeForm, ImportForm, ImportTutorialAssignmentForm, ImportMatriculationListForm
@@ -14,7 +14,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.sites.requests import RequestSite
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
-from django.core import urlresolvers
 from django.utils.http import int_to_base36
 from django.core.mail import send_mail
 from django.utils.translation import ugettext_lazy as _
@@ -113,7 +112,7 @@ def import_user(request):
                                 'expiration_days': get_settings().acount_activation_days,
                             }
                             send_mail(_("Account activation on %s") % settings.SITE_NAME, t.render(c), None, [user.email])
-                return HttpResponseRedirect(urlresolvers.reverse('admin:accounts_user_changelist'))
+                return HttpResponseRedirect(reverse('admin:accounts_user_changelist'))
             except:
                 raise
                 from django.forms.utils import ErrorList
@@ -148,7 +147,7 @@ def import_tutorial_assignment(request):
                     failed += 1
             #assert False
             messages.warning(request, "%i assignments were imported successfully, %i users not found, %i failed." % (succeeded, not_present, failed))
-            return HttpResponseRedirect(urlresolvers.reverse('admin:accounts_user_changelist'))
+            return HttpResponseRedirect(reverse('admin:accounts_user_changelist'))
     else:
         form = ImportTutorialAssignmentForm()
     return render(request, 'admin/accounts/user/import_tutorial_assignment.html', {'form': form, 'title':"Import tutorial assignment"  })
@@ -193,7 +192,7 @@ def import_matriculation_list(request, group_id):
             messages.success(request,
                 ("%i users added to group %s, %i removed, %i already in group. "+
                 "%i new users created.") % (nr_added, group.name, nr_removed, nr_already, nr_new_users))
-            return HttpResponseRedirect(urlresolvers.reverse('admin:auth_group_change', args=[group_id]))
+            return HttpResponseRedirect(reverse('admin:auth_group_change', args=[group_id]))
     else:
         form = ImportMatriculationListForm()
     return render(request, 'admin/auth/group/import_matriculation_list.html', {'form': form, 'title':"Import matriuculation number list"})

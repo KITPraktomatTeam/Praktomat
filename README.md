@@ -42,7 +42,7 @@ Prerequisites
     junit
     junit4
     dejagnu
-    gcj-jdk (jcf-dump, for checking Submissions for use of javax.* etc)
+    gcj-jdk (gcj compiler)
 
     git-core
 

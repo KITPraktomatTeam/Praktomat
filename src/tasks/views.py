@@ -10,7 +10,7 @@ from django.http import Http404
 from django.http import HttpResponseRedirect, HttpResponse
 from datetime import datetime
 from django import forms
-from django.core import urlresolvers
+from django.urls import reverse
 from django.conf import settings
 from django.contrib import messages
 import django.utils.timezone
@@ -83,7 +83,7 @@ def import_tasks(request):
             try:
                 Task.import_Tasks(form.files['file'], request.user)
                 messages.success(request, "The import was successful.")
-                return HttpResponseRedirect(urlresolvers.reverse('admin:tasks_task_changelist'))
+                return HttpResponseRedirect(reverse('admin:tasks_task_changelist'))
             except Exception as e:
                 from django.forms.utils import ErrorList
                 msg = "An Error occured. The import file was probably malformed.: %s" % str(e)

@@ -48,7 +48,7 @@ class JavaBuilder(ClassFileGeneratingBuilder):
     _language    = "Java"
     _env            = {}
     _env['JAVAC'] = settings.JAVA_BINARY
-    _env['JCFDUMP'] = settings.JCFDUMP
+    _env['JAVAP'] = settings.JAVAP
 
     def libs(self):
         def toPath(lib):

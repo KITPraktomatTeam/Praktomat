@@ -425,7 +425,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='IgnoringHaskellBuilder',
             fields=[
-                ('haskellbuilder_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='checker.HaskellBuilder')),
+                ('haskellbuilder_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='checker.HaskellBuilder', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -435,7 +435,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='IgnoringJavaBuilder',
             fields=[
-                ('javabuilder_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='checker.JavaBuilder')),
+                ('javabuilder_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='checker.JavaBuilder', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -445,7 +445,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TestOnlyBuildingBuilder',
             fields=[
-                ('haskellbuilder_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='checker.HaskellBuilder')),
+                ('haskellbuilder_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='checker.HaskellBuilder', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,

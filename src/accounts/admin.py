@@ -14,7 +14,7 @@ import accounts.views
 
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 
 class UserAdmin(UserBaseAdmin):
@@ -119,7 +119,6 @@ class UserAdmin(UserBaseAdmin):
                 )
         else:
             return ""
-    useful_links.allow_tags = True
 
 # This should work in Django 1.4 :O
 # from django.contrib.admin import SimpleListFilter
@@ -162,8 +161,7 @@ class TutorialAdmin(admin.ModelAdmin):
         }
 
     def view_url(self, tutorial):
-        return '<a href="%s">View</a>' % (reverse('tutorial_overview', args=[tutorial.id]))
-    view_url.allow_tags = True
+        return mark_safe('<a href="%s">View</a>' % (reverse('tutorial_overview', args=[tutorial.id])))
     view_url.short_description = 'View (Tutor Site)'
 
 admin.site.register(Tutorial, TutorialAdmin)

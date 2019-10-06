@@ -6,7 +6,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from utilities.TestSuite import TestCase, SeleniumTestCase
 from accounts.models import User
 from django.contrib.auth.models import Group
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from io import StringIO
 
 

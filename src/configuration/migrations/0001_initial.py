@@ -42,6 +42,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='chunk',
             name='settings',
-            field=models.ForeignKey(default=1, to='configuration.Settings', help_text=b'Makes it easy to display chunks as inlines in Settings.'),
+            field=models.ForeignKey(default=1, to='configuration.Settings', help_text=b'Makes it easy to display chunks as inlines in Settings.', on_delete=models.CASCADE),
         ),
     ]

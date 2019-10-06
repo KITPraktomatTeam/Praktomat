@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ('_libs', models.CharField(default=b'', help_text='Compiler libraries', max_length=1000, blank=True)),
                 ('_file_pattern', models.CharField(default=b'^[a-zA-Z0-9_]*$', help_text='Regular expression describing all source files to be passed to the compiler.', max_length=1000)),
                 ('_main_required', models.BooleanField(default=True, help_text='Is a submission required to provide a main method?')),
-                ('task', models.ForeignKey(to='tasks.Task')),
+                ('task', models.ForeignKey(to='tasks.Task', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,

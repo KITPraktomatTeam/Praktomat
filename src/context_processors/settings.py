@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 def from_settings(request):
     ''' A context processor to add the "current site" to the current Context '''
