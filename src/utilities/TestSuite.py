@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+# -*- encoding: utf-8 -*-
+
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
+
 from django.test.runner import DiscoverRunner
 from django.test import TestCase as DjangoTestCase
 from django.conf import settings
