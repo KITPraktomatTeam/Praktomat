@@ -10,7 +10,8 @@ install:
  - sudo apt-get install phantomjs
  - sudo apt-get install r-base
  - pip install -r requirements.txt
+ - pip freeze
+ - python --version && python -c "import sqlite3; print(\"... uses pysqlite \" + sqlite3.version +\" with SQLite \" + sqlite3.sqlite_version);"
 
 script:
- - pip freeze
  - ./src/manage-test.py test accounts attestation checker configuration solutions tasks
