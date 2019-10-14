@@ -12,4 +12,5 @@ install:
  - pip install -r requirements.txt
 
 script:
+ - pip freeze
  - ./src/manage-test.py test accounts attestation checker configuration solutions tasks
