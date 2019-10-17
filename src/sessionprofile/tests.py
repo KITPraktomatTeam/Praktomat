@@ -46,7 +46,7 @@ class TestSessionProfileMaintained(TestCase):
         self.assertNotEqual(self.client.session.get("_auth_user_id"), None)
 
     def assertNotLoggedIn(self):
-        self.assertEquals(self.client.session.get("_auth_user_id"), None)
+        self.assertEqual(self.client.session.get("_auth_user_id"), None)
 
 
     def testProfileCreatedAndMaintained(self):

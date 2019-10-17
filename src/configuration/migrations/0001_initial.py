@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 import datetime
@@ -42,6 +42,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='chunk',
             name='settings',
-            field=models.ForeignKey(default=1, to='configuration.Settings', help_text=b'Makes it easy to display chunks as inlines in Settings.'),
+            field=models.ForeignKey(default=1, to='configuration.Settings', help_text=b'Makes it easy to display chunks as inlines in Settings.', on_delete=models.CASCADE),
         ),
     ]

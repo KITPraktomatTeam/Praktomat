@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 import tasks.models
@@ -33,13 +33,13 @@ class Migration(migrations.Migration):
                 ('max_file_size', models.IntegerField(default=1000, help_text='The maximum size of an uploaded solution file in kilobyte.')),
                 ('all_checker_finished', models.BooleanField(default=False, help_text="Indicates whether the checker which don't run immediately on submission have been executed.", editable=False)),
                 ('only_trainers_publish', models.BooleanField(default=False, help_text='Indicates that only trainers may publish attestations. Otherwise, tutors may publish final attestations within their tutorials.')),
-                ('final_grade_rating_scale', models.ForeignKey(to='attestation.RatingScale', help_text='The scale used to mark the whole solution.', null=True)),
-                ('model_solution', models.ForeignKey(related_name='model_solution_task', blank=True, to='solutions.Solution', null=True)),
+                ('final_grade_rating_scale', models.ForeignKey(to='attestation.RatingScale', on_delete=models.CASCADE, help_text='The scale used to mark the whole solution.', null=True)),
+                ('model_solution', models.ForeignKey(related_name='model_solution_task', on_delete=models.CASCADE, blank=True, to='solutions.Solution', null=True)),
             ],
         ),
         migrations.AddField(
             model_name='mediafile',
             name='task',
-            field=models.ForeignKey(to='tasks.Task'),
+            field=models.ForeignKey(to='tasks.Task', on_delete=models.CASCADE),
         ),
     ]
