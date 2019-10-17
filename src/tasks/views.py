@@ -27,8 +27,8 @@ from configuration import get_settings
 @login_required
 def taskList(request):
     now = django.utils.timezone.now()
-    tasks = Task.objects.filter(publication_date__lte = now).order_by('submission_date')
-    expired_Tasks = Task.objects.filter(submission_date__lt = now).order_by('publication_date', 'submission_date')
+    tasks = Task.objects.filter(publication_date__lte = now).order_by('submission_date', 'title')
+    expired_Tasks = Task.objects.filter(submission_date__lt = now).order_by('publication_date', 'submission_date', 'title')
     try:
         tutors = request.user.tutorial.tutors.all()
     except:
