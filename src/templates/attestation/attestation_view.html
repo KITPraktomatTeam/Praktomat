@@ -90,18 +90,6 @@
 {% endif %}
 
 
-{% if user.is_trainer or user.is_tutor %}
-<h2>{% trans "Files" %}</h2>
-<div class="filetabs">
-{% with attest.solution.solutionfile_set.all as solutionfiles %}
-        {% include "solutions/solution_files_inline.html" %}
-{% endwith %}
-</div>
-{% endif %}
-
-
-
-<a href={% url "solution_download" solution_id=attest.solution.id %} id='download'><span class="ui-icon ui-icon-disk"></span>Download Solution</a>
 <h2>{% trans "Annotated Files" %}</h2>
 <div class="filetabs">
 	<ul>
@@ -117,6 +105,18 @@
 		</div>
 	{%endfor%}
 </div>
+
+
+<a href={% url "solution_download" solution_id=attest.solution.id %} id='download'><span class="ui-icon ui-icon-disk"></span>Download Solution</a>
+{% if user.is_trainer or user.is_tutor %}
+<h2>{% trans "Original Files" %}</h2>
+<div class="filetabs">
+{% with attest.solution.solutionfile_set.all as solutionfiles %}
+        {% include "solutions/solution_files_inline.html" %}
+{% endwith %}
+</div>
+{% endif %}
+
 
 {% if submitable %}
 	<br/><br/>
