@@ -116,17 +116,20 @@ def create_test_data():
     solution = Solution.objects.create(    task = task, author = user )
 
     solution_file = SolutionFile(solution = solution)
-    solution_file.file.save(
-                'GgT.java',
-                File(open(join(dirname(dirname(dirname(__file__))),
+    df = open(join(dirname(dirname(dirname(__file__))),
                 'examples',
                 'Tasks',
                 'GGT',
                 'solutions',
-                'GgT.java'))))
+                'GgT.java'))
+    solution_file.file.save(
+                'GgT.java',
+                File(df))
 
     # Attestation
     attestation = Attestation.objects.create(solution = solution, author=tutor) # final, published
+
+    df.close()
 
 def dump(obj):
     """ Kinda like obj.__meta__ but shows more, very usefull for testcase debuging. """

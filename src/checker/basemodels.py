@@ -236,7 +236,9 @@ class CheckerResult(models.Model):
     def add_artefact(self, filename, path):
         assert os.path.isfile(path)
         artefact = CheckerResultArtefact(result = self, filename=filename)
-        artefact.file.save(filename, File(open(path, 'rb')))
+        fd = open(path, 'rb')
+        artefact.file.save(filename, File(fd))
+        fd.close()
 
 def get_checkerresultartefact_upload_path(instance, filename):
     result = instance.result

@@ -28,6 +28,7 @@ class TestViews(TestCase):
                             'solutionfile_set-TOTAL_FORMS': '3',
                             'solutionfile_set-0-file': f
                         }, follow=True)
+        f.close()
         self.assertRedirectsToView(response, 'solution_detail')
 
     def test_post_solution_expired(self):
@@ -41,6 +42,7 @@ class TestViews(TestCase):
                             'solutionfile_set-TOTAL_FORMS': '3',
                             'solutionfile_set-0-file': f
                         }, follow=True)
+        f.close()
         self.assertEqual(response.status_code, 403)
 
     def test_get_solution(self):

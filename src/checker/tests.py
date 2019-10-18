@@ -188,7 +188,7 @@ class TestChecker(TestCase):
                 self.assertFalse(checkerresult.passed, "Test succeed (no timeout?)")
                 self.assertNotIn('done', checkerresult.log, "Test did finish (no timeout?)")
 
-
+    #@unittest.skipIf('WSL_DISTRO_NAME' in os.environ, "in MS Windows 10 - WSL something is wrong")
     @unittest.skipIf('TRAVIS' in os.environ, "ulimit doesn’t seem to work on travis")
     @unittest.skipIf(settings.USESAFEDOCKER, "not yet supported with safe-docker")
     def test_script_filesizelimit(self):
@@ -305,9 +305,10 @@ class TestChecker(TestCase):
 
     def test_r_checker(self):
         solution_file = SolutionFile(solution = self.solution)
+        fd = open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',))
         solution_file.file.save(
             'example.R',
-            File(open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)))
+            File(fd)
             )
 
         RChecker.RChecker.objects.create(
@@ -322,14 +323,15 @@ class TestChecker(TestCase):
             self.assertTrue(checkerresult.artefacts.exists())
             self.assertEqual(checkerresult.artefacts.get().path(), "Rplots.pdf")
             self.assertTrue(checkerresult.passed, checkerresult.log)
-
+        fd.close()
         solution_file.delete()
 
     def test_r_checker_2(self):
         solution_file = SolutionFile(solution = self.solution)
+        fd = open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',))
         solution_file.file.save(
             'example.R',
-            File(open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)))
+            File(fd)
             )
 
         RChecker.RChecker.objects.create(
@@ -345,13 +347,15 @@ class TestChecker(TestCase):
             self.assertTrue(checkerresult.passed, checkerresult.log)
             self.assertTrue(checkerresult.artefacts.exists())
             self.assertEqual(checkerresult.artefacts.get().path(), "Rplots.pdf")
+        fd.close()
         solution_file.delete()
 
     def test_r_checker_3(self):
         solution_file = SolutionFile(solution = self.solution)
+        fd = open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',))
         solution_file.file.save(
             'example.R',
-            File(open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)))
+            File(fd)
             )
 
         RChecker.RChecker.objects.create(
@@ -365,18 +369,21 @@ class TestChecker(TestCase):
         for checkerresult in self.solution.checkerresult_set.all():
             self.assertIn('Could not find expected R script', checkerresult.log, "Test did not complain (%s)" % checkerresult.log)
             self.assertFalse(checkerresult.passed, checkerresult.log)
+        fd.close()
         solution_file.delete()
 
     def test_r_checker_4(self):
         solution_file = SolutionFile(solution = self.solution)
+        fd1 = open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',))
         solution_file.file.save(
             'example.R',
-            File(open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)))
+            File(fd1)
             )
         solution_file2 = SolutionFile(solution = self.solution)
+        fd2 = open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',))
         solution_file2.file.save(
             'example2.R',
-            File(open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)))
+            File(fd2)
             )
 
         RChecker.RChecker.objects.create(
@@ -389,6 +396,8 @@ class TestChecker(TestCase):
         for checkerresult in self.solution.checkerresult_set.all():
             self.assertIn('Multiple R scripts found', checkerresult.log, "Test did not complain (%s)" % checkerresult.log)
             self.assertFalse(checkerresult.passed, checkerresult.log)
+        fd1.close()
+        fd2.close()
         solution_file2.delete()
 
     def test_keep_file_checker(self):

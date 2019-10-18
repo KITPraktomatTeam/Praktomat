@@ -33,7 +33,9 @@ class CheckerWithFile(Checker):
 
     def add_to_environment(self, env, path):
         if (self._add_to_environment):
-            env.add_source(path, open(os.path.join(env.tmpdir(), path), 'rb').read())
+            fd = open(os.path.join(env.tmpdir(), path), 'rb')
+            env.add_source(path, fd.read())
+            fd.close()
 
     def run_file(self, env):
         result = self.create_result(env)

@@ -41,6 +41,7 @@ class TestStaffViews(TestCase):
         response = self.client.post(reverse('admin:task_import'), data={
                             'file': f
                         }, follow=True)
+        f.close()
         self.assertRedirectsToView(response, 'changelist_view')
 
     def test_get_model_solution(self):
@@ -54,6 +55,7 @@ class TestStaffViews(TestCase):
                             'solutionfile_set-TOTAL_FORMS': '3',
                             'solutionfile_set-0-file': f
                         })
+        f.close()
         self.assertNotContains(response, 'error_list')
 
     def test_task_export(self):

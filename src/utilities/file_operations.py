@@ -39,8 +39,10 @@ def create_file(path, content, override=True, binary=False):
     with open(path, 'wb') as fd:
         if binary:
             fd.write(content)
+            fd.close()
         else:
             fd.write(encoding.get_utf8(encoding.get_unicode(content)))
+            fd.close()
     if (gid):
         # chown :praktomat <path>
         os.chown(path, -1, gid)
@@ -54,6 +56,7 @@ def copy_file(from_path, to_path, to_is_directory=False, override=True):
         to_path = os.path.join(to_path, os.path.basename(from_path))
     with open(from_path, "rb") as fd:
         create_file(to_path, fd.read(), override=override, binary=True)
+        fd.close()
 
 
 def create_tempfolder(path):

@@ -134,11 +134,15 @@ class DejaGnuTester(Checker, DejaGnu):
         output = encoding.get_unicode(output)
 
         try:
-            summary = encoding.get_unicode(open(os.path.join(testsuite, program_name + ".sum"),"rb").read())
-            log        = encoding.get_unicode(open(os.path.join(testsuite, program_name + ".log"),"rb").read())
+            fd_summary = open(os.path.join(testsuite, program_name + ".sum"),"rb")
+            summary = encoding.get_unicode(fd_summary.read())
+            fd_summary.close()
+            fd_log = open(os.path.join(testsuite, program_name + ".log"),"rb")
+            log     = encoding.get_unicode(fd_log.read())
+            fd_log.close()
         except:
             summary = ""
-            log        = ""
+            log     = ""
 
         complete_output = self.htmlize_output(output + log)
 
