@@ -130,7 +130,11 @@ def import_tutorial_assignment(request):
         if form.is_valid():
             file = form.files['csv_file']
             file.seek(0)
-            reader = csv.reader(io.StringIO(file.read().decode('utf-8')), delimiter=str(form.cleaned_data['delimiter']), quotechar=str(form.cleaned_data['quotechar']))
+            try:
+                reader = csv.reader(io.StringIO(file.read().decode('utf-8')), delimiter=str(form.cleaned_data['delimiter']), quotechar=str(form.cleaned_data['quotechar']))
+            except UnicodeDecodeError as e:
+                messages.error(request, "Import failed: %s" % str(e))
+                return render(request, 'admin/accounts/user/import_tutorial_assignment.html', {'form': form, 'title':"Import tutorial assignment"  })
             succeeded = not_present = failed = 0
             for row in reader:
                 try:
