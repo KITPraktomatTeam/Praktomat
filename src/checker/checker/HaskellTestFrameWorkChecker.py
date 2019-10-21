@@ -99,9 +99,9 @@ class HaskellTestFrameWorkChecker(CheckerWithFile):
 
             if not test_build_result.passed:
                 result = self.create_result(env)
-            result.set_passed(False)
-            result.set_log('<pre>' + escape(self.test_description) + '\n\n======== Test Results (Building all) ======\n\n</pre><br/>\n'+test_build_result.log)
-            return result
+                result.set_passed(False)
+                result.set_log('<pre>' + escape(self.test_description) + '\n\n======== Test Results (Building all) ======\n\n</pre><br/>\n'+test_build_result.log)
+                return result
 
         environ = {}
 
