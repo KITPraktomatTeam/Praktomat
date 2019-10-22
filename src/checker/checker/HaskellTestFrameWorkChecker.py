@@ -81,7 +81,9 @@ class HaskellTestFrameWorkChecker(CheckerWithFile):
 
     def run(self, env):
         filecopy_result = self.run_file(env)
-        if not filecopy_result.passed: return filecopy_result
+        if filecopy_result:
+            # if there is a checker result, file copying has failed
+            return filecopy_result
 
         if self.require_safe:
             safe_builder = IgnoringHaskellBuilder(_flags="-XSafe", _file_pattern = r"^.*\.[hH][sS]$", _main_required=False)
