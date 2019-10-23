@@ -38,7 +38,11 @@ class CheckerWithFile(Checker):
             env.add_source(path, open(os.path.join(env.tmpdir(), path), 'rb').read())
 
     def run_file(self, env):
-        result = self.create_result(env)
+        """ Tries to unpack all necessary files.
+        Fails if there is a clash with files submitted by the student.
+        In that case, this function creates and returns the (failed) CheckerResult.
+        Otherwise (if the unpacking succeeds), this function returns None.
+        """
         clashes = []
         cleanpath = self.path.lstrip("/ ")
         if (self.unpack_zipfile):
@@ -56,10 +60,13 @@ class CheckerWithFile(Checker):
                 clashes.append(os.path.join(self.path, os.path.basename(filename)))
             self.add_to_environment(env, source_path)
 
-        result.set_passed(not clashes)
         if clashes:
+            result = self.create_result(env)
+            result.set_passed(False)
             result.set_log("These files already existed. Do NOT include them in your submissions:<br/><ul>\n" + "\n".join(["<li>%s</li>" % escape(f) for f in clashes]) + "</ul>")
-        return result
+            return result
+
+        return None
 
 class CreateFileChecker(CheckerWithFile):
 
@@ -73,7 +80,12 @@ class CreateFileChecker(CheckerWithFile):
         return "Diese Prüfung wird bestanden, falls die Zieldatei nicht schon vorhanden ist (z.B.: vom Studenten eingereicht wurde)!"
 
     def run(self, env):
-        return self.run_file(env)
+        copyfile_result = self.run_file(env)
+        if copyfile_result:
+            return copyfile_result
+        result = self.create_result(env)
+        result.set_passed(True)
+        return result
 
 
     def show_publicly(self, passed):

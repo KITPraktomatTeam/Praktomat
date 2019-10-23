@@ -11,8 +11,26 @@ praktomat-users@lists.kit.edu.
 General setup
 =============
 
-You need Python 3.5 and a recent version of pip. I also highly recommend to
+You need Python 3.5 and a recent version of pip. We also highly recommend to
 use virtualenv so your system Python installation remains clean.
+
+If you are having trouble with 
+
+    pip install
+
+and get a **No matching distribution found** or **Could not fetch URL** error, 
+try adding -v to the command to get more information:
+
+    pip install --upgrade -v pip
+
+If you see an error like **There was a problem confirming the ssl certificate** or **tlsv1 alert protocol version or TLSV1_ALERT_PROTOCOL_VERSION**, you need to be connecting to PyPI with a newer TLS support library.
+
+Reason: PyPI turned off support for TLS versions 1.0 and 1.1 in April 2018
+   https://pyfound.blogspot.com/2017/01/time-to-upgrade-your-python-tls-v12.html
+
+To fix this, it might help to run the following command:
+
+    pip install -U pip virtualenv setuptools wheel urllib3[secure]
 
 Prerequisites
 ============
@@ -22,27 +40,26 @@ Prerequisites
   On a Debian or Ubuntu System, install the packages
 
     postgresql
-    apache2-mpm-worker
-
-  In ubuntu 16 the package `apache2-mpm-worker` has been merged into `apache2`.
+    apache2
 
   Praktomat requires some 3rd-Party libraries programs to run.
   On a Ubuntu/Debian System, these can be installed by installing the following packages:
 
     libpq-dev
     zlib1g-dev
-    libmysqlclient-dev
+    libmysqlclient-dev (or: default-libmysqlclient-dev)
     libsasl2-dev
     libssl-dev
     swig
     libapache2-mod-xsendfile
-    libapache2-mod-wsgi
+    libapache2-mod-wsgi-py3
 
-    sun-java6-jdk (from the "Canonical Parner" Repository)
+    openjdk-11-jdk (or: openjdk-8-jdk)
     junit
     junit4
     dejagnu
     gcj-jdk (gcj compiler)
+    r-base
 
     git-core
 
@@ -120,8 +137,7 @@ sudo -u postgres createuser -DRS praktomat
 sudo -u postgres createdb -O praktomat praktomat_default
 ```
 
-Configure Praktomat in `Praktomat/src/settings/local.py`, to set data base
-names and paths.
+Configure Praktomat in `Praktomat/src/settings/local.py`, which contains all settings and paths for your deployment system.
 
 Create the upload directory, populate the database:
 
@@ -143,7 +159,7 @@ Adding the first user
 If you use django for authentification, you might want to add a first user using
 
 ```bash
-./Praktomat/src/manage-local.py createsuperuser -
+./Praktomat/src/manage-local.py createsuperuser
 ```
 
 If you use single-sign-on via Shibboleth, you can already log in. After you have logged in, you can assign super user rights to yourself using
@@ -209,7 +225,7 @@ jPlag integration
 Praktomat provides a rudimentary, but convenient integration of the plagiarism
 detection program [jPlag](https://jplag.ipd.kit.edu/). Do enable this support, you have to do these two steps:
 
- * Download the latest [jPlag release](https://github.com/jplag/jplag/releases) (latest tested version: v2.11.8)
+ * Download the latest [jPlag release](https://github.com/jplag/jplag/releases) (latest tested version: v2.12.1)
  * Copy the resulting `.jar` file somewhere on the Praktomat server.
  * In the settings, set `JPLAGJAR = /full/path/to/jplag.jar`
 
@@ -217,7 +233,7 @@ detection program [jPlag](https://jplag.ipd.kit.edu/). Do enable this support, y
 PhpBB integration
 =================
 
-To access the praktomat usersessions from an phpBB folow the instructions in `src/sessionprofile/phpbb/README.txt`.
+To access the praktomat usersessions from an phpBB follow the instructions in `src/sessionprofile/phpbb/README.txt`.
 
 
 [Bug tracker]: https://github.com/KITPraktomatTeam/Praktomat/issues

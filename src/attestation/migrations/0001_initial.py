@@ -73,7 +73,7 @@ class Migration(migrations.Migration):
             name='Script',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('script', models.TextField(default=b'var sum = 0.0;\nfor (x = 0; x != grades.length; ++x) {\n    grade = parseFloat(grades[x]);\n    if (!isNaN(grade)) {\n        sum += grade;\n    }\n}\nresult=sum;', help_text='This JavaScript will calculate a recommend end note for every user based on final grade of every task.', blank=True)),
+                ('script', models.TextField(default='var sum = 0.0;\nfor (x = 0; x != grades.length; ++x) {\n    grade = parseFloat(grades[x]);\n    if (!isNaN(grade)) {\n        sum += grade;\n    }\n}\nresult=sum;', help_text='This JavaScript will calculate a recommend end note for every user based on final grade of every task.', blank=True)),
             ],
         ),
         migrations.AddField(
