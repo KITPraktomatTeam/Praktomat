@@ -163,7 +163,7 @@ class Task(models.Model):
         # fetch tasks, media objects, checker and serialize
         task_objects = list(queryset)
         # prevent duplication of exported RatingScale objects
-        rating_scale_objects = list( {t.final_grade_rating_scale for t in task_objects} )
+        rating_scale_objects = list( {t.final_grade_rating_scale for t in task_objects if t.final_grade_rating_scale} )
         rating_scale_item_objects = list( RatingScaleItem.objects.filter(scale__in=rating_scale_objects) )
         media_objects = list( MediaFile.objects.filter(task__in=task_objects) )
         model_solution_objects = list( Solution.objects.filter(model_solution_task__in=task_objects) )
@@ -221,7 +221,7 @@ class Task(models.Model):
                 task_id_map[old_id] = object.id
                 old_solution_to_new_task_map[object.model_solution_id] = object.id
                 object.model_solution = None
-                object.final_grade_rating_scale = None if is_template else scale_map[object.final_grade_rating_scale_id]
+                object.final_grade_rating_scale = None if is_template else scale_map.get(object.final_grade_rating_scale_id)
                 deserialized_object.save()
             elif isinstance(object, RatingScale):
                 if not is_template:
