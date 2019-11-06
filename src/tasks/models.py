@@ -155,12 +155,16 @@ class Task(models.Model):
 
 
     @classmethod
-    def export_Tasks(cls, qureyset):
+    def export_Tasks(cls, queryset):
         """ Serializes a task queryset and related checkers to xml and bundels it with all files into a zipfile  """
         from solutions.models import Solution, SolutionFile
+        from attestation.models import RatingScaleItem
 
         # fetch tasks, media objects, checker and serialize
-        task_objects = list(qureyset)
+        task_objects = list(queryset)
+        # prevent duplication of exported RatingScale objects
+        rating_scale_objects = list( {t.final_grade_rating_scale for t in task_objects} )
+        rating_scale_item_objects = list( RatingScaleItem.objects.filter(scale__in=rating_scale_objects) )
         media_objects = list( MediaFile.objects.filter(task__in=task_objects) )
         model_solution_objects = list( Solution.objects.filter(model_solution_task__in=task_objects) )
         model_solution_file_objects = list( SolutionFile.objects.filter(solution__in=model_solution_objects) )
@@ -169,7 +173,8 @@ class Task(models.Model):
         checker_app = apps.get_app_config('checker')
         checker_classes = [x for x in checker_app.get_models() if issubclass(x, Checker)]
         checker_objects = sum([list(x.objects.filter(task__in=task_objects)) for x in checker_classes], [])
-        data = serializers.serialize("xml", task_objects + media_objects + checker_objects + model_solution_objects + model_solution_file_objects)
+        # serialize RatingScale objects first since they are used by tasks
+        data = serializers.serialize("xml", rating_scale_objects + rating_scale_item_objects + task_objects + media_objects + checker_objects + model_solution_objects + model_solution_file_objects)
 
         # fetch files
         files = []
@@ -193,11 +198,14 @@ class Task(models.Model):
 
     @classmethod
     @transaction.atomic
-    def import_Tasks(cls, zip_file, solution_author):
+    def import_Tasks(cls, zip_file, solution_author, is_template=True):
         from solutions.models import Solution, SolutionFile
+        from attestation.models import RatingScale, RatingScaleItem
+
         zip = zipfile.ZipFile(zip_file, 'r')
         data = zip.read('data.xml').decode('utf-8')
         task_id_map = {}
+        scale_map = {}
         solution_id_map = {}
         old_solution_to_new_task_map = {}
         solution_list = []
@@ -207,13 +215,22 @@ class Task(models.Model):
             object.id = None
             if isinstance(object, Task):
                 # save all tasks and their old id
-                object.publication_date = date.max
+                if is_template:
+                    object.publication_date = date.max
                 deserialized_object.save()
                 task_id_map[old_id] = object.id
                 old_solution_to_new_task_map[object.model_solution_id] = object.id
                 object.model_solution = None
-                object.final_grade_rating_scale = None
+                object.final_grade_rating_scale = None if is_template else scale_map[object.final_grade_rating_scale_id]
                 deserialized_object.save()
+            elif isinstance(object, RatingScale):
+                if not is_template:
+                    deserialized_object.save()
+                    scale_map[old_id] = object
+            elif isinstance(object, RatingScaleItem):
+                if not is_template:
+                    object.scale = scale_map[object.scale_id]
+                    deserialized_object.save()
             else:
                 # save modelsolution, media and checker, update task id
                 if isinstance(object, SolutionFile):
