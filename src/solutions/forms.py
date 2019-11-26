@@ -4,13 +4,12 @@ from django.utils.translation import ugettext_lazy as _
 from django.forms.models import ModelForm, inlineformset_factory, BaseInlineFormSet
 from django import forms
 from django.conf import settings
-from utilities.safeuncompressor import SafeUncompressor
 import zipfile
-import tarfile
 import mimetypes
 import re
 
 from solutions.models import Solution, SolutionFile
+from utilities import encoding
 from functools import reduce
 
 ziptype_re = re.compile(r'^application/(zip|x-zip|x-zip-compressed|x-compressed)$')
@@ -18,6 +17,9 @@ tartype_re = re.compile(r'^application/(tar|x-tar|x-tar-compressed)$')
 
 for (mimetype, extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
     mimetypes.add_type(mimetype, extension, strict=True)
+
+def contains_NUL_char(bytestring):
+    return encoding.get_unicode(bytestring).find("\x00") >= 0
 
 class SolutionFileForm(ModelForm):
     class Meta:
@@ -34,6 +36,12 @@ class SolutionFileForm(ModelForm):
             contenttype = mimetypes.guess_type(data.name)[0] # don't rely on the browser: data.content_type could be wrong or empty
             if (contenttype is None) or (not (supported_types_re.match(contenttype) or ziptype_re.match(contenttype) or tartype_re.match(contenttype))):
                 raise forms.ValidationError(_('The file of type %s is not supported.' %contenttype))
+            if contenttype.startswith("text"):
+                content = data.read()
+                # undo the consuming the read method has done
+                data.seek(0)
+                if contains_NUL_char(content):
+                    raise forms.ValidationError(_("The plain text file '%(file)s' contains a NUL character, which is not supported." %{'file':data.name}))
             if ziptype_re.match(contenttype):
                 try:
                     zip = zipfile.ZipFile(data)
@@ -42,11 +50,15 @@ class SolutionFileForm(ModelForm):
                     if sum(fileinfo.file_size for fileinfo in zip.infolist()) > 1000000:
                         raise forms.ValidationError(_('The zip file is too big.'))
                     for fileinfo in zip.infolist():
-                        (type, encoding) = mimetypes.guess_type(fileinfo.filename)
-                        ignorred = SolutionFile.ignorred_file_names_re.search(fileinfo.filename)
+                        filename = fileinfo.filename
+                        (type, encoding) = mimetypes.guess_type(filename)
+                        ignorred = SolutionFile.ignorred_file_names_re.search(filename)
                         supported = type and supported_types_re.match(type)
+                        is_text_file = not ignorred and type.startswith("text")
                         if not ignorred and not supported:
-                            raise forms.ValidationError(_("The file '%(file)s' of guessed mime type '%(type)s' in this zip file is not supported." %{'file':fileinfo.filename, 'type':type}))
+                            raise forms.ValidationError(_("The file '%(file)s' of guessed mime type '%(type)s' in this zip file is not supported." %{'file':filename, 'type':type}))
+                        if is_text_file and contains_NUL_char(zip.read(filename)):
+                            raise forms.ValidationError(_("The plain text file '%(file)s' in this zip file contains a NUL character, which is not supported." %{'file':filename}))
                         # check whole zip instead of contained files
                         #if fileinfo.file_size > max_file_size:
                         #    raise forms.ValidationError(_("The file '%(file)s' is bigger than %(size)iKB which is not suported." %{'file':fileinfo.filename, 'size':max_file_size_kb}))
@@ -55,31 +67,7 @@ class SolutionFileForm(ModelForm):
                 except:
                     raise forms.ValidationError(_('Uhoh - something unexpected happened.'))
             elif tartype_re.match(contenttype):
-                try:
-                    uncompressed = SafeUncompressor(data, max_file_size);
-                    tar = tarfile.open(mode = 'r:', fileobj = uncompressed)
-                    #if tar.testtar():
-                    #    raise forms.ValidationError(_('The tar file seems to be corrupt.'))
-                    if sum(fileinfo.size for fileinfo in tar.getmembers()) > 1000000:
-                        raise forms.ValidationError(_('The tar file is too big.'))
-                    for fileinfo in tar.getmembers():
-                        if not fileinfo.isfile():
-                            continue
-                        (type, encoding) = mimetypes.guess_type(fileinfo.name)
-                        ignorred = SolutionFile.ignorred_file_names_re.search(fileinfo.name)
-                        supported = type and supported_types_re.match(type)
-                        if not ignorred and not supported:
-                            raise forms.ValidationError(_("The file '%(file)s' of guessed mime type '%(type)s' in this tar file is not supported." %{'file':fileinfo.name, 'type':type}))
-                        # check whole tar instead of contained files
-                        #if fileinfo.file_size > max_file_size:
-                        #    raise forms.ValidationError(_("The file '%(file)s' is bigger than %(size)iKB which is not suported." %{'file':fileinfo.name, 'size':max_file_size_kb}))
-                    data.seek(0)
-                except forms.ValidationError:
-                    raise
-                except SafeUncompressor.FileTooLarge:
-                    raise forms.ValidationError(_('The tar file is too big.'))
-                except:
-                    raise forms.ValidationError(_('Uhoh - something unexpected happened.'))
+                raise forms.ValidationError(_('Tar files are not supported, please upload the files individually or use a zip file.'))
             if data.size > max_file_size:
                 raise forms.ValidationError(_("The file '%(file)s' is bigger than %(size)iKB which is not suported." %{'file':data.name, 'size':max_file_size_kb}))
             return data

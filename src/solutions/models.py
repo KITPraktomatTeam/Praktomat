@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import zipfile
-import tarfile
 import tempfile
 import mimetypes
 import shutil
@@ -118,7 +117,7 @@ class SolutionFile(models.Model):
     """docstring for SolutionFile"""
 
     solution = models.ForeignKey(Solution, on_delete=models.CASCADE)
-    file = models.FileField(upload_to = get_solutionfile_upload_path, max_length=500, help_text = _('Source code file as part of a solution an archive file (.zip, .tar or .tar.gz) containing multiple solution files.'))
+    file = models.FileField(upload_to = get_solutionfile_upload_path, max_length=500, help_text = _('Source code file as part of a solution an archive file (.zip) containing multiple solution files.'))
     mime_type = models.CharField(max_length=100, help_text = _("Guessed file type. Automatically  set on save()."))
 
     # ignore hidden or os-specific files, etc. in zipfiles
@@ -142,15 +141,6 @@ class SolutionFile(models.Model):
                     temp_file = tempfile.NamedTemporaryFile()                                    # autodeleted
                     temp_file.write(zip.open(zip_file_name).read())
                     zip_file_name = zip_file_name  if isinstance(zip_file_name, str) else str(zip_file_name, errors='replace')
-                    new_solution_file.file.save(zip_file_name, File(temp_file), save=True)        # need to check for filenames begining with / or ..?
-        elif self.file.name.upper().endswith(('.TAR.GZ', '.TAR.BZ2', '.TAR')):
-            tar = tarfile.open(fileobj = self.file)
-            for member in tar.getmembers():
-                if not self.ignorred_file_names_re.search(member.name) and member.isfile():
-                    new_solution_file = SolutionFile(solution=self.solution)
-                    temp_file = tempfile.NamedTemporaryFile()                                    # autodeleted
-                    temp_file.write(tar.extractfile(member.name).read())
-                    zip_file_name = member.name  if isinstance(member.name, str) else str(member.name, errors='replace')
                     new_solution_file.file.save(zip_file_name, File(temp_file), save=True)        # need to check for filenames begining with / or ..?
         else:
             self.mime_type = mimetypes.guess_type(self.file.name)[0]
