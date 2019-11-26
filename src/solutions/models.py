@@ -350,8 +350,13 @@ class MessageWrapper():
         msg = self.message.as_bytes(linesep=linesep)
         # Now, use the S/MIME headers as headers for the email
         lines = msg.split(linesep_bytes)
+        if (lines[0] != b'Content-Type: text/plain; charset="utf-8"' or
+                lines[1] != b'MIME-Version: 1.0' or
+                not re.match(b'Content-Transfer-Encoding: (7|8)bit', lines[2])):
+            raise AssertionError('Assumptions on message format violated')
         i = lines.index(b'')
-        transformed = [s.replace(b"Content-Type: text/plain", lines[i+2]) for s in lines[0:i]] + lines[i+3:]
+        j = lines[i+1:].index(b'') + i + 1
+        transformed = lines[i+1:j] + lines[3:i] + lines[j+1:]
         return linesep_bytes.join(transformed)
 
     def get_charset(self):
