@@ -34,6 +34,7 @@ class UserAdmin(UserBaseAdmin):
             (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
             (_('Groups'), {'fields': ('groups', 'tutorial')}),
             (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+            (_('Custom text'), {'fields': ('user_text',)}),
         )
 
     form = AdminUserChangeForm
@@ -106,6 +107,7 @@ class UserAdmin(UserBaseAdmin):
         from django.conf.urls import url
         my_urls = [url(r'^import/$', accounts.views.import_user, name='user_import')]
         my_urls += [url(r'^import_tutorial_assignment/$', accounts.views.import_tutorial_assignment, name='import_tutorial_assignment')]
+        my_urls += [url(r'^import_user_texts/$', accounts.views.import_user_texts, name='import_user_texts')]
         return my_urls + urls
 
     def useful_links(self, instance):

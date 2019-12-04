@@ -54,6 +54,7 @@ def taskList(request):
                       'trainers': trainers,
                       'threshold': threshold,
                       'calculated_grade': calculated_grade,
+                      'user_text': request.user.user_text,
                   })
 
 @login_required
