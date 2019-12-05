@@ -64,7 +64,7 @@ class MyRegistrationForm(UserBaseCreationForm):
         user = super(MyRegistrationForm, self).save()
 
         # default group: user
-        user.groups = Group.objects.filter(name='User')
+        user.groups.set(Group.objects.filter(name='User'))
 
         # disable user until activated via email
         user.is_active=False

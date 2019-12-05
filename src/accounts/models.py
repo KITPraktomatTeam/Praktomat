@@ -47,7 +47,8 @@ class User(BasicUser):
     def set_new_activation_key(self):
         # The activation key will be a SHA1 hash, generated from a combination of the username and a random salt.
         sha = hashlib.sha1()
-        sha.update( str(random.random()) + self.username)
+        to_hash = str(random.random()) + self.username
+        sha.update(to_hash.encode('utf-8'))
         self.activation_key = sha.hexdigest()
         self.save()
 
