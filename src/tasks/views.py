@@ -54,6 +54,7 @@ def taskList(request):
                       'trainers': trainers,
                       'threshold': threshold,
                       'calculated_grade': calculated_grade,
+                      'user_text': request.user.user_text,
                   })
 
 @login_required
@@ -73,6 +74,9 @@ def taskDetail(request, task_id):
 
 class ImportForm(forms.Form):
     file = forms.FileField()
+    is_template = forms.BooleanField(initial=True,
+                                     required=False,
+                                     help_text="Enabled if the imported task is just used as template to create another task. If disabled, the publication date and the rating scale are also imported. This means that students might see the task immediately, and rating scales might be duplicated.")
 
 @staff_member_required
 def import_tasks(request):
@@ -81,12 +85,12 @@ def import_tasks(request):
         form = ImportForm(request.POST, request.FILES)
         if form.is_valid():
             try:
-                Task.import_Tasks(form.files['file'], request.user)
+                Task.import_Tasks(form.files['file'], request.user, form.cleaned_data['is_template'])
                 messages.success(request, "The import was successful.")
                 return HttpResponseRedirect(reverse('admin:tasks_task_changelist'))
             except Exception as e:
                 from django.forms.utils import ErrorList
-                msg = "An Error occured. The import file was probably malformed.: %s" % str(e)
+                msg = "An Error occured. The import file was probably malformed: %s" % str(e)
                 form._errors["file"] = ErrorList([msg])
     else:
         form = ImportForm()

@@ -17,10 +17,8 @@ function resize(id) {
 {% block content %}<div id='task_list'>
 
 <div id="welcome">
-	
+
 	{% motd %}
-	
-	{% chunk "Welcome Message" %}
 
 	{% if not user.is_trainer and not user.is_superuser %}
 		{% if tutors or trainers %}
@@ -39,6 +37,10 @@ function resize(id) {
 			{% endif %}</div>
 		{% endif %}
 	{% endif %}
+
+	{% chunk "Welcome Message" %}
+
+	{% if user_text %}<pre>{{ user_text }}</pre>{% endif %}
 </div>
 
 <div style="font-size:18px;color:red;font-weight: bold;">{% if calculated_grade < threshold and user.is_user %}{% chunk 'warning message' %}{% endif %}</div>

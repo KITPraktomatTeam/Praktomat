@@ -44,7 +44,8 @@ class TestStaffViews(TestCase):
         path = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'AMI', 'TaskExport.zip')
         f = open(path, 'rb')
         response = self.client.post(reverse('admin:task_import'), data={
-                            'file': f
+                            'file': f,
+                            'is_template': True,
                         }, follow=True)
         self.assertRedirectsToView(response, 'changelist_view')
 
