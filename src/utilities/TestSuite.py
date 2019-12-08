@@ -132,10 +132,11 @@ def create_test_data():
                 u'GGT',
                 u'solutions',
                 u'GgT.java')))
-    import sys, locale
+    import sys 
+    import locale
     print("sys:defaultencoding: " , sys.getdefaultencoding())
     print("sys:filesystemencoding: " ,sys.getfilesystemencoding())
-    print("locale:preferredencoding: " locale.getpreferredencoding())
+    print("locale:preferredencoding: " , locale.getpreferredencoding())
     print("locale:defaultlocale ",locale.getdefaultlocale())
     print("locale:locale ",locale.getlocale())
     print(type(tempF))
