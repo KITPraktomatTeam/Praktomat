@@ -135,7 +135,7 @@ def create_test_data():
                 u'solutions',
                 u'GgT.java'),'r',encoding='utf-8'))
     tempC=tempF.read()
-    tempD=tempC.encode("utf-8")    
+    tempD=tempC.decode("utf-8")    
     print(encoding.get_unicode(tempD))
     solution_file.file.save(
                 u'GgT.java',
