@@ -127,13 +127,13 @@ def create_test_data():
 
     solution_file = SolutionFile(solution = solution)
     solution_file.file.save(
-                'GgT.java',
+                u'GgT.java',
                 File(open(join(dirname(dirname(dirname(__file__))),
-                'examples',
-                'Tasks',
-                'GGT',
-                'solutions',
-                'GgT.java'),'r',encoding='utf-8')))
+                u'examples',
+                u'Tasks',
+                u'GGT',
+                u'solutions',
+                u'GgT.java'),'r',encoding='utf-8')))
 
     # Attestation
     attestation = Attestation.objects.create(solution = solution, author=tutor) # final, published
