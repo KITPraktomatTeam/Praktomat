@@ -124,14 +124,19 @@ def create_test_data():
 
     # Solutions
     solution = Solution.objects.create(    task = task, author = user )
-
+    
     solution_file = SolutionFile(solution = solution)
+    from utilities import encoding, file_operations
+    import chardet
     tempF = File(open(join(dirname(dirname(dirname(__file__))),
                 u'examples',
                 u'Tasks',
                 u'GGT',
                 u'solutions',
                 u'GgT.java'),'r',encoding='utf-8'))
+    tempC=tempF.read()
+    tempD=tempC.encode("utf-8")    
+    print(encoding.get_unicode(tempD))
     solution_file.file.save(
                 u'GgT.java',
                 tempF
