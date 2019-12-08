@@ -133,11 +133,12 @@ def create_test_data():
                 u'Tasks',
                 u'GGT',
                 u'solutions',
-                u'GgT.java'),'r',encoding='utf-8'))
-    tempC=tempF.read()
-    print(type(tempC))
-    tempD=tempC.encode("utf-8")    
-    print(encoding.get_unicode(tempD))
+                u'GgT.java'))
+    print(sys.getdefaultencoding())
+    print(sys.getfilesystemencoding())
+    print(locale.getpreferredencoding())
+    print(locale.getdefaultlocale())
+    print(locale.getlocale())
     solution_file.file.save(
                 u'GgT.java',
                 tempF
