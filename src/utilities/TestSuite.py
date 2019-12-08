@@ -133,7 +133,7 @@ def create_test_data():
                 'Tasks',
                 'GGT',
                 'solutions',
-                'GgT.java'))))
+                'GgT.java'),'r',encoding='utf-8')))
 
     # Attestation
     attestation = Attestation.objects.create(solution = solution, author=tutor) # final, published
