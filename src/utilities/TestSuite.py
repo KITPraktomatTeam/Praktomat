@@ -132,6 +132,7 @@ def create_test_data():
                 u'GGT',
                 u'solutions',
                 u'GgT.java')))
+    import sys, locale
     print("sys:defaultencoding: " , sys.getdefaultencoding()
     print("sys:filesystemencoding: " ,sys.getfilesystemencoding(),
     print("locale:preferredencoding: " locale.getpreferredencoding(),
