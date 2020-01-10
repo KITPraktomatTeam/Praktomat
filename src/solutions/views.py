@@ -65,6 +65,9 @@ def solution_list(request, task_id, user_id=None):
                     'site_name': settings.SITE_NAME,
                     'solution': solution,
                 }
+                if user_id:
+                    # in case someone else uploaded the solution, add this to the email
+                    c['uploader'] = request.user
                 with tempfile.NamedTemporaryFile(mode='w+') as tmp:
                     tmp.write("Content-Type: text/plain; charset=utf-8\n")
                     tmp.write("Content-Transfer-Encoding: quoted-printable\n\n")

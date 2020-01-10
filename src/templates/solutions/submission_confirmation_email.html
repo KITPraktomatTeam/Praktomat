@@ -1,10 +1,10 @@
 {% load i18n %}{% autoescape off %}{% trans "Hello " %}{{solution.author}},
 
-your solution to the task "{{solution.task}}" has been successfully uploaded.
+{% if uploader %}a{% else %}your{% endif %} solution to the task "{{solution.task}}" has been successfully uploaded{% if uploader %} in your name by trainer {{uploader}}{% endif %}.
 
-You can view your solution here: {{protocol}}://{{ domain }}{% url "solution_detail" solution_id=solution.id %}
+You can view the uploaded solution here: {{protocol}}://{{ domain }}{% url "solution_detail" solution_id=solution.id %}
 
-Your upload included these files:
+The upload included these files:
 {% for file in solution.solutionfile_set.all %}
 	{{file}} [SHA256:{{file.get_hash}}]
 {% endfor %}
