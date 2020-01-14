@@ -315,13 +315,14 @@ class TestChecker(TestCase):
 
         self.solution.check_solution()
 
-        for checkerresult in self.solution.checkerresult_set.all():
-            self.assertIn('2', checkerresult.log, "Test did not calculate 1 + 2 (%s)" % checkerresult.log)
-            self.assertTrue(checkerresult.artefacts.exists())
-            self.assertEqual(checkerresult.artefacts.get().path(), "Rplots.pdf")
-            self.assertTrue(checkerresult.passed, checkerresult.log)
-
-        solution_file.delete()
+        try:
+            for checkerresult in self.solution.checkerresult_set.all():
+                self.assertIn('2', checkerresult.log, "Test did not calculate 1 + 2 (%s)" % checkerresult.log)
+                self.assertTrue(checkerresult.passed, checkerresult.log)
+                self.assertTrue(checkerresult.artefacts.exists())
+                self.assertEqual(checkerresult.artefacts.get().path(), "Rplots.pdf")
+        finally:
+            solution_file.delete()
 
     def test_r_checker_2(self):
         solution_file = SolutionFile(solution = self.solution)
@@ -336,12 +337,14 @@ class TestChecker(TestCase):
 
         self.solution.check_solution()
 
-        for checkerresult in self.solution.checkerresult_set.all():
-            self.assertIn('2', checkerresult.log, "Test did not calculate 1 + 2 (%s)" % checkerresult.log)
-            self.assertTrue(checkerresult.passed, checkerresult.log)
-            self.assertTrue(checkerresult.artefacts.exists())
-            self.assertEqual(checkerresult.artefacts.get().path(), "Rplots.pdf")
-        solution_file.delete()
+        try:
+            for checkerresult in self.solution.checkerresult_set.all():
+                self.assertIn('2', checkerresult.log, "Test did not calculate 1 + 2 (%s)" % checkerresult.log)
+                self.assertTrue(checkerresult.passed, checkerresult.log)
+                self.assertTrue(checkerresult.artefacts.exists())
+                self.assertEqual(checkerresult.artefacts.get().path(), "Rplots.pdf")
+        finally:
+                solution_file.delete()
 
     def test_r_checker_3(self):
         solution_file = SolutionFile(solution = self.solution)
@@ -378,10 +381,13 @@ class TestChecker(TestCase):
 
         self.solution.check_solution()
 
-        for checkerresult in self.solution.checkerresult_set.all():
-            self.assertIn('Multiple R scripts found', checkerresult.log, "Test did not complain (%s)" % checkerresult.log)
-            self.assertFalse(checkerresult.passed, checkerresult.log)
-        solution_file2.delete()
+        try:
+            for checkerresult in self.solution.checkerresult_set.all():
+                self.assertIn('Multiple R scripts found', checkerresult.log, "Test did not complain (%s)" % checkerresult.log)
+                self.assertFalse(checkerresult.passed, checkerresult.log)
+        finally:
+            solution_file.delete()
+            solution_file2.delete()
 
     def test_keep_file_checker(self):
         KeepFileChecker.KeepFileChecker.objects.create(
