@@ -10,7 +10,7 @@ import resource
 
 from django.conf import settings
 
-def execute_arglist(args, working_directory, environment_variables={}, timeout=None, maxmem=None, fileseeklimit=None, extradirs=[], unsafe=False, error_to_output=True):
+def execute_arglist(args, working_directory, environment_variables={}, timeout=None, maxmem=None, fileseeklimit=None, extradirs=[], unsafe=False, error_to_output=True, filenumberlimit=128):
     """ Wrapper to execute Commands with the praktomat testuser. Excpects Command as list of arguments, the first being the execeutable to run. """
     assert isinstance(args, list)
 
@@ -60,8 +60,12 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
         # create a new session for the spawned subprocess using os.setsid,
         # so we can later kill it and all children on timeout, taken from http://stackoverflow.com/questions/4789837/how-to-terminate-a-python-subprocess-launched-with-shell-true
         os.setsid()
-        # Limit the size of files created during execution
-        resource.setrlimit(resource.RLIMIT_NOFILE, (128, 128))
+        # Limit the size of files created during execution.
+        # Default value of filenumberlimit is 128.
+        # In newer versions, R requires more to be started
+        # (see comment in RscriptChecker.py),
+        # even if it does not use it.
+        resource.setrlimit(resource.RLIMIT_NOFILE, (filenumberlimit, filenumberlimit))
         if fileseeklimit is not None:
             resource.setrlimit(resource.RLIMIT_FSIZE, (fileseeklimitbytes, fileseeklimitbytes))
             if resource.getrlimit(resource.RLIMIT_FSIZE) != (fileseeklimitbytes, fileseeklimitbytes):

@@ -82,6 +82,10 @@ class RChecker(Checker):
             timeout=settings.TEST_TIMEOUT,
             fileseeklimit=settings.TEST_MAXFILESIZE,
             maxmem=settings.TEST_MAXMEM,
+            # newer versions of R need a file number ulimit of at least 167,
+            # else the program will crash right away with an error
+            # (167 = ceil(100/0.6)).
+            filenumberlimit=167,
             )
 
         if timed_out:
