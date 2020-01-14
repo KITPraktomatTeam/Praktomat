@@ -33,7 +33,8 @@ class CheckerWithFile(Checker):
 
     def add_to_environment(self, env, path):
         if (self._add_to_environment):
-            env.add_source(path, open(os.path.join(env.tmpdir(), path), 'rb').read())
+            with open(os.path.join(env.tmpdir(), path), 'rb') as fd:
+                env.add_source(path, fd.read())
 
     def run_file(self, env):
         """ Tries to unpack all necessary files.
