@@ -1,16 +1,8 @@
-from utilities.TestSuite import TestCase, SeleniumTestCase
+from utilities.TestSuite import TestCase
 from accounts.models import User
 from django.contrib.auth.models import Group
 from django.urls import reverse
 from io import StringIO
-
-
-class TestViewsSelenium(SeleniumTestCase):
-    def test_login(self):
-        self.loginAsUser()
-        self.assertIn("/tasks/", self.selenium.current_url)
-        user_tools = self.selenium.find_element_by_id('user-tools')
-        self.assertIn("Welcome, user", user_tools.text)
 
 
 class TestViews(TestCase):
@@ -18,6 +10,15 @@ class TestViews(TestCase):
         self.client.login(username='trainer', password='demo')
         self.testgroup = Group(name = 'test')
         self.testgroup.save()
+
+    def test_login(self):
+        response = self.client.get('/accounts/login/')
+        self.assertTrue('username' in response.context['form'].fields)
+        self.assertTrue('password' in response.context['form'].fields)
+        response2 = self.client.post('/accounts/login/',
+                           {'username':'user', 'password':'demo'},
+                           follow=True)
+        self.assertTrue(b'Welcome, user' in response2.content)
 
     def test_get_testgroup(self):
         response = self.client.get(reverse('admin:auth_group_change', args=[self.testgroup.id]))

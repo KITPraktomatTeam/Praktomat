@@ -13,5 +13,4 @@ django-tinymce
 django-debug-toolbar
 docutils
 psycopg2-binary
-selenium
 

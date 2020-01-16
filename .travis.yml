@@ -7,7 +7,6 @@ install:
  - sudo apt-get update
  - sudo apt-get install swig libsasl2-dev libssl-dev libpq-dev
  - sudo apt-get install openjdk-8-jdk dejagnu checkstyle gcj-jdk
- - sudo apt-get install phantomjs
  - sudo apt-get install r-base
  - pip install -r requirements.txt
  - pip freeze
