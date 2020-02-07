@@ -125,14 +125,21 @@ class UserAdmin(UserBaseAdmin):
 
     def save_model(self, request, obj, form, change):
         """ give a user both superuser and staff rights if he obtains the trainer role """
-        was_trainer = get_object_or_404(User, pk=obj.id).is_trainer
-        is_trainer = "Trainer" in [g.name for g in form.cleaned_data['groups']]
-        #import pdb;pdb.set_trace()
-        if is_trainer and not was_trainer and not (obj.is_staff and obj.is_superuser):
-            obj.is_superuser = True
-            obj.is_staff = True
-            messages.warning(request, 'The user "%s" was automatically made staff member and superuser (because he was made a trainer)' % obj)
-        obj.save()
+        if change:
+            was_trainer = get_object_or_404(User, pk=obj.id).is_trainer
+            is_trainer = "Trainer" in [g.name for g in form.cleaned_data['groups']]
+            #import pdb;pdb.set_trace()
+            if is_trainer and not was_trainer and not (obj.is_staff and obj.is_superuser):
+                obj.is_superuser = True
+                obj.is_staff = True
+                messages.warning(request, 'The user "%s" was automatically made staff member and superuser (because he was made a trainer)' % obj)
+            obj.save()
+        else:
+            # need to save object to set many2many relationship
+            obj.save()
+            obj.groups.set(Group.objects.filter(name='User'))
+            obj.save()
+
 
 # This should work in Django 1.4 :O
 # from django.contrib.admin import SimpleListFilter
