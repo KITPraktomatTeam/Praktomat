@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+# -*- encoding: utf-8 -*-
+
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
+
 import os.path
 import shutil
 import sys
@@ -236,7 +241,8 @@ class CheckerResult(models.Model):
     def add_artefact(self, filename, path):
         assert os.path.isfile(path)
         artefact = CheckerResultArtefact(result = self, filename=filename)
-        artefact.file.save(filename, File(open(path, 'rb')))
+        with open(path, 'rb') as fd:
+            artefact.file.save(filename, File(fd))
 
 def get_checkerresultartefact_upload_path(instance, filename):
     result = instance.result

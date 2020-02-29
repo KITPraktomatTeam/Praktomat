@@ -2,11 +2,12 @@
 
 from random import randint
 from django.utils.translation import ugettext_lazy as _
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.auth.models import User as UserBase, Group
 from django.contrib.auth.admin import UserAdmin as UserBaseAdmin, GroupAdmin as GroupBaseAdmin
 from django.db.models import Count
 from django.db.transaction import atomic
+from django.shortcuts import get_object_or_404
 from accounts.models import User, Tutorial
 from accounts.forms import AdminUserCreationForm, AdminUserChangeForm
 
@@ -34,6 +35,7 @@ class UserAdmin(UserBaseAdmin):
             (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
             (_('Groups'), {'fields': ('groups', 'tutorial')}),
             (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+            (_('Custom text'), {'fields': ('user_text',)}),
         )
 
     form = AdminUserChangeForm
@@ -106,6 +108,7 @@ class UserAdmin(UserBaseAdmin):
         from django.conf.urls import url
         my_urls = [url(r'^import/$', accounts.views.import_user, name='user_import')]
         my_urls += [url(r'^import_tutorial_assignment/$', accounts.views.import_tutorial_assignment, name='import_tutorial_assignment')]
+        my_urls += [url(r'^import_user_texts/$', accounts.views.import_user_texts, name='import_user_texts')]
         return my_urls + urls
 
     def useful_links(self, instance):
@@ -119,6 +122,24 @@ class UserAdmin(UserBaseAdmin):
                 )
         else:
             return ""
+
+    def save_model(self, request, obj, form, change):
+        """ give a user both superuser and staff rights if he obtains the trainer role """
+        if change:
+            was_trainer = get_object_or_404(User, pk=obj.id).is_trainer
+            is_trainer = "Trainer" in [g.name for g in form.cleaned_data['groups']]
+            #import pdb;pdb.set_trace()
+            if is_trainer and not was_trainer and not (obj.is_staff and obj.is_superuser):
+                obj.is_superuser = True
+                obj.is_staff = True
+                messages.warning(request, 'The user "%s" was automatically made staff member and superuser (because he was made a trainer)' % obj)
+            obj.save()
+        else:
+            # need to save object to set many2many relationship
+            obj.save()
+            obj.groups.set(Group.objects.filter(name='User'))
+            obj.save()
+
 
 # This should work in Django 1.4 :O
 # from django.contrib.admin import SimpleListFilter

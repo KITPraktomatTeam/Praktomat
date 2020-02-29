@@ -1,3 +1,8 @@
+# -*- encoding: utf-8 -*-
+
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
+
 from os.path import dirname, join
 from datetime import datetime, timedelta
 
@@ -22,12 +27,12 @@ class TestViews(TestCase):
 
     def test_post_solution(self):
         path = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'AMI', 'ModelSolution(flat).zip')
-        f = open(path, 'rb')
-        response = self.client.post(reverse('solution_list', args=[self.task.id]), data={
-                            'solutionfile_set-INITIAL_FORMS': '0',
-                            'solutionfile_set-TOTAL_FORMS': '3',
-                            'solutionfile_set-0-file': f
-                        }, follow=True)
+        with open(path, 'rb') as f:
+            response = self.client.post(reverse('solution_list', args=[self.task.id]), data={
+                                'solutionfile_set-INITIAL_FORMS': '0',
+                                'solutionfile_set-TOTAL_FORMS': '3',
+                                'solutionfile_set-0-file': f
+                            }, follow=True)
         self.assertRedirectsToView(response, 'solution_detail')
 
     def test_post_solution_expired(self):
@@ -35,12 +40,12 @@ class TestViews(TestCase):
         self.task.save()
 
         path = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'AMI', 'ModelSolution(flat).zip')
-        f = open(path, 'rb')
-        response = self.client.post(reverse('solution_list', args=[self.task.id]), data={
-                            'solutionfile_set-INITIAL_FORMS': '0',
-                            'solutionfile_set-TOTAL_FORMS': '3',
-                            'solutionfile_set-0-file': f
-                        }, follow=True)
+        with open(path, 'rb') as f:
+            response = self.client.post(reverse('solution_list', args=[self.task.id]), data={
+                                'solutionfile_set-INITIAL_FORMS': '0',
+                                'solutionfile_set-TOTAL_FORMS': '3',
+                                'solutionfile_set-0-file': f
+                            }, follow=True)
         self.assertEqual(response.status_code, 403)
 
     def test_get_solution(self):

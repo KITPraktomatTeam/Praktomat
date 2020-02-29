@@ -1,3 +1,8 @@
+# -*- encoding: utf-8 -*-
+
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
+
 from os.path import dirname, join
 from datetime import datetime, timedelta
 
@@ -37,10 +42,11 @@ class TestStaffViews(TestCase):
 
     def test_post_task_import(self):
         path = join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'AMI', 'TaskExport.zip')
-        f = open(path, 'rb')
-        response = self.client.post(reverse('admin:task_import'), data={
-                            'file': f
-                        }, follow=True)
+        with open(path, 'rb') as f:
+            response = self.client.post(reverse('admin:task_import'), data={
+                               'file': f,
+                               'is_template': True,
+                            }, follow=True)
         self.assertRedirectsToView(response, 'changelist_view')
 
     def test_get_model_solution(self):
@@ -48,12 +54,12 @@ class TestStaffViews(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_post_model_solution(self):
-        f = open(join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'AMI', 'ModelSolution(flat).zip'), 'rb')
-        response = self.client.post(reverse('model_solution', args=[self.task.id]), data={
-                            'solutionfile_set-INITIAL_FORMS': '0',
-                            'solutionfile_set-TOTAL_FORMS': '3',
-                            'solutionfile_set-0-file': f
-                        })
+        with open(join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'AMI', 'ModelSolution(flat).zip'), 'rb') as f:
+            response = self.client.post(reverse('model_solution', args=[self.task.id]), data={
+                                'solutionfile_set-INITIAL_FORMS': '0',
+                                'solutionfile_set-TOTAL_FORMS': '3',
+                                'solutionfile_set-0-file': f
+                            })
         self.assertNotContains(response, 'error_list')
 
     def test_task_export(self):

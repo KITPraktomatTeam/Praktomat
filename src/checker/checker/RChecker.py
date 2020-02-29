@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
 
 from pipes import quote
 import shutil, os, re, subprocess
@@ -82,6 +84,10 @@ class RChecker(Checker):
             timeout=settings.TEST_TIMEOUT,
             fileseeklimit=settings.TEST_MAXFILESIZE,
             maxmem=settings.TEST_MAXMEM,
+            # newer versions of R need a file number ulimit of at least 167,
+            # else the program will crash right away with an error
+            # (167 = ceil(100/0.6)).
+            filenumberlimit=167,
             )
 
         if timed_out:

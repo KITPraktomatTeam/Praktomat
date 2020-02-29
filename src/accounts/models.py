@@ -1,3 +1,9 @@
+# -*- encoding: utf-8 -*-
+
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
+
+
 import datetime
 import re
 import hashlib
@@ -29,6 +35,7 @@ class User(BasicUser):
     final_grade = models.CharField( null=True, blank=True, max_length=100,  help_text = _('The final grade for the whole class.'))
     programme = models.CharField(null=True, blank=True, max_length=100, help_text = _('The programme the student is enlisted in.'))
     activation_key=models.CharField(_('activation key'), max_length=40, editable=False)
+    user_text=models.CharField(null=True, blank=True, max_length=500, help_text = _("Custom text which will be shown to this student."))
 
     # Use UserManager to get the create_user method, etc.
     objects = UserManager()
@@ -46,7 +53,8 @@ class User(BasicUser):
     def set_new_activation_key(self):
         # The activation key will be a SHA1 hash, generated from a combination of the username and a random salt.
         sha = hashlib.sha1()
-        sha.update( str(random.random()) + self.username)
+        to_hash = str(random.random()) + self.username
+        sha.update(to_hash.encode('utf-8'))
         self.activation_key = sha.hexdigest()
         self.save()
 

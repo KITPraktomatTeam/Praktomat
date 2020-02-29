@@ -65,7 +65,12 @@ def solution_list(request, task_id, user_id=None):
                     'site_name': settings.SITE_NAME,
                     'solution': solution,
                 }
+                if user_id:
+                    # in case someone else uploaded the solution, add this to the email
+                    c['uploader'] = request.user
                 with tempfile.NamedTemporaryFile(mode='w+') as tmp:
+                    tmp.write("Content-Type: text/plain; charset=utf-8\n")
+                    tmp.write("Content-Transfer-Encoding: quoted-printable\n\n")
                     tmp.write(t.render(c))
                     tmp.seek(0)
                     [signed_mail, __, __, __, __]  = execute_arglist(["openssl", "smime", "-sign", "-signer", settings.CERTIFICATE, "-inkey", settings.PRIVATE_KEY, "-in", tmp.name], ".", unsafe=True)

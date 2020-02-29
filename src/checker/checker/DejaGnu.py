@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
 
 """
 DejaGnu Tests.
@@ -134,11 +136,13 @@ class DejaGnuTester(Checker, DejaGnu):
         output = encoding.get_unicode(output)
 
         try:
-            summary = encoding.get_unicode(open(os.path.join(testsuite, program_name + ".sum"),"rb").read())
-            log        = encoding.get_unicode(open(os.path.join(testsuite, program_name + ".log"),"rb").read())
+            with open(os.path.join(testsuite, program_name + ".sum"),"rb") as fd:
+                summary = encoding.get_unicode(fd.read())
+            with open(os.path.join(testsuite, program_name + ".log"),"rb") as fd:
+                log = encoding.get_unicode(fd.read())
         except:
             summary = ""
-            log        = ""
+            log = ""
 
         complete_output = self.htmlize_output(output + log)
 
