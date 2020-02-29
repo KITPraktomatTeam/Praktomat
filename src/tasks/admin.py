@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.contrib.auth.admin import UserAdmin
 from django.db import models
 from django.db import transaction
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from tinymce.widgets import TinyMCE
 from django.utils.html import format_html
 
@@ -93,13 +93,11 @@ class TaskAdmin(admin.ModelAdmin):
     def attestations_url(self, task):
         return format_html ('<a href="{0}">Attestations (User site)</a>',
                             reverse('attestation_list', kwargs={'task_id': task.id}))
-    attestations_url.allow_tags = True
     attestations_url.short_description = 'Attestations'
 
     def testupload_url(self, task):
         return format_html ('<a href="{0}">Test Submission</a>',
                             reverse('upload_test_solution', kwargs={'task_id': task.id}))
-    testupload_url.allow_tags = True
     testupload_url.short_description = 'Test Submission'
 
     def useful_links(self, instance):
@@ -112,7 +110,6 @@ class TaskAdmin(admin.ModelAdmin):
                 )
         else:
             return ""
-    useful_links.allow_tags = True
 
 
 admin.site.register(Task, TaskAdmin)

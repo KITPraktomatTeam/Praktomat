@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+# -*- encoding: utf-8 -*-
+
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
+
 from django.test.runner import DiscoverRunner
 from django.test import TestCase as DjangoTestCase
 from django.conf import settings
@@ -41,35 +47,13 @@ class TestCase(DjangoTestCase):
             from urlparse import urlparse
         else:
             from urllib.parse import urlparse
-        from django.core.urlresolvers import resolve
+        from django.urls import resolve
         self.assertTrue(hasattr(response, 'redirect_chain'),
                         msg="Please use client.get(...,follow=True) with assertRedirectsToView")
         self.assertTrue(len(response.redirect_chain) > 0,
                         msg="No redirection found")
         url = response.redirect_chain[-1][0]
         self.assertEqual(resolve(urlparse(url)[2])[0].__name__, view)
-
-
-from django.test import LiveServerTestCase
-from selenium.webdriver.phantomjs.webdriver import WebDriver
-
-class SeleniumTestCase(LiveServerTestCase):
-    def setUp(self):
-        super(SeleniumTestCase, self).setUp()
-        self.selenium = WebDriver()
-
-    def tearDown(self):
-        self.selenium.quit()
-        super(SeleniumTestCase, self).tearDown()
-
-    def loginAsUser(self):
-        self.selenium.get('%s%s' % (self.live_server_url, '/accounts/login/'))
-        username_input = self.selenium.find_element_by_name("username")
-        username_input.send_keys('user')
-        password_input = self.selenium.find_element_by_name("password")
-        password_input.send_keys('demo')
-        self.selenium.find_element_by_xpath('//input[@value="Login"]').click()
-
 
 
 
@@ -118,16 +102,10 @@ def create_test_data():
 
     # Solutions
     solution = Solution.objects.create(    task = task, author = user )
-
+    
     solution_file = SolutionFile(solution = solution)
-    solution_file.file.save(
-                'GgT.java',
-                File(open(join(dirname(dirname(dirname(__file__))),
-                'examples',
-                'Tasks',
-                'GGT',
-                'solutions',
-                'GgT.java'))))
+    with open(join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'GGT', 'solutions', 'GgT.java')) as fd:
+        solution_file.file.save('GgT.java', File(fd))
 
     # Attestation
     attestation = Attestation.objects.create(solution = solution, author=tutor) # final, published

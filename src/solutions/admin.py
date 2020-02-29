@@ -5,10 +5,11 @@ from solutions.models import Solution, SolutionFile
 from checker.basemodels import CheckerResult
 from checker.basemodels import check_multiple
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import transaction
 from django.db.models import Max
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
 
 
@@ -76,25 +77,21 @@ class SolutionAdmin(admin.ModelAdmin):
     edit.short_description = 'Edit (Admin Site)'
 
     def view_url(self, solution):
-        return '<a href="%s">View</a>' % (reverse('solution_detail_full', args=[solution.id]))
-    view_url.allow_tags = True
+        return mark_safe('<a href="%s">View</a>' % (reverse('solution_detail_full', args=[solution.id])))
     view_url.short_description = 'View (User Site)'
 
     def download_url(self, solution):
-        return '<a href="%s">Download</a>' % (reverse('solution_download', args=[solution.id]))
-    download_url.allow_tags = True
+        return mark_safe('<a href="%s">Download</a>' % (reverse('solution_download', args=[solution.id])))
     download_url.short_description = 'Download'
 
     def run_checker_url(self, solution):
-        return '<a href="%s">Run Checkers</a>' % (reverse('solution_run_checker', args=[solution.id]))
-    run_checker_url.allow_tags = True
+        return mark_safe('<a href="%s">Run Checkers</a>' % (reverse('solution_run_checker', args=[solution.id])))
     run_checker_url.short_description = 'Run Checker (incl. those run at submission)'
 
     def show_author(self, instance):
         return format_html('<a href="{0}">{1}</a>',
                            reverse('admin:accounts_user_change', args=(instance.author.pk,)),
                            instance.author)
-    show_author.allow_tags = True
     show_author.short_description = 'Solution author'
 
     def useful_links(self, instance):
@@ -105,7 +102,6 @@ class SolutionAdmin(admin.ModelAdmin):
                 )
         else:
             return ""
-    useful_links.allow_tags = True
 
     def tests_failed(self,solution):
         return CheckerResult.objects.filter(solution=solution,passed=False).exists();
