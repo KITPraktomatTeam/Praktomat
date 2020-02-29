@@ -2,7 +2,7 @@
 <!-- include form.non_field_errors? -->
 {{ formset.management_form }}
 <fieldset class="module aligned">
-    {% for form in formset.forms %}	
+    {% for form in formset.forms %}
 		{% include "forms/form_snippet.html" %}
 	{% endfor %}
 </fieldset>

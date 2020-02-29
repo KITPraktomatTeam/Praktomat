@@ -23,7 +23,7 @@
 		$(".calculated_grade_cell").click();
 	}
 </script>
-{% endblock %} 
+{% endblock %}
 
 {% block breadcrumbs %} {{block.super}} > Rating Overview {% endblock %}
 {% block content %}<div id="rating">
@@ -43,7 +43,7 @@
 
 		{{ final_grade_option_form.final_grades_plagiarism_option }}
 
-		plagiarism notes will be calculated as the final grades. <br>
+		plagiarism grades will be calculated as the final grades. <br>
 
 		<input type="submit" value="Calculate" name="calculate" id="calculate_button" /><br>
 {% endif %}

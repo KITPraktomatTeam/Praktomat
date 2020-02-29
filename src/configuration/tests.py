@@ -4,7 +4,7 @@ from utilities.TestSuite import TestCase
 
 from configuration.models import Chunk
 
-class TestConfiguratoin(TestCase):
+class TestConfiguration(TestCase):
     def setUp(self):
         pass
 
