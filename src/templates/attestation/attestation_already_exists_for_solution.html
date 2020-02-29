@@ -18,7 +18,7 @@
 
 		<div id="Solutions">
 			<div>There already are Attestations for the <a href={% url "solution_detail" solution_id=solution.id %}>specified solution</a>. Do you want to <a href={% url "new_attestation_for_solution" solution_id=solution.id force_create='force_create'%}>force the creation</a> of another Attestation?
-			
+
 			</div>
 			<h2>{% trans "Existing Attestationss" %}</h2>
 			{% for attestation in attestations%}

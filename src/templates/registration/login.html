@@ -23,15 +23,15 @@ function resize(id) {
 
 {% motd %}
 
-{% chunk "Login Message" %}	
+{% chunk "Login Message" %}
 
-<div id="form">	
+<div id="form">
     {% if REGISTRATION_POSSIBLE %}
 	<span class="icon ui-icon-triangle-1-e"></span><a href="{% url "registration_register" %}">Registration</a>
 	/
-	{% endif %} 
+	{% endif %}
 	<span class="icon ui-icon-triangle-1-e"></span><a href="{% url "password_reset" %}">Retrieve password</a>
-	
+
 	<form method="post" action=".">{% csrf_token %}
 	    {% include "forms/form_as_div.html" %}
 		<input type="submit" value="Login" />

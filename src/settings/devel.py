@@ -6,7 +6,7 @@ from os.path import join, dirname
 SITE_NAME = 'Praktomat'
 
 # Identifie this Praktomat among multiple installation on one webserver
-PRAKTOMAT_ID = 'default' 
+PRAKTOMAT_ID = 'default'
 
 # The URL where this site is reachable. 'http://localhost:8000/' in case of the
 # developmentserver.
@@ -20,7 +20,7 @@ STATIC_URL = BASE_PATH + 'static/'
 # files created at runtime.
 
 # Example: "/home/media/media.lawrence.com/"
-UPLOAD_ROOT = join(dirname(dirname(dirname(__file__))),'data')
+UPLOAD_ROOT = join(dirname(dirname(dirname(__file__))), 'data')
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -35,12 +35,13 @@ DATABASES = {
 JPLAGJAR = join(dirname(dirname(dirname(__file__))), 'jplag.jar')
 
 PRIVATE_KEY = join(dirname(dirname(dirname(__file__))), 'examples', 'certificates', 'privkey.pem')
+CERTIFICATE = join(dirname(dirname(dirname(__file__))), 'examples', 'certificates', 'signer.pem')
 
 # Finally load defaults for missing setttings.
-import defaults
+from . import defaults
 defaults.load_defaults(globals())
 
 # To get exceptions logged as well:
-MIDDLEWARE_CLASSES += (
+MIDDLEWARE += [
         'utilities.exceptionlogger.ExceptionLoggingMiddleware',
-    )
+    ]
