@@ -4,9 +4,9 @@
 <script type="text/javascript" src="{{STATIC_URL}}/frameworks/dotdotdot/jquery.dotdotdot-packed.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}/frameworks/jquery.easy-confirm-dialog/jquery.easy-confirm-dialog.js"></script>
 
-<script type="text/javascript">	
- $(document).ready(function(){
- 	$("#help_icon").tooltip({
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#help_icon").tooltip({
 		position:  "center left"
 	});
 	$("#edit_soluton_button").click(function(){
@@ -44,12 +44,12 @@
 <h1>{{task.title}}</h1>
 
 <div id='help_icon'><span class="icon icon-orange ui-icon-info"></span></div>
-<div class="tooltip"> 
+<div class="tooltip">
 	<span class="icon ui-icon-radio-on icon-orange" title="not finished"></span> <a>not finished</a><br/>
 	<span class="icon ui-icon-check icon-green" title="final unpublished"></span> <a>final but unpublished</a><br/>
 	<span class="icon ui-icon-circle-check icon-green" title="final published"></span> <a>final and published</a><br/>
 	<span class="icon ui-icon-search" title="view only"></span> <a>view only</a><br/>
-</div> 
+</div>
 
 {% if user.is_tutor or user.is_trainer %}
 <ul>
@@ -77,9 +77,9 @@
 	{% if not task.all_checker_finished %}
 		<p>{% trans "Not all checker have yet been run." %}</p>
 	{% else %}
-	
+
 		<div id="Solutions">
-			
+
 			{% if user.is_trainer %}
 				<h2>{% trans "Attestation Progress by Tutor" %}</h2>
 				<div class='attestation'>
@@ -132,7 +132,7 @@
 					{% endfor %}
 				</div>
 			{% endif %}
-			
+
 			{% if user.is_tutor %}
 				{% if show_author %}
 				<div>
@@ -145,11 +145,11 @@
 				</div>
 				{% endif %}
 				<div style="margin-top:50px">
-					<input id="next_attestation_button" type="button" value="Attest next solution" {% if unattested_solutions|length == 0 %}disabled="disabled"{% endif %} onclick="location.href ='{% url "new_attestation_for_task" task_id=task.id %}'"/> 
+					<input id="next_attestation_button" type="button" value="Attest next solution" {% if unattested_solutions|length == 0 %}disabled="disabled"{% endif %} onclick="location.href ='{% url "new_attestation_for_task" task_id=task.id %}'"/>
 				</div>
 				{{ unattested_solutions|length }} solutions to attest.</br></br></br>
 			{% endif %}
-			
+
 			{% if solutions_with_plagiarism %}
 				{% if show_author %}
 			<span class='plagiarism error'><span class="icon ui-icon-alert icon-red"></span>The solutions of{% for solution in solutions_with_plagiarism %} {{solution.author}}{%if not forloop.last%}, {%endif%}{% endfor %} have been marked as plagiarism.</span>
@@ -157,7 +157,7 @@
 					<span class='plagiarism error'><span class="icon ui-icon-alert icon-red"></span>{{solutions_with_plagiarism|length}} solutions have been marked as plagiarism.</span>
 				{% endif %}
 			{% endif %}
-			
+
 			{% if my_attestations %}
 				<h2>{% trans "My attestations" %}</h2>
 				{% for attestation in my_attestations%}
@@ -187,8 +187,8 @@
 					</div>
 				{% endfor %}
 			{% endif %}
-			
-			
+
+
 			{% if attestations_by_others %}
 				<h2>{% trans "Attestations by other tutors" %}</h2>
 				{% for attestation in attestations_by_others%}
