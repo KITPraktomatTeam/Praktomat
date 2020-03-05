@@ -83,7 +83,7 @@ class TaskAdmin(admin.ModelAdmin):
             count += task.check_all_final_solutions()
         end = timer()
         self.message_user(request, "%d final solutions were successfully checked (%d seconds elapsed)." % (count, end-start))
-
+    run_all_checkers_on_finals.short_description = "check only finals (Admin)"
 
     def run_all_checkers_on_latest_only_failed(self,request, queryset):
         """ Rerun all checker on latest of only failed solutions including "not always" action """
@@ -108,13 +108,14 @@ class TaskAdmin(admin.ModelAdmin):
 					count += 1
 		end = timer()
 		self.message_user(request, "%d users with only failed solutions were checked (%d seconds elapsed)." % (count, end-start))
-
+    run_all_checkers_on_latest_only_failed.short_description = "recheck only latest failed (Admin)"
 
 
     def run_all_checkers(self, request, queryset):
         """ Rerun all checker including "not always" action for students with final or latest of only failed solutions """
         self.run_all_checkers_on_finals(request, queryset)
         self.run_all_checkers_on_latest_only_failed(request, queryset)
+    run_all_checkers.short_description = "run all checkers (Trainer)"        
 	
     def delete_attestations(self, request, queryset):
         """ delete given attestations for task solutions """
@@ -131,7 +132,7 @@ class TaskAdmin(admin.ModelAdmin):
 			tcount += 1
 		end = timer()
 		self.message_user(request, "Deleted %d Attestations over %d Tasks: LoopTimer: %d " %(count, tcount, end-start),"warning")
-
+    delete_attestations.short_description = "delete attestations (Admin)"
 
     def run_all_uploadtime_checkers_on_all(self, request, queryset):
         """ Rerun on all solutions all checkers which are running at uploadtime """
@@ -206,7 +207,7 @@ class TaskAdmin(admin.ModelAdmin):
 			self.message_user(request, "Task %s : Checked %d authors lost their finals: LoopTimer: %d seconds elapsed "%(task.title, len(users_missing_in_new_final_solution),(end-start)),"warning")
 		allend = timer()
 		self.message_user(request, "%d Tasks rechecked : LoopTimer: %d seconds elapsed" % (task_set.count(),allend-allstart))
-		
+    run_all_uploadtime_checkers_on_all.short_description = "recheck all submissions with uploadtime checker (Admin)"		
 
 		
     def unset_all_checker_finished(self, request, queryset):
@@ -219,7 +220,7 @@ class TaskAdmin(admin.ModelAdmin):
 			count += 1
 		end = timer()
 		self.message_user(request, "State of attribute \"all_checker_finished\" at %d Tasks resetted to \"FALSE\": LoopTimer: %d " % (count, end-start),"warning")
-		
+    unset_all_checker_finished.short_description = "unset all checker finished (Admin)"		
 		
 
 
