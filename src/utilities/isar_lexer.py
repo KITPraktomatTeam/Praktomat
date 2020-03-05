@@ -3,74 +3,74 @@ from pygments.lexers.theorem import IsabelleLexer
 from pygments.lexer import RegexLexer, inherit, bygroups, words
 from pygments.token import *
 
-import encoding
+from . import encoding
 
 __all__ = ['IsarLexer']
 
 class IsarLexer(IsabelleLexer):
-	name = 'Isabelle/Isar'
+    name = 'Isabelle/Isar'
 
-	keyword_cartouche_text = ('text', 'txt', 'text_raw',
-		'chapter', 'section', 'subsection', 'subsubsection',
-		'paragraph', 'subparagraph',
-	)
-	tokens = {
-		'root': [
-			(words(keyword_cartouche_text, prefix=r'\b', suffix=r'(%\w+)?(\s*\\<open>)'), bygroups(Keyword,Comment.Preproc,Comment), 'cartouche-text'),
-			(r'\\<comment>.*$', Comment),
-			(r'%\w+', Comment.Preproc),
-			(r'\\<open>', String.Other, 'fact'),
-			inherit,
-		],
-		'cartouche-text': [
-			(r'[^\\@]', Comment),
-			(r'(@\{)(\w+)', bygroups(String.Other, Keyword), 'antiquotation'),
-			(r'\\<open>', Text, '#push'),
-			(r'\\<close>', Comment, '#pop'),
-			(r'\\<[\^\w]+>', Comment.Symbol),
-			(r'\\', Comment),
-		],
-		'antiquotation': [
-			(r'[^\{\}\\]', Text),
-			(r'\{', String.Other, '#push'),
-			(r'\}', String.Other, '#pop'),
-			(r'\\<[\^\w]+>', String.Symbol),
-			(r'\\', Text),
-		],
-		'fact': [
-			(r'\\<close>', String.Other, '#pop'),
-			inherit,
-		],
-	}
+    keyword_cartouche_text = ('text', 'txt', 'text_raw',
+        'chapter', 'section', 'subsection', 'subsubsection',
+        'paragraph', 'subparagraph',
+    )
+    tokens = {
+        'root': [
+            (words(keyword_cartouche_text, prefix=r'\b', suffix=r'(%\w+)?(\s*\\<open>)'), bygroups(Keyword, Comment.Preproc, Comment), 'cartouche-text'),
+            (r'\\<comment>.*$', Comment),
+            (r'%\w+', Comment.Preproc),
+            (r'\\<open>', String.Other, 'fact'),
+            inherit,
+        ],
+        'cartouche-text': [
+            (r'[^\\@]', Comment),
+            (r'(@\{)(\w+)', bygroups(String.Other, Keyword), 'antiquotation'),
+            (r'\\<open>', Text, '#push'),
+            (r'\\<close>', Comment, '#pop'),
+            (r'\\<[\^\w]+>', Comment.Symbol),
+            (r'\\', Comment),
+        ],
+        'antiquotation': [
+            (r'[^\{\}\\]', Text),
+            (r'\{', String.Other, '#push'),
+            (r'\}', String.Other, '#pop'),
+            (r'\\<[\^\w]+>', String.Symbol),
+            (r'\\', Text),
+        ],
+        'fact': [
+            (r'\\<close>', String.Other, '#pop'),
+            inherit,
+        ],
+    }
 
-	def get_tokens_unprocessed(self, text):
-		for index, token, value in RegexLexer.get_tokens_unprocessed(self, text):
-			value = isar_decode(value)
-			yield index, token, value
+    def get_tokens_unprocessed(self, text):
+        for index, token, value in RegexLexer.get_tokens_unprocessed(self, text):
+            value = isar_decode(value)
+            yield index, token, value
 
 
 def isar_decode(raw):
-	global symbol_table
-	if symbol_table is None:
-		symbol_table = {}
-		for line in symbols_raw.splitlines():
-			if line:
-				if re.match(r"^#", line):
-					continue
-				m = re.match(r"^(\\<.*>)\s+code:\s+0x([0-9a-f]+).*$", line)
-				assert m, "Failed to parse " + line
-				n = int(m.group(2),16)
-				if n < 0x10000:
-					symbol_table[m.group(1)] = unichr(n)
+    global symbol_table
+    if symbol_table is None:
+        symbol_table = {}
+        for line in symbols_raw.splitlines():
+            if line:
+                if re.match(r"^#", line):
+                    continue
+                m = re.match(r"^(\\<.*>)\s+code:\s+0x([0-9a-f]+).*$", line)
+                assert m, "Failed to parse " + line
+                n = int(m.group(2), 16)
+                if n < 0x10000:
+                    symbol_table[m.group(1)] = chr(n)
 
-	if isinstance(raw, str):
-		raw = encoding.get_unicode(raw)
-	def repl(m):
-		if m.group(0) in symbol_table:
-			return symbol_table[m.group(0)]
-		else:
-			return m.group(0)
-	return re.sub(r"\\<[\^a-zA-Z]+>", repl, raw)
+    if isinstance(raw, str):
+        raw = encoding.get_unicode(raw)
+    def repl(m):
+        if m.group(0) in symbol_table:
+            return symbol_table[m.group(0)]
+        else:
+            return m.group(0)
+    return re.sub(r"\\<[\^a-zA-Z]+>", repl, raw)
 
 
 # ~~/etc/symbols from Isabelle2016

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 import datetime
@@ -23,8 +23,8 @@ class Migration(migrations.Migration):
             name='Settings',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('email_validation_regex', models.CharField(default=b'.*@(student.)?kit.edu', help_text=b'Regular expression used to check the email domain of registering users.', max_length=200, blank=True)),
-                ('mat_number_validation_regex', models.CharField(default=b'\\d{5,7}', help_text=b'Regular expression used to check the student number.', max_length=200, blank=True)),
+                ('email_validation_regex', models.CharField(default='.*@(student.)?kit.edu', help_text=b'Regular expression used to check the email domain of registering users.', max_length=200, blank=True)),
+                ('mat_number_validation_regex', models.CharField(default='\\d{5,7}', help_text=b'Regular expression used to check the student number.', max_length=200, blank=True)),
                 ('new_users_via_sso', models.BooleanField(default=True, help_text=b'If enabled, users previously unknown to the Praktomat can register via sigle sign on (eg. Shibboleth).')),
                 ('deny_registration_from', models.DateTimeField(default=datetime.date(2222, 1, 1), help_text=b'After this date, registration wont be possible.')),
                 ('acount_activation_days', models.IntegerField(default=10, help_text=b'Days until the user has time to activate his account with the link send in the registation email.')),
@@ -42,6 +42,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='chunk',
             name='settings',
-            field=models.ForeignKey(default=1, to='configuration.Settings', help_text=b'Makes it easy to display chunks as inlines in Settings.'),
+            field=models.ForeignKey(default=1, to='configuration.Settings', help_text=b'Makes it easy to display chunks as inlines in Settings.', on_delete=models.CASCADE),
         ),
     ]

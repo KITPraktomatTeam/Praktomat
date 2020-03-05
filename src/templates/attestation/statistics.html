@@ -13,7 +13,6 @@
 			},
 			title: {
 				text: 'Solution Submission Rate',
-
 			},
 			xAxis: {
 				type: 'datetime',
@@ -43,13 +42,13 @@
 					},
 				},
 				labels: {
-					 formatter: function() {
+					formatter: function() {
 						return this.value * 100 +' %';
-					 },
-					 style: {
+					},
+					style: {
 						color: '#4572A7'
-					 }
-				  },
+					}
+				},
 				opposite: true,
 				max: 1,
 				min: 0,
@@ -106,289 +105,290 @@
 			}]
 		});
 
-{% if has_runtime_chart %}
-		var runtime_chart = new Highcharts.Chart({
+		{% if has_runtime_chart %}
+			var runtime_chart = new Highcharts.Chart({
+				chart: {
+					renderTo: 'runtime_chart',
+					defaultSeriesType: 'line',
+					alignTicks: false,
+					margin: [80, 100, 60, 100],
+				},
+				title: {
+					text: 'Solution runtimes',
+				},
+				xAxis: {
+					type: 'datetime',
+					title: {
+						text: 'Date'
+					},
+				},
+				yAxis: {
+					title: {
+						text: 'Runtime (ms)',
+						style: {
+							color: '#AA4643'
+						},
+					},
+					labels: {
+						 style: {
+							color: '#AA4643'
+						 }
+					},
+					min: 0,
+				},
+				legend: {
+					enabled:false
+				},
+				credits: {
+					enabled: false
+				},
+				plotOptions: {
+					area: {
+						fillOpacity:0.75,
+					},
+					line: {
+						lineWidth:3,
+					},
+				},
+				series: [
+					{% for runtime_series in runtimes %}
+						{ type: 'scatter',
+							name: '{{ runtime_series.checker }}',
+							color: '#4572A7',
+							data: [
+								{% for point in runtime_series.runtimes %}
+									[ Date.parse('{{point.date|date:"c"}}'), {{point.value|default_if_none:'null'}} ],
+								{% endfor %}
+							],
+						},
+						{ type: 'spline',
+							name: '{{ runtime_series.checker }} (median)',
+							color: '#DA7D44',
+							marker: {enabled: false},
+							data: [
+								{% for point in runtime_series.medians %}
+									[ Date.parse('{{point.date|date:"c"}}'), {{point.value|default_if_none:'null'}} ],
+								{% endfor %}
+							],
+						},
+					{% endfor %}
+				]
+			});
+		{% endif %}
+
+		function date_to_timestr(d) {
+			var h = d.getHours();
+			var m = d.getMinutes();
+			return h + ":" + ((m < 10) ? "0" + m : m);
+		}
+
+		var time_chart = new Highcharts.Chart({
 			chart: {
-				renderTo: 'runtime_chart',
-				defaultSeriesType: 'line',
-				alignTicks: false,
+				renderTo: 'punchcard',
+				defaultSeriesType: 'scatter',
 				margin: [80, 100, 60, 100],
 			},
 			title: {
-				text: 'Solution runtimes',
-
-			},
-			xAxis: {
-				type: 'datetime',
-				title: {
-					text: 'Date'
-				},
-			},
-			yAxis: {
-				title: {
-					text: 'Runtime (ms)',
-					style: {
-						color: '#AA4643'
-					},
-				},
-				labels: {
-					 style: {
-						color: '#AA4643'
-					 }
-				},
-				min: 0,
-			},
-			legend: {
-				enabled:false
+				text: 'Submission Activity by Day and Hour'
 			},
 			credits: {
 				enabled: false
 			},
+			xAxis: {
+				title: {
+					enabled: true,
+					text: 'Time'
+				},
+				type: "datetime",
+				min: 0,
+				max: 24*3600*1000,
+			},
+			yAxis: {
+				title: {
+					text: 'Day',
+					margin: 80,
+				},
+				categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+				min:0,
+				max:6,
+				startOnTick:false,
+				endOnTick:false,
+				reversed:true
+			},
+			tooltip: {
+				formatter: function() {
+					date = new Date(this.x);
+					return '<b>'+ this.series.name +'</b><br/>' + ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][this.y] + ' ' + date_to_timestr(date);
+				}
+			},
+			legend: {
+				layout: 'horizontal',
+				backgroundColor: '#FFFFFF',
+				borderWidth: 1
+			},
 			plotOptions: {
-				area: {
-					fillOpacity:0.75,
-				},
-				line: {
-					lineWidth:3,
-				},
+				scatter: {
+					marker: {
+						radius: 5,
+						states: {
+							hover: {
+								enabled: true,
+								lineColor: 'rgb(100,100,100)'
+							}
+						}
+					},
+					states: {
+						hover: {
+							marker: {
+								enabled: false
+							}
+						}
+					}
+				}
 			},
 			series: [
-			{% for runtime_series in runtimes %}
-				{ type: 'scatter',
-				  name: '{{ runtime_series.checker }}',
-				  color: '#4572A7',
-				  data: [
-					{% for point in runtime_series.runtimes %}
-					[ Date.parse('{{point.date|date:"c"}}'), {{point.value|default_if_none:'null'}} ],
-					{% endfor %}
-				  ],
+				{
+					name: 'Submissions',
+					color: '#89A54E',
+					data: {{creation_times}}
 				},
-				{ type: 'spline',
-				  name: '{{ runtime_series.checker }} (median)',
-				  color: '#DA7D44',
-				  marker: {enabled: false},
-				  data: [
-					{% for point in runtime_series.medians %}
-					[ Date.parse('{{point.date|date:"c"}}'), {{point.value|default_if_none:'null'}} ],
-					{% endfor %}
-				  ],
-				},
-			{% endfor %}
+				{
+					name: 'Final Submissions',
+					color: '#AA4643',
+					data: {{creation_times_final}}
+				}
 			]
 		});
-{% endif %}
-    			
-        function date_to_timestr(d) {
-        	var h = d.getHours();
-        	var m = d.getMinutes();
-        	return h + ":" + ((m < 10) ? "0" + m : m);
-        }
-    			
-    	var time_chart = new Highcharts.Chart({
-       chart: {
-          renderTo: 'punchcard', 
-          defaultSeriesType: 'scatter',
-		  margin: [80, 100, 60, 100],
-       },
-       title: {
-          text: 'Submission Activity by Day and Hour'
-       },
-	   credits: {
-        				enabled: false
-        			},
-       xAxis: {
-          title: {
-             enabled: true,
-             text: 'Time'
-          },
-		  type: "datetime",	
-		  min: 0,
-		  max: 24*3600*1000,
-       },
-       yAxis: {
-          title: {
-             text: 'Day',
-			 margin: 80,
-          },
-		  categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-		  min:0,
-		  max:6,
-		  startOnTick:false,
-		  endOnTick:false,
-		  reversed:true
-       },
-       tooltip: {
-          formatter: function() {
-		  		date = new Date(this.x);
-                return '<b>'+ this.series.name +'</b><br/>' + ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][this.y] + ' ' + date_to_timestr(date);
-          }
-       },
-       legend: {
-          layout: 'horizontal',
-          backgroundColor: '#FFFFFF',
-          borderWidth: 1
-       },
-       plotOptions: {
-          scatter: {
-             marker: {
-                radius: 5,
-                states: {
-                   hover: {
-                      enabled: true,
-                      lineColor: 'rgb(100,100,100)'
-                   }
-                }
-             },
-             states: {
-                hover: {
-                   marker: {
-                      enabled: false
-                   }
-                }
-             }
-          }
-       },
-       series: [{
-          name: 'Submissions',
-          color: '#89A54E',
-          data: {{creation_times}}
-    
-       }, {
-          name: 'Final Submissions',
-          color: '#AA4643',
-          data: {{creation_times_final}}
-    
-       }]
-    });
-	
-	
-	
-	var chart = new Highcharts.Chart({
-   chart: {
-      renderTo: 'attestation_chart',
-      defaultSeriesType: 'bar',
-	  margin: [80, 100, 60, 100],
-	  height:200,
-   },
-   title: {
-      text: 'Attestations'
-   },
-   credits: {
-        enabled: false
-   },
-   xAxis: {
-      categories: ['All'],
-	  
-   },
-   yAxis: {
-	  max:{{attestations.all}},
-	  title: {
-	  	enabled:false,
-	  },
-   },
-   legend: {
-      backgroundColor: '#FFFFFF',
-      borderColor: '#CCC',
-      borderWidth: 1,
-      shadow: false
-   },
-   tooltip: {
-      formatter: function() {
-         return '<b>'+ this.x +'</b><br/>'+
-             this.series.name +': '+ this.y +'';
-      }
-   },
-   plotOptions: {
-      series: {
-         stacking: 'normal'
-      }
-   },
-   series: [ {
-      name: 'ready',
-      data: [{{attestations.final}}]
-   },{
-      name: 'published',
-      data: [{{attestations.published}}]
-   }]
-});
 
 
 
-function grade_chart(div_to_render_into, title, scale_items,ratings){ 
-	return new Highcharts.Chart({
-      chart: {
-         renderTo: div_to_render_into,
-         defaultSeriesType: 'column',
-         margin: [80, 100, 100, 100]
-      },
-      title: {
-         text: title
-      },
-	  credits: {
-        enabled: false
-   	},
-      xAxis: {
-         categories: scale_items,
-         min: 0,
-         max: scale_items.length-1,
-         labels: {
-            rotation: -45,
-            align: 'right',
-            style: {
-                font: 'normal 13px Verdana, sans-serif'
-            }
-         }
-      },
-      yAxis: {
-	  	allowDecimals: false,
-         min: 0,
-         title: {
-            text: ''
-         }
-		 
-      },
-      legend: {
-         enabled: false
-      },
-      tooltip: {
-         formatter: function() {
-            return '<b>'+ this.x +'</b>:'+ Highcharts.numberFormat(this.y, 1);
-         }
-      },
+		var chart = new Highcharts.Chart({
+			chart: {
+				renderTo: 'attestation_chart',
+				defaultSeriesType: 'bar',
+				margin: [80, 100, 60, 100],
+				height:200,
+			},
+			title: {
+				text: 'Attestations'
+			},
+			credits: {
+				enabled: false
+			},
+			xAxis: {
+				categories: ['All'],
+			},
+			yAxis: {
+				max:{{attestations.all}},
+				title: {
+					enabled:false,
+				},
+			},
+			legend: {
+				backgroundColor: '#FFFFFF',
+				borderColor: '#CCC',
+				borderWidth: 1,
+				shadow: false
+			},
+			tooltip: {
+				formatter: function() {
+					return '<b>'+ this.x +'</b><br/>' + this.series.name + ': ' + this.y + '';
+				}
+			},
+			plotOptions: {
+				series: {
+					stacking: 'normal'
+				}
+			},
+			series: [
+				{
+					name: 'ready',
+					data: [{{attestations.final}}]
+				},
+				{
+					name: 'published',
+					data: [{{attestations.published}}]
+				}
+			]
+		});
 
-      plotOptions: {
-            series: {
-                pointWidth: 15
-            }
-      },
 
-      series: [{
-         name: 'Ratings',
-         data: ratings,
-         dataLabels: {
-            enabled: true,
-            rotation: -90,
-            color: '#FFFFFF',
-            align: 'right',
-            x: 4,
-            y: 2,
-            formatter: function() {
-               return this.y;
-            },
-            style: {
-               font: 'normal 13px Verdana, sans-serif'
-            }
-         }         
-      }]
-   });
-}
-{% for ratings in all_ratings %}
-var final_grade_chart_{{forloop.counter}} = grade_chart('final_grade_chart_{{forloop.counter}}','{{ratings.title}}',{{ final_grade_rating_scale_items|safe }},{{ratings.ratings}});
-{% endfor %}
 
-});
+		function grade_chart(div_to_render_into, title, scale_items,ratings){
+			return new Highcharts.Chart({
+				chart: {
+					renderTo: div_to_render_into,
+					defaultSeriesType: 'column',
+					margin: [80, 100, 100, 100]
+				},
+				title: {
+					text: title
+				},
+				credits: {
+					enabled: false
+				},
+				xAxis: {
+					categories: scale_items,
+					min: 0,
+					max: scale_items.length-1,
+					labels: {
+						rotation: -45,
+						align: 'right',
+						style: {
+							font: 'normal 13px Verdana, sans-serif'
+						}
+					}
+				},
+				yAxis: {
+					allowDecimals: false,
+					min: 0,
+					title: {
+						text: ''
+					}
+				},
+				legend: {
+					enabled: false
+				},
+				tooltip: {
+					formatter: function() {
+						return '<b>'+ this.x +'</b>:'+ Highcharts.numberFormat(this.y, 1);
+					}
+				},
+
+				plotOptions: {
+					series: {
+						pointWidth: 15
+					}
+				},
+
+				series: [{
+					name: 'Ratings',
+					data: ratings,
+					dataLabels: {
+						enabled: true,
+						rotation: -90,
+						color: '#FFFFFF',
+						align: 'right',
+						x: 4,
+						y: 2,
+						formatter: function() {
+							return this.y;
+						},
+						style: {
+							font: 'normal 13px Verdana, sans-serif'
+						}
+					}
+				}]
+			});
+		}
+
+		{% for ratings in all_ratings %}
+			var final_grade_chart_{{forloop.counter}} = grade_chart('final_grade_chart_{{forloop.counter}}','{{ratings.title}}',{{ final_grade_rating_scale_items|safe }},{{ratings.ratings}});
+		{% endfor %}
+
+	});
 </script>
-{% endblock %} 
+{% endblock %}
 
 {% block breadcrumbs %}
 {{block.super}} &gt; <a href={% url "task_detail" task_id=task.id%}>{{task.title}}  </a> &gt; Statistics
@@ -398,10 +398,10 @@ var final_grade_chart_{{forloop.counter}} = grade_chart('final_grade_chart_{{for
 
 <h2>{% trans "Statistics" %}</h2>
 <div id="submission_chart"></div>
-<p>Shows the dates on which solution submissions were made. Final submissions indicate when users uploaded their newest solution. Total submissions shows the percantage of active users who have submitted at least one solution.</p><br/><br/>
+<p>Shows the dates on which solution submissions were made. Final submissions indicate when users uploaded their newest solution. Total submissions shows the percentage of active users who have submitted at least one solution.</p><br/><br/>
 <div id="punchcard"></div>
 <p>This chart plots on which time of day the users were most active.</p><br/><br/>
-{% if task.expired %} 
+{% if task.expired %}
 	<div id="attestation_chart"></div>
 	<p>This chart gives an overview of how many attestations are ready to be published and how many of these are already published by the tutors.</p><br/><br/>
 {% for ratings in all_ratings %}

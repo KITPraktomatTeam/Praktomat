@@ -13,12 +13,12 @@
 			else          { $("#container").css("max-width","none"); }
 			maxWidth = !maxWidth;
 			if (env.editor) { env.editor.resize(); }
-               }
-        </script>
+		}
+	</script>
 
 	<link type="text/css" rel="stylesheet" href="{% static "frameworks/jquery/jquery-ui-theme.css" %}" />
 	<link type="text/css" rel="stylesheet" href="{% static "styles/style.css" %}" />
-	{% block extrahead %}{% endblock %}	
+	{% block extrahead %}{% endblock %}
 	<title>{{ site_name|default:"Praktomat" }} {% block title %}{% endblock %}</title>
 </head>
 
@@ -27,24 +27,24 @@
 		<div id="header"><div class="inner">
 			<div id="title">
 				<h1>{{ SITE_NAME|default:"Praktomat" }}</h1>
- 				{% comment %} the error500 template does not set SITE_NAME {% endcomment %}
+				{% comment %} the error500 template does not set SITE_NAME {% endcomment %}
 			</div>
 			<div id="user-tools">
 				{% if user.is_authenticated %}
-					Welcome, {% firstof user.get_full_name user.username %} 
+					Welcome, {% firstof user.get_full_name user.username %}
 					{% if user.is_shibboleth_user %}
 					/ <a href="{% url "registration_view" %}">View Account</a>
 					{% else %}
 					/ <a href="{% url "registration_change" %}">Change Account</a>
-                    {% endif %}
+					{% endif %}
 					/ <a href="{% url "logout" %}">Log-out</a><br/>
 					{% if user.is_staff or user.is_trainer or user.is_coordinator %}<a href={% url "rating_overview" %}>{% trans "Rating overview"%}</a>
 					{% if user.is_staff %} / <a href="{% url "admin:index" %}">Admin Panel</a>	{%endif%} {%endif%}
 					{% if user.is_tutor %} <a href={% url "tutorial_overview" %}>{% trans "My Tutorial"%}</a>{%endif%}
 				{% else %}
-					<a href="{{ LOGIN_URL }}">Login</a> 
+					<a href="{{ LOGIN_URL }}">Login</a>
 					{% if REGISTRATION_POSSIBLE %}
-						<a href="{% url "registration_register" %}">Register</a> 
+						<a href="{% url "registration_register" %}">Register</a>
 					{%endif%}
 				{%endif%}
 			</div>
@@ -54,7 +54,7 @@
 		</div></div>
 		<div id="content">
 			<noscript><div id="javascripterror" class="ui-widget ui-state-error ui-corner-all notification">
-				<p><span class="ui-icon ui-icon-alert"></span> 
+				<p><span class="ui-icon ui-icon-alert"></span>
 				<strong>Warnig:</strong> This site is designed to use Javascript! Enabling it is advised.</p>
 			</div></noscript>
 			{% comment %} 4 use with messages framework
