@@ -2,9 +2,9 @@
 {% load i18n %}
 {% block extrahead %}{{ block.super }}
 <script type="text/javascript" src="{{STATIC_URL}}frameworks/jquery.formset/jquery.formset.min.js"></script>
-<script type="text/javascript">	
+<script type="text/javascript">
 $(function() {
-	$('fieldset.module .form-row').formset({ 
+	$('fieldset.module .form-row').formset({
 		prefix: '{{ formset.prefix }}',
 		deleteText: '',
 		deleteCssClass: 'icon icon-orange ui-icon-circle-minus',
@@ -13,27 +13,27 @@ $(function() {
 	});
 })
 
-$(function(){ 
-	$('form[enctype=multipart/form-data]').submit(function(){ 
-	  	$("#progress").overlay({ 
-	    	top: 272, 
-	    	api: true,
+$(function(){
+	$('form[enctype=multipart/form-data]').submit(function(){
+		$("#progress").overlay({
+			top: 272,
+			api: true,
 			closeOnClick: false,
-			closeOnEsc: false, 
-			expose: { 
-	        	color: '#333', 
-	        	loadSpeed: 1000, 
-	        	opacity: 0.9 
-		    }, 
+			closeOnEsc: false,
+			expose: {
+				color: '#333',
+				loadSpeed: 1000,
+				opacity: 0.9
+			},
 		}).load();
 	});
 });
 
- $(document).ready(function(){
- 	$("#help_icon").tooltip({
+$(document).ready(function(){
+	$("#help_icon").tooltip({
 		position:  "center left"
 	});
- })
+})
 
 </script>
 {% endblock %}
@@ -56,10 +56,10 @@ $(function(){
 </div>
 
 
-<div class="simple_overlay" id="progress"> 
+<div class="simple_overlay" id="progress">
 	<!-- spinner from http://ajaxload.info/ -->
 	<img id="spinner" src="{{STATIC_URL}}images/loading.gif" alt="loading" />
-    <p>Please wait while your solution is examined.</p>
-</div> 
+	<p>Please wait while your solution is examined.</p>
+</div>
 
 </div>{% endblock %}

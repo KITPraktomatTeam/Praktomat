@@ -1,4 +1,6 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
 
 """
 A Scala compiler for construction.
@@ -10,6 +12,7 @@ from checker.basemodels import Checker
 from checker.compiler.Builder import Builder
 from checker.compiler.JavaBuilder import ClassFileGeneratingBuilder
 from django.template.loader import get_template
+from functools import reduce
 
 class ScalaBuilder(ClassFileGeneratingBuilder):
     """ A Scala compiler. """
@@ -18,11 +21,11 @@ class ScalaBuilder(ClassFileGeneratingBuilder):
     _compiler = settings.SCALAC
     _language = "scala"
 
-# _rx_warnings			= r"^([^ :]*:[^:].*)$"
+# _rx_warnings            = r"^([^ :]*:[^:].*)$"
 
-    def build_log(self,output,args,filenames):
+    def build_log(self, output, args, filenames):
         t = get_template('checker/compiler/scala_builder_report.html')
-        return t.render({'filenames' : filenames, 'output' : output, 'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm,ps: parm + ' ' + ps,args[1:],'')})
+        return t.render({'filenames' : filenames, 'output' : output, 'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm, ps: parm + ' ' + ps, args[1:], '')})
 
 from checker.admin import CheckerInline, AlwaysChangedModelForm
 
@@ -41,5 +44,3 @@ class CheckerForm(AlwaysChangedModelForm):
 class ScalaBuilderInline(CheckerInline):
     model = ScalaBuilder
     form = CheckerForm
-
-

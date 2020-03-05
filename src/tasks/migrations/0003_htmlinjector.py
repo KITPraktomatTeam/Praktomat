@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 import tasks.models
@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('inject_in_attestation_edit', models.BooleanField(default=True, help_text='Indicates whether HTML code shall be injected in attestation edits, e.g.: in https://praktomat.cs.kit.edu/2016_WS_Abschluss/attestation/134/edit')),
                 ('inject_in_attestation_view', models.BooleanField(default=False, help_text='Indicates whether HTML code shall be injected in attestation views, e.g.: in https://praktomat.cs.kit.edu/2016_WS_Abschluss/attestation/134')),
                 ('html_file', utilities.deleting_file_field.DeletingFileField(max_length=500, upload_to=tasks.models.get_htmlinjectorfile_storage_path)),
-                ('task', models.ForeignKey(to='tasks.Task')),
+                ('task', models.ForeignKey(to='tasks.Task', on_delete=models.CASCADE)),
             ],
         ),
     ]

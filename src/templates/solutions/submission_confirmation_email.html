@@ -1,15 +1,15 @@
 {% load i18n %}{% autoescape off %}{% trans "Hello " %}{{solution.author}},
 
-your solution to the task "{{solution.task}}" has been successfully uploaded.
+{% if uploader %}a{% else %}your{% endif %} solution to the task "{{solution.task}}" has been successfully uploaded{% if uploader %} in your name by trainer {{uploader}}{% endif %}.
 
-You can view your solution here: {{protocol}}://{{ domain }}{% url "solution_detail" solution_id=solution.id %}
+You can view the uploaded solution here: {{protocol}}://{{ domain }}{% url "solution_detail" solution_id=solution.id %}
 
-Your upload included these files:
+The upload included these files:
 {% for file in solution.solutionfile_set.all %}
-	{% with file.get_signature as signature %}{{file}} [MD5:{{file.get_hash}}] {% if signature %}[SIGNATURE:{{signature}}]{% endif %} {% endwith%}
+	{{file}} [SHA256:{{file.get_hash}}]
 {% endfor %}
 
-Please keep this email and the files you have uploded to verify that you've completed the task.
+Please keep this email and the files you have uploaded to verify that you've completed the task.
 
 {% trans "Thanks for using our site!" %}
 

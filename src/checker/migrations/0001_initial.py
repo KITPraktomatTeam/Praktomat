@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 import checker.checker.DejaGnu
@@ -37,10 +37,10 @@ class Migration(migrations.Migration):
                 ('required', models.BooleanField(default=False, help_text='The test must be passed to submit the solution.')),
                 ('always', models.BooleanField(default=True, help_text='The test will run on submission time.')),
                 ('critical', models.BooleanField(default=False, help_text='If this test fails, do not display further test results.')),
-                ('_flags', models.CharField(default=b'-Wall', help_text='Compiler flags', max_length=1000, blank=True)),
-                ('_output_flags', models.CharField(default=b'-o %s', help_text="Output flags. '%s' will be replaced by the program name.", max_length=1000, blank=True)),
-                ('_libs', models.CharField(default=b'', help_text='Compiler libraries', max_length=1000, blank=True)),
-                ('_file_pattern', models.CharField(default=b'^[a-zA-Z0-9_]*$', help_text='Regular expression describing all source files to be passed to the compiler.', max_length=1000)),
+                ('_flags', models.CharField(default='-Wall', help_text='Compiler flags', max_length=1000, blank=True)),
+                ('_output_flags', models.CharField(default='-o %s', help_text="Output flags. '%s' will be replaced by the program name.", max_length=1000, blank=True)),
+                ('_libs', models.CharField(default='', help_text='Compiler libraries', max_length=1000, blank=True)),
+                ('_file_pattern', models.CharField(default='^[a-zA-Z0-9_]*$', help_text='Regular expression describing all source files to be passed to the compiler.', max_length=1000)),
                 ('_main_required', models.BooleanField(default=True, help_text='Is a submission required to provide a main method?')),
             ],
             options={
@@ -76,7 +76,7 @@ class Migration(migrations.Migration):
                 ('required', models.BooleanField(default=False, help_text='The test must be passed to submit the solution.')),
                 ('always', models.BooleanField(default=True, help_text='The test will run on submission time.')),
                 ('critical', models.BooleanField(default=False, help_text='If this test fails, do not display further test results.')),
-                ('name', models.CharField(default=b'CheckStyle', help_text='Name to be displayed on the solution detail page.', max_length=100)),
+                ('name', models.CharField(default='CheckStyle', help_text='Name to be displayed on the solution detail page.', max_length=100)),
                 ('configuration', checker.basemodels.CheckerFileField(help_text='XML configuration of CheckStyle. See http://checkstyle.sourceforge.net/', max_length=500, upload_to=checker.basemodels.get_checkerfile_storage_path)),
             ],
             options={
@@ -112,10 +112,10 @@ class Migration(migrations.Migration):
                 ('required', models.BooleanField(default=False, help_text='The test must be passed to submit the solution.')),
                 ('always', models.BooleanField(default=True, help_text='The test will run on submission time.')),
                 ('critical', models.BooleanField(default=False, help_text='If this test fails, do not display further test results.')),
-                ('_flags', models.CharField(default=b'-Wall', help_text='Compiler flags', max_length=1000, blank=True)),
-                ('_output_flags', models.CharField(default=b'-o %s', help_text="Output flags. '%s' will be replaced by the program name.", max_length=1000, blank=True)),
-                ('_libs', models.CharField(default=b'', help_text='Compiler libraries', max_length=1000, blank=True)),
-                ('_file_pattern', models.CharField(default=b'^[a-zA-Z0-9_]*$', help_text='Regular expression describing all source files to be passed to the compiler.', max_length=1000)),
+                ('_flags', models.CharField(default='-Wall', help_text='Compiler flags', max_length=1000, blank=True)),
+                ('_output_flags', models.CharField(default='-o %s', help_text="Output flags. '%s' will be replaced by the program name.", max_length=1000, blank=True)),
+                ('_libs', models.CharField(default='', help_text='Compiler libraries', max_length=1000, blank=True)),
+                ('_file_pattern', models.CharField(default='^[a-zA-Z0-9_]*$', help_text='Regular expression describing all source files to be passed to the compiler.', max_length=1000)),
                 ('_main_required', models.BooleanField(default=True, help_text='Is a submission required to provide a main method?')),
             ],
             options={
@@ -167,10 +167,10 @@ class Migration(migrations.Migration):
                 ('required', models.BooleanField(default=False, help_text='The test must be passed to submit the solution.')),
                 ('always', models.BooleanField(default=True, help_text='The test will run on submission time.')),
                 ('critical', models.BooleanField(default=False, help_text='If this test fails, do not display further test results.')),
-                ('_flags', models.CharField(default=b'-Wall', help_text='Compiler flags', max_length=1000, blank=True)),
-                ('_output_flags', models.CharField(default=b'-o %s', help_text="Output flags. '%s' will be replaced by the program name.", max_length=1000, blank=True)),
-                ('_libs', models.CharField(default=b'', help_text='Compiler libraries', max_length=1000, blank=True)),
-                ('_file_pattern', models.CharField(default=b'^[a-zA-Z0-9_]*$', help_text='Regular expression describing all source files to be passed to the compiler.', max_length=1000)),
+                ('_flags', models.CharField(default='-Wall', help_text='Compiler flags', max_length=1000, blank=True)),
+                ('_output_flags', models.CharField(default='-o %s', help_text="Output flags. '%s' will be replaced by the program name.", max_length=1000, blank=True)),
+                ('_libs', models.CharField(default='', help_text='Compiler libraries', max_length=1000, blank=True)),
+                ('_file_pattern', models.CharField(default='^[a-zA-Z0-9_]*$', help_text='Regular expression describing all source files to be passed to the compiler.', max_length=1000)),
                 ('_main_required', models.BooleanField(default=True, help_text='Is a submission required to provide a main method?')),
             ],
             options={
@@ -187,10 +187,10 @@ class Migration(migrations.Migration):
                 ('required', models.BooleanField(default=False, help_text='The test must be passed to submit the solution.')),
                 ('always', models.BooleanField(default=True, help_text='The test will run on submission time.')),
                 ('critical', models.BooleanField(default=False, help_text='If this test fails, do not display further test results.')),
-                ('_flags', models.CharField(default=b'-Wall', help_text='Compiler flags', max_length=1000, blank=True)),
-                ('_output_flags', models.CharField(default=b'-o %s', help_text="Output flags. '%s' will be replaced by the program name.", max_length=1000, blank=True)),
-                ('_libs', models.CharField(default=b'', help_text='Compiler libraries', max_length=1000, blank=True)),
-                ('_file_pattern', models.CharField(default=b'^[a-zA-Z0-9_]*$', help_text='Regular expression describing all source files to be passed to the compiler.', max_length=1000)),
+                ('_flags', models.CharField(default='-Wall', help_text='Compiler flags', max_length=1000, blank=True)),
+                ('_output_flags', models.CharField(default='-o %s', help_text="Output flags. '%s' will be replaced by the program name.", max_length=1000, blank=True)),
+                ('_libs', models.CharField(default='', help_text='Compiler libraries', max_length=1000, blank=True)),
+                ('_file_pattern', models.CharField(default='^[a-zA-Z0-9_]*$', help_text='Regular expression describing all source files to be passed to the compiler.', max_length=1000)),
                 ('_main_required', models.BooleanField(default=True, help_text='Is a submission required to provide a main method?')),
             ],
             options={
@@ -213,9 +213,9 @@ class Migration(migrations.Migration):
                 ('unpack_zipfile', models.BooleanField(default=False, help_text='Unpack the zip file into the given subfolder. (It will be an error if the file is not a zip file; the filename is ignored.)')),
                 ('test_description', models.TextField(help_text='Description of the Testcase. To be displayed on Checker Results page when checker is unfolded.')),
                 ('name', models.CharField(help_text='Name of the Testcase. To be displayed as title on Checker Results page', max_length=100)),
-                ('ignore', models.CharField(default=b'', help_text='space-seperated list of files to be ignored during compilation', max_length=4096, blank=True)),
+                ('ignore', models.CharField(default='', help_text='space-seperated list of files to be ignored during compilation', max_length=4096, blank=True)),
                 ('require_safe', models.BooleanField(default=True, help_text='Is a submission required to be Safe (according to GHCs Safe-Mode)?')),
-                ('include_testcase_in_report', models.CharField(default=b'DL', help_text='Make the cestcases source available via the checkers result report?', max_length=4, choices=[(b'DL', b'Download-Link only'), (b'NO', b'Do not make the testcases source available'), (b'FULL', b'Also copy the source into the report')])),
+                ('include_testcase_in_report', models.CharField(default='DL', help_text='Make the cestcases source available via the checkers result report?', max_length=4, choices=[(b'DL', b'Download-Link only'), (b'NO', b'Do not make the testcases source available'), (b'FULL', b'Also copy the source into the report')])),
             ],
             options={
                 'abstract': False,
@@ -253,7 +253,7 @@ class Migration(migrations.Migration):
                 ('required', models.BooleanField(default=False, help_text='The test must be passed to submit the solution.')),
                 ('always', models.BooleanField(default=True, help_text='The test will run on submission time.')),
                 ('critical', models.BooleanField(default=False, help_text='If this test fails, do not display further test results.')),
-                ('logic', models.CharField(default=b'HOL', help_text='Default heap to use', max_length=100)),
+                ('logic', models.CharField(default='HOL', help_text='Default heap to use', max_length=100)),
             ],
             options={
                 'abstract': False,
@@ -269,10 +269,10 @@ class Migration(migrations.Migration):
                 ('required', models.BooleanField(default=False, help_text='The test must be passed to submit the solution.')),
                 ('always', models.BooleanField(default=True, help_text='The test will run on submission time.')),
                 ('critical', models.BooleanField(default=False, help_text='If this test fails, do not display further test results.')),
-                ('_flags', models.CharField(default=b'-Wall', help_text='Compiler flags', max_length=1000, blank=True)),
-                ('_output_flags', models.CharField(default=b'-o %s', help_text="Output flags. '%s' will be replaced by the program name.", max_length=1000, blank=True)),
-                ('_libs', models.CharField(default=b'', help_text='Compiler libraries', max_length=1000, blank=True)),
-                ('_file_pattern', models.CharField(default=b'^[a-zA-Z0-9_]*$', help_text='Regular expression describing all source files to be passed to the compiler.', max_length=1000)),
+                ('_flags', models.CharField(default='-Wall', help_text='Compiler flags', max_length=1000, blank=True)),
+                ('_output_flags', models.CharField(default='-o %s', help_text="Output flags. '%s' will be replaced by the program name.", max_length=1000, blank=True)),
+                ('_libs', models.CharField(default='', help_text='Compiler libraries', max_length=1000, blank=True)),
+                ('_file_pattern', models.CharField(default='^[a-zA-Z0-9_]*$', help_text='Regular expression describing all source files to be passed to the compiler.', max_length=1000)),
                 ('_main_required', models.BooleanField(default=True, help_text='Is a submission required to provide a main method?')),
             ],
             options={
@@ -289,10 +289,10 @@ class Migration(migrations.Migration):
                 ('required', models.BooleanField(default=False, help_text='The test must be passed to submit the solution.')),
                 ('always', models.BooleanField(default=True, help_text='The test will run on submission time.')),
                 ('critical', models.BooleanField(default=False, help_text='If this test fails, do not display further test results.')),
-                ('_flags', models.CharField(default=b'-Wall', help_text='Compiler flags', max_length=1000, blank=True)),
-                ('_output_flags', models.CharField(default=b'-o %s', help_text="Output flags. '%s' will be replaced by the program name.", max_length=1000, blank=True)),
-                ('_libs', models.CharField(default=b'', help_text='Compiler libraries', max_length=1000, blank=True)),
-                ('_file_pattern', models.CharField(default=b'^[a-zA-Z0-9_]*$', help_text='Regular expression describing all source files to be passed to the compiler.', max_length=1000)),
+                ('_flags', models.CharField(default='-Wall', help_text='Compiler flags', max_length=1000, blank=True)),
+                ('_output_flags', models.CharField(default='-o %s', help_text="Output flags. '%s' will be replaced by the program name.", max_length=1000, blank=True)),
+                ('_libs', models.CharField(default='', help_text='Compiler libraries', max_length=1000, blank=True)),
+                ('_file_pattern', models.CharField(default='^[a-zA-Z0-9_]*$', help_text='Regular expression describing all source files to be passed to the compiler.', max_length=1000)),
                 ('_main_required', models.BooleanField(default=True, help_text='Is a submission required to provide a main method?')),
             ],
             options={
@@ -312,8 +312,8 @@ class Migration(migrations.Migration):
                 ('class_name', models.CharField(help_text='The fully qualified name of the test case class (without .class)', max_length=100)),
                 ('test_description', models.TextField(help_text='Description of the Testcase. To be displayed on Checker Results page when checker is  unfolded.')),
                 ('name', models.CharField(help_text='Name of the Testcase. To be displayed as title on Checker Results page', max_length=100)),
-                ('ignore', models.CharField(default=b'', help_text='space-seperated list of files to be ignored during compilation', max_length=4096)),
-                ('junit_version', models.CharField(default=b'junit3', max_length=16, choices=[('junit4', 'JUnit 4'), ('junit3', 'JUnit 3')])),
+                ('ignore', models.CharField(default='', help_text='space-seperated list of files to be ignored during compilation', max_length=4096)),
+                ('junit_version', models.CharField(default='junit3', max_length=16, choices=[('junit4', 'JUnit 4'), ('junit3', 'JUnit 3')])),
             ],
             options={
                 'abstract': False,
@@ -362,8 +362,8 @@ class Migration(migrations.Migration):
                 ('critical', models.BooleanField(default=False, help_text='If this test fails, do not display further test results.')),
                 ('max_line_length', models.IntegerField(default=80, help_text='The maximum length of a line of code.')),
                 ('tab_width', models.IntegerField(default=4, help_text='The amount of characters a tab represents.')),
-                ('include', models.CharField(default=b'.*', help_text='Regular expression describing the filenames to be checked. Case Insensetive. Blank: use all files.', max_length=100, blank=True)),
-                ('exclude', models.CharField(default=b'.*\\.txt$', help_text='Regular expression describing included filenames, which shall be excluded. Case Insensetive. Blank: use all files.', max_length=100, blank=True)),
+                ('include', models.CharField(default='.*', help_text='Regular expression describing the filenames to be checked. Case Insensetive. Blank: use all files.', max_length=100, blank=True)),
+                ('exclude', models.CharField(default='.*\\.txt$', help_text='Regular expression describing included filenames, which shall be excluded. Case Insensetive. Blank: use all files.', max_length=100, blank=True)),
             ],
             options={
                 'abstract': False,
@@ -397,7 +397,7 @@ class Migration(migrations.Migration):
                 ('required', models.BooleanField(default=False, help_text='The test must be passed to submit the solution.')),
                 ('always', models.BooleanField(default=True, help_text='The test will run on submission time.')),
                 ('critical', models.BooleanField(default=False, help_text='If this test fails, do not display further test results.')),
-                ('name', models.CharField(default=b'Externen Tutor ausf\xc3\xbchren', help_text='Name to be displayed on the solution detail page.', max_length=100)),
+                ('name', models.CharField(default='Externen Tutor ausführen', help_text='Name to be displayed on the solution detail page.', max_length=100)),
                 ('shell_script', checker.basemodels.CheckerFileField(help_text='A script (e.g. a shell script) to run. Its output will be displayed to the user (if public), the checker will succeed if it returns an exit code of 0. The environment will contain the variables JAVA and PROGRAM.', max_length=500, upload_to=checker.basemodels.get_checkerfile_storage_path)),
                 ('remove', models.CharField(help_text='Regular expression describing passages to be removed from the output.', max_length=5000, blank=True)),
                 ('returns_html', models.BooleanField(default=False, help_text="If the script doesn't return HTML it will be enclosed in &lt; pre &gt; tags.")),
@@ -425,7 +425,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='IgnoringHaskellBuilder',
             fields=[
-                ('haskellbuilder_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='checker.HaskellBuilder')),
+                ('haskellbuilder_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='checker.HaskellBuilder', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -435,7 +435,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='IgnoringJavaBuilder',
             fields=[
-                ('javabuilder_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='checker.JavaBuilder')),
+                ('javabuilder_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='checker.JavaBuilder', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -445,7 +445,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TestOnlyBuildingBuilder',
             fields=[
-                ('haskellbuilder_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='checker.HaskellBuilder')),
+                ('haskellbuilder_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='checker.HaskellBuilder', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
