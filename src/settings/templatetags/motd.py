@@ -7,7 +7,7 @@ def do_get_motd(parser, token):
     # split_contents() knows not to split quoted strings.
     tokens = token.split_contents()
     if len(tokens) != 1:
-        raise template.TemplateSyntaxError, "%r tag should have no arguments" % (tokens[0],)
+        raise template.TemplateSyntaxError("%r tag should have no arguments" % (tokens[0],))
     return MotdNode()
 
 class MotdNode(template.Node):
