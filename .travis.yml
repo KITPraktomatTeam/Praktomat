@@ -1,16 +1,16 @@
 language: python
 
 python:
- - "2.7"
+ - "3.5"
 
 install:
  - sudo apt-get update
- - sudo apt-get install python2.7-dev swig libsasl2-dev libssl-dev libpq-dev
- - sudo apt-get install openjdk-6-jdk dejagnu checkstyle gcj-jdk
- - sudo apt-get install phantomjs
+ - sudo apt-get install swig libsasl2-dev libssl-dev libpq-dev
+ - sudo apt-get install openjdk-8-jdk dejagnu checkstyle gcj-jdk
  - sudo apt-get install r-base
- - pip install https://pypi.python.org/packages/b8/2f/49e53b0d0e94611a2dc624a1ad24d41b6d94d0f1b0a078443407ea2214c2/subprocess32-3.2.7.tar.gz#md5=824c801e479d3e916879aae3e9c15e16
  - pip install -r requirements.txt
+ - pip freeze
+ - python --version && python -c "import sqlite3; print(\"... uses pysqlite \" + sqlite3.version +\" with SQLite \" + sqlite3.sqlite_version);"
 
 script:
  - ./src/manage-test.py test accounts attestation checker configuration solutions tasks

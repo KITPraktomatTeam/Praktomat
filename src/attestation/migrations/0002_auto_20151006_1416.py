@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 
@@ -17,31 +17,31 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='rating',
             name='task',
-            field=models.ForeignKey(to='tasks.Task'),
+            field=models.ForeignKey(to='tasks.Task', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='attestation',
             name='author',
-            field=models.ForeignKey(verbose_name=b'attestation author', to='accounts.User'),
+            field=models.ForeignKey(verbose_name=b'attestation author', to='accounts.User', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='attestation',
             name='final_grade',
-            field=models.ForeignKey(to='attestation.RatingScaleItem', help_text='The mark for the whole solution.', null=True),
+            field=models.ForeignKey(to='attestation.RatingScaleItem', help_text='The mark for the whole solution.', null=True, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='attestation',
             name='solution',
-            field=models.ForeignKey(to='solutions.Solution'),
+            field=models.ForeignKey(to='solutions.Solution', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='annotatedsolutionfile',
             name='attestation',
-            field=models.ForeignKey(to='attestation.Attestation'),
+            field=models.ForeignKey(to='attestation.Attestation', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='annotatedsolutionfile',
             name='solution_file',
-            field=models.ForeignKey(to='solutions.SolutionFile'),
+            field=models.ForeignKey(to='solutions.SolutionFile', on_delete=models.CASCADE),
         ),
     ]

@@ -23,7 +23,7 @@
 
 {% if solution.accepted %}
 	{% if solution.warnings %}
-		<p class="warning" id='commit_text'>{% trans "All required tests have been passed. Nevertheless there is at least one warning" %} 
+		<p class="warning" id='commit_text'>{% trans "All required tests have been passed. Nevertheless there is at least one warning" %}
 		{% if not solution.task.expired %}{% trans "You should consider correcting it." %}{% endif %}</p>
 	{% else %}
 		<p class="passed" id='commit_text'>{% trans "All required tests have been passed." %}</p>
@@ -78,10 +78,14 @@
 	{% include "solutions/solution_files_inline.html" %}
 {% endwith %}
 
+
+<a href={% url "solution_download" solution_id=solution.id %} id='download'><span class="ui-icon ui-icon-disk"></span>Download Solution</a>
+
 {% for snippet in htmlinjector_snippets %}
 		<div class="snippet">
 			{{snippet|safe}}
 		</div>
 {% endfor %}
+
 
 </div>{% endblock %}
