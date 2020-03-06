@@ -42,6 +42,6 @@ from . import defaults
 defaults.load_defaults(globals())
 
 # To get exceptions logged as well:
-MIDDLEWARE_CLASSES += (
+MIDDLEWARE += [
         'utilities.exceptionlogger.ExceptionLoggingMiddleware',
-    )
+    ]

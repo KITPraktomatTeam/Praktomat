@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
+# -*- encoding: utf-8 -*-
+
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
 
 import zipfile
-import tarfile
 import tempfile
 import mimetypes
 import shutil
@@ -33,8 +36,8 @@ class Solution(models.Model):
 
     number = models.IntegerField(null=False, editable=False, help_text = _("Id unique in task and user. E.g. Solution 1 of user X in task Y in contrast to global solution Z"))
 
-    task = models.ForeignKey('tasks.task')
-    author = models.ForeignKey(User, verbose_name="solution author")
+    task = models.ForeignKey('tasks.task', on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="solution author")
     creation_date = models.DateTimeField(auto_now_add=True)
 
     testupload = models.BooleanField( default = False, help_text = _('Indicates whether this solution is a test upload.'))
@@ -117,8 +120,8 @@ def get_solutionfile_upload_path(instance, filename):
 class SolutionFile(models.Model):
     """docstring for SolutionFile"""
 
-    solution = models.ForeignKey(Solution)
-    file = models.FileField(upload_to = get_solutionfile_upload_path, max_length=500, help_text = _('Source code file as part of a solution an archive file (.zip, .tar or .tar.gz) containing multiple solution files.'))
+    solution = models.ForeignKey(Solution, on_delete=models.CASCADE)
+    file = models.FileField(upload_to = get_solutionfile_upload_path, max_length=500, help_text = _('Source code file as part of a solution an archive file (.zip) containing multiple solution files.'))
     mime_type = models.CharField(max_length=100, help_text = _("Guessed file type. Automatically  set on save()."))
 
     # ignore hidden or os-specific files, etc. in zipfiles
@@ -142,15 +145,6 @@ class SolutionFile(models.Model):
                     temp_file = tempfile.NamedTemporaryFile()                                    # autodeleted
                     temp_file.write(zip.open(zip_file_name).read())
                     zip_file_name = zip_file_name  if isinstance(zip_file_name, str) else str(zip_file_name, errors='replace')
-                    new_solution_file.file.save(zip_file_name, File(temp_file), save=True)        # need to check for filenames begining with / or ..?
-        elif self.file.name.upper().endswith(('.TAR.GZ', '.TAR.BZ2', '.TAR')):
-            tar = tarfile.open(fileobj = self.file)
-            for member in tar.getmembers():
-                if not self.ignorred_file_names_re.search(member.name) and member.isfile():
-                    new_solution_file = SolutionFile(solution=self.solution)
-                    temp_file = tempfile.NamedTemporaryFile()                                    # autodeleted
-                    temp_file.write(tar.extractfile(member.name).read())
-                    zip_file_name = member.name  if isinstance(member.name, str) else str(member.name, errors='replace')
                     new_solution_file.file.save(zip_file_name, File(temp_file), save=True)        # need to check for filenames begining with / or ..?
         else:
             self.mime_type = mimetypes.guess_type(self.file.name)[0]
@@ -352,14 +346,22 @@ class MessageWrapper():
     def __init__(self, message):
         self.message = message
 
-    def as_bytes(self, linesep=b'\n'):
+    # Django supplies Strings as "linesep" (and not Bytes)
+    def as_bytes(self, linesep='\n'):
+        # byte version of linesep
+        linesep_bytes = linesep.encode('ascii')
         # Construct the message with the full S/MIME mail as body
-        msg = self.message.as_bytes(linesep)
+        msg = self.message.as_bytes(linesep=linesep)
         # Now, use the S/MIME headers as headers for the email
-        lines = msg.split(linesep)
+        lines = msg.split(linesep_bytes)
+        if (lines[0] != b'Content-Type: text/plain; charset="utf-8"' or
+                lines[1] != b'MIME-Version: 1.0' or
+                not re.match(b'Content-Transfer-Encoding: (7|8)bit', lines[2])):
+            raise AssertionError('Assumptions on message format violated')
         i = lines.index(b'')
-        transformed = [s.replace(b"Content-Type: text/plain", lines[i+2]) for s in lines[0:i]] + lines[i+3:]
-        return linesep.join(transformed)
+        j = lines[i+1:].index(b'') + i + 1
+        transformed = lines[i+1:j] + lines[3:i] + lines[j+1:]
+        return linesep_bytes.join(transformed)
 
     def get_charset(self):
         return None

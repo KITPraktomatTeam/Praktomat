@@ -1,3 +1,8 @@
+# -*- encoding: utf-8 -*-
+
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
+
 from django.db import models, transaction
 from django.conf import settings
 from tasks.models import Task
@@ -23,12 +28,12 @@ class Attestation(models.Model):
     """An attestation for a student's solution."""
 
     created = models.DateTimeField(auto_now_add=True)
-    solution = models.ForeignKey(Solution)
-    author = models.ForeignKey(User, verbose_name="attestation author", limit_choices_to = {'groups__name': 'Tutor'})
+    solution = models.ForeignKey(Solution, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, verbose_name="attestation author", limit_choices_to = {'groups__name': 'Tutor'}, on_delete=models.CASCADE)
 
     public_comment = models.TextField(blank=True, help_text = _('Comment which is shown to the user.'))
     private_comment = models.TextField(blank=True, help_text = _('Comment which is only visible to tutors'))
-    final_grade = models.ForeignKey('RatingScaleItem', null=True, help_text = _('The mark for the whole solution.'))
+    final_grade = models.ForeignKey('RatingScaleItem', null=True, help_text = _('The mark for the whole solution.'), on_delete=models.SET_NULL)
 
     final = models.BooleanField(default = False, help_text = _('Indicates whether the attestation is ready to be published'))
     published = models.BooleanField(default = False, help_text = _('Indicates whether the user can see the attestation.'))
@@ -186,8 +191,8 @@ class Attestation(models.Model):
 
 class AnnotatedSolutionFile(models.Model):
     """"""
-    attestation = models.ForeignKey(Attestation)
-    solution_file = models.ForeignKey(SolutionFile)
+    attestation = models.ForeignKey(Attestation, on_delete=models.CASCADE)
+    solution_file = models.ForeignKey(SolutionFile, on_delete=models.CASCADE)
     content = models.TextField(help_text = _('The content of the solution file annotated by the tutor.'), blank = True)
 
     def has_anotations(self):
@@ -223,7 +228,7 @@ class RatingScale(models.Model):
 
 class RatingScaleItem(models.Model):
     """ lists all items(marks) of an rating scale"""
-    scale = models.ForeignKey(RatingScale)
+    scale = models.ForeignKey(RatingScale, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, help_text = _('The Name of the item(mark) in the rating scale. E.g.: "A" or "very good" '))
     position = models.PositiveSmallIntegerField(help_text = _('Defines the order in which the items are sorted. Lowest is best.'))
 
@@ -235,18 +240,18 @@ class RatingScaleItem(models.Model):
 
 class Rating(models.Model):
     """ intermediate model to assign a rating aspect and a rating scale to a task """
-    task = models.ForeignKey(Task)
-    aspect = models.ForeignKey(RatingAspect)
-    scale = models.ForeignKey(RatingScale)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    aspect = models.ForeignKey(RatingAspect, on_delete=models.CASCADE)
+    scale = models.ForeignKey(RatingScale, on_delete=models.CASCADE)
 
     def __str__(self):
         return "%s - %s - %s" % (self.task.title, self.aspect.name, self.scale.name)
 
 class RatingResult(models.Model):
     """ the rating of particular aspect of a specific solution """
-    attestation = models.ForeignKey(Attestation)
-    rating = models.ForeignKey(Rating)
-    mark = models.ForeignKey(RatingScaleItem, null=True) # allow for db-null so that rating results can be created programaticly without mark (blank = False !)
+    attestation = models.ForeignKey(Attestation, on_delete=models.CASCADE)
+    rating = models.ForeignKey(Rating, on_delete=models.CASCADE)
+    mark = models.ForeignKey(RatingScaleItem, null=True, on_delete=models.SET_NULL) # allow for db-null so that rating results can be created programaticly without mark (blank = False !)
 
     def __str__(self):
         return str(self.rating.aspect)

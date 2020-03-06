@@ -2,7 +2,7 @@ from django.conf.urls import url, include
 from django.views.generic.base import RedirectView
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 import sys
 import os
 
@@ -15,7 +15,6 @@ import accounts.urls
 import tinymce.urls
 
 from django.contrib import admin
-admin.autodiscover()
 
 urlpatterns = [
     # Index page
@@ -26,7 +25,7 @@ urlpatterns = [
     url(r'^admin/tasks/task/(?P<task_id>\d+)/final_solutions', tasks.views.download_final_solutions, name="download_final_solutions"),
     url(r'^admin/attestation/ratingscale/generate', attestation.views.generate_ratingscale, name="generate_ratingscale"),
     url(r'^admin/doc/', include(django.contrib.admindocs.urls)),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
 
     # Login and Registration
     url(r'^accounts/', include(accounts.urls)),

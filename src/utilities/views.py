@@ -12,7 +12,7 @@ from accounts.views import access_denied
 from solutions.models import Solution
 
 def serve_unrestricted(request, path):
-     return sendfile(request, path)
+    return sendfile(request, path)
 
 @login_required
 def serve_staff_only(request, path):
