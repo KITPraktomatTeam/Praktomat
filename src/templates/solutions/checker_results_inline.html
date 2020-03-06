@@ -1,16 +1,16 @@
 {% comment %}
-	include the folowing depenencies once in the including pages head:
+	include the following dependencies once in the including pages head:
 	<script type="text/javascript" src="{{STATIC_URL}}script/solution_inlines.js"></script>
 	<link type="text/css" rel="stylesheet" href="{{STATIC_URL}}frameworks/jquery/jquery-ui-theme.css" />
 {% endcomment %}
 
 
-{% for result in results %} 
+{% for result in results %}
 	<div class="result">
 		<h3 class="{{result.only_title|yesno:',clickable'}} result">
 			{% if not result.only_title %}<a class="checkerinline" href="#{{result.title}}" title="{{result.title}}" >{% endif %}
-			<span class="ui-icon {{result.only_title|yesno:'icon-none,ui-icon-triangle-1-s'}}"></span> 
-			{{result.title}} <span class="{{result.public|yesno:',ui-icon ui-icon-locked icon-orange'}}"></span>: 
+			<span class="ui-icon {{result.only_title|yesno:'icon-none,ui-icon-triangle-1-s'}}"></span>
+			{{result.title}} <span class="{{result.public|yesno:',ui-icon ui-icon-locked icon-orange'}}"></span>:
 			<span class="{% if result.passed %} passed {% else %}{% if result.required %} error {% else %} warning {% endif %}{% endif %}">
 				{{result.passed|yesno:_("passed, failed")}} {% if result.passed %} {% else %} {% if result.required %} {% else %} (but not required) {% endif %} {% endif %}
 			</span>

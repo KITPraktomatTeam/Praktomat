@@ -7,7 +7,7 @@
 
 {% block content %}
 	<h1>{{ account|yesno:_("Activation successful,Activation unsuccessful") }}</h1>
-	
+
 	{% if account %}
 		<p>{% blocktrans %} You have successfully activated your account. You can now login.{% endblocktrans %}</p>
 		<a href="{% url "login" %}">Login ></a>
@@ -15,7 +15,7 @@
 		<p>{% trans 'Your activation has failed due to one of the folloing reasons:' %}</p>
 		<ul>
 			<li>{% blocktrans %} The activation period of {{expiration_days}} days has expired. {% endblocktrans %}</li>
-			<li>{% trans "The activation code was already succsessfully used. You may try to log in." %}</li>
+			<li>{% trans "The activation code was already successfully used. You may try to log in." %}</li>
 			<li>{% trans "The activation code is invalid." %}</li>
 			<li>{% trans "An account with the same matnumber was already activated." %}</li>
 		</ul>

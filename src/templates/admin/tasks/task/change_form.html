@@ -18,7 +18,7 @@
 	<div class="add-row">
 		{% if add %}
 			Save this task to add a model solution
-		{% else %}	
+		{% else %}
 			<a href="{% url "model_solution" object_id %}" onclick="return showAddAnotherPopup(this);">{% if original.model_solution %}Edit{% else %}Add{% endif %} model solution</a>
 		{% endif %}
 	</div>
