@@ -57,13 +57,13 @@ final class GgT {
 	    arg2 = in.readInt();
 	    // StdInput.readLn();
 	    
-	    // Prüfung Eingabe
+	    // PrÃ¼fung Eingabe
 	    if ((arg1 == 0) || (arg2 == 0)){
 		if (arg1 == 0 && arg2 == 0){
 		    System.exit(0);
 		} else { 
 		    // Null als ein Argument
-		    System.out.println("Fehler! ungültiger Wert");
+		    System.out.println("Fehler! ungÃ¼ltiger Wert");
 		    continue;
 		}
 	    }

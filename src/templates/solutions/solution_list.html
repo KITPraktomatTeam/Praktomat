@@ -2,9 +2,9 @@
 {% load i18n %}
 {% block extrahead %}{{ block.super }}
 <script type="text/javascript" src="{{STATIC_URL}}frameworks/jquery.formset/jquery.formset.min.js"></script>
-<script type="text/javascript">	
+<script type="text/javascript">
 $(function() {
-	$('fieldset.module .form-row').formset({ 
+	$('fieldset.module .form-row').formset({
 		prefix: '{{ formset.prefix }}',
 		deleteText: '',
 		deleteCssClass: 'icon icon-orange ui-icon-circle-minus',
@@ -13,27 +13,27 @@ $(function() {
 	});
 })
 
-$(function(){ 
-	$('form[enctype=multipart/form-data]').submit(function(){ 
-	  	$("#progress").overlay({ 
-	    	top: 272, 
-	    	api: true,
+$(function(){
+	$('form[enctype=multipart/form-data]').submit(function(){
+		$("#progress").overlay({
+			top: 272,
+			api: true,
 			closeOnClick: false,
-			closeOnEsc: false, 
-			expose: { 
-	        	color: '#333', 
-	        	loadSpeed: 1000, 
-	        	opacity: 0.9 
-		    }, 
+			closeOnEsc: false,
+			expose: {
+				color: '#333',
+				loadSpeed: 1000,
+				opacity: 0.9
+			},
 		}).load();
 	});
 });
 
- $(document).ready(function(){
- 	$("#help_icon").tooltip({
+$(document).ready(function(){
+	$("#help_icon").tooltip({
 		position:  "center left"
 	});
- })
+})
 
 </script>
 {% endblock %}
@@ -57,19 +57,19 @@ $(function(){
 			<input type="submit" value="upload" />
 		</form>
 	{% else %}
-		<h2>{%trans "Upload solution" %}</h2> 
+		<h2>{%trans "Upload solution" %}</h2>
 		{%trans "The deadline has passed. Therefore (re)submission is not possible." %}
 	{% endif %}
 </div>
 
 <div class='right'>
 	<div id='help_icon'><span class="icon icon-orange ui-icon-info"></span></div>
-	<div class="tooltip"> 
-    	<span class="icon ui-icon-bullet icon-red"></span> <a>Errors</a><br/>
-		<span class="icon ui-icon-bullet icon-orange"></span> <a>Warnings</a><br/> 
-		<span class="icon ui-icon-bullet icon-green"></span> <a>No Warnings</a><br/>  		
-		<span class="icon ui-icon-script"></span> <a>Attest</a><br/> 
-	</div> 
+	<div class="tooltip">
+		<span class="icon ui-icon-bullet icon-red"></span> <a>Errors</a><br/>
+		<span class="icon ui-icon-bullet icon-orange"></span> <a>Warnings</a><br/>
+		<span class="icon ui-icon-bullet icon-green"></span> <a>No Warnings</a><br/>
+		<span class="icon ui-icon-script"></span> <a>Attest</a><br/>
+	</div>
 	<h2>{% trans "Final Solution" %}</h2>
 	{% if final_solution %}
 		{% with final_solution as solution %}
@@ -78,7 +78,7 @@ $(function(){
 	{% else %}
 		<span class="icon ui-icon-alert icon-red"></span> {% trans "There is no final solution." %}
 	{% endif %}
-	
+
 	<h2>{% trans "Solution History" %}</h2>
 	{% for solution in solutions %}
 		{% include "solutions/solution_list_inline.html" %}
@@ -87,10 +87,10 @@ $(function(){
 	{%endfor%}
 </div>
 
-<div class="simple_overlay" id="progress"> 
+<div class="simple_overlay" id="progress">
 	<!-- spinner from http://ajaxload.info/ -->
 	<img id="spinner" src="{{STATIC_URL}}images/loading.gif" alt="loading" />
-    <p>Please wait while your solution is examined.</p>
-</div> 
+	<p>Please wait while your solution is examined.</p>
+</div>
 
 </div>{% endblock %}
