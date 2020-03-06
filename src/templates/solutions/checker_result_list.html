@@ -2,28 +2,28 @@
 {% load i18n %}
 {% block extrahead %}{{ block.super }}
 <script type="text/javascript" src="{{STATIC_URL}}frameworks/jquery.formset/jquery.formset.min.js"></script>
-<script type="text/javascript">	
- $(document).ready(function(){
- 	$("#help_icon").tooltip({
-		position:  "center left"
-	});
- })
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("#help_icon").tooltip({
+			position:  "center left"
+		});
+	})
 </script>
 <style>
-			.verticalText
-			{
-				text-align: center;
-				vertical-align: middle;
-				width: 10px;
-				margin: 0px;
-				padding: 0px;
-				padding-left: 3px;
-				padding-right: 3px;
-				padding-top: 10px;
-				white-space: nowrap;
-				-webkit-transform: rotate(-90deg); 
-				-moz-transform: rotate(-90deg);  				
-			};
+	.verticalText
+	{
+		text-align: center;
+		vertical-align: middle;
+		width: 10px;
+		margin: 0px;
+		padding: 0px;
+		padding-left: 3px;
+		padding-right: 3px;
+		padding-top: 10px;
+		white-space: nowrap;
+		-webkit-transform: rotate(-90deg);
+		-moz-transform: rotate(-90deg);
+	};
 </style>
 {% endblock %}
 {% block breadcrumbs %} {{block.super}} > <a href={% url "task_detail" task_id=task.id%}>{{task.title}}</a> > Checker Results{% endblock %}
@@ -32,7 +32,7 @@
 		<table>
 		<tr>
 			<th>Name</th>
-			<th>Matriklnr</th>
+			<th>Matrnumberr</th>
 			<th>Username</th>
 			{% for checker in checkers_seen %}
 			<th align="center">{{checker}}</th>
@@ -44,11 +44,11 @@
 			<td nowrap>{{user.mat_number}}</td>
 			<td nowrap>{{user.username}}</td>
 			{% for result in results %}
-				{% if result %} 
-			<td align="center"><img src="{{STATIC_URL}}admin/img/admin/icon-{{ result.passed|yesno:"yes,no" }}.gif" alt="{{result.passed}}"></td>
+				{% if result %}
+					<td align="center"><img src="{{STATIC_URL}}admin/img/admin/icon-{{ result.passed|yesno:"yes,no" }}.gif" alt="{{result.passed}}"></td>
 				{% else %}
-			<td></td>
-                	        {% endif %}
+					<td></td>
+				{% endif %}
 			{% endfor %}
 		{% endfor %}
 	</table>

@@ -3,7 +3,7 @@
 $(document).ready(function(){
 
 	// hide all order number inputs
-	$('td.position').hide();
+	$('td.field-position').hide();
 	$("th:contains('Position')").hide();
 
 	// remove double name
@@ -13,7 +13,7 @@ $(document).ready(function(){
 	// change cursor
 	$(".dynamic-ratingscaleitem_set").css('cursor', 'move');
 
-	// apply sortebility
+	// apply sortability
 	$("tbody").sortable({
         items: '.dynamic-ratingscaleitem_set',
 		revert: true,

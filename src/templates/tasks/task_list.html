@@ -17,28 +17,30 @@ function resize(id) {
 {% block content %}<div id='task_list'>
 
 <div id="welcome">
-	
+
 	{% motd %}
-	
-	{% chunk "Welcome Message" %}
-	
+
 	{% if not user.is_trainer and not user.is_superuser %}
 		{% if tutors or trainers %}
 			<div id="contact"><a> Got Problems? </a>
 			{% if tutors %}
 				<a> Your tutor{{tutors.count|pluralize}}: </a>
 				{% for tutor in tutors %}
-					<a href="mailto:{{tutor.email}}">{{tutor.get_full_name}}</a>	
+					<a href="mailto:{{tutor.email}}">{{tutor.get_full_name}}</a>
 				{% endfor %}
 			{% endif %}
 			{% if trainers %}
 				<a> Your trainer{{trainers.count|pluralize}}: </a>
 				{% for trainer in trainers %}
-					<a href="mailto:{{trainer.email}}">{{trainer.get_full_name}}</a>	
+					<a href="mailto:{{trainer.email}}">{{trainer.get_full_name}}</a>
 				{% endfor %}
 			{% endif %}</div>
 		{% endif %}
 	{% endif %}
+
+	{% chunk "Welcome Message" %}
+
+	{% if user_text %}<pre>{{ user_text }}</pre>{% endif %}
 </div>
 
 <div style="font-size:18px;color:red;font-weight: bold;">{% if calculated_grade < threshold and user.is_user %}{% chunk 'warning message' %}{% endif %}</div>
@@ -71,7 +73,7 @@ function resize(id) {
 	<a>{% trans "No tasks to be submitted at the moment." %}</a>
 {% endfor %}</div>
 
-{% if user.is_user %}	
+{% if user.is_user %}
 	{% if attestations %}
 		<div id="attestation_overview">
 			<h2>Result Overview</h2>
@@ -86,13 +88,13 @@ function resize(id) {
 						<td>{{task.final_grade_rating_scale.name}}</td>
 					</tr>
 				{% endfor %}
-				
+
 				{% if show_final_grade %}
 					<tr class="final_grade"><td>Final Grade</td><td>{{user.final_grade}}</td></tr>
 				{% else %}
 					<tr class="final_grade"><td>Predicted Final Grade</td><td>{{calculated_grade}}</td></tr>
 				{% endif %}
-				
+
 			</table>
 		</div>
 	{% endif %}

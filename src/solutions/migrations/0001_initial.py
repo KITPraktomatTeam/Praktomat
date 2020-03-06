@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 import solutions.models
@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('warnings', models.BooleanField(default=False, help_text='Indicates whether the solution has at least failed one public and not required tests.')),
                 ('plagiarism', models.BooleanField(default=False, help_text='Indicates whether the solution is a rip-off of another one.')),
                 ('final', models.BooleanField(default=False, help_text='Indicates whether this solution is the last (accepted) of the author.')),
-                ('author', models.ForeignKey(verbose_name=b'solution author', to='accounts.User')),
+                ('author', models.ForeignKey(verbose_name=b'solution author', to='accounts.User', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('file', models.FileField(help_text='Source code file as part of a solution an archive file (.zip, .tar or .tar.gz) containing multiple solution files.', max_length=500, upload_to=solutions.models.get_solutionfile_upload_path)),
                 ('mime_type', models.CharField(help_text='Guessed file type. Automatically  set on save().', max_length=100)),
-                ('solution', models.ForeignKey(to='solutions.Solution')),
+                ('solution', models.ForeignKey(to='solutions.Solution', on_delete=models.CASCADE)),
             ],
         ),
     ]
