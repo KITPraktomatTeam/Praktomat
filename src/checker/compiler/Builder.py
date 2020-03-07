@@ -124,7 +124,16 @@ class CompilerOrLinker(Checker, IncludeHelper):
         # use it where you want like this :  env.set_program(self.main_module(env)) #
         for module_name in self.get_file_names(env):
             try:
-                return module_name[:string.index(module_name, '.')]
+
+                import sys
+                PY2 = sys.version_info[0] == 2
+                PY3 = sys.version_info[0] == 3
+                if PY3:
+                    return module_name[:module_name.index('.')]
+                else:
+                    import string
+                    return module_name[:string.index(module_name, '.')]
+                
             except ValueError:
                 pass
         # Module name not found
@@ -218,8 +227,15 @@ class CompilerOrLinker(Checker, IncludeHelper):
 #          """ default implementation of get_file_names throws a TypeError """
 #        raise TypeError("Can't instantiate class with abstract method get_file_names(self,env). You have to implement it using rxarg(self).")
     def get_file_names(self,env):
-        
-        if isinstance (self.rxarg(), basestring):
+        import sys
+        PY2 = sys.version_info[0] == 2
+        PY3 = sys.version_info[0] == 3
+
+        if PY3:
+                string_types = str
+        else:
+                string_types = basestring
+        if isinstance (self.rxarg(), string_types):
             rxarg = re.compile(self.rxarg())
             return [name for (name,content) in env.sources() if rxarg.match(name)]
         else:
