@@ -18,19 +18,19 @@ class CXXBuilder(Compiler):
     _language                = "C++"
     #_rx_warnings            = r"^([^ :]*:[^:].*)$"
 
-	def pre_run(self,env):
-		return self.compiler()
+    def pre_run(self,env):
+        return self.compiler()
 
 
 
-	def post_run(self,env):
-		passed = True
-		log = ""
-		return [passed,log]
+    def post_run(self,env):
+        passed = True
+        log = ""
+        return [passed,log]
 
 
-	def connected_flags(self, env):     		
-		return self.search_path() + self.flags()
+    def connected_flags(self, env):             
+        return self.search_path() + self.flags()
 
 
 from checker.admin import CheckerInline, AlwaysChangedModelForm
