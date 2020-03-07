@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='junitchecker',
             name='ignore',
-            field=models.CharField(default=b'', help_text='space-seperated list of files to be ignored during compilation, i.e.: these files will not be compiled.', max_length=4096, blank=True),
+            field=models.CharField(blank=True, default='', help_text='space-separated list of files to be ignored during compilation, i.e.: these files will not be compiled.', max_length=4096),
         ),
     ]
