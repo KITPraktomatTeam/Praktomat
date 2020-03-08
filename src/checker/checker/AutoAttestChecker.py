@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-AutoAttestChecker (basierend auf S.B. (HBRS FB02,2013) updated by Robert Hartmann,HBRS FB02, 2013 - 2016)
+AutoAttestChecker (basierend auf S.B. (HBRS FB02,2013) updated by Robert Hartmann,HBRS FB02, 2013 - 2016,2020)
 """
 import os, re
 import os.path
@@ -9,7 +9,7 @@ import os.path
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from django.utils.encoding import force_unicode
+#from django.utils.encoding import force_unicode
 from checker.basemodels import Checker, CheckerFileField, CheckerResult, truncated_log
 from django.core.exceptions import ValidationError
 from utilities.safeexec import execute_arglist
@@ -21,7 +21,7 @@ from datetime import datetime
 
 class AutoAttestChecker(Checker):
 
-    author = models.ForeignKey(User, verbose_name="attestation author", limit_choices_to = {'groups__name': 'Tutor'})
+    author = models.ForeignKey(User, verbose_name="attestation author", limit_choices_to = {'groups__name': 'Tutor'}, on_delete=models.SET_NULL, null=True, blank=True)
     public_comment = models.TextField(blank=True, help_text = _('Comment which is shown to the user.'))
     private_comment = models.TextField(blank=True, help_text = _('Comment which is only visible to tutors'))
     final = models.BooleanField(default = True, help_text = _('Indicates whether the attestation is ready to be published'))
@@ -36,8 +36,8 @@ class AutoAttestChecker(Checker):
         self._meta.get_field('published').default = True
         
     def clean(self):
-	super(AutoAttestChecker, self).clean()
-	if (self.required or self.always or self.public): raise ValidationError("Robert says: AutoAttestChecker have to be non-required, non-always, non-public")
+        super(AutoAttestChecker, self).clean()
+        if (self.required or self.always or self.public): raise ValidationError("Robert says: AutoAttestChecker have to be non-required, non-always, non-public")
 
     def title(self):
         """ Returns the title for this checker category. """
@@ -95,16 +95,16 @@ class AutoAttestChecker(Checker):
                 else:
                     result.set_log('WARNING: No checkers.')
 
-		new_final_solution = env.solution()
-		if new_final_solution:
-			new_final_solution.final = True			
-			new_final_solution.save()
+                new_final_solution = env.solution()
+                if new_final_solution:
+                    new_final_solution.final = True			
+                    new_final_solution.save()
     
                 a = Attestation(solution=env.solution(), author=self.author,
                                 public_comment=self.public_comment, private_comment=self.private_comment,
                                 final=self.final, published=self.published, published_on=datetime.now(),
                                 final_grade=grades[-1])
-		a.save()
+                a.save()
             else:
                 result.set_log('%d required checkers failed.' % checkers_failed)
 #                result.set_solution_id(env.solution())
@@ -112,7 +112,7 @@ class AutoAttestChecker(Checker):
                                 public_comment=self.public_comment, private_comment=self.private_comment,
                                 final=self.final, published=self.published, published_on=datetime.now(),
                                 final_grade=grades[0])
-		a.save()
+                a.save()
         return result
     
 from checker.admin import    CheckerInline
