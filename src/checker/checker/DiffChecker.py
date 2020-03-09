@@ -11,7 +11,7 @@ import os.path
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
-from django.utils.encoding import force_unicode
+#from django.utils.encoding import force_unicode
 from checker.basemodels import Checker, CheckerFileField, CheckerResult, truncated_log
 from django.core.exceptions import ValidationError
 from utilities.safeexec import execute_arglist
@@ -28,8 +28,8 @@ class DiffChecker(Checker):
         
     
     def clean(self):
-	super(DiffChecker, self).clean()
-	if (not self.shell_script or not self.input_file or not self.output_file): raise ValidationError("Robert says: DiffChecker have to have an Shell script, an Inputfile and an Outputfile")
+        super(DiffChecker, self).clean()
+        if (not self.shell_script or not self.input_file or not self.output_file): raise ValidationError("Robert says: DiffChecker have to have an Shell script, an Inputfile and an Outputfile")
     
     def title(self):
         """ Returns the title for this checker category. """
@@ -62,12 +62,12 @@ class DiffChecker(Checker):
         
         #some time after 2013 Praktomat losts copy_file_to_directory with replace parameter
         to_path = os.path.join(test_dir, os.path.basename(self.shell_script.path))
-	with open(to_path) as fd:
-		content = encoding.get_unicode(fd.read())
-		for (old, new) in replace:
-			content = content.replace(old, new)
-	with open(to_path, 'w') as fd:
-		fd.write(encoding.get_utf8(content))
+        with open(to_path) as fd:
+                content = encoding.get_unicode(fd.read())
+                for (old, new) in replace:
+                        content = content.replace(old, new)
+        with open(to_path, 'w') as fd:
+                fd.write(encoding.get_utf8(content))
         
         
         args = ["sh",  os.path.basename(self.shell_script.name)]
@@ -89,7 +89,7 @@ class DiffChecker(Checker):
                             fileseeklimit=settings.TEST_MAXFILESIZE,
                             extradirs = [script_dir],
                             )
-	output = force_unicode(output, errors='replace')
+        output = force_unicode(output, errors='replace')
         
         
         result = CheckerResult(checker=self, solution=env.solution())
