@@ -4,13 +4,13 @@
 	<script type="text/javascript" src="{{STATIC_URL}}/frameworks/jquery.easy-confirm-dialog/jquery.easy-confirm-dialog.js"></script>
 	<script type="text/javascript" src="{{STATIC_URL}}script/solution_inlines.js"></script>
 	<link type="text/css" rel="stylesheet" href="{{STATIC_URL}}styles/pygments_friendly.css" />
-	<script type="text/javascript">	
+	<script type="text/javascript">
 		function updatePublishButton(){
 			if ($('#id_final').is(':checked')) {
 				$('#publishButton').removeAttr('disabled');
 			} else {
 				$('#publishButton').attr('disabled', true);
-			} 
+			}
 		}
 		$(document).ready(function(){
 			updatePublishButton();
@@ -30,14 +30,14 @@
 
 	</script>
 {% endblock %}
-{% block breadcrumbs %} {{block.super}} > <a href={% url "task_detail" task_id=attest.solution.task.id%}>{{attest.solution.task.title}}</a> 
+{% block breadcrumbs %} {{block.super}} > <a href={% url "task_detail" task_id=attest.solution.task.id%}>{{attest.solution.task.title}}</a>
 {% if user.is_tutor %}
-	> <a href={% url "attestation_list" attest.solution.task_id %}>My attestations</a> 
+	> <a href={% url "attestation_list" attest.solution.task_id %}>My attestations</a>
 	> <a href={% url "edit_attestation" attest.id %}>Attestation</a>
 	> Preview
 {% else %}
-	> <a href={% url "solution_list" task_id=attest.solution.task.id%}>My solutions</a> 
-	> <a href={% url "solution_detail" solution_id=attest.solution.id%}>Solution {{attest.solution.id}}</a> 
+	> <a href={% url "solution_list" task_id=attest.solution.task.id%}>My solutions</a>
+	> <a href={% url "solution_detail" solution_id=attest.solution.id%}>Solution {{attest.solution.id}}</a>
 	> Attestation {{attest.id}}
 {% endif %}
 {% endblock %}
@@ -50,7 +50,7 @@
 	{% if user.is_trainer or user.is_tutor %}
 		<div class="section private">
 			<h2>Private Comment</h2>
-			<p>{{attest.private_comment}}</p>	
+			<p>{{attest.private_comment}}</p>
 		</div>
 	{% endif %}
 {% endif %}
@@ -58,7 +58,7 @@
 {% if attest.public_comment %}
 	<div class="section">
 		<h2>Comment</h2>
-		<p>{{attest.public_comment|linebreaks}}</p>	
+		<p>{{attest.public_comment|linebreaks}}</p>
 	</div>
 {% endif %}
 
@@ -71,7 +71,7 @@
 				<p>{{ratingresult.aspect.description}}</p>
 			</div>
 		{%endfor%}
-		{% if attest.final_grade %} 
+		{% if attest.final_grade %}
 			<div class="result">
 				<h3 href="#">Final grade: <span class="mark">{{attest.final_grade}}</h3>
 			</div>
@@ -89,14 +89,14 @@
 	</div>
 {% endif %}
 
-<a href={% url "solution_download" solution_id=attest.solution.id %} id='download'><span class="ui-icon ui-icon-disk"></span>Download Solution</a>
+
 <h2>{% trans "Annotated Files" %}</h2>
 <div class="filetabs">
 	<ul>
 		{% for anotfile in attest.annotatedsolutionfile_set.all%}
-			<li><a href="#file{{forloop.counter}}">{{anotfile}}{% if anotfile.has_anotations%}<span class="has_anotations">*</span>{% endif %}</a></li> 
-		{%endfor%} 
-	</ul> 	
+			<li><a href="#file{{forloop.counter}}">{{anotfile}}{% if anotfile.has_anotations%}<span class="has_anotations">*</span>{% endif %}</a></li>
+		{%endfor%}
+	</ul>
 
 	{% for anotfile in attest.annotatedsolutionfile_set.all%}
 		<div class="file" id="file{{forloop.counter}}">
@@ -105,6 +105,18 @@
 		</div>
 	{%endfor%}
 </div>
+
+
+<a href={% url "solution_download" solution_id=attest.solution.id %} id='download'><span class="ui-icon ui-icon-disk"></span>Download Solution</a>
+{% if user.is_trainer or user.is_tutor %}
+<h2>{% trans "Original Files" %}</h2>
+<div class="filetabs">
+{% with attest.solution.solutionfile_set.all as solutionfiles %}
+        {% include "solutions/solution_files_inline.html" %}
+{% endwith %}
+</div>
+{% endif %}
+
 
 {% if submitable %}
 	<br/><br/>

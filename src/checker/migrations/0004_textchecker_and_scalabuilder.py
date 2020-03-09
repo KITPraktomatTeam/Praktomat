@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 
@@ -22,12 +22,12 @@ class Migration(migrations.Migration):
                 ('required', models.BooleanField(default=False, help_text='The test must be passed to submit the solution.')),
                 ('always', models.BooleanField(default=True, help_text='The test will run on submission time.')),
                 ('critical', models.BooleanField(default=False, help_text='If this test fails, do not display further test results.')),
-                ('_flags', models.CharField(default=b'-Wall', help_text='Compiler flags', max_length=1000, blank=True)),
-                ('_output_flags', models.CharField(default=b'-o %s', help_text="Output flags. '%s' will be replaced by the program name.", max_length=1000, blank=True)),
-                ('_libs', models.CharField(default=b'', help_text='Compiler libraries', max_length=1000, blank=True)),
-                ('_file_pattern', models.CharField(default=b'^[a-zA-Z0-9_]*$', help_text='Regular expression describing all source files to be passed to the compiler.', max_length=1000)),
+                ('_flags', models.CharField(default='-Wall', help_text='Compiler flags', max_length=1000, blank=True)),
+                ('_output_flags', models.CharField(default='-o %s', help_text="Output flags. '%s' will be replaced by the program name.", max_length=1000, blank=True)),
+                ('_libs', models.CharField(default='', help_text='Compiler libraries', max_length=1000, blank=True)),
+                ('_file_pattern', models.CharField(default='^[a-zA-Z0-9_]*$', help_text='Regular expression describing all source files to be passed to the compiler.', max_length=1000)),
                 ('_main_required', models.BooleanField(default=True, help_text='Is a submission required to provide a main method?')),
-                ('task', models.ForeignKey(to='tasks.Task')),
+                ('task', models.ForeignKey(to='tasks.Task', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
