@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-
+import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('class_name', models.CharField(help_text='The fully qualified name of the test case class (without .class)', max_length=100)),
                 ('test_description', models.TextField(help_text='Description of the Testcase. To be displayed on Checker Results page when checker is unfolded.')),
                 ('name', models.CharField(help_text='Name of the Testcase. To be displayed as title on Checker Results page', max_length=100)),
-                ('task', models.ForeignKey(to='tasks.Task')),
+                ('task', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='tasks.Task')),
             ],
             options={
                 'abstract': False,
