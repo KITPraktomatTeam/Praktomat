@@ -43,6 +43,6 @@ class SessionProfile(models.Model):
     user ID, by going via the Users table.
     """
 
-    session = models.ForeignKey(Session, unique=True)
+    session = models.ForeignKey(Session, on_delete=models.CASCADE, unique=True)
 
-    user = models.ForeignKey(User, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)

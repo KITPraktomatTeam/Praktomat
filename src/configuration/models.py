@@ -132,7 +132,8 @@ class Chunk(models.Model):
     settings = models.ForeignKey(
             Settings,
             default=1,
-            help_text="Makes it easy to display chunks as inlines in Settings."
+            help_text="Makes it easy to display chunks as inlines in Settings.",
+            on_delete=models.CASCADE
         )
 
     key = \

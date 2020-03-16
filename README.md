@@ -17,7 +17,7 @@ Praktomat with Python 2.
 General setup
 =============
 
-You need Python 3.5 and a recent version of pip. I also highly recommend to
+You need Python 3.5 and a recent version of pip. We also highly recommend to
 use virtualenv so your system Python installation remains clean.
 
 If you are having trouble with 
@@ -49,7 +49,8 @@ Prerequisites: Database and Webserver
     apache2-mpm-worker         (<= Ubuntu 14)
     apache2
     libapache2-mod-macro       (<= Ubuntu 14, removed in Ubuntu 16)
-    libapache2-mod-wsgi        
+    libapache2-mod-wsgi        (for using with Python2)
+    libapache2-mod-wsgi-py3    (for using with Python3)
     libapache2-mod-xsendfile   
 
 Pitfalls while Systemupgrades
@@ -70,7 +71,6 @@ Pitfalls while Systemupgrades
     Auto-Installed: 0
     
   If you don't change that value, apache2 package becomes deleted while upgrading Ubuntu.
-
   
 Prerequisites: 3rd-Party libraries and programms
 ============
@@ -80,16 +80,17 @@ Prerequisites: 3rd-Party libraries and programms
 
     libpq-dev
     zlib1g-dev
-    libmysqlclient-dev
+    libmysqlclient-dev (or: default-libmysqlclient-dev)
     libsasl2-dev
     libssl-dev
     swig
 
-    sun-java6-jdk (from the "Canonical Parner" Repository)
+    openjdk-11-jdk (or: openjdk-8-jdk)
     junit
     junit4
     dejagnu
-    gcj-jdk (jcf-dump, for checking Submissions for use of javax.* etc) 
+    gcj-jdk (gcj compiler)
+    r-base
 
     git-core
 
@@ -169,8 +170,7 @@ sudo -u postgres createuser -DRS praktomat
 sudo -u postgres createdb -O praktomat praktomat_default
 ```
 
-Configure Praktomat in `Praktomat/src/settings/local.py`, to set data base
-names and paths.
+Configure Praktomat in `Praktomat/src/settings/local.py`, which contains all settings and paths for your deployment system.
 
 Create the upload directory, populate the database:
 
@@ -258,7 +258,7 @@ jPlag integration
 Praktomat provides a rudimentary, but convenient integration of the plagiarism
 detection program [jPlag](https://jplag.ipd.kit.edu/). Do enable this support, you have to do these two steps:
 
- * Download the latest [jPlag release](https://github.com/jplag/jplag/releases) (latest tested version: v2.11.8)
+ * Download the latest [jPlag release](https://github.com/jplag/jplag/releases) (latest tested version: v2.12.1)
  * Copy the resulting `.jar` file somewhere on the Praktomat server.
  * In the settings, set `JPLAGJAR = /full/path/to/jplag.jar`
 
@@ -266,7 +266,7 @@ detection program [jPlag](https://jplag.ipd.kit.edu/). Do enable this support, y
 PhpBB integration
 =================
 
-To access the praktomat usersessions from an phpBB folow the instructions in `src/sessionprofile/phpbb/README.txt`.
+To access the praktomat usersessions from an phpBB follow the instructions in `src/sessionprofile/phpbb/README.txt`.
 
 
 [Bug tracker]: https://github.com/KITPraktomatTeam/Praktomat/issues

@@ -10,7 +10,7 @@ from django.http import Http404
 from django.http import HttpResponseRedirect, HttpResponse
 from datetime import datetime
 from django import forms
-from django.core import urlresolvers
+from django.urls import reverse
 from django.conf import settings
 from django.contrib import messages
 import django.utils.timezone
@@ -27,8 +27,8 @@ from configuration import get_settings
 @login_required
 def taskList(request):
     now = django.utils.timezone.now()
-    tasks = Task.objects.filter(publication_date__lte = now).order_by('submission_date')
-    expired_Tasks = Task.objects.filter(submission_date__lt = now).order_by('publication_date', 'submission_date')
+    tasks = Task.objects.filter(publication_date__lte = now).order_by('submission_date', 'title')
+    expired_Tasks = Task.objects.filter(submission_date__lt = now).order_by('publication_date', 'submission_date', 'title')
     try:
         tutors = request.user.tutorial.tutors.all()
     except:
@@ -54,6 +54,7 @@ def taskList(request):
                       'trainers': trainers,
                       'threshold': threshold,
                       'calculated_grade': calculated_grade,
+                      'user_text': request.user.user_text,
                   })
 
 @login_required
@@ -73,6 +74,9 @@ def taskDetail(request, task_id):
 
 class ImportForm(forms.Form):
     file = forms.FileField()
+    is_template = forms.BooleanField(initial=True,
+                                     required=False,
+                                     help_text="Enabled if the imported task is just used as template to create another task. If disabled, the publication date and the rating scale are also imported. This means that students might see the task immediately, and rating scales might be duplicated.")
 
 @staff_member_required
 def import_tasks(request):
@@ -81,12 +85,12 @@ def import_tasks(request):
         form = ImportForm(request.POST, request.FILES)
         if form.is_valid():
             try:
-                Task.import_Tasks(form.files['file'], request.user)
+                Task.import_Tasks(form.files['file'], request.user, form.cleaned_data['is_template'])
                 messages.success(request, "The import was successful.")
-                return HttpResponseRedirect(urlresolvers.reverse('admin:tasks_task_changelist'))
+                return HttpResponseRedirect(reverse('admin:tasks_task_changelist'))
             except Exception as e:
                 from django.forms.utils import ErrorList
-                msg = "An Error occured. The import file was probably malformed.: %s" % str(e)
+                msg = "An Error occured. The import file was probably malformed: %s" % str(e)
                 form._errors["file"] = ErrorList([msg])
     else:
         form = ImportForm()
