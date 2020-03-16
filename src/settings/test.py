@@ -1,6 +1,6 @@
 # Settings for running the test-runner
 
-import locale 
+import locale
 locale.setlocale( locale.LC_ALL, 'en_US.UTF-8' )
 
 

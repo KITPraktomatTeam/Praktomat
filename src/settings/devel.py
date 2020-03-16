@@ -37,7 +37,7 @@ JPLAGJAR = join(dirname(dirname(dirname(__file__))), 'jplag.jar')
 PRIVATE_KEY = join(dirname(dirname(dirname(__file__))), 'examples', 'certificates', 'privkey.pem')
 CERTIFICATE = join(dirname(dirname(dirname(__file__))), 'examples', 'certificates', 'signer.pem')
 
-# Finally load defaults for missing setttings.
+# Finally load defaults for missing settings.
 from . import defaults
 defaults.load_defaults(globals())
 

@@ -20,3 +20,6 @@ psycopg2-binary
 subprocess32;python_version<"3"
 # selenium # has been removed by commit "remove selenium and phantomjs dependency" (16.1.2020)
 
+#modules used in fix bug #255 in safeexec.py
+psutil
+

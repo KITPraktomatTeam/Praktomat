@@ -284,7 +284,22 @@ def load_defaults(settings):
 
     # Alternatively: Run everything in a docker instance, to provide higher
     # insulation. Should not be used together with USEPRAKTOMATTESTER.
+    
+    # It is recomendet to use DOCKER and not a tester account
+    # for using Docker from https://github.com/nomeata/safe-docker
+    # Use docker to test submission
+    
+    # To allow Praktomat the execution of scriptfile  safe-docker  without requiring a password:
+    # "praktomat	ALL= NOPASSWD: /usr/local/bin/safe-docker"
+    
     d.USESAFEDOCKER = False
+    
+    
+    # be sure that you change file permission 
+    # sudo chown praktomat:tester praktomat/src/checker/scripts/java
+    # sudo chown praktomat:tester praktomat/src/checker/scripts/javac
+    # sudo chmod u+x,g+x,o-x praktomat/src/checker/scripts/java
+    # sudo chmod u+x,g+x,o-x praktomat/src/checker/scripts/javac 
 
     # Make sure uploaded solution are not work-readable
     d.FILE_UPLOAD_PERMISSIONS = 0o640
@@ -324,8 +339,8 @@ def load_defaults(settings):
 
     # Length of timeout applied whenever an external check that runs a students
     # submission is executed,
-    # for example: JUnitChecker, DejaGnuChecker
-    d.TEST_TIMEOUT=60
+    # for example: JUnitChecker, DejaGnuChecker    
+    d.TEST_TIMEOUT=60  # but make sure to use ulimit -t 60 inside shell scripts!
 
     # Amount of memory available to the checker, in megabytes
     # (this is currently only supported with USESAFEDOCKER=True)
