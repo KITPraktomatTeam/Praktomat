@@ -23,3 +23,5 @@ subprocess32;python_version<"3"
 #modules used in fix bug #255 in safeexec.py
 psutil
 
+#for LDAP support make sure, that ldap module libldap2-dev is installed on your operation system
+python-ldap

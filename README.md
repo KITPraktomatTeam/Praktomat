@@ -93,6 +93,8 @@ Prerequisites: 3rd-Party libraries and programms
     r-base
 
     git-core
+    
+    libldap2-dev (if you want to use python-ldap==2.3.13 for connecting to ldap)
 
   If youre going to use Praktomat to check Haskell submissions, you will also require the packages:
 

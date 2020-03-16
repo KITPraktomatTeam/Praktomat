@@ -342,6 +342,28 @@ def load_defaults(settings):
     # Set this to False to disable "Got Problems?"-link in task list
     d.SHOW_CONTACT_LINK = True
 
+    # Set this to False to disable account changes via the website
+    d.ACCOUNT_CHANGE_POSSIBLE = True
+
+    # Set this to True to automatically set user.mat_number = user.id
+    d.DUMMY_MAT_NUMBERS = False
+
+
+    #TODO: Code refactoring: make it more flexible, to change between LDAP or Shibboleth support!
+
+    # LDAP support
+    # You probably want to disable REGISTRATION_POSSIBLE if you enable LDAP
+    # LDAP config put it in local or devel settings with individual correct values!
+
+    d.LDAP_ENABLED = False
+    d.AUTHENTICATION_BACKENDS = (
+	'accounts.ldap_auth.LDAPBackend',
+	'django.contrib.auth.backends.ModelBackend',
+    )
+    d.LDAP_URI="ldap://ldap.DAMANENAME.TOPLEVEL" 
+    d.LDAP_BASE="dc=DAMANENAME,dc=TOPLEVEL"
+
+
     # Length of timeout applied whenever an external check that runs a students
     # submission is executed,
     # for example: JUnitChecker, DejaGnuChecker    
