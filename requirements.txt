@@ -15,4 +15,4 @@ docutils
 psycopg2-binary
 
 #for LDAP support make sure, that ldap module libldap2-dev is installed on your operation system
-python-ldap==2.3.13
+python-ldap
