@@ -98,9 +98,11 @@ Prerequisites: 3rd-Party libraries and programms
 
     ghc libghc-test-framework-dev libghc-test-framework-hunit-dev libghc-test-framework-quickcheck2-dev
 
- For Checkstyle, we recommend getting checkstyle-all-4.4.jar
+ For Checkstyle, we recommend getting checkstyle-all-4.4.jar or checkstyle-8.14-all.jar
 
-    http://sourceforge.net/projects/checkstyle/files/checkstyle/4.4/
+    https://github.com/checkstyle/checkstyle/releases/
+
+  Documentation for checkstyle please see: https://checkstyle.org/ 
 
  If you want your users to submit Isabelle theories, add the following line to
  /etc/mime.types:
