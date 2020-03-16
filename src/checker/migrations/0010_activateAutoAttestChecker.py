@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
                 ('private_comment', models.TextField(blank=True, help_text='Comment which is only visible to tutors')),
                 ('final', models.BooleanField(default=True, help_text='Indicates whether the attestation is ready to be published')),
                 ('published', models.BooleanField(default=True, help_text='Indicates whether the user can see the attestation.')),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='accounts.User', verbose_name=b'attestation author')),
+                ('author', models.ForeignKey(blank=True, limit_choices_to={'groups__name': 'Tutor'}, null=True, on_delete=django.db.models.deletion.SET_NULL, to='accounts.User', verbose_name='attestation author')),
                 ('task', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='tasks.Task')),
             ],
             options={

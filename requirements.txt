@@ -1,7 +1,10 @@
+urllib3[secure]
 # workaround for debug-toolbar/sqlparse incompatibility, see http://stackoverflow.com/questions/38479063/django-debug-toolbar-breaking-on-admin-while-getting-sql-stats
 sqlparse
-Django==1.11.15
-M2Crypto
+Django~=1.11,<2.0;python_version<="2.7"
+Django~=2.0;python_version=="3.4"
+Django~=2.2;python_version>="3.5"
+# M2Crypto # has been removed by commit "use hashlib+smime for upload verification mails instead of M2Crypto" (19.1.2018)
 Markdown
 Pygments
 chardet
@@ -13,15 +16,13 @@ django-extensions
 django-tinymce
 django-debug-toolbar
 docutils
-subprocess32
-psycopg2
-selenium
-
+psycopg2-binary
+subprocess32;python_version<"3"
+# selenium # has been removed by commit "remove selenium and phantomjs dependency" (16.1.2020)
 
 #module used in fix bug #255 in safeexec.py
 psutil
 
-
 #for LDAP support make sure, that ldap module libldap2-dev is installed on your operation system
-python-ldap==2.3.13
+python-ldap
 

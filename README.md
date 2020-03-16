@@ -8,15 +8,22 @@ also a moderated [mailing list] for Praktomat administrators:
 praktomat-users@lists.kit.edu.
 
 
+A note about Python 2 
+=============
+Since `pip` will drop support for Python 2 in Jannuary 2020, 
+we don't support Python 2 any more. But at time of writing that note, you can use 
+Praktomat with Python 2.
+
 General setup
 =============
 
-You need Python 2.7 and a recent version of pip. I also highly recommend to
+You need Python 3.5 and a recent version of pip. We also highly recommend to
 use virtualenv so your system Python installation remains clean.
 
 If you are having trouble with 
 
-    pip install 
+    pip install
+
 and get a **No matching distribution found** or **Could not fetch URL** error, 
 try adding -v to the command to get more information:
 
@@ -27,7 +34,11 @@ If you see an error like **There was a problem confirming the ssl certificate** 
 Reason: PyPI turned off support for TLS versions 1.0 and 1.1 in April 2018
    https://pyfound.blogspot.com/2017/01/time-to-upgrade-your-python-tls-v12.html
 
-Prerequisites
+To fix this, it might help to run the following command:
+
+    pip install -U pip virtualenv setuptools wheel urllib3[secure]
+
+Prerequisites: Database and Webserver 
 ============
   We recommend to run Praktomat within Apache, using Postgresql as
   database.
@@ -35,27 +46,51 @@ Prerequisites
   On a Debian or Ubuntu System, install the packages
 
     postgresql
-    apache2-mpm-worker
+    apache2-mpm-worker         (<= Ubuntu 14)
+    apache2
+    libapache2-mod-macro       (<= Ubuntu 14, removed in Ubuntu 16)
+    libapache2-mod-wsgi        (for using with Python2)
+    libapache2-mod-wsgi-py3    (for using with Python3)
+    libapache2-mod-xsendfile   
 
-  In ubuntu 16 the package `apache2-mpm-worker` has been merged into `apache2`.
+Pitfalls while Systemupgrades
+============
+  In Ubuntu 16 the package `apache2-mpm-worker` has been merged into `apache2`.
+  Before upgrading to Ubuntu 16 or higher and you are in Ubuntu 14 or lower versions, than you have to edit
 
+    /var/lib/apt/extended_state 
+    
+  there change entry
+  
+    Package: apache2
+    Architecture: amd64
+    Auto-Installed: 1
+    
+  to
+  
+    Auto-Installed: 0
+    
+  If you don't change that value, apache2 package becomes deleted while upgrading Ubuntu.
+  
+Prerequisites: 3rd-Party libraries and programms
+============
+  
   Praktomat requires some 3rd-Party libraries programs to run.
   On a Ubuntu/Debian System, these can be installed by installing the following packages:
 
     libpq-dev
     zlib1g-dev
-    libmysqlclient-dev
+    libmysqlclient-dev (or: default-libmysqlclient-dev)
     libsasl2-dev
     libssl-dev
     swig
-    libapache2-mod-xsendfile
-    libapache2-mod-wsgi
 
-    sun-java6-jdk (from the "Canonical Parner" Repository)
+    openjdk-11-jdk (or: openjdk-8-jdk)
     junit
     junit4
     dejagnu
-    gcj-jdk (jcf-dump, for checking Submissions for use of javax.* etc)
+    gcj-jdk (gcj compiler)
+    r-base
 
     git-core
     
@@ -76,17 +111,15 @@ Prerequisites
 
     text/x-isabelle thy
 
-Python 2.7
+Python 3.5
 ==========
-  The Praktomat currently requires Python 2.7
+  The Praktomat currently requires Python 3.5
 
-  On Ubuntu 11.04, Python2.7 is installed by default,
+  On Ubuntu 16.04, Python3.5 is installed by default,
   but you may need to install the packages
 
-    python2.7-dev
     python-setuptools
     python-psycopg2
-    python-m2crypto
     python-virtualenv
 
 Developer setup
@@ -98,7 +131,7 @@ The following describes a recommended setup using virtualenv.
 
 ```bash
 git clone --recursive git://github.com/KITPraktomatTeam/Praktomat.git
-virtualenv --system-site-packages env/
+virtualenv -p python3 --system-site-packages env/
 . env/bin/activate
 pip install -U pip virtualenv setuptools wheel urllib3[secure]
 pip install -r Praktomat/requirements.txt
@@ -127,7 +160,7 @@ Like for the development version, clone the Praktomat and install its dependenci
 
 ```bash
 git clone --recursive git://github.com/KITPraktomatTeam/Praktomat.git
-virtualenv --system-site-packages env/
+virtualenv -p python3 --system-site-packages env/
 . env/bin/activate
 pip install -U pip virtualenv setuptools wheel urllib3[secure]
 pip install -r Praktomat/requirements.txt
@@ -141,8 +174,7 @@ sudo -u postgres createuser -DRS praktomat
 sudo -u postgres createdb -O praktomat praktomat_default
 ```
 
-Configure Praktomat in `Praktomat/src/settings/local.py`, to set data base
-names and paths.
+Configure Praktomat in `Praktomat/src/settings/local.py`, which contains all settings and paths for your deployment system.
 
 Create the upload directory, populate the database:
 
@@ -230,7 +262,7 @@ jPlag integration
 Praktomat provides a rudimentary, but convenient integration of the plagiarism
 detection program [jPlag](https://jplag.ipd.kit.edu/). Do enable this support, you have to do these two steps:
 
- * Download the latest [jPlag release](https://github.com/jplag/jplag/releases) (latest tested version: v2.11.8)
+ * Download the latest [jPlag release](https://github.com/jplag/jplag/releases) (latest tested version: v2.12.1)
  * Copy the resulting `.jar` file somewhere on the Praktomat server.
  * In the settings, set `JPLAGJAR = /full/path/to/jplag.jar`
 
@@ -238,7 +270,7 @@ detection program [jPlag](https://jplag.ipd.kit.edu/). Do enable this support, y
 PhpBB integration
 =================
 
-To access the praktomat usersessions from an phpBB folow the instructions in `src/sessionprofile/phpbb/README.txt`.
+To access the praktomat usersessions from an phpBB follow the instructions in `src/sessionprofile/phpbb/README.txt`.
 
 
 [Bug tracker]: https://github.com/KITPraktomatTeam/Praktomat/issues

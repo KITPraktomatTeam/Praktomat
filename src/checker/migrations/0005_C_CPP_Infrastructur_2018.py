@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
+import django.db.models.deletion
 import checker.basemodels
 
 
@@ -30,7 +31,7 @@ class Migration(migrations.Migration):
                 ('_file_pattern', models.CharField(default=b'^[a-zA-Z0-9_]*$', help_text='Regular expression describing all source files to be passed to the compiler or linker. (Play with  RegEx at <a href="http://pythex.org/" target="_blank">http://pythex.org/ </a>', max_length=1000)),
                 ('_output_flags', models.CharField(default=b'-o %s', help_text="choose link output type. '%s' will replaced by output_name. ", max_length=16, choices=[('out', '-o %s (Link to executable program)'), ('so', '-shared -fPIC -o %s (Link to shared object)')])),
                 ('_output_name', models.CharField(default=b'%s', help_text="choose a outputname. '%s' will be replaced by an internal default name.", max_length=16)),
-                ('task', models.ForeignKey(to='tasks.Task')),
+                ('task', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='tasks.Task')),
             ],
             options={
                 'abstract': False,
@@ -61,7 +62,7 @@ class Migration(migrations.Migration):
                 ('_sol_name', models.CharField(default='Solution', help_text='Basisfilename ( = filename without fileending!) for interaction with  MUT (Module-Under-Test)<br>The fileending to use gets determined by your choosen Link type.<br>', max_length=100, verbose_name='MUT Filename')),
                 ('_sol_ignore', models.CharField(default=b"sorry, this feature doesn't work now", help_text='Regular Expression for ignoring files while compile CUT and link MUT.<br>CUT = Code Under Test - MUT = Module Under Test <br>Play with RegEx at <a href="http://pythex.org/" target="_blank">http://pythex.org/ </a>', max_length=4096, verbose_name='MUT ignore files', blank=True)),
                 ('_sol_flags', models.CharField(default='-Wall -Wextra -Wl,--warn-common', help_text='Compiler and Linker flags used while generating MUT (Module-under-Test).', max_length=1000, verbose_name='MUT flags', blank=True)),
-                ('task', models.ForeignKey(to='tasks.Task')),
+                ('task', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='tasks.Task')),
             ],
             options={
                 'abstract': False,
@@ -70,7 +71,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='IgnoringCBuilder2',
             fields=[
-                ('cbuilder_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='checker.CBuilder')),
+                ('cbuilder_ptr', models.OneToOneField(parent_link=True, auto_created=True, on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to='checker.CBuilder')),
             ],
             options={
                 'abstract': False,
@@ -80,7 +81,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='IgnoringCXXBuilder2',
             fields=[
-                ('cxxbuilder_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='checker.CXXBuilder')),
+                ('cxxbuilder_ptr', models.OneToOneField(parent_link=True, auto_created=True, on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to='checker.CXXBuilder')),
             ],
             options={
                 'abstract': False,
