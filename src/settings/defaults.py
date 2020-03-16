@@ -267,6 +267,7 @@ def load_defaults(settings):
     d.CHECKSTYLEALLJAR = '/home/praktomat/contrib/checkstyle-all-4.4.jar'
     d.JUNIT38='junit'
     d.JAVA_LIBS = { 'junit3' : '/usr/share/java/junit.jar', 'junit4' : '/usr/share/java/junit4.jar' }
+    d.JAVA_CUSTOM_LIBS = PRAKTOMAT_ROOT + '/lib/java/*'
     d.JAVAP='javap'
     d.GHC='ghc'
     d.SCALA='scala'
