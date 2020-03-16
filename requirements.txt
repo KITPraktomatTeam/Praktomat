@@ -1,9 +1,10 @@
+urllib3[secure]
 # workaround for debug-toolbar/sqlparse incompatibility, see http://stackoverflow.com/questions/38479063/django-debug-toolbar-breaking-on-admin-while-getting-sql-stats
 sqlparse
-#Fix CVE-2018-14574 , CVE-2019-3498 , CVE-2019-6975
-Django~=1.11.19,<2.0
-
-M2Crypto
+Django~=1.11,<2.0;python_version<="2.7"
+Django~=2.0;python_version=="3.4"
+Django~=2.2;python_version>="3.5"
+# M2Crypto # has been removed by commit "use hashlib+smime for upload verification mails instead of M2Crypto" (19.1.2018)
 Markdown
 Pygments
 chardet
@@ -16,4 +17,6 @@ django-tinymce
 django-debug-toolbar
 docutils
 psycopg2-binary
+subprocess32;python_version<"3"
+# selenium # has been removed by commit "remove selenium and phantomjs dependency" (16.1.2020)
 
