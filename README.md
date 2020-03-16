@@ -22,7 +22,8 @@ use virtualenv so your system Python installation remains clean.
 
 If you are having trouble with 
 
-    pip install 
+    pip install
+
 and get a **No matching distribution found** or **Could not fetch URL** error, 
 try adding -v to the command to get more information:
 
@@ -32,6 +33,10 @@ If you see an error like **There was a problem confirming the ssl certificate** 
 
 Reason: PyPI turned off support for TLS versions 1.0 and 1.1 in April 2018
    https://pyfound.blogspot.com/2017/01/time-to-upgrade-your-python-tls-v12.html
+
+To fix this, it might help to run the following command:
+
+    pip install -U pip virtualenv setuptools wheel urllib3[secure]
 
 Prerequisites: Database and Webserver 
 ============
