@@ -149,7 +149,7 @@ def import_ldap_user(request):
                                u.groups.add(g)
                                u.tutorial = tutorial
                                u.save()
-               return HttpResponseRedirect(urlresolvers.reverse('admin:accounts_user_changelist'))
+               return HttpResponseRedirect(reverse('admin:accounts_user_changelist'))
        else:
                form = ImportLDAPForm()
        return render(request,'admin/accounts/user/import_ldap.html', {'form':form, 'title':"Import LDAP Users"  })
