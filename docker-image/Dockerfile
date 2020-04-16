@@ -31,7 +31,7 @@ RUN apt-get install --yes python3-simplejson python-simplejson    && apt-get cle
 ################ISABELLE#################
 # Install Isabelle2019
 RUN apt-get install --yes curl libc6-i386 lib32stdc++6  && apt-get clean
-RUN curl http://isabelle.in.tum.de/dist/Isabelle2019_linux.tar.gz | tar -C /opt -xz
+RUN curl https://isabelle.in.tum.de/website-Isabelle2019/dist/Isabelle2019_linux.tar.gz | tar -C /opt -xz
 RUN ln -s /opt/Isabelle2019/bin/isabelle /usr/local/bin
 RUN isabelle build -bv HOL
 #########################################
