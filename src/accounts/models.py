@@ -30,6 +30,7 @@ class User(BasicUser):
     programme = models.CharField(null=True, blank=True, max_length=100, help_text = _('The programme the student is enlisted in.'))
     activation_key=models.CharField(_('activation key'), max_length=40, editable=False)
     user_text=models.CharField(null=True, blank=True, max_length=500, help_text = _("Custom text which will be shown to this student."))
+    accepted_disclaimer=models.BooleanField(default=False, help_text="Whether the user accepted the disclaimer.")
 
     # Use UserManager to get the create_user method, etc.
     objects = UserManager()

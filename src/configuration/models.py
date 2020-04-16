@@ -48,6 +48,12 @@ class Settings(models.Model):
                 help_text="If enabled, registrations via the website must be manually validated by a trainer."
             )
 
+    requires_disclaimer_acceptance = \
+            models.BooleanField(
+                default=False,
+                help_text="If enabled, users have to accept the disclaimer before using the site."
+            )
+
     accept_all_solutions = \
             models.BooleanField(
                 default=False,

@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.urls import reverse
 from django.template import Template, loader
 from django.conf import settings
-from accounts.forms import MyRegistrationForm, UserChangeForm, ImportForm, ImportTutorialAssignmentForm, ImportMatriculationListForm, ImportUserTextsForm
+from accounts.forms import MyRegistrationForm, UserChangeForm, ImportForm, ImportTutorialAssignmentForm, ImportMatriculationListForm, ImportUserTextsForm, AcceptDisclaimerForm
 from accounts.models import User, Tutorial
 from accounts.decorators import local_user_required
 from django.contrib.auth.models import Group
@@ -233,7 +233,21 @@ def import_matriculation_list(request, group_id):
             return HttpResponseRedirect(reverse('admin:auth_group_change', args=[group_id]))
     else:
         form = ImportMatriculationListForm()
-    return render(request, 'admin/auth/group/import_matriculation_list.html', {'form': form, 'title':"Import matriuculation number list"})
+    return render(request, 'admin/auth/group/import_matriculation_list.html', {'form': form, 'title':"Import matriculation number list"})
 
 def deactivated(request):
     return render(request, 'registration/registration_deactivated.html')
+
+def accept_disclaimer(request):
+    if request.method == 'POST':
+        form = AcceptDisclaimerForm(request.POST)
+        if form.is_valid():
+            # the following should be enforced by the form but check again, just to be sure
+            if form.cleaned_data['accept_disclaimer']:
+                import pdb; pdb.set_trace()
+                request.user.accepted_disclaimer = True
+                request.user.save()
+                return HttpResponseRedirect(reverse('index'))
+    else:
+        form = AcceptDisclaimerForm()
+    return render(request, 'registration/accept_disclaimer.html', {'form' : form})

@@ -22,7 +22,7 @@ class UserAdmin(UserBaseAdmin):
     model = User
 
     # add active status
-    list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'is_trainer', 'is_tutor', 'is_coordinator', 'email', 'date_joined', 'is_failed_attempt', 'programme' )
+    list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'accepted_disclaimer', 'is_trainer', 'is_tutor', 'is_coordinator', 'email', 'date_joined', 'is_failed_attempt', 'programme' )
     list_filter = ('groups', 'tutorial', 'is_staff', 'is_superuser', 'is_active', 'programme')
     search_fields = ['username', 'first_name', 'last_name', 'mat_number', 'email']
     date_hierarchy = 'date_joined'
@@ -32,7 +32,7 @@ class UserAdmin(UserBaseAdmin):
     fieldsets = (
             (None, {'fields': ('username', 'password', 'useful_links')}),
             (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'mat_number', 'programme')}),
-            (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
+            (_('Permissions'), {'fields': ('is_active', 'accepted_disclaimer', 'is_staff', 'is_superuser',)}),
             (_('Groups'), {'fields': ('groups', 'tutorial')}),
             (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
             (_('Custom text'), {'fields': ('user_text',)}),
