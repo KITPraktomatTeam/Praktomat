@@ -244,7 +244,6 @@ def accept_disclaimer(request):
         if form.is_valid():
             # the following should be enforced by the form but check again, just to be sure
             if form.cleaned_data['accept_disclaimer']:
-                import pdb; pdb.set_trace()
                 request.user.accepted_disclaimer = True
                 request.user.save()
                 return HttpResponseRedirect(reverse('index'))

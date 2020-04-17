@@ -128,7 +128,6 @@ class UserAdmin(UserBaseAdmin):
         if change:
             was_trainer = get_object_or_404(User, pk=obj.id).is_trainer
             is_trainer = "Trainer" in [g.name for g in form.cleaned_data['groups']]
-            #import pdb;pdb.set_trace()
             if is_trainer and not was_trainer and not (obj.is_staff and obj.is_superuser):
                 obj.is_superuser = True
                 obj.is_staff = True
