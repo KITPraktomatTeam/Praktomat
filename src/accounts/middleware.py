@@ -41,5 +41,5 @@ class DisclaimerAcceptanceMiddleware(MiddlewareMixin):
             return
         if get_settings().requires_disclaimer_acceptance and not request.user.accepted_disclaimer:
             # prevent infinite redirects or catching logout requests
-            if request.path_info not in {reverse('accept_disclaimer'), reverse('logout')}:
+            if request.path not in {reverse('accept_disclaimer'), reverse('logout')}:
                 return HttpResponseRedirect(reverse('accept_disclaimer'))
