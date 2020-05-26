@@ -8,6 +8,12 @@ also a moderated [mailing list] for Praktomat administrators:
 praktomat-users@lists.kit.edu.
 
 
+A note about Python 2 
+=============
+Since `pip` will drop support for Python 2 in Jannuary 2020, 
+we don't support Python 2 any more. But at time of writing that note, you can use 
+Praktomat with Python 2.
+
 General setup
 =============
 
@@ -32,7 +38,7 @@ To fix this, it might help to run the following command:
 
     pip install -U pip virtualenv setuptools wheel urllib3[secure]
 
-Prerequisites
+Prerequisites: Database and Webserver 
 ============
   We recommend to run Praktomat within Apache, using Postgresql as
   database.
@@ -40,8 +46,35 @@ Prerequisites
   On a Debian or Ubuntu System, install the packages
 
     postgresql
+    apache2-mpm-worker         (<= Ubuntu 14)
     apache2
+    libapache2-mod-macro       (<= Ubuntu 14, removed in Ubuntu 16)
+    libapache2-mod-wsgi        (for using with Python2)
+    libapache2-mod-wsgi-py3    (for using with Python3)
+    libapache2-mod-xsendfile   
 
+Pitfalls while Systemupgrades
+============
+  In Ubuntu 16 the package `apache2-mpm-worker` has been merged into `apache2`.
+  Before upgrading to Ubuntu 16 or higher and you are in Ubuntu 14 or lower versions, than you have to edit
+
+    /var/lib/apt/extended_state 
+    
+  there change entry
+  
+    Package: apache2
+    Architecture: amd64
+    Auto-Installed: 1
+    
+  to
+  
+    Auto-Installed: 0
+    
+  If you don't change that value, apache2 package becomes deleted while upgrading Ubuntu.
+  
+Prerequisites: 3rd-Party libraries and programms
+============
+  
   Praktomat requires some 3rd-Party libraries programs to run.
   On a Ubuntu/Debian System, these can be installed by installing the following packages:
 
@@ -51,8 +84,6 @@ Prerequisites
     libsasl2-dev
     libssl-dev
     swig
-    libapache2-mod-xsendfile
-    libapache2-mod-wsgi-py3
 
     openjdk-11-jdk (or: openjdk-8-jdk)
     junit
@@ -98,6 +129,7 @@ The following describes a recommended setup using virtualenv.
 git clone --recursive git://github.com/KITPraktomatTeam/Praktomat.git
 virtualenv -p python3 --system-site-packages env/
 . env/bin/activate
+pip install -U pip virtualenv setuptools wheel urllib3[secure]
 pip install -r Praktomat/requirements.txt
 ```
 
@@ -126,6 +158,7 @@ Like for the development version, clone the Praktomat and install its dependenci
 git clone --recursive git://github.com/KITPraktomatTeam/Praktomat.git
 virtualenv -p python3 --system-site-packages env/
 . env/bin/activate
+pip install -U pip virtualenv setuptools wheel urllib3[secure]
 pip install -r Praktomat/requirements.txt
 ```
 
