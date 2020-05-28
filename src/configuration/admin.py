@@ -24,6 +24,7 @@ class SettingsAdmin(admin.ModelAdmin):
                     'deny_registration_from',
                     'acount_activation_days',
                     ( 'account_manual_validation',
+                      'requires_disclaimer_acceptance',
                       'new_users_via_sso' )
                 )
             }),
