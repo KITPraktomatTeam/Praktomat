@@ -30,4 +30,5 @@ urlpatterns = [
     url(r'^register/allow/(?P<user_id>\d+)/$', accounts.views.activation_allow, name='activation_allow'),
     url(r'^activate/(?P<activation_key>.+)/$', accounts.views.activate, name='registration_activate'),
     url(r'^deactivated/$', accounts.views.deactivated, name='registration_deactivated'),
+    url(r'^accept_disclaimer/$', accounts.views.accept_disclaimer, name='accept_disclaimer'),
 ]
