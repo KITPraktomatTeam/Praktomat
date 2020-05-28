@@ -357,7 +357,7 @@ def edit_attestation(request, attestation_id):
     show_author = not get_settings().anonymous_attestation
     show_run_checkers = get_settings().attestation_allow_run_checkers
     htmlinjectors = HtmlInjector.objects.filter(task = solution.task, inject_in_attestation_edit = True)
-    htmlinjector_snippets = [ injector.html_file.read() for injector in htmlinjectors ]
+    htmlinjector_snippets = [ injector.html_file.read().decode("utf-8") for injector in htmlinjectors ]
 
     return render(request,
         "attestation/attestation_edit.html",
@@ -400,7 +400,7 @@ def view_attestation(request, attestation_id):
         withdrawable = may_modify and attest.published
 
         htmlinjectors = HtmlInjector.objects.filter(task = attest.solution.task, inject_in_attestation_view = True)
-        htmlinjector_snippets = [ injector.html_file.read() for injector in htmlinjectors ]
+        htmlinjector_snippets = [ injector.html_file.read().decode("utf-8") for injector in htmlinjectors ]
 
         return render(request,
             "attestation/attestation_view.html",
