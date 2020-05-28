@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM debian:stretch
 
 MAINTAINER Simon Bischof <simon.bischof@kit.edu>
 
@@ -12,9 +12,9 @@ RUN chmod 1777 /home
 RUN apt-get --yes update
 RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
 RUN apt-get install --yes ca-certificates-java
-RUN apt-get install --yes openjdk-11-jdk junit junit4 && apt-get clean
-# java 11 is already the default version
-#RUN update-java-alternatives -s java-1.11.0-openjdk-amd64
+RUN apt-get install --yes openjdk-8-jdk junit junit4 dejagnu gcj-jdk && apt-get clean
+# java 8 is already the default version
+#RUN update-java-alternatives -s java-1.8.0-openjdk-amd64
 
 # Python-Stuff
 RUN apt-get update -y
@@ -31,7 +31,7 @@ RUN apt-get install --yes python3-simplejson python-simplejson    && apt-get cle
 ################ISABELLE#################
 # Install Isabelle2019
 RUN apt-get install --yes curl libc6-i386 lib32stdc++6  && apt-get clean
-RUN curl https://isabelle.in.tum.de/website-Isabelle2019/dist/Isabelle2019_linux.tar.gz | tar -C /opt -xz
+RUN curl http://isabelle.in.tum.de/dist/Isabelle2019_linux.tar.gz | tar -C /opt -xz
 RUN ln -s /opt/Isabelle2019/bin/isabelle /usr/local/bin
 RUN isabelle build -bv HOL
 #########################################
