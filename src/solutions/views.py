@@ -160,7 +160,7 @@ def solution_detail(request, solution_id, full):
             htmlinjectors = HtmlInjector.objects.filter(task = solution.task, inject_in_solution_full_view = True)
         else:
             htmlinjectors = HtmlInjector.objects.filter(task = solution.task, inject_in_solution_view      = True)
-        htmlinjector_snippets = [ injector.html_file.read() for injector in htmlinjectors ]
+        htmlinjector_snippets = [ injector.html_file.read().decode("utf-8") for injector in htmlinjectors ]
 
 
 

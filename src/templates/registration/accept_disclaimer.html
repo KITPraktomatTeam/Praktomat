@@ -1,0 +1,21 @@
+{% extends "base.html"%}
+
+{% load i18n %}
+{% load chunks %}
+
+{% block breadcrumbs %}
+	{{ block.super }} > {% trans 'Accept Disclaimer ' %}
+{% endblock %}
+
+{% block content %}
+
+Before using this site, you have to accept the following disclaimer:
+{% chunk "disclaimer" %}
+
+<form method="post" action=".">
+{% csrf_token %}
+{{ form }}<br/>
+<input type="submit" value="Submit">
+</form>
+
+{% endblock %}
