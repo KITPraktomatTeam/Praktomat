@@ -7,7 +7,6 @@ from django.urls import reverse
 from django.template import Template, loader
 from django.conf import settings
 from accounts.forms import MyRegistrationForm, UserChangeForm, ImportForm, ImportTutorialAssignmentForm, ImportMatriculationListForm, ImportUserTextsForm, AcceptDisclaimerForm
-from accounts.forms import MyRegistrationForm, UserChangeForm, ImportForm, ImportTutorialAssignmentForm, ImportMatriculationListForm, ImportUserTextsForm, ImportLDAPForm
 from accounts.models import User, Tutorial
 from accounts.decorators import local_user_required
 from django.contrib.auth.models import Group
@@ -19,6 +18,7 @@ from django.utils.http import int_to_base36
 from django.core.mail import send_mail
 from django.utils.translation import ugettext_lazy as _
 from configuration import get_settings
+from accounts.forms import ImportLDAPForm
 from accounts.ldap_auth import fetch_ldapuser_dict, create_localuser_from_ldapuser
 
 import csv
