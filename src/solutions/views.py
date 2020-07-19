@@ -66,6 +66,18 @@ def solution_list(request, task_id, user_id=None):
     if request.method == "POST":
         if task.expired() and not request.user.is_trainer:
             return access_denied(request)
+#       fight against multiple open browser window for cheating limits 
+#       deep defense
+        dap = datetime.now() # query datetime after returning from HTTP "post"-method again
+        sap = solutions.count() # query solution counter after returning from HTTP "post"-method again
+        uap = task.submission_maxpossible - sap
+        if not request.user.is_trainer and (
+                                               ((task.submission_free_uploads < 0) or ((task.submission_free_uploads > 0) and (task.submission_free_uploads <= sap ))) 
+                                               and ((task.submission_waitdelta > 0) and (dap < upload_next_possible_time))
+                                            or 
+                                               ((task.submission_maxpossible > 0) and (uap <= 0))                                               
+                                            ):
+            return access_denied(request)	  
 
         solution = Solution(task = task, author=author)
         formset = SolutionFormSet(request.POST, request.FILES, instance=solution)
