@@ -107,6 +107,7 @@ def load_defaults(settings):
         'django.middleware.csrf.CsrfViewMiddleware',
         'accounts.middleware.AuthenticationMiddleware',
         'accounts.middleware.LogoutInactiveUserMiddleware',
+        'accounts.middleware.DisclaimerAcceptanceMiddleware',
     ]
 
     # needed since Django 1.11 in order to show the 'Deactivated' page
