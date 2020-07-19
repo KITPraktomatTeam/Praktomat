@@ -23,6 +23,7 @@ urlpatterns = [
     #url(r'^password/change/$', auth_views.PasswordChangeView.as_view(), name='password_change'),
     #url(r'^password/change/done/$', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
     #url(r'^password/reset/$', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    url(r'^accept_disclaimer/$', accounts.views.accept_disclaimer, name='accept_disclaimer'),
 ]
 if settings.ACCOUNT_CHANGE_POSSIBLE:
     urlpatterns += [
@@ -40,5 +41,4 @@ if settings.ACCOUNT_CHANGE_POSSIBLE:
         url(r'^register/allow/(?P<user_id>\d+)/$', accounts.views.activation_allow, name='activation_allow'),
         url(r'^activate/(?P<activation_key>.+)/$', accounts.views.activate, name='registration_activate'),
         url(r'^deactivated/$', accounts.views.deactivated, name='registration_deactivated'),
-    url(r'^accept_disclaimer/$', accounts.views.accept_disclaimer, name='accept_disclaimer'),
     ]
