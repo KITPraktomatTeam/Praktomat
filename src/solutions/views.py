@@ -132,7 +132,7 @@ def test_upload_student(request, task_id):
     else:
         formset = SolutionFormSet()
 
-    return render("solutions/solution_test_upload.html", {"formset": formset, "task":task})
+    return render(request, "solutions/solution_test_upload.html", {"formset": formset, "task":task})
 
 @login_required
 def solution_detail(request, solution_id, full):

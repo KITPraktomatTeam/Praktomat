@@ -79,7 +79,7 @@ class AnonymityChecker(Checker):
 
         user = env.user()
 
-        for (fullfname, content) in env.sources():
+        for (fullfname, content) in env.string_sources():
             # check anonymity
 
             # search for user ID or name

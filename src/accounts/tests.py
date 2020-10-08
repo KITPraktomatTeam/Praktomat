@@ -5,12 +5,7 @@ from django.urls import reverse
 from io import StringIO
 
 
-class TestViews(TestCase):
-    def setUp(self):
-        self.client.login(username='trainer', password='demo')
-        self.testgroup = Group(name = 'test')
-        self.testgroup.save()
-
+class TestLogin(TestCase):
     def test_login(self):
         response = self.client.get('/accounts/login/')
         self.assertTrue('username' in response.context['form'].fields)
@@ -19,6 +14,13 @@ class TestViews(TestCase):
                            {'username':'user', 'password':'demo'},
                            follow=True)
         self.assertTrue(b'Welcome, user' in response2.content)
+
+
+class TestViews(TestCase):
+    def setUp(self):
+        self.client.login(username='trainer', password='demo')
+        self.testgroup = Group(name = 'test')
+        self.testgroup.save()
 
     def test_get_testgroup(self):
         response = self.client.get(reverse('admin:auth_group_change', args=[self.testgroup.id]))

@@ -45,7 +45,7 @@ class LineWidthChecker(Checker):
         include_re = re.compile(self.include, re.IGNORECASE)
         exclude_re = re.compile(self.exclude, re.IGNORECASE)
 
-        sources = env.sources()
+        sources = env.string_sources()
         if self.include: sources = [name_content for name_content in sources if include_re.search(name_content[0])]
         if self.exclude: sources = [name_content1 for name_content1 in sources if not exclude_re.search(name_content1[0])]
 
