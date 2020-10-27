@@ -148,6 +148,12 @@ class CheckerEnvironment:
         """ Returns the list of source files. [(name, content)...] """
         return self._sources
 
+    def string_sources(self):
+        """ Returns the list of string-like source files,
+            so it excludes byte-like content. [(name, content)...] """
+        return [(name, content) for (name, content) in self._sources
+                                if isinstance(content, str)]
+
     def add_source(self, path, content):
         """ Add source to the list of source files. [(name, content)...] """
         self._sources.append((path, content))
