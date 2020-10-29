@@ -31,6 +31,7 @@ from configuration import get_settings
 for (mimetype, extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
     mimetypes.add_type(mimetype, extension, strict=True)
 
+@python_2_unicode_compatible
 class Solution(models.Model):
     """ """
 
@@ -117,6 +118,7 @@ def get_solutionfile_upload_path(instance, filename):
     solution = instance.solution
     return 'SolutionArchive/Task_' + str(solution.task.id) + '/User_' + solution.author.username + '/Solution_' + str(solution.id) + '/' + filename
 
+@python_2_unicode_compatible
 class SolutionFile(models.Model):
     """docstring for SolutionFile"""
 
@@ -144,7 +146,14 @@ class SolutionFile(models.Model):
                     new_solution_file = SolutionFile(solution=self.solution)
                     temp_file = tempfile.NamedTemporaryFile()                                    # autodeleted
                     temp_file.write(zip.open(zip_file_name).read())
-                    zip_file_name = zip_file_name  if isinstance(zip_file_name, str) else str(zip_file_name, errors='replace')
+                    import sys  # stay python 2 python 3 compatible
+                    PY2 = sys.version_info[0] == 2
+                    PY3 = sys.version_info[0] == 3
+                    if PY3:
+                        string_types = str
+                    else:
+                        string_types = unicode
+                    zip_file_name = zip_file_name  if isinstance(zip_file_name, string_types) else string_types(zip_file_name, errors='replace')
                     new_solution_file.file.save(zip_file_name, File(temp_file), save=True)        # need to check for filenames begining with / or ..?
         else:
             self.mime_type = mimetypes.guess_type(self.file.name)[0]
@@ -212,7 +221,7 @@ class DummyFile:
         self.path = path
 
 
-def get_solutions_zip(solutions,include_file_copy_checker_files=False):
+def get_solutions_zip(solutions,include_copy_checker_files=False,include_artifacts=False):
     zip_file = tempfile.TemporaryFile()
     zip = zipfile.ZipFile(zip_file, 'w', allowZip64 = True)
     praktomat_files_destination          = "praktomat-files/"
@@ -224,11 +233,10 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
     solution_files_destination           = "solution/"
 
     tmpdir = None
-
     createfile_checker_files_destinations = []
     createfile_checker_files = []
 
-    if include_file_copy_checker_files:
+    if include_copy_checker_files:
         createfile_checker = { checker for solution in solutions for checker in solution.task.createfilechecker_set.all().filter(include_in_solution_download=True) }
         createfile_checker_files = [(createfile_checker_files_destination + checker.path + '/' + checker.path_relative_to_sandbox(),        checker.file)          for checker in createfile_checker if not checker.unpack_zipfile]
         # Temporary build directory
@@ -260,7 +268,15 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
 
         # We need to pass unicode strings to ZipInfo to ensure that it sets bit
         # 11 appropriately if the filename contains non-ascii characters.
-        assert isinstance(base_name, str)
+        import sys  # stay python 2 python 3 compatible
+        PY2 = sys.version_info[0] == 2
+        PY3 = sys.version_info[0] == 3
+        if PY3:
+            string_types = str
+        else:
+            string_types = unicode
+        
+        assert isinstance(base_name, string_types)
 
         checkstyle_checker_files = []
         script_checker_files     = []
@@ -268,23 +284,25 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
         junit3 = False
         junit4 = False
         checkstyle = False
-        if include_file_copy_checker_files:
+        if include_copy_checker_files:
             checkstyle_checker = solution.task.checkstylechecker_set.all()
             script_checker     = solution.task.scriptchecker_set.all()
             junit_checker      = solution.task.junitchecker_set.all()
-            artefacts          = [ artefact for result in solution.allCheckerResults() for artefact in result.artefacts.all() ]
             junit3     = bool([ 0 for j in junit_checker if  j.junit_version == 'junit3' ])
             junit4     = bool([ 0 for j in junit_checker if  j.junit_version == 'junit4' ])
             checkstyle = bool(checkstyle_checker)
 
             checkstyle_checker_files = [(checkstyle_checker_files_destination + os.path.basename(checker.configuration.name), checker.configuration) for checker in checkstyle_checker]
             script_checker_files     = [(script_checker_files_destination     + checker.path_relative_to_sandbox(),    checker.shell_script)  for checker in script_checker]
-            artefact_files           = [(artefact_files_destination + os.path.basename(artefact.file.name), artefact.file) for artefact in artefacts]
+
+        if include_artifacts:
+            artefacts = [ artefact for result in solution.allCheckerResults() for artefact in result.artefacts.all() ]
+            artefact_files = [(artefact_files_destination + os.path.basename(artefact.file.name), artefact.file) for artefact in artefacts]
 
         zip.writestr(base_name+'.project', render_to_string('solutions/eclipse/project.xml', { 'name': project_name, 'checkstyle' : checkstyle }).encode("utf-8"))
         zip.writestr(base_name+'.settings/org.eclipse.jdt.core.prefs', render_to_string('solutions/eclipse/settings/org.eclipse.jdt.core.prefs', { }).encode("utf-8"))
 
-        zip.writestr(base_name+'.classpath', render_to_string('solutions/eclipse/classpath.xml', {'junit3' : junit3, 'junit4': junit4, 'createfile_checker_files' : include_file_copy_checker_files, 'createfile_checker_files_destinations' : createfile_checker_files_destinations, 'testsuite_destination' : testsuite_destination }).encode("utf-8"))
+        zip.writestr(base_name+'.classpath', render_to_string('solutions/eclipse/classpath.xml', {'junit3' : junit3, 'junit4': junit4, 'createfile_checker_files' : include_copy_checker_files, 'createfile_checker_files_destinations' : createfile_checker_files_destinations, 'testsuite_destination' : testsuite_destination }).encode("utf-8"))
         if checkstyle:
             zip.writestr(base_name+'.checkstyle', render_to_string('solutions/eclipse/checkstyle.xml', {'checkstyle_files' : [filename for (filename, _) in checkstyle_checker_files], 'createfile_checker_files_destination' : createfile_checker_files_destination, 'testsuite_destination' : testsuite_destination }).encode("utf-8"))
 
@@ -293,12 +311,20 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
             zip.writestr(base_name+praktomat_files_destination+'AllJUnitTests.launch', render_to_string('solutions/eclipse/AllJUnitTests.launch', { 'project_name' : project_name, 'praktomat_files_destination' : praktomat_files_destination}).encode("utf-8"))
             zip.write(os.path.dirname(__file__)+"/../checker/scripts/eclipse-junit.policy", (base_name+praktomat_files_destination+'eclipse-junit.policy'))
 
-
         solution_files  = [ (solution_files_destination+solutionfile.path(), solutionfile.file) for solutionfile in solution.solutionfile_set.all()]
 
-        for  (name, file) in solution_files + createfile_checker_files + checkstyle_checker_files + script_checker_files + artefact_files:
+        for (name, file) in solution_files + createfile_checker_files + checkstyle_checker_files + script_checker_files + artefact_files:
             zippath = os.path.normpath(base_name + name)
-            assert isinstance(zippath, str)
+
+            import sys  # stay python 2 python 3 compatible
+            PY2 = sys.version_info[0] == 2
+            PY3 = sys.version_info[0] == 3
+            if PY3:
+                string_types = str
+            else:
+                string_types = unicode
+            
+            assert isinstance(zippath, string_types)
             try: # Do not overwrite files from the solution by checker files
                 zip.getinfo(zippath)
             except KeyError:
@@ -308,7 +334,7 @@ def get_solutions_zip(solutions,include_file_copy_checker_files=False):
     zip.close()
     zip_file.seek(0)
 
-    if include_file_copy_checker_files:
+    if include_copy_checker_files:
         if (tmpdir is None) or (not os.path.isdir(tmpdir)) or (not os.path.basename(tmpdir).startswith("tmp")):
             raise Exception("Invalid tmpdir: " + tmpdir)
         shutil.rmtree(tmpdir)
