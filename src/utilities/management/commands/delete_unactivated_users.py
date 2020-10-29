@@ -1,15 +1,13 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from accounts.models import User
 
-from os.path import join, dirname as dir
-
 class Command(BaseCommand):
-    help = 'Delete all users which have not activated their account.'
+    help = 'Delete users which have not activated their account. Users registered via Shibboleth are ignored.'
 
-    def handle_noargs(self, **options):
+    def handle(self, *args, **options):
         count = 0
         for user in User.objects.all():
-            if not user.is_activated() and user.activation_key_expired():
+            if user.activation_key != "" and not user.is_activated() and user.activation_key_expired():
                 user.delete()
                 count += 1
-        print("%i users have been deleted." % count)
+        self.stdout.write("%i users have been deleted." % count)
