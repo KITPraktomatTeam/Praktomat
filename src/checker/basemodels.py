@@ -44,6 +44,7 @@ class CheckerFileField(DeletingFileField):
         kwargs['max_length'] = kwargs.get('max_length', 500)
         super(CheckerFileField, self).__init__(verbose_name, name, upload_to, storage, **kwargs)
 
+@python_2_unicode_compatible
 class Checker(models.Model):
     """ A Checker implements some quality assurance.
 
@@ -147,6 +148,20 @@ class CheckerEnvironment:
     def sources(self):
         """ Returns the list of source files. [(name, content)...] """
         return self._sources
+
+    def string_sources(self):
+        """ Returns the list of string-like source files,
+            so it excludes byte-like content. [(name, content)...] """
+        import sys # stay python 2 and python 3 compatible , we could use six.text_type too.
+        PY2 = sys.version_info[0] == 2
+        PY3 = sys.version_info[0] == 3
+
+        if PY3:
+                string_types = str
+        else:
+                string_types = basestring
+        return [(name, content) for (name, content) in self._sources
+                                if isinstance(content, string_types)]
 
     def add_source(self, path, content):
         """ Add source to the list of source files. [(name, content)...] """
@@ -255,6 +270,7 @@ def get_checkerresultartefact_upload_path(instance, filename):
         'Result_' + str(result.id),
         filename)
 
+@python_2_unicode_compatible
 class CheckerResultArtefact(models.Model):
 
     result = models.ForeignKey(CheckerResult, related_name='artefacts', on_delete=models.CASCADE)
