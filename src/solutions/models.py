@@ -31,6 +31,7 @@ from configuration import get_settings
 for (mimetype, extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
     mimetypes.add_type(mimetype, extension, strict=True)
 
+@python_2_unicode_compatible
 class Solution(models.Model):
     """ """
 
@@ -117,6 +118,7 @@ def get_solutionfile_upload_path(instance, filename):
     solution = instance.solution
     return 'SolutionArchive/Task_' + str(solution.task.id) + '/User_' + solution.author.username + '/Solution_' + str(solution.id) + '/' + filename
 
+@python_2_unicode_compatible
 class SolutionFile(models.Model):
     """docstring for SolutionFile"""
 
@@ -144,7 +146,14 @@ class SolutionFile(models.Model):
                     new_solution_file = SolutionFile(solution=self.solution)
                     temp_file = tempfile.NamedTemporaryFile()                                    # autodeleted
                     temp_file.write(zip.open(zip_file_name).read())
-                    zip_file_name = zip_file_name  if isinstance(zip_file_name, str) else str(zip_file_name, errors='replace')
+                    import sys  # stay python 2 python 3 compatible
+                    PY2 = sys.version_info[0] == 2
+                    PY3 = sys.version_info[0] == 3
+                    if PY3:
+                        string_types = str
+                    else:
+                        string_types = unicode
+                    zip_file_name = zip_file_name  if isinstance(zip_file_name, string_types) else string_types(zip_file_name, errors='replace')
                     new_solution_file.file.save(zip_file_name, File(temp_file), save=True)        # need to check for filenames begining with / or ..?
         else:
             self.mime_type = mimetypes.guess_type(self.file.name)[0]
@@ -259,7 +268,15 @@ def get_solutions_zip(solutions,include_copy_checker_files=False,include_artifac
 
         # We need to pass unicode strings to ZipInfo to ensure that it sets bit
         # 11 appropriately if the filename contains non-ascii characters.
-        assert isinstance(base_name, str)
+        import sys  # stay python 2 python 3 compatible
+        PY2 = sys.version_info[0] == 2
+        PY3 = sys.version_info[0] == 3
+        if PY3:
+            string_types = str
+        else:
+            string_types = unicode
+        
+        assert isinstance(base_name, string_types)
 
         checkstyle_checker_files = []
         script_checker_files     = []
@@ -298,7 +315,16 @@ def get_solutions_zip(solutions,include_copy_checker_files=False,include_artifac
 
         for (name, file) in solution_files + createfile_checker_files + checkstyle_checker_files + script_checker_files + artefact_files:
             zippath = os.path.normpath(base_name + name)
-            assert isinstance(zippath, str)
+
+            import sys  # stay python 2 python 3 compatible
+            PY2 = sys.version_info[0] == 2
+            PY3 = sys.version_info[0] == 3
+            if PY3:
+                string_types = str
+            else:
+                string_types = unicode
+            
+            assert isinstance(zippath, string_types)
             try: # Do not overwrite files from the solution by checker files
                 zip.getinfo(zippath)
             except KeyError:
