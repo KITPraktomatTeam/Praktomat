@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block extrahead %}{{ block.super }}
-<script type="text/javascript" src="{{STATIC_URL}}/frameworks/dotdotdot/jquery.dotdotdot-packed.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}/frameworks/dotdotdot/jquery.dotdotdot.js"></script>
 {% endblock %}
 {% block breadcrumbs %} {{block.super}} > <a href={% url "task_detail" task_id=task.id%}>{{task.title}}</a> > Attestations{% endblock %}
 {% block content %}<div id='attestation_list'>
