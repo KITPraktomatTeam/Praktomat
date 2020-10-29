@@ -26,7 +26,7 @@
 					    window.open("{% url "solution_download" solution_id=solution.id %}","Download");
 					    return false;
 					  } else if (id == "download_full") {
-					    window.open("{% url "solution_download" solution_id=solution.id full="full" %}","Download");
+					    window.open("{% url "solution_download_full" solution_id=solution.id %}","Download");
 					    return false;
 					  } else
 					    return true;
@@ -195,7 +195,7 @@
 		  <a href="{% url "solution_download" solution_id=solution.id %}">Download</a>
 		</div>
 		<div id="download_full">
-		  <a href="{% url "solution_download" solution_id=solution.id full="full" %}">Download</a>
+		  <a href="{% url "solution_download_full" solution_id=solution.id %}">Download</a>
 		</div>
 	</div>
 </form>
