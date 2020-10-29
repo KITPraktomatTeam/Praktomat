@@ -24,7 +24,7 @@ from configuration import get_settings
 from utilities.deleting_file_field import DeletingFileField
 from utilities.safeexec import execute_arglist
 
-
+@python_2_unicode_compatible
 class Task(models.Model):
     title = models.CharField(max_length=100, help_text = _("The name of the task"))
     description = models.TextField(help_text = _("Description of the assignment."))
