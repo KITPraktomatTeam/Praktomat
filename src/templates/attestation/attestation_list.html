@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block extrahead %}{{ block.super }}
-<script type="text/javascript" src="{{STATIC_URL}}/frameworks/dotdotdot/jquery.dotdotdot-packed.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}/frameworks/dotdotdot/jquery.dotdotdot.js"></script>
 <script type="text/javascript" src="{{STATIC_URL}}/frameworks/jquery.easy-confirm-dialog/jquery.easy-confirm-dialog.js"></script>
 
 <script type="text/javascript">
@@ -55,7 +55,8 @@ $(document).ready(function(){
 <ul>
   <li><a href="{% url "upload_test_solution" task_id=task.id %}">Upload a test solution</a></li>
   <li><a href="{% url "solution_download_for_task" task_id=task.id %}">Download all solutions</a></li>
-  <li><a href="{% url "solution_download_for_task" task_id=task.id full="full" %}">Download all solutions, including checker files</a></li>
+  <li><a href="{% url "solution_download_for_task_artifacts" task_id=task.id %}">Download all solutions, including artifacts</a></li>
+  <li><a href="{% url "solution_download_for_task_full" task_id=task.id %}">Download all solutions, including artifacts and checker files</a></li>
 </ul>
 {% endif %}
 

@@ -52,7 +52,7 @@ class DejaGnu(object):
         makedirs(self.lib_dir(env))
         makedirs(self.tests_dir(env))
 
-
+@python_2_unicode_compatible
 class DejaGnuTester(Checker, DejaGnu):
     """ Run a test case on the program.  Requires a previous `DejaGnuSetup'. """
 
