@@ -292,7 +292,8 @@ class CUnitChecker2(CheckerWithFile):
         copyTestFileArchive_result = super(CUnitChecker2,self).run_file(env) # Instance of Class CheckerResult in basemodel.py
         
         # if copying failed we can stop right here!
-        if not copyTestFileArchive_result.passed:
+        #if not copyTestFileArchive_result.passed:
+        if copyTestFileArchive_result is not None:
             #result = self.create_result(env)
             result = copyTestFileArchive_result
             result.set_passed(False)
@@ -305,7 +306,7 @@ class CUnitChecker2(CheckerWithFile):
             return result
             
         result = copyTestFileArchive_result
-    
+        result = self.create_result(env)            
         # now we configure build and link steps for test-code and solution-code
         
         # link_type: o, so, out

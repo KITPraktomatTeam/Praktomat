@@ -19,8 +19,9 @@
 ulimit -t 600
 
 
+# TODO: update path each semester
 # Script dir is group writable...
-DIRS="bin lib usr/bin usr/lib home/praktomat/inst/2018s_c/Praktomat/src/checker/scripts"
+DIRS="bin lib usr/bin usr/lib home/praktomat/inst/pC2020/Praktomat/src/checker/scripts"
 
 # Some logs are produced in the chroot at
 # the moment and unfortunately get lost when
