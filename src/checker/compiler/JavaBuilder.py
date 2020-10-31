@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
 
 """
 A Java bytecode compiler for construction.
@@ -51,7 +53,7 @@ class JavaBuilder(ClassFileGeneratingBuilder):
     def libs(self):
         def toPath(lib):
             if lib=="junit3":
-                 return settings.JUNIT38_JAR
+                return settings.JUNIT38_JAR
             return lib
 
         required_libs = super(JavaBuilder, self).libs()
