@@ -6,4 +6,5 @@ __all__ = [    "Builder",
             "FortranBuilder",
             "HaskellBuilder",
             "ScalaBuilder",
+			"CLinker",
             ]

@@ -1,0 +1,32 @@
+#!/bin/sh 
+
+#Praktomat is using this script to call nm from checker CLinker.py
+#Praktomat grap nm output from stdout and does the analyse on its own.
+
+LC_ALL=C
+ulimit -t 600
+
+echo "Running findMainInObject '$(date)'" >> /tmp/findMainInObject_$(date '+%s').log
+
+SCRIPT=`basename $0`
+if [ $# -eq 0 ] ; then
+    (>&2 echo "${SCRIPT}: Internal Error: Not enough parameters. Exit.")
+    exit 1
+fi
+
+EXEC="$1"
+shift 
+
+
+#?? hash "${EXEC}" &> /dev/null
+
+if [ $? -eq 0 ] || [ -x "${EXEC}" ] ; then
+
+    "${EXEC}" "$@" 2>&1
+    exit $?
+else
+    (>&2 echo "${SCRIPT}: Internal error: '${EXEC}' does not seem to be an executable. Exit.")
+    exit 1
+fi
+
+exit 0

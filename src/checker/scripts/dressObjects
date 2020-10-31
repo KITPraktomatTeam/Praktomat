@@ -1,0 +1,15 @@
+#!/bin/sh 
+
+
+echo "Running dressObject '$(date)'" >> /tmp/dressObjects.log
+ls *.o | grep -v wrap.o | while read f; do
+  echo "processing '$f'..." >> /tmp/dressObjects.log
+  objcopy -L main $f
+  ret=$?
+  if [ $ret != 0 ] ; then
+    echo "dressObject failed. Exit."
+    exit $ret
+  fi
+done
+exit 0
+
