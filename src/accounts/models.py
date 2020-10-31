@@ -1,3 +1,9 @@
+# -*- encoding: utf-8 -*-
+
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
+
+
 import datetime
 import re
 import hashlib
@@ -22,6 +28,7 @@ def validate_mat_number(value):
     if regex:
         RegexValidator("^"+regex+"$", message="This is not a valid student number.", code="")(value)
 
+@python_2_unicode_compatible
 class User(BasicUser):
     # all fields need to be null-able in order to create user
     tutorial = models.ForeignKey('Tutorial', on_delete=models.SET_NULL, null=True, blank=True, help_text = _("The tutorial the student belongs to."))
@@ -119,7 +126,10 @@ class User(BasicUser):
     activate_user = staticmethod(activate_user)
 
     def is_shibboleth_user(self):
-        return not self.has_usable_password()
+        return not self.has_usable_password() and not self.is_ldap_user()
+	
+    def is_ldap_user(self):
+        return self.password == 'LDAP_AUTH'
 
     # Cache group membership for users
     def cached_groups(self):
@@ -174,7 +184,10 @@ class User(BasicUser):
                     pass # unique username validation - user already existed
         return User.objects.filter(id__in = imported_user_ids)     # get them fresh from the db, otherwise the user object won't have basicUser attributes set
 
-
+    def clean(self):
+        super(User, self).clean()
+        if settings.DUMMY_MAT_NUMBERS:			
+            self.mat_number = self.id			
 
 
 
@@ -195,6 +208,7 @@ def create_user_for_basicuser(sender, **kwargs):
         u.save()
 signals.post_save.connect(create_user_for_basicuser, sender=BasicUser)
 
+@python_2_unicode_compatible
 class Tutorial(models.Model):
     name = models.CharField(max_length=100, blank=True, help_text=_("The name of the tutorial"))
     # A Tutorial may have many tutors as well as a Tutor may have multiple tutorials

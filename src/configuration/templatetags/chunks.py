@@ -24,8 +24,8 @@ def do_get_chunk(parser, token):
 
 class ChunkNode(template.Node):
     def __init__(self, key, cache_time=0):
-       self.key = key
-       self.cache_time = cache_time
+        self.key = key
+        self.cache_time = cache_time
 
     def render(self, context):
         Chunk = apps.get_model('configuration', 'chunk')

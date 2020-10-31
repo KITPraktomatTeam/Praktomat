@@ -1,3 +1,5 @@
+from django.conf import settings   # for switching via ACCOUNT_CHANGE_POSSIBLE
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, get_object_or_404
@@ -576,11 +578,18 @@ def rating_export(request):
     rating_list = user_task_attestation_map(users, tasks)
 
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=rating_export.csv'
-    t = loader.get_template('attestation/rating_export.csv')
-    c = {'rating_list': rating_list, 'tasks': tasks}
-    #response.write(u'\ufeff') setting utf-8 BOM for Excel doesn't work
-    response.write(t.render(c))
+    if settings.LDAP_ENABLED:
+        response['Content-Disposition'] = 'attachment; filename=rating_export_ldap.csv'
+        t = loader.get_template('attestation/rating_export_ldap.csv')
+        c = {'rating_list': rating_list, 'tasks': tasks}
+        #response.write(u'\ufeff') setting utf-8 BOM for Exel doesn't work
+        response.write(t.render(c))
+    else:
+        response['Content-Disposition'] = 'attachment; filename=rating_export.csv'
+        t = loader.get_template('attestation/rating_export.csv')
+        c = {'rating_list': rating_list, 'tasks': tasks}
+        #response.write(u'\ufeff') setting utf-8 BOM for Excel doesn't work
+        response.write(t.render(c))
     return response
 
 def frange(start, end, inc):
