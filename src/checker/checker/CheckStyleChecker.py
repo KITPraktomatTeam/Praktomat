@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
 
 import shutil, os, re, subprocess
 from django.conf import settings
@@ -36,7 +38,8 @@ class CheckStyleChecker(Checker):
         [output, error, exitcode, timed_out, oom_ed] = execute_arglist(args, env.tmpdir())
 
         # Remove Praktomat-Path-Prefixes from result:
-        output = re.sub(r"^"+re.escape(env.tmpdir())+"/+", "", output, flags=re.MULTILINE)
+        #output = re.sub(r"^"+re.escape(env.tmpdir())+"/+", "", output, flags=re.MULTILINE)
+        output = re.sub(r""+re.escape(env.tmpdir())+"/+","",output,flags=re.MULTILINE)
 
         result = self.create_result(env)
 

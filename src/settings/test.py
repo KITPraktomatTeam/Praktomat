@@ -1,5 +1,9 @@
 # Settings for running the test-runner
 
+import locale 
+locale.setlocale( locale.LC_ALL, 'en_US.UTF-8' )
+
+
 from os.path import join, dirname
 
 # The name that will be displayed on top of the page and in emails.
