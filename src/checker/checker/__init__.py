@@ -11,6 +11,11 @@ __all__ = [    "AnonymityChecker",
             "CheckStyleChecker",
             "IsabelleChecker",
             "HaskellTestFrameWorkChecker",
-                        "RChecker",
-                        "KeepFileChecker",
+            "RChecker",
+            "KeepFileChecker",
+            "JavaChecker",
+            "DiffChecker",
+            "AutoAttestChecker",
+            "CUnitChecker_v2",
           ]
+

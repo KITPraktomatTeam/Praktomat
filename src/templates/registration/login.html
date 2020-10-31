@@ -30,7 +30,9 @@ function resize(id) {
 	<span class="icon ui-icon-triangle-1-e"></span><a href="{% url "registration_register" %}">Registration</a>
 	/
 	{% endif %}
+	{% if ACCOUNT_CHANGE_POSSIBLE %}
 	<span class="icon ui-icon-triangle-1-e"></span><a href="{% url "password_reset" %}">Retrieve password</a>
+	{% endif %}
 
 	<form method="post" action=".">{% csrf_token %}
 	    {% include "forms/form_as_div.html" %}

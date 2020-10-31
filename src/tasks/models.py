@@ -1,3 +1,8 @@
+# -*- encoding: utf-8 -*-
+
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
+
 from datetime import date, datetime, timedelta
 import tempfile
 import zipfile
@@ -19,12 +24,17 @@ from configuration import get_settings
 from utilities.deleting_file_field import DeletingFileField
 from utilities.safeexec import execute_arglist
 
-
+@python_2_unicode_compatible
 class Task(models.Model):
     title = models.CharField(max_length=100, help_text = _("The name of the task"))
     description = models.TextField(help_text = _("Description of the assignment."))
     publication_date = models.DateTimeField(help_text = _("The time on which the user will see the task."))
     submission_date = models.DateTimeField(help_text = _("The time up until the user has time to complete the task. This time will be extended by one hour for those who just missed the deadline."))
+
+    submission_free_uploads = models.IntegerField(default=1, help_text =_("Number of submissions a user can make before waitdelta got active"))
+    submission_waitdelta = models.IntegerField(default=0,help_text=_("Timedelta in minutes. The user must wait before submitting the next solution of same task: I removed the linear function: Timedelta multiplied with number of current uploads"))
+    submission_maxpossible = models.IntegerField(default=-1,help_text=_("Number of uploads a user can submit for the same task. Value -1 means unlimited")) 	
+
     supported_file_types = models.CharField(max_length=1000, default ="^(text/.*|image/.*|application/pdf)$", help_text = _("Regular Expression describing the mime types of solution files that the user is allowed to upload."))
     max_file_size = models.IntegerField(default=1000, help_text = _("The maximum size of an uploaded solution file in kilobyte."))
     model_solution = models.ForeignKey('solutions.Solution', on_delete=models.SET_NULL, blank=True, null=True, related_name='model_solution_task')
@@ -59,8 +69,8 @@ class Task(models.Model):
         count = check_multiple(final_solutions, True)
 
         if self.expired():
-                self.all_checker_finished = True
-                self.save()
+            self.all_checker_finished = True
+            self.save()
         return final_solutions.count()
 
     def get_checkers(self):
@@ -204,7 +214,16 @@ class Task(models.Model):
         from attestation.models import RatingScale, RatingScaleItem
 
         zip = zipfile.ZipFile(zip_file, 'r')
-        data = zip.read('data.xml').decode('utf-8')
+        
+        import sys
+        PY2 = sys.version_info[0] == 2
+        PY3 = sys.version_info[0] == 3
+        data = ""
+        if PY3:
+            data = zip.read('data.xml').decode('utf-8') #py3
+        else:
+            data = zip.read('data.xml') #Py2
+        
         task_id_map = {}
         scale_map = {}
         solution_id_map = {}
@@ -215,7 +234,7 @@ class Task(models.Model):
             old_id = object.id
             object.id = None
             if isinstance(object, Task):
-                # save all tasks and their old id
+            # save all tasks and their old id
                 if is_template:
                     object.publication_date = date.max
                 deserialized_object.save()

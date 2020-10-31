@@ -265,9 +265,10 @@ def load_defaults(settings):
     d.FORTRAN_BINARY = 'g77'
     d.ISABELLE_BINARY = 'isabelle' # Isabelle should be in PATH
     d.DEJAGNU_RUNTEST = '/usr/bin/runtest'
-    d.CHECKSTYLEALLJAR = '/home/praktomat/contrib/checkstyle-all-4.4.jar'
+    d.CHECKSTYLEALLJAR = '/home/praktomat/contrib/checkstyle-8.14-all.jar'
     d.JUNIT38='junit'
     d.JAVA_LIBS = { 'junit3' : '/usr/share/java/junit.jar', 'junit4' : '/usr/share/java/junit4.jar' }
+    d.JAVA_CUSTOM_LIBS = PRAKTOMAT_ROOT + '/lib/java/*'
     d.JAVAP='javap'
     d.GHC='ghc'
     d.SCALA='scala'
@@ -285,7 +286,22 @@ def load_defaults(settings):
 
     # Alternatively: Run everything in a docker instance, to provide higher
     # insulation. Should not be used together with USEPRAKTOMATTESTER.
+    
+    # It is recomendet to use DOCKER and not a tester account
+    # for using Docker from https://github.com/nomeata/safe-docker
+    # Use docker to test submission
+    
+    # To allow Praktomat the execution of scriptfile  safe-docker  without requiring a password:
+    # "praktomat	ALL= NOPASSWD: /usr/local/bin/safe-docker"
+    
     d.USESAFEDOCKER = False
+    
+    
+    # be sure that you change file permission 
+    # sudo chown praktomat:tester praktomat/src/checker/scripts/java
+    # sudo chown praktomat:tester praktomat/src/checker/scripts/javac
+    # sudo chmod u+x,g+x,o-x praktomat/src/checker/scripts/java
+    # sudo chmod u+x,g+x,o-x praktomat/src/checker/scripts/javac 
 
     # Make sure uploaded solution are not work-readable
     d.FILE_UPLOAD_PERMISSIONS = 0o640
@@ -315,7 +331,7 @@ def load_defaults(settings):
 
     d.SHIB_USERNAME = "email"
     d.SHIB_PROVIDER = "kit.edu"
-    
+
     # URL to the MOTD page which will be shown on login page and task list
     d.SYSADMIN_MOTD_URL = None
 
@@ -323,10 +339,36 @@ def load_defaults(settings):
     # Single Sign On is used
     d.REGISTRATION_POSSIBLE = True
 
+    # Set this to False to disable "Got Problems?"-link in task list
+    d.SHOW_CONTACT_LINK = True
+
+    # Set this to False to disable account changes via the website
+    d.ACCOUNT_CHANGE_POSSIBLE = True
+
+    # Set this to True to automatically set user.mat_number = user.id 
+    d.DUMMY_MAT_NUMBERS = False
+
+
+    #TODO: Code refactoring: make it more flexible, to change between LDAP or Shibboleth support!
+
+    # LDAP support
+    # You probably want to disable REGISTRATION_POSSIBLE if you enable LDAP
+    # LDAP config put it in local or devel settings with individual correct values!
+
+    d.LDAP_ENABLED = False
+    d.AUTHENTICATION_BACKENDS = (
+	'accounts.ldap_auth.LDAPBackend',
+	'django.contrib.auth.backends.ModelBackend',
+    )
+    d.LDAP_URI="ldap://ldap.DomainNAME.TOPLEVEL" 
+    d.LDAP_BASE="dc=DomainNAME,dc=TOPLEVEL"
+
+
+
     # Length of timeout applied whenever an external check that runs a students
     # submission is executed,
-    # for example: JUnitChecker, DejaGnuChecker
-    d.TEST_TIMEOUT=60
+    # for example: JUnitChecker, DejaGnuChecker    
+    d.TEST_TIMEOUT=60  # but make sure to use ulimit -t 60 inside shell scripts!
 
     # Amount of memory available to the checker, in megabytes
     # (this is currently only supported with USESAFEDOCKER=True)
