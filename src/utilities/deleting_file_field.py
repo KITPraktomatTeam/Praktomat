@@ -14,7 +14,7 @@ class DeletingFileField(models.FileField):
         # delete it from the backend.
         if file and file.name != self.default and \
             not sender._default_manager.filter(**{self.name: file.name}):
-                file.delete(save=False)
+            file.delete(save=False)
         elif file:
             # Otherwise, just close the file, so it doesn't tie up resources.
             file.close()

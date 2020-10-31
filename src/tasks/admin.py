@@ -38,6 +38,7 @@ class TaskAdmin(admin.ModelAdmin):
                             ('publication_date', 'submission_date'),
                             'description',
                             ('supported_file_types', 'max_file_size'),
+                            ('submission_free_uploads', 'submission_waitdelta', 'submission_maxpossible'),
                             'final_grade_rating_scale',
                             'only_trainers_publish',
                             'warning_threshold',

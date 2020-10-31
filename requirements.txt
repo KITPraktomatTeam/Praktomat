@@ -1,6 +1,10 @@
+urllib3[secure]
 # workaround for debug-toolbar/sqlparse incompatibility, see http://stackoverflow.com/questions/38479063/django-debug-toolbar-breaking-on-admin-while-getting-sql-stats
 sqlparse
-Django~=2.2.0
+Django~=1.11,<2.0;python_version<="2.7"
+Django~=2.0;python_version=="3.4"
+Django~=2.2;python_version>="3.5"
+# M2Crypto # has been removed by commit "use hashlib+smime for upload verification mails instead of M2Crypto" (19.1.2018)
 Markdown
 Pygments
 chardet
@@ -9,8 +13,11 @@ django-extensions
 # It appears that due to the pull-request https://github.com/aljosa/django-tinymce/pull/103 merged in django-tinymce==2.4.0, jquery is loaded after our onw jquery
 # loaded in admin-sites. Using an old version of django-tinymce (2.3.x) is not possible because it uses methods removed between Django 1.8 and 1.11.
 # We might want to use the django-admin provieded jquery in our admin-site jquery snippets?!?!?
-django-tinymce
+django-tinymce~=2.8;python_version<="3.5"  # because 3.0.1 and 3.0.2 gave error messages with python 3.5 and lower
+django-tinymce~=3.0;python_version>="3.6"
 django-debug-toolbar
 docutils
 psycopg2-binary
+subprocess32;python_version<"3"
+# selenium # has been removed by commit "remove selenium and phantomjs dependency" (16.1.2020)
 

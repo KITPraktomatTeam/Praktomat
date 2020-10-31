@@ -5,7 +5,9 @@ from os.path import *
 import time
 import subprocess
 import signal
-import subprocess
+from six import PY2
+if PY2:
+    import subprocess32 as subprocess
 import resource
 
 from django.conf import settings
