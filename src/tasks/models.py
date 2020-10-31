@@ -209,7 +209,16 @@ class Task(models.Model):
         from attestation.models import RatingScale, RatingScaleItem
 
         zip = zipfile.ZipFile(zip_file, 'r')
-        data = zip.read('data.xml').decode('utf-8')
+        
+        import sys
+        PY2 = sys.version_info[0] == 2
+        PY3 = sys.version_info[0] == 3
+        data = ""
+        if PY3:
+            data = zip.read('data.xml').decode('utf-8') #py3
+        else:
+            data = zip.read('data.xml') #Py2
+        
         task_id_map = {}
         scale_map = {}
         solution_id_map = {}
