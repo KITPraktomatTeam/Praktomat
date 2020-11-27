@@ -111,7 +111,7 @@ def until_critical(l):
 
 def get_solutionfile_upload_path(instance, filename):
     solution = instance.solution
-    return 'SolutionArchive/Task_' + str(solution.task.id) + '/User_' + solution.author.username + '/Solution_' + str(solution.id) + '/' + filename
+    return 'SolutionArchive/Task_' + str(solution.task.id) + '/User_' + solution.author.username.replace("/","\u2044") + '/Solution_' + str(solution.id) + '/' + filename
 
 class SolutionFile(models.Model):
     """docstring for SolutionFile"""
@@ -312,7 +312,7 @@ def get_solutions_zip(solutions,include_copy_checker_files=False,include_artifac
     return zip_file
 
 def path_for_user(user):
-    return user.get_full_name()+'-'+str(user.mat_number)+'-'+str(user.id)
+    return user.get_full_name().replace("/","\u2044")+'-'+str(user.mat_number)+'-'+str(user.id)
 
 def path_for_task(task):
     return task.title
