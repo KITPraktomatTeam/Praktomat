@@ -50,9 +50,9 @@ Prerequisites: Database and Webserver
     apache2
     libapache2-mod-macro       (<= Ubuntu 14, removed in Ubuntu 16)
     libapache2-mod-wsgi        (for using with Python2)
-    libapache2-mod-wsgi-py3    (for using with Python3)
-    libapache2-mod-xsendfile   
-
+    libapache2-mod-wsgi-py3    (for using with Python3)   
+    libapache2-mod-xsendfile   (version 0.12; or install version 1.0 manually)
+ 
 Pitfalls while Systemupgrades
 ============
   In Ubuntu 16 the package `apache2-mpm-worker` has been merged into `apache2`.
@@ -85,6 +85,7 @@ Prerequisites: 3rd-Party libraries and programms
     libssl-dev
     openssl (for signing E-Mails)
     swig
+    
 
     openjdk-11-jdk (or: openjdk-8-jdk)
     junit
@@ -207,7 +208,7 @@ to run django unit tests
 ```bash
 cd Praktomat
 mkdir ../test-data/
-./src/manage-test.py test accounts attestation checker configuration solutions tasks
+./src/manage-test.py test accounts attestation checker configuration solutions tasks hbrs_tests
 ```
 
 
