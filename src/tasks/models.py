@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
 from django.utils.encoding import python_2_unicode_compatible
@@ -145,8 +145,11 @@ class Task(models.Model):
                 "-p", jplag_settings['files'],
                 "-r", path,
                 tmp]
+        environ={}
+        environ['LANG'] = settings.LANG
+        environ['LANGUAGE'] = settings.LANGUAGE
         [output, error, exitcode, timed_out, oom_ed] = \
-         execute_arglist(args, path, unsafe=True)
+         execute_arglist(args, path, environment_variables=environ, unsafe=True)
 
         # remove solution copies
         shutil.rmtree(tmp)

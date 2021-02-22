@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.utils.encoding import python_2_unicode_compatible
+
 
 import re
 
@@ -110,7 +110,9 @@ class HaskellTestFrameWorkChecker(CheckerWithFile):
         environ = {}
 
         environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
-
+        environ['LANG'] = settings.LANG
+        environ['LANGUAGE'] = settings.LANGUAGE
+        
         cmd = ["./"+self.module_binary_name(), "--maximum-generated-tests=1000"]
         [output, error, exitcode, timed_out, oom_ed] = execute_arglist(cmd, env.tmpdir(), environment_variables=environ, timeout=settings.TEST_TIMEOUT, fileseeklimit=settings.TEST_MAXFILESIZE)
 

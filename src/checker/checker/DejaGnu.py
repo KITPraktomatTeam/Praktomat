@@ -119,11 +119,13 @@ class DejaGnuTester(Checker, DejaGnu):
         environ = {}
         environ['JAVA'] = settings.JVM
         script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'scripts')
-        environ['POLICY'] = join(script_dir, "praktomat.policy")
+        environ['POLICY'] = join(script_dir, "java.policy")
         environ['USER'] = env.user().get_full_name()
         environ['HOME'] = testsuite
         environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
-
+        environ['LANG'] = settings.LANG
+        environ['LANGUAGE'] = settings.LANGUAGE
+        
         [output, error, exitcode, timed_out, oom_ed] = \
                     execute_arglist(
                         cmd,
