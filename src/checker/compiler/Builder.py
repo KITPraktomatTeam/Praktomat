@@ -11,6 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.html import escape
 from django.template.loader import get_template
 
+from django.conf import settings
 
 from checker.basemodels import Checker
 from utilities.safeexec import execute_arglist
@@ -123,7 +124,10 @@ class Builder(Checker):
         filenames = [name for name in self.get_file_names(env)]
         args = [self.compiler()] + self.output_flags(env) + self.flags(env) + filenames + self.libs()
         script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'scripts')
-        [output, _, _, _, _]  = execute_arglist(args, env.tmpdir(), self.environment(), extradirs=[script_dir])
+        environ = self.environment()
+        environ['LANG'] = settings.LANG
+        environ['LANGUAGE'] = settings.LANGUAGE
+        [output, _, _, _, _]  = execute_arglist(args, env.tmpdir(), environ, extradirs=[script_dir])
 
         output = escape(output)
         output = self.enhance_output(env, output)
@@ -152,3 +156,4 @@ class Builder(Checker):
             'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm, ps: parm + ' ' + ps, args[1:], ''),
             'regexp' : self.rxarg()
         })
+
