@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="solution/"/>
 	{% if createfile_checker_files %}
-	{% for createfile_checker_files_destination in createfile_checker_files_destinations %} 
+	{% for createfile_checker_files_destination in createfile_checker_files_destinations %}
 	<classpathentry kind="src" path="{{createfile_checker_files_destination}}"/>
 	{% endfor %}
 	{% endif  %}
