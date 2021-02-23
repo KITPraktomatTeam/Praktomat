@@ -1,0 +1,16 @@
+{% load i18n %}{% autoescape off %}{% trans "Hello " %} ,
+
+while processing solution "{{ solution }}" of task "{{ solution.task }}"
+from user {{ solution.author }} at {{ datetime }}
+an exception occured in checker "{{ checker }}".
+
+ERROR was {{ errormsg }}
+
+Maybe buggy checker config or checker content.
+
+Please have a look to {{ base_host }}{% url "solution_detail" solution_id=solution.id %}
+
+{{ site_name }}
+
+{% endautoescape %}
+
