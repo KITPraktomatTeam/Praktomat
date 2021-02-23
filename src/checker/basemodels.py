@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-# -*- encoding: utf-8 -*-
-
 from __future__ import unicode_literals
 from django.utils.encoding import python_2_unicode_compatible
 
@@ -30,6 +28,14 @@ from multiprocessing import Pool
 from django.db import transaction
 from django import db
 from django.db import connection
+
+from accounts.models import User
+from tasks.models import Task
+from django.template import loader, Context
+from django.core.mail import EmailMultiAlternatives, mail_admins
+import sys
+from datetime import datetime
+
 
 def get_checkerfile_storage_path(instance, filename):
     """ Use this function as upload_to parameter for filefields. """
@@ -152,7 +158,8 @@ class CheckerEnvironment:
     def string_sources(self):
         """ Returns the list of string-like source files,
             so it excludes byte-like content. [(name, content)...] """
-        import sys # stay python 2 and python 3 compatible , we could use six.text_type too.
+        # stay python 2 and python 3 compatible , we could use six.text_type too
+        # sys has been imported at top of file.
         PY2 = sys.version_info[0] == 2
         PY3 = sys.version_info[0] == 3
 
@@ -371,6 +378,7 @@ def run_checks(solution, env, run_all):
 
             if can_run_checker:
                 # Invoke Checker
+                # TODO: well perhaps we could use settings.MIRROR to let store mails as file for development or test
                 if settings.DEBUG or 'test' in sys.argv:
                     result = checker.run(env)
                 else:
@@ -380,7 +388,30 @@ def run_checks(solution, env, run_all):
                         result = checker.create_result(env)
                         result.set_log("The Checker caused an unexpected internal error.")
                         result.set_passed(False)
-                        #TODO: Email Admins
+                        #TODO: signed Email Admins
+                        # sys has been imported at top of file
+                        extype, exvalue, ectb = sys.exc_info()
+                        exnow = datetime.now()
+                        dt_string = exnow.strftime("%d/%m/%Y %H:%M:%S")
+#                        myRequestUser = User.objects.filter(id=request.user.id)
+                        myTask = Task.objects.filter(id=solution.task_id)
+                        myerrmsg = " %s => %s " % (extype.__name__, exvalue) if exvalue else " %s " %(extype.__name__,)
+                        plaintext = loader.get_template('checker/exception.txt')
+                        htmly = loader.get_template('checker/exception.html')
+                        c = {
+#                              'protocol' : request.is_secure() and "https" or "http",
+#                              'domain' : RequestSite(request).domain,
+                              'base_host' : settings.BASE_HOST,
+                              'site_name' : settings.SITE_NAME,
+                              'solution' : solution,
+                              'checker' : checker,
+                              'errormsg' : myerrmsg,
+                              'datetime' : dt_string,
+                        }
+                        mail_admins(_("%s : checker in %s failed")%(settings.SITE_NAME, myTask), plaintext.render(c),html_message=htmly.render(c))
+                        if settings.DEBUG :
+                            print (_("%s : checker in %s failed \n %s")%(settings.SITE_NAME, myTask, plaintext.render(c)))
+                        #raise
             else:
                 # make non passed result
                 # this as well as the dependency check should propably go into checker class
