@@ -13,4 +13,6 @@ install:
  - python --version && python -c "import sqlite3; print(\"... uses pysqlite \" + sqlite3.version +\" with SQLite \" + sqlite3.sqlite_version);"
 
 script:
- - ./src/manage-test.py test accounts attestation checker configuration solutions tasks
+ - mkdir ../debug-data
+ - mkdir ../test-data
+ - ./src/manage-test.py test accounts attestation checker configuration solutions tasks hbrs_tests

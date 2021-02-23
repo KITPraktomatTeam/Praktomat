@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-# -*- encoding: utf-8 -*-
-
 from __future__ import unicode_literals
 from django.utils.encoding import python_2_unicode_compatible
 
@@ -48,7 +46,8 @@ class Solution(models.Model):
     final = models.BooleanField( default = False, help_text = _('Indicates whether this solution is the last (accepted) of the author.'))
 
     def __str__(self):
-        return str(self.task) + ":" + str(self.author) + ":" + str(self.number)
+        return "%s:%s:%s" % (self.task, self.author , self.number)
+        #return str(self.task) + ":" + str(self.author) + ":" + str(self.number)
 
     def allCheckerResults(self):
         results = self.checkerresult_set.all().prefetch_related('artefacts')
@@ -116,7 +115,7 @@ def until_critical(l):
 
 def get_solutionfile_upload_path(instance, filename):
     solution = instance.solution
-    return 'SolutionArchive/Task_' + str(solution.task.id) + '/User_' + solution.author.username + '/Solution_' + str(solution.id) + '/' + filename
+    return 'SolutionArchive/Task_' + str(solution.task.id) + '/User_' + solution.author.username.replace("/","\u2044") + '/Solution_' + str(solution.id) + '/' + filename
 
 @python_2_unicode_compatible
 class SolutionFile(models.Model):
@@ -275,7 +274,7 @@ def get_solutions_zip(solutions,include_copy_checker_files=False,include_artifac
             string_types = str
         else:
             string_types = unicode
-        
+
         assert isinstance(base_name, string_types)
 
         checkstyle_checker_files = []
@@ -323,7 +322,7 @@ def get_solutions_zip(solutions,include_copy_checker_files=False,include_artifac
                 string_types = str
             else:
                 string_types = unicode
-            
+
             assert isinstance(zippath, string_types)
             try: # Do not overwrite files from the solution by checker files
                 zip.getinfo(zippath)
@@ -342,7 +341,7 @@ def get_solutions_zip(solutions,include_copy_checker_files=False,include_artifac
     return zip_file
 
 def path_for_user(user):
-    return user.get_full_name()+'-'+str(user.mat_number)+'-'+str(user.id)
+    return user.get_full_name().replace("/","\u2044")+'-'+str(user.mat_number)+'-'+str(user.id)
 
 def path_for_task(task):
     return task.title
