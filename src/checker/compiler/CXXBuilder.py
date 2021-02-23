@@ -29,7 +29,7 @@ class CXXBuilder(Compiler):
         return [passed,log]
 
 
-    def connected_flags(self, env):             
+    def connected_flags(self, env):
         return self.search_path() + self.flags()
 
 

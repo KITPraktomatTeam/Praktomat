@@ -25,7 +25,7 @@ class IgnoringCBuilder2(CBuilder):
     _ignore = []
 
     def __init__(self,_flags, _ignore, _file_pattern, _output_flags):
-                        
+
         super(IgnoringCBuilder2,self).__init__(_flags=_flags, _file_pattern=_file_pattern, _output_flags=_output_flags)
         self._ignore=_ignore
 
@@ -86,7 +86,7 @@ class IgnoringCXXBuilder2(CXXBuilder):
 
 class CUnitChecker2(CheckerWithFile):
     """ New Checker for CUnit and CPPUnit Unittests """ # code based upon JUnitChecker but has changet so much to become completly independent from JUnitChecker
-# You can write testcode with 
+# You can write testcode with
 # https://sourceforge.net/projects/cunit/
 # https://sourceforge.net/projects/cppunit/
 # but you are not forced to write your tests with that above frameworks
@@ -99,12 +99,12 @@ class CUnitChecker2(CheckerWithFile):
             verbose_name=_("TestApp Filename"),
         default=u"TestApp.out"
     )
-    _test_ignore = models.CharField(max_length=4096, 
+    _test_ignore = models.CharField(max_length=4096,
         help_text=_("Regular Expression for ignoring files while compile and link test-code.")+" <br> Play with  RegEx at <a href=\"http://pythex.org/\" target=\"_blank\">http://pythex.org/ </a>",
         default=u"sorry, this feature doesn't work now", blank=True)
 
-    _test_flags = models.CharField(max_length = 1000, blank = True, 
-        default=u"-Wall -Wextra -Wl,--warn-common", 
+    _test_flags = models.CharField(max_length = 1000, blank = True,
+        default=u"-Wall -Wextra -Wl,--warn-common",
         help_text = _("Compiler and Linker flags for i.e. libraries used while generating TestApp. <br> Don't fill in cunit or cppunit here."))
 
     LINK_CHOICES = (
@@ -114,7 +114,7 @@ class CUnitChecker2(CheckerWithFile):
     )
     LINK_DICT = {u'out':u'-o' , u'so':u'-shared -fPIC -o' , u'o':u''}
     link_type = models.CharField(max_length=16, choices=LINK_CHOICES,default="o", help_text = _('How to use solution submission in test-code?'))
-    
+
 
     CUNIT_CHOICES = (
       ('cunit', u'CUnit 2.1-3'),
@@ -126,8 +126,8 @@ class CUnitChecker2(CheckerWithFile):
     cunit_version = models.CharField(max_length=16, choices=CUNIT_CHOICES,default="cunit", verbose_name=_("Unittest type or library"))
 
 
-    _test_par = models.CharField(max_length = 1000, 
-        default=u"", 
+    _test_par = models.CharField(max_length = 1000,
+        default=u"",
         help_text = _("Command line parameters for running TestApp"),
         blank=True)
 
@@ -137,23 +137,23 @@ class CUnitChecker2(CheckerWithFile):
 
     _sol_name =  models.CharField(
             max_length=100,
-            help_text=_("Basisfilename ( = filename without fileending!) for interaction with  MUT (Module-Under-Test)<br>" 
+            help_text=_("Basisfilename ( = filename without fileending!) for interaction with  MUT (Module-Under-Test)<br>"
             +"The fileending to use gets determined by your choosen Link type.<br>"
             ),
         verbose_name=_("MUT Filename"),
         default=u"Solution"
-    )    
-    _sol_ignore = models.CharField(max_length=4096, 
+    )
+    _sol_ignore = models.CharField(max_length=4096,
         help_text=_("Regular Expression for ignoring files while compile CUT and link MUT.<br>"
               +"CUT = Code Under Test - MUT = Module Under Test <br>"
                       +"Play with RegEx at <a href=\"http://pythex.org/\" target=\"_blank\">http://pythex.org/ </a>"
                       ),
-        default="sorry, this feature doesn't work now", blank=True, 
+        default="sorry, this feature doesn't work now", blank=True,
         verbose_name=_("MUT ignore files")
     )
 
-    _sol_flags = models.CharField(max_length = 1000, blank = True, 
-        default=u"-Wall -Wextra -Wl,--warn-common", 
+    _sol_flags = models.CharField(max_length = 1000, blank = True,
+        default=u"-Wall -Wextra -Wl,--warn-common",
         help_text = _("Compiler and Linker flags used while generating MUT (Module-under-Test)."),
         verbose_name=_("MUT flags")
     )
@@ -165,7 +165,7 @@ class CUnitChecker2(CheckerWithFile):
         my_sibling_files = []
         import zipfile  #via src/utilities/file_operations
         for checker in my_task_sibling_checkers:
-            if (checker != self) :                        
+            if (checker != self) :
 
                 try:
                     with zipfile.ZipFile(checker.file.path) as zip_file:
@@ -174,16 +174,16 @@ class CUnitChecker2(CheckerWithFile):
                     import string
                     import re
                     cleanfilename = re.sub(r'^CheckerFiles/Task_\d*/'+self.__class__.__name__, '', checker.filename).lstrip('/')
-                    names = [cleanfilename]    
+                    names = [cleanfilename]
                 my_sibling_files = my_sibling_files + names
         return my_sibling_files
 
 
 
     def instance_filenames(self, env):
-        
+
         import zipfile  #via src/utilities/file_operations
-            
+
         try:
             with zipfile.ZipFile(self.file.path) as zip_file:
                 names = zip_file.namelist()
@@ -191,20 +191,20 @@ class CUnitChecker2(CheckerWithFile):
                 import string
                 import re
                 cleanfilename = re.sub(r'^CheckerFiles/Task_\d*/'+self.__class__.__name__, '', self.filename).lstrip('/')
-                names = [cleanfilename]    
-        return names         
+                names = [cleanfilename]
+        return names
 
-    
+
     def use_cppBuilder(self):
         if 'pp' in self.cunit_version:
             return True
         else:
             return False
-    
-    
+
+
     def mut_flags(self,env):
         return self._sol_flags if self._sol_flags else " "
-    
+
 
     def mut_output_flags(self,env):
                 if self.link_type=='so':
@@ -222,7 +222,7 @@ class CUnitChecker2(CheckerWithFile):
 
     def runner(self):
         #return {'cunit' : 'cuMain.exe', 'cppunit' : 'cxxMain.exe' }[self.cunit_version]
-        # cTestrunner is name of shell-script file inside folder checker/scripts 
+        # cTestrunner is name of shell-script file inside folder checker/scripts
         return "cTestrunner"
 
     def title(self):
@@ -238,77 +238,77 @@ class CUnitChecker2(CheckerWithFile):
     def clean(self):
         #call parents clean
         super(CUnitChecker2, self).clean()
-        
+
 
     def run(self, env):
     # Robert Hartmann : 9.1.2018
     # okay lets play with an Idea:
-    # We want to check students solutions 
+    # We want to check students solutions
     #     - functions: input / output parameters
     #     - functions: with return values
-    #     - programs: user interaction (input/output) 
+    #     - programs: user interaction (input/output)
     #         via STDOUT, STDERR, STDIN
-    # In C we can only have one main function 
-    # (unlike in Java there can a 
-    # public static void main(String args) method 
+    # In C we can only have one main function
+    # (unlike in Java there can a
+    # public static void main(String args) method
     # in each class.)
     #
     # Each Instance of this CUnitChecker has a corresponding
     # c-File with main-function.
-    # therefor we must hide c-main functions from other 
+    # therefor we must hide c-main functions from other
     # instances of this checker.
-    # 
-    # Now we have a look to interactin with students files:  
-    # => If the student have to write a program, 
+    #
+    # Now we have a look to interactin with students files:
+    # => If the student have to write a program,
     #    that is when the students submission contains a main function,
-    #    than we cannot link student-code and test-code 
-    #    to one binary executable. 
-    #    In that case the student-code should 
+    #    than we cannot link student-code and test-code
+    #    to one binary executable.
+    #    In that case the student-code should
     #    - compile and link as an executable program
     #    - compile as a shared object (*.so or *.dll)
-    #    a) And the test-code should use that Library for testing functions: 
+    #    a) And the test-code should use that Library for testing functions:
     #       on posix-systems use dlopen, dlsym, dlclose
     #          (Our Praktomat is a linux server)
     #       on windows it would be LoadLibrary, GetProcAdress, FreeLibrary.
     #    - but on Windows there must be a library-entry function for each *.dll
-    #    BOOLEAN WINAPI DllMain( 
-    #    IN HINSTANCE hDllHandle, 
-    #    IN DWORD     nReason, 
+    #    BOOLEAN WINAPI DllMain(
+    #    IN HINSTANCE hDllHandle,
+    #    IN DWORD     nReason,
     #    IN LPVOID    Reserved ) https://msdn.microsoft.com/de-de/library/windows/desktop/aa370448
     #    b) To test programs user interaction
     #    our test-code have to redirect STDOUT, STDERR, STDIN
     #    befor starting the new process with redirections
-    #    on posix-systems use fork, execvp, 
+    #    on posix-systems use fork, execvp,
     #    on windows CreatePipe, CreateProcess , see  https://msdn.microsoft.com/en-us/library/windows/desktop/ms682499(v=vs.85).aspx
 
-    # TODO: How to deal with students static c-functions. Think again how to interact with scriptfile dressObjects from this Checker        
+    # TODO: How to deal with students static c-functions. Think again how to interact with scriptfile dressObjects from this Checker
 
-        
+
         my_env_Sources = env.sources()[:] #swallow copy because env.sources() gets manipulated by time
         ignore_Filenames = [ seq[0] for seq in my_env_Sources if seq[0] not in self.instance_filenames(env) ]
-        
+
 
         # copy testfiles to sandbox
         copyTestFileArchive_result = super(CUnitChecker2,self).run_file(env) # Instance of Class CheckerResult in basemodel.py
-        
+
         # if copying failed we can stop right here!
         #if not copyTestFileArchive_result.passed:
         if copyTestFileArchive_result is not None:
             #result = self.create_result(env)
             result = copyTestFileArchive_result
             result.set_passed(False)
-            result.set_log( #escape(self.CUNIT_CHOICES[self.cunit_version])   
-                        ""+ '<pre>' 
-                          + escape(self.test_description) 
+            result.set_log( #escape(self.CUNIT_CHOICES[self.cunit_version])
+                        ""+ '<pre>'
+                          + escape(self.test_description)
                           + '\n\n======== Preprocessing: Filecopy Failure-Results: ======\n\n</pre><br/>\n'
                           + copyTestFileArchive_result.log )
             #raise TypeError
             return result
-            
+
         result = copyTestFileArchive_result
-        result = self.create_result(env)            
+        result = self.create_result(env)
         # now we configure build and link steps for test-code and solution-code
-        
+
         # link_type: o, so, out
         test_builder = None
         solution_builder = None
@@ -318,7 +318,7 @@ class CUnitChecker2(CheckerWithFile):
             my_flags = self.mut_flags(env) +u" " + self.test_flags(env)
             my_oflags = self.test_output_flags(env) # + self.mut_output_flags(env)
 
-            #languageCompiler C or CPP 
+            #languageCompiler C or CPP
             if self.use_cppBuilder():
                 #CPP
                 test_builder = IgnoringCXXBuilder2(_flags=my_flags ,_ignore=self.all_own_sibling_instances_filenames(env), _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags=my_oflags)
@@ -328,7 +328,7 @@ class CUnitChecker2(CheckerWithFile):
         else:
             #ignoring all test-code filenames for solution_builder
             #ignoring all non test-code filenames for test_builder
-            
+
             names = self.instance_filenames(env)
 
             # shared object or executable
@@ -338,9 +338,9 @@ class CUnitChecker2(CheckerWithFile):
             my_test_oflags = self.test_output_flags(env)
             my_mut_oflags = self.mut_output_flags(env)
 
-                        
 
-            #languageCompiler C or CPP 
+
+            #languageCompiler C or CPP
             if self.use_cppBuilder():
                 #CPP
                 solution_builder = IgnoringCXXBuilder2(_flags=my_mut_flags, _ignore=names + self.all_own_sibling_instances_filenames(env) , _file_pattern=r"^.*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$",_output_flags=my_mut_oflags)
@@ -349,7 +349,7 @@ class CUnitChecker2(CheckerWithFile):
                 #C
                 solution_builder = IgnoringCBuilder2(_flags=my_mut_flags, _ignore=names + self.all_own_sibling_instances_filenames(env) , _file_pattern=r"^.*\.(c|C)$",_output_flags=my_mut_oflags)
                 test_builder = IgnoringCBuilder2(_flags=my_test_flags, _ignore=ignore_Filenames, _file_pattern=r"^.*\.(c|C)$",_output_flags=my_test_oflags)
-            
+
         build_solution_result = None
         if solution_builder:
             build_solution_result = solution_builder.run(env)
@@ -357,9 +357,9 @@ class CUnitChecker2(CheckerWithFile):
                 result.set_passed(False)
                 result.set_log( '<pre>' + escape(self.test_description) + '\n\n==========  Preprocessing =============\n*    Generating "Shared Object"       *\n* or "Executable" from solution files *\n======== Failure-Results ==============\n\n</pre><br/>\n'+build_solution_result.log )
                 return result
-                
+
         build_test_result = test_builder.runFail(env, False)
-                
+
         if not build_test_result.passed:
             # result = self.create_result(env)
             # result += build_test_result
@@ -389,7 +389,7 @@ class CUnitChecker2(CheckerWithFile):
         return result
 
 class UnitCheckerCopyForm(AlwaysChangedModelForm):
-        
+
     def __init__(self, **args):
         """ override default values for the model fields """
         super(UnitCheckerCopyForm, self).__init__(**args)
@@ -397,8 +397,8 @@ class UnitCheckerCopyForm(AlwaysChangedModelForm):
         #self.fields["_output_flags"].initial = ""
         #self.fields["_libs"].initial = "junit3"
         #self.fields["_file_pattern"].initial = r"^.*\.[jJ][aA][vV][aA]$"
-        
-        
+
+
     def clean_filename(self):
         filename = self.cleaned_data['filename']
         if (not filename.strip()):
@@ -407,13 +407,13 @@ class UnitCheckerCopyForm(AlwaysChangedModelForm):
                 return (os.path.basename(file.name))
             else:
                 return None
-        else:            
+        else:
             if 'file' in self.cleaned_data:
                 file = self.cleaned_data['file']
                 basename = os.path.basename(file.name)
                 force = self.cleaned_data.get('force_save')
-                
-                if not force: 
+
+                if not force:
                     if not (filename == basename):
                         from django import forms
                         self.fields['force_save'] = forms.BooleanField(initial=True, widget=forms.HiddenInput())
@@ -424,7 +424,7 @@ class UnitCheckerCopyForm(AlwaysChangedModelForm):
                     return filename
             else:
                 return filename
-    
+
 
 class CUnitChecker2Inline(CheckerInline):
     """ This Class defines how the the the checker is represented as inline in the task admin page. """
@@ -434,7 +434,7 @@ class CUnitChecker2Inline(CheckerInline):
     # graphical layout
     fieldsets = (
         (CUnitChecker2.description(), {
-        'fields': ('order', 
+        'fields': ('order',
             ('public', 'required', 'always', 'critical'),
             'name','test_description',
             ( 'file', 'unpack_zipfile'),
@@ -464,4 +464,4 @@ class CUnitChecker2Inline(CheckerInline):
     #model = ExampleChecker
     #form = ExampleForm
 
-    
+
