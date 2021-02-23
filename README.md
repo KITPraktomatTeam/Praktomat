@@ -8,10 +8,10 @@ also a moderated [mailing list] for Praktomat administrators:
 praktomat-users@lists.kit.edu.
 
 
-A note about Python 2 
+A note about Python 2
 =============
-Since `pip` will drop support for Python 2 in January 2020, 
-we don't support Python 2 any more. But at time of writing that note, you can use 
+Since `pip` will drop support for Python 2 in January 2020,
+we don't support Python 2 any more. But at time of writing that note, you can use
 Praktomat with Python 2.
 
 General setup
@@ -20,11 +20,11 @@ General setup
 You need Python 3.5 and a recent version of pip. We also highly recommend to
 use virtualenv so your system Python installation remains clean.
 
-If you are having trouble with 
+If you are having trouble with
 
     pip install
 
-and get a **No matching distribution found** or **Could not fetch URL** error, 
+and get a **No matching distribution found** or **Could not fetch URL** error,
 try adding -v to the command to get more information:
 
     pip install --upgrade -v pip
@@ -38,7 +38,7 @@ To fix this, it might help to run the following command:
 
     pip install -U pip virtualenv setuptools wheel urllib3[secure]
 
-Prerequisites: Database and Webserver 
+Prerequisites: Database and Webserver
 ============
   We recommend to run Praktomat within Apache, using Postgresql as
   database.
@@ -50,31 +50,31 @@ Prerequisites: Database and Webserver
     apache2
     libapache2-mod-macro       (<= Ubuntu 14, removed in Ubuntu 16)
     libapache2-mod-wsgi        (for using with Python2)
-    libapache2-mod-wsgi-py3    (for using with Python3)   
+    libapache2-mod-wsgi-py3    (for using with Python3)
     libapache2-mod-xsendfile   (version 0.12; or install version 1.0 manually)
- 
+
 Pitfalls while Systemupgrades
 ============
   In Ubuntu 16 the package `apache2-mpm-worker` has been merged into `apache2`.
   Before upgrading to Ubuntu 16 or higher and you are in Ubuntu 14 or lower versions, than you have to edit
 
-    /var/lib/apt/extended_state 
-    
+    /var/lib/apt/extended_state
+
   there change entry
-  
+
     Package: apache2
     Architecture: amd64
     Auto-Installed: 1
-    
+
   to
-  
+
     Auto-Installed: 0
-    
+
   If you don't change that value, apache2 package becomes deleted while upgrading Ubuntu.
-  
+
 Prerequisites: 3rd-Party libraries and programms
 ============
-  
+
   Praktomat requires some 3rd-Party libraries programs to run.
   On a Ubuntu/Debian System, these can be installed by installing the following packages:
 
@@ -85,7 +85,6 @@ Prerequisites: 3rd-Party libraries and programms
     libssl-dev
     openssl (for signing E-Mails)
     swig
-    
 
     openjdk-11-jdk (or: openjdk-8-jdk)
     junit
@@ -106,7 +105,7 @@ Prerequisites: 3rd-Party libraries and programms
 
     https://github.com/checkstyle/checkstyle/releases/
 
-  Documentation for checkstyle please see: https://checkstyle.org/ 
+  Documentation for checkstyle please see: https://checkstyle.org/
 
  If you want your users to submit Isabelle theories, add the following line to
  /etc/mime.types:
@@ -137,8 +136,9 @@ dependig on manage-devel.py, manage-test.py or manage-local.py.
 Python variable SANDBOX_DIR points to a folder inside UPLOAD_ROOT.
 
 Semester folder:
+```
 .
-  |-Praktomat   <= this is only the repository 
+  |-Praktomat   <= this is only the repository
   |  |-documentation
   |  |-media
   |  |-examples
@@ -158,8 +158,8 @@ Semester folder:
   |  |-CheckerFiles
   |  |-SolutionArchive
   |  |-SolutionSandbox
+```
 
-    
 Developer and Tester setup
 ===============
 
@@ -180,7 +180,7 @@ In standard development configuration `Praktomat/src/settings/devel.py`
 and in configuration `Praktomat/src/settings/test.py` for running django unit tests against Praktomat
 the databases are SQLite files.
    - 'UPLOAD_ROOT+/Database+PRAKTOMAT_ID' for development
-   - 'UPLOAD_ROOT+/DjangoTestDatabase+PRAKTOMAT_ID' for unittesting 
+   - 'UPLOAD_ROOT+/DjangoTestDatabase+PRAKTOMAT_ID' for unittesting
 which are created by python on the fly.
 
 ```bash
@@ -256,7 +256,7 @@ It should now be possible to start the deployment server with:
   If you want to deploy the project using mod_wsgi in apache you could use `documentation/apache_praktomat_wsgi.conf` as a starting point. Don't forget to install `mod_xsendfile` to serve uploaded files.
 
   And if your Praktomat running on apache should handle non-ASCII filenames correctly, than the easyest way is activating UTF-8 support inside apache.
-  Debian runs Apache with the LANG=C locale by default, which breaks uploading files with special characters in their names at least when running with mod_wsgi. 
+  Debian runs Apache with the LANG=C locale by default, which breaks uploading files with special characters in their names at least when running with mod_wsgi.
   Activating a UTF-8 locale in /etc/apache2/envvars should resolve the issue. ( see https://code.djangoproject.com/ticket/6009#comment:18 )
 
 

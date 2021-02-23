@@ -1,10 +1,10 @@
 {% load i18n %}{% autoescape off %}{% trans "Hello " %} ,
 
-while processing solution "{{ solution }}" of task "{{ solution.task }}" 
+while processing solution "{{ solution }}" of task "{{ solution.task }}"
 from user {{ solution.author }} at {{ datetime }}
 an exception occured in checker "{{ checker }}".
 
-<strong> ERROR was {{ errormsg }} </strong> 
+<strong> ERROR was {{ errormsg }} </strong>
 
 Maybe buggy checker config or checker content.
 

@@ -21,14 +21,14 @@ class ModelTaskAdminTests(TestCase):
         import datetime
         cls.umlautTask = Task.objects.create(title="German Umlauts äöü",description="Fußball is soccer. German umlauts are äöü",publication_date=datetime.date.today(),submission_date=datetime.date.today())
         cls.umlautTask.save()
-        
+
 
     def setUp(self):
         self.site = AdminSite()
         self.client.login(username='trainer', password='demo')
 
 
-    def test_TaskAdmin_ListView_shows_Umlauts(self):        
+    def test_TaskAdmin_ListView_shows_Umlauts(self):
         all_tasks = list(Task.objects.order_by('id').values())
         self.assertEqual(all_tasks[-1]['title'],"German Umlauts äöü")
         self.assertEqual(all_tasks[-1]['description'],"Fußball is soccer. German umlauts are äöü")
@@ -41,7 +41,7 @@ class ModelTaskAdminTests(TestCase):
         self.assertIn("äöü".encode("utf-8"), response.content, msg="Admin site : tasks task : do not show task with german umlauts in title")
 
 
-    def test_TaskAdmin_ChangeView_shows_Umlauts(self):        
+    def test_TaskAdmin_ChangeView_shows_Umlauts(self):
         all_tasks = list(Task.objects.order_by('id').values())
         self.assertEqual(all_tasks[-1]['title'],"German Umlauts äöü")
         self.assertEqual(all_tasks[-1]['description'],"Fußball is soccer. German umlauts are äöü")
@@ -50,8 +50,6 @@ class ModelTaskAdminTests(TestCase):
         app_label = "tasks"
         model_name = "task"
         response = self.client.get('/admin/%s/%s/%s/change/'%(app_label,model_name,all_tasks[-1]['id']))
-        self.assertEqual(response.status_code, 200, msg="Admin site : tasks task : Status was %s != 200 : while forward lookup via URL" % response.status_code)       
+        self.assertEqual(response.status_code, 200, msg="Admin site : tasks task : Status was %s != 200 : while forward lookup via URL" % response.status_code)
         self.assertNotIn("Internal Server Error".encode("utf-8"),response.content, msg="Admin site : tasks task : change : shows \"Internal Server Error\"")
         self.assertIn("äöü".encode("utf-8"), response.content, msg="Admin site : tasks task : change : do not show task with german umlauts in title")
-        
-        

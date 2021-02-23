@@ -30,7 +30,7 @@ class ModelSolutionAdminTests(TestCase):
         from os.path import dirname, join
         self.client.login(username='trainer', password='demo')
         self.task = list(Task.objects.order_by('id').values())[-1]
-        
+
         path = join(dirname(__file__), 'umlautstest.zip')
         with open(path, 'rb') as f:
             response = self.client.post(reverse('solution_list', args=[self.task['id']]), data={
@@ -39,16 +39,16 @@ class ModelSolutionAdminTests(TestCase):
                                 'solutionfile_set-0-file': f
                             }, follow=True)
             self.assertEqual(response.status_code, 200)
-        self.client.logout()        
+        self.client.logout()
         self.site = AdminSite()
         self.client.login(username='trainer', password='demo')
-        
 
-    def test_SolutionAdmin_ListView_shows_Umlauts(self):        
+
+    def test_SolutionAdmin_ListView_shows_Umlauts(self):
         app_label = "solutions"
         model_name = "solution"
         response = self.client.get(reverse('admin:%s_%s_changelist' %(app_label, model_name)))
-        self.assertEqual(response.status_code, 200, msg="Admin site : solutions solution : Status was %s != 200 : while forward lookup via URL" % response.status_code)       
+        self.assertEqual(response.status_code, 200, msg="Admin site : solutions solution : Status was %s != 200 : while forward lookup via URL" % response.status_code)
         self.assertNotIn("Internal Server Error".encode("utf-8"),response.content, msg="Admin site : solutions solution : shows \"Internal Server Error\"")
 
     def test_SolutionAdmin_ChangeView_shows_Umlauts(self):
@@ -56,18 +56,16 @@ class ModelSolutionAdminTests(TestCase):
         app_label = "solutions"
         model_name = "solution"
         response = self.client.get('/admin/%s/%s/%s/change/'%(app_label,model_name,all_solutions[-1]['id']))
-        self.assertEqual(response.status_code, 200, msg="Admin site : solutions solution : Status was %s != 200 : while forward lookup via URL" % response.status_code)       
+        self.assertEqual(response.status_code, 200, msg="Admin site : solutions solution : Status was %s != 200 : while forward lookup via URL" % response.status_code)
         self.assertNotIn("Internal Server Error".encode("utf-8"),response.content, msg="Admin site : solutions solution : change : shows \"Internal Server Error\"")
 
-    
-    
-    def test_SolutionAdmin_UserView_shows_Umlauts(self):        
+
+    def test_SolutionAdmin_UserView_shows_Umlauts(self):
         all_solutions = list(Solution.objects.order_by('id').values())
         app_label = "solutions"
         model_name = "solution"
         response = self.client.get(reverse('solution_detail_full', args=[all_solutions[-1]['id']]))
-        self.assertEqual(response.status_code, 200, msg="Admin site : solutions solution : Status was %s != 200 : while forward lookup via URL" % response.status_code)       
+        self.assertEqual(response.status_code, 200, msg="Admin site : solutions solution : Status was %s != 200 : while forward lookup via URL" % response.status_code)
         self.assertIn("Fußballspieler".encode("utf-8"), response.content, msg="Admin site : solutions solution : user view : does not contain the right solution file \"Fußballspieler.java\"")
         self.assertIn("just have some utf-8 coded german umlauts äüö".encode("utf-8"), response.content, msg="Admin site : solutions solution : user view : does not contain the right solution file \"Fußballspieler.java\" having german umlauts in java line comment")
         self.assertNotIn("Internal Server Error".encode("utf-8"),response.content, msg="Admin site : solutions solution : user view : shows \"Internal Server Error\"")
-        

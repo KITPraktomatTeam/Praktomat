@@ -389,7 +389,7 @@ def run_checks(solution, env, run_all):
                         result.set_log("The Checker caused an unexpected internal error.")
                         result.set_passed(False)
                         #TODO: signed Email Admins
-                        # sys has been imported at top of file 
+                        # sys has been imported at top of file
                         extype, exvalue, ectb = sys.exc_info()
                         exnow = datetime.now()
                         dt_string = exnow.strftime("%d/%m/%Y %H:%M:%S")

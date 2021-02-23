@@ -274,7 +274,7 @@ def get_solutions_zip(solutions,include_copy_checker_files=False,include_artifac
             string_types = str
         else:
             string_types = unicode
-        
+
         assert isinstance(base_name, string_types)
 
         checkstyle_checker_files = []
@@ -322,7 +322,7 @@ def get_solutions_zip(solutions,include_copy_checker_files=False,include_artifac
                 string_types = str
             else:
                 string_types = unicode
-            
+
             assert isinstance(zippath, string_types)
             try: # Do not overwrite files from the solution by checker files
                 zip.getinfo(zippath)

@@ -125,7 +125,7 @@ class DejaGnuTester(Checker, DejaGnu):
         environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
         environ['LANG'] = settings.LANG
         environ['LANGUAGE'] = settings.LANGUAGE
-        
+
         [output, error, exitcode, timed_out, oom_ed] = \
                     execute_arglist(
                         cmd,

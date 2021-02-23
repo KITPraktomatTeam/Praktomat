@@ -99,7 +99,7 @@ def create_test_data():
 
     # Solutions
     solution = Solution.objects.create(    task = task, author = user )
-    
+
     solution_file = SolutionFile(solution = solution)
     with open(join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'GGT', 'solutions', 'GgT.java')) as fd:
         solution_file.file.save('GgT.java', File(fd))

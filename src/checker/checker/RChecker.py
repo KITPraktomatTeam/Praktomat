@@ -83,7 +83,7 @@ class RChecker(Checker):
         environ['LANGUAGE'] = settings.LANGUAGE
         (output, error, exitcode, timed_out, oom_ed) = execute_arglist(
             args,
-            working_directory=env.tmpdir(), 
+            working_directory=env.tmpdir(),
             environment_variables=environ,
             timeout=settings.TEST_TIMEOUT,
             fileseeklimit=settings.TEST_MAXFILESIZE,
