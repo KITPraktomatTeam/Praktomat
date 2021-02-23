@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os, sys, mimetypes
+import os, sys, mimetypes, urllib
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
@@ -39,7 +39,8 @@ def sendfile(request, path):
         # serve with development server when not run in apache
         return serve(request, path, document_root=settings.UPLOAD_ROOT)
     response = HttpResponse()
-    response['X-Sendfile'] = smart_str(filename)
+    # Need to url-quote the filename for mod_xsendfile V1.0
+    response['X-Sendfile'] =  urllib.parse.quote(smart_str(filename)) if settings.MOD_XSENDFILE_V1_0 else smart_str(filename)
     content_type, encoding = mimetypes.guess_type(path)
     if not content_type:
         content_type = 'application/octet-stream'

@@ -4,6 +4,7 @@ sqlparse
 Django~=1.11,<2.0;python_version<="2.7"
 Django~=2.0;python_version=="3.4"
 Django~=2.2;python_version>="3.5"
+django-admin-view-permission;python_version<="3.4"
 # M2Crypto # has been removed by commit "use hashlib+smime for upload verification mails instead of M2Crypto" (19.1.2018)
 Markdown
 Pygments
@@ -19,5 +20,6 @@ django-debug-toolbar
 docutils
 psycopg2-binary
 subprocess32;python_version<"3"
+pathlib;python_version<"3"
 # selenium # has been removed by commit "remove selenium and phantomjs dependency" (16.1.2020)
 
