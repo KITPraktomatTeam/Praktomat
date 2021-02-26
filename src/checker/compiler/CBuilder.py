@@ -18,8 +18,8 @@ class CBuilder(Compiler):
     _language        = "C"
     #_rx_warnings            = r"^([^ :]*:[^:].*)$"
 
-		
-		
+
+
     def pre_run(self,env):
         return self.compiler()
 
