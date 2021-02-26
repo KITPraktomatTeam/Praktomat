@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-# -*- encoding: utf-8 -*-
-
 from __future__ import unicode_literals
-from django.utils.encoding import python_2_unicode_compatible
 
 from django.test.runner import DiscoverRunner
 from django.test import TestCase as DjangoTestCase
@@ -102,7 +99,7 @@ def create_test_data():
 
     # Solutions
     solution = Solution.objects.create(    task = task, author = user )
-    
+
     solution_file = SolutionFile(solution = solution)
     with open(join(dirname(dirname(dirname(__file__))), 'examples', 'Tasks', 'GGT', 'solutions', 'GgT.java')) as fd:
         solution_file.file.save('GgT.java', File(fd))

@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
 from django.utils.encoding import python_2_unicode_compatible
@@ -150,8 +150,11 @@ class Task(models.Model):
                 "-p", jplag_settings['files'],
                 "-r", path,
                 tmp]
+        environ={}
+        environ['LANG'] = settings.LANG
+        environ['LANGUAGE'] = settings.LANGUAGE
         [output, error, exitcode, timed_out, oom_ed] = \
-         execute_arglist(args, path, unsafe=True)
+         execute_arglist(args, path, environment_variables=environ, unsafe=True)
 
         # remove solution copies
         shutil.rmtree(tmp)
@@ -214,7 +217,7 @@ class Task(models.Model):
         from attestation.models import RatingScale, RatingScaleItem
 
         zip = zipfile.ZipFile(zip_file, 'r')
-        
+
         import sys
         PY2 = sys.version_info[0] == 2
         PY3 = sys.version_info[0] == 3
@@ -223,7 +226,7 @@ class Task(models.Model):
             data = zip.read('data.xml').decode('utf-8') #py3
         else:
             data = zip.read('data.xml') #Py2
-        
+
         task_id_map = {}
         scale_map = {}
         solution_id_map = {}

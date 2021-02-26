@@ -10,7 +10,7 @@ from django.urls import reverse
 from django.views.decorators.cache import cache_control
 from django.template import loader
 from django.conf import settings
-from django.core.mail import send_mail, get_connection
+from django.core.mail import send_mail, get_connection , mail_admins
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.requests import RequestSite
 
@@ -83,7 +83,31 @@ def solution_list(request, task_id, user_id=None):
         formset = SolutionFormSet(request.POST, request.FILES, instance=solution)
         if formset.is_valid():
             solution.save()
-            formset.save()
+            try:
+                formset.save() # Handle UnicodeEncodeError while saving solution
+            except UnicodeError as inst:
+                import sys
+                extyp, exvalue, ectb = sys.exc_info()
+                exnow = datetime.now() # reinserted
+                dt_string = exnow.strftime("%d/%m/%Y %H:%M:%S")
+                # Send Encoding Error to user via mail
+                myRequestUser = User.objects.filter(id=request.user.id)
+                myerrmsg = " %s => %s " % (extyp.__name__, exvalue) if exvalue else " %s " %(extyp.__name__,)
+                t = loader.get_template('solutions/submission_upload_UnicodeError_email.html')
+                c = {
+                      'protocol' : request.is_secure() and "https" or "http",
+                      'domain' : RequestSite(request).domain,
+                      'site_name' : settings.SITE_NAME,
+                      'solution' : solution,
+                      'request_user': myRequestUser,
+                      'errormsg' : myerrmsg,
+                      'datetime' : dt_string,
+                }
+                #ToDo: change to send signed e-mails or unsigned e-mails depending on settings configuration
+                send_mail(_("%s submission failed") %settings.SITE_NAME, t.render(c),None, [request.user.email])
+                mail_admins(_("%s submission failed") %settings.SITE_NAME, t.render(c))
+                raise inst
+
             #run_all_checker = bool(User.objects.filter(id=user_id, tutorial__tutors__pk=request.user.id) or request.user.is_trainer)
             run_all_checker = bool(User.objects.filter(id=user_id, tutorial__tutors__pk=request.user.id) and task.expired() or request.user.is_trainer and task.expired() )
             solution.check_solution(run_all_checker)
@@ -100,16 +124,37 @@ def solution_list(request, task_id, user_id=None):
                 if user_id:
                     # in case someone else uploaded the solution, add this to the email
                     c['uploader'] = request.user
-                with tempfile.NamedTemporaryFile(mode='w+') as tmp:
-                    tmp.write("Content-Type: text/plain; charset=utf-8\n")
-                    tmp.write("Content-Transfer-Encoding: quoted-printable\n\n")
-                    tmp.write(t.render(c))
-                    tmp.seek(0)
-                    [signed_mail, __, __, __, __]  = execute_arglist(["openssl", "smime", "-sign", "-signer", settings.CERTIFICATE, "-inkey", settings.PRIVATE_KEY, "-in", tmp.name], ".", unsafe=True)
-                connection = get_connection()
-                message = ConfirmationMessage(_("%s submission confirmation") % settings.SITE_NAME, signed_mail, None, [solution.author.email], connection=connection)
-                if solution.author.email:
-                    message.send()
+
+                # we create an smime signed message with openssl, if a private-key and certificate is configured
+                if settings.PRIVATE_KEY and settings.CERTIFICATE:
+                    with tempfile.NamedTemporaryFile(mode='w+') as tmp:
+                        tmp.write("Content-Type: text/plain; charset=utf-8\n")
+                        tmp.write("Content-Transfer-Encoding: quoted-printable\n\n")
+
+                        import sys
+                        PY2 = sys.version_info[0] == 2
+                        PY3 = sys.version_info[0] == 3
+                        if PY3:
+                            tmp.write(t.render(c))
+                            tmp.flush()
+                        else:
+                            tmp.write(t.render(c).encode('utf-8'))
+                            tmp.flush()
+                        tmp.seek(0)
+                        environ = {}
+                        environ['LANG'] = settings.LANG
+                        environ['LANGUAGE'] = settings.LANGUAGE
+                        [signed_mail, __, __, __, __]  = execute_arglist(["openssl", "smime", "-sign", "-signer", settings.CERTIFICATE, "-inkey", settings.PRIVATE_KEY, "-in", tmp.name], ".", environment_variables=environ, unsafe=True)
+
+                    connection = get_connection()
+                    message = ConfirmationMessage(_("%s submission confirmation") % settings.SITE_NAME, signed_mail, None, [solution.author.email], connection=connection)
+                    if solution.author.email:
+                         message.send() # any PY2-PY3 problem in here ?
+
+                else: #we are sending unsigned email
+                    if solution.author.email:
+                         send_mail(_("%s submission confirmation") % settings.SITE_NAME, t.render(c), None, [solution.author.email])
+
 
             if solution.accepted or get_settings().accept_all_solutions:
                 solution.final = True
