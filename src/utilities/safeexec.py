@@ -52,7 +52,7 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
         fileseeklimitbytes = fileseeklimit * 1024
 
     sudo_prefix = ["sudo", "-E", "-u", "tester"]
-	
+
 
     if unsafe:
         command = []
@@ -83,7 +83,7 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
             command += ["%s=%s" % (k, v)]
     else:
         command = []
-	
+
     command += args[:]
 
 
@@ -106,7 +106,7 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
 
 
 
-	
+
         command,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT if error_to_output else subprocess.PIPE,
