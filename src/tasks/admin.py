@@ -101,7 +101,7 @@ class TaskAdmin(admin.ModelAdmin):
             nonfinalusers = list( set(User.objects.all().values('id').values_list('id',flat=True)) - set(finalusers))
 
             for user in User.objects.filter(id__in=nonfinalusers) :
-                users_only_failed_solution = only_failed_solution_set.filter(author=user).order_by('author','number') 
+                users_only_failed_solution = only_failed_solution_set.filter(author=user).order_by('author','number')
                 ucount = int(users_only_failed_solution.count())
                 if ucount :
                     latest_only_failed_solution=users_only_failed_solution.latest('number')
@@ -116,7 +116,7 @@ class TaskAdmin(admin.ModelAdmin):
         """ Rerun all checker including "not always" action for students with final or latest of only failed solutions """
         self.run_all_checkers_on_finals(request, queryset)
         self.run_all_checkers_on_latest_only_failed(request, queryset)
-    run_all_checkers.short_description = "run all checkers (Trainer)"        
+    run_all_checkers.short_description = "run all checkers (Trainer)"
 
     def delete_attestations(self, request, queryset):
         """ delete given attestations for task solutions """
@@ -150,24 +150,24 @@ class TaskAdmin(admin.ModelAdmin):
         for task in task_set:
             start = timer()
              #solutions = Solution.objects.filter(task=task.id).order_by('author', 'number')
-            solution_set = task.solution_set.order_by('author','number') 
-                        
+            solution_set = task.solution_set.order_by('author','number')
+
             old_final_solution_set =  solution_set.filter(final=True)
             users_with_old_final_solution = list(set(old_final_solution_set.values('author').values_list('author',flat = True)))
-                        
+
             for solution in old_final_solution_set:
                 solution.final = False
                 solution.accepted = False
                 solution.save()
-                        
-            #TODO: some how inform user how long time they must wait until this method will be finish. 
+
+            #TODO: some how inform user how long time they must wait until this method will be finish.
             #print("rerun checkers ... wait much time ...")
             #this takes many time !!!!
             if  solution_set.count() > 1 :
                 check_multiple(solution_set,False)  # just run upload-time_checkers  ... should we ignore Testuploads?
             elif  solution_set.count() == 1 :
                 check_solution(latest_only_failed_solution,False)
-                        
+
             new_accepted_solution_set = Solution.objects.filter(task=task.id , accepted=True , testupload=False ).order_by('author', 'number')
             users_with_accepted_solutions = list(set(
                                                          new_accepted_solution_set.values('author').values_list('author', flat=True)
@@ -181,19 +181,19 @@ class TaskAdmin(admin.ModelAdmin):
 
 
             new_final_solution_set =  new_accepted_solution_set.filter(final=True)
-            users_with_final_solution =  list(set(new_final_solution_set.values('author').values_list('author',flat = True)))  
+            users_with_final_solution =  list(set(new_final_solution_set.values('author').values_list('author',flat = True)))
 
             users_missing_in_new_final_solution = list(set(users_with_old_final_solution) - set(users_with_final_solution))
             missing_users_in_new_final_solution_set = task.solution_set.filter(author__in=users_missing_in_new_final_solution).order_by('author','number')
 
             for userid in users_missing_in_new_final_solution :
                 user = User.objects.filter(id=userid)
-                latestfailed_user_solution = missing_users_in_new_final_solution_set.filter(author=userid).latest('number') 
+                latestfailed_user_solution = missing_users_in_new_final_solution_set.filter(author=userid).latest('number')
                 # Send final solution lost email to current RequestUser tutor/trainer/superuser
                 t = loader.get_template('solutions/submission_final_lost_email.html')
                 c = {
                                         'protocol': request.is_secure() and "https" or "http",
-                                        'domain': RequestSite(request).domain, 
+                                        'domain': RequestSite(request).domain,
                                         'site_name': settings.SITE_NAME,
                                         'solution': latestfailed_user_solution,
                                         'request_user': myRequestUser,
@@ -201,7 +201,7 @@ class TaskAdmin(admin.ModelAdmin):
                 if request.user.email and latestfailed_user_solution.author.email:
                     send_mail(_("[%s] lost final submission confirmation") % settings.SITE_NAME, t.render(Context(c)), None, [request.user.email, latestfailed_user_solution.author.email])
                 elif request.user.email and not latestfailed_user_solution.author.email:
-                    send_mail(_("[%s] lost final submission confirmation") % settings.SITE_NAME, t.render(Context(c)), None, [request.user.email])  
+                    send_mail(_("[%s] lost final submission confirmation") % settings.SITE_NAME, t.render(Context(c)), None, [request.user.email])
                 elif not request.user.email and latestfailed_user_solution.author.email:
                     send_mail(_("%s lost final submission confirmation") % settings.SITE_NAME, t.render(Context(c)), None, [latestfailed_user_solution.author.email])
             end = timer()
@@ -212,7 +212,7 @@ class TaskAdmin(admin.ModelAdmin):
 
 
     def unset_all_checker_finished(self, request, queryset):
-        """ Unset task attribute: all_checker_finished """  
+        """ Unset task attribute: all_checker_finished """
         start = timer()
         count = 0
         for task in queryset:

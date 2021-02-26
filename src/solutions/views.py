@@ -47,14 +47,14 @@ def solution_list(request, task_id, user_id=None):
     # TODO: Code Refactoring: move code to own function: say linear_waiting
     # linear waiting function
     uploads_left = task.submission_maxpossible - solutions.count()
-	
+
     minutes_to_wait_for_next_upload = task.submission_waitdelta * ( solutions.count() - task.submission_free_uploads )
-	
+
     upload_next_possible_time = datetime.now()
     if solutions.count() > 0 :
         upload_next_possible_time = solutions[0].creation_date + timedelta(minutes=minutes_to_wait_for_next_upload)
-	
-    dnow = datetime.now()	
+
+    dnow = datetime.now()
 
     # TODO: Code Refactoring: move code to own function: say const_waiting
     #after some time Prof. wish ... don't use a linear waiting function but a constant therefor quick and dirty overwriting "minutes_to_wait_for_next_upload"
@@ -62,22 +62,22 @@ def solution_list(request, task_id, user_id=None):
     if solutions.count() > 0 :
         upload_next_possible_time = solutions[0].creation_date + timedelta(minutes=minutes_to_wait_for_next_upload)
 
-	
+
     if request.method == "POST":
         if task.expired() and not request.user.is_trainer:
             return access_denied(request)
-#       fight against multiple open browser window for cheating limits 
+#       fight against multiple open browser window for cheating limits
 #       deep defense
         dap = datetime.now() # query datetime after returning from HTTP "post"-method again
         sap = solutions.count() # query solution counter after returning from HTTP "post"-method again
         uap = task.submission_maxpossible - sap
         if not request.user.is_trainer and (
-                                               ((task.submission_free_uploads < 0) or ((task.submission_free_uploads > 0) and (task.submission_free_uploads <= sap ))) 
+                                               ((task.submission_free_uploads < 0) or ((task.submission_free_uploads > 0) and (task.submission_free_uploads <= sap )))
                                                and ((task.submission_waitdelta > 0) and (dap < upload_next_possible_time))
-                                            or 
-                                               ((task.submission_maxpossible > 0) and (uap <= 0))                                               
+                                            or
+                                               ((task.submission_maxpossible > 0) and (uap <= 0))
                                             ):
-            return access_denied(request)	  
+            return access_denied(request)
 
         solution = Solution(task = task, author=author)
         formset = SolutionFormSet(request.POST, request.FILES, instance=solution)

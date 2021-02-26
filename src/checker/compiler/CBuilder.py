@@ -7,7 +7,7 @@ A C compiler for construction.
 """
 
 from django.conf import settings
-from checker.compiler.Builder import Compiler 
+from checker.compiler.Builder import Compiler
 from django.utils.translation import ugettext_lazy as _
 
 class CBuilder(Compiler):
@@ -18,8 +18,8 @@ class CBuilder(Compiler):
     _language        = "C"
     #_rx_warnings            = r"^([^ :]*:[^:].*)$"
 
-		
-		
+
+
     def pre_run(self,env):
         return self.compiler()
 
@@ -29,8 +29,8 @@ class CBuilder(Compiler):
         return [passed,log]
 
 
-    def connected_flags(self, env):     		
-        return self.search_path() + self.flags() 
+    def connected_flags(self, env):
+        return self.search_path() + self.flags()
 
 from checker.admin import CheckerInline, AlwaysChangedModelForm
 

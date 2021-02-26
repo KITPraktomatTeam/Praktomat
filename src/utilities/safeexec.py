@@ -20,7 +20,7 @@ from django.conf import settings
 # TODO: should kill child or grandchild processes, but didn't if they are running as other user;
 #       wherefor it is necessary to use "ulimit -t 60" command in shell-scripts called by praktomat checkers:
 #       forcing script exit with error after 60 seconds
-def kill_proc_tree(pid, including_parent=False):    
+def kill_proc_tree(pid, including_parent=False):
 	parent = psutil.Process(pid)
 	# just for debugging in development vm
         #f = open('workfile.rh', 'a', 0)
@@ -52,7 +52,7 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
         fileseeklimitbytes = fileseeklimit * 1024
 
     sudo_prefix = ["sudo", "-E", "-u", "tester"]
-	
+
 
     if unsafe:
         command = []
@@ -83,7 +83,7 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
             command += ["%s=%s" % (k, v)]
     else:
         command = []
-	
+
     command += args[:]
 
 
@@ -106,7 +106,7 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
 
 
 
-	
+
         command,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT if error_to_output else subprocess.PIPE,
@@ -122,7 +122,7 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
         timed_out = True
 		# http://bencane.com/2014/04/01/understanding-the-kill-command-and-how-to-terminate-processes-in-linux/
         term_cmd = ["pkill", "-TERM", "-s", str(process.pid)]
-        int_cmd  = ["pkill","-INT","-s",str(process.pid)] 
+        int_cmd  = ["pkill","-INT","-s",str(process.pid)]
         hup_cmd  = ["pkill","-HUP","-s",str(process.pid)]
         kill_cmd = ["pkill", "-KILL", "-s", str(process.pid)]
         if not unsafe and settings.USEPRAKTOMATTESTER:

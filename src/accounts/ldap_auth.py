@@ -114,7 +114,7 @@ def fetch_ldapuser_dict(uid, password=None):
         else:
             # mehrere Einträge, wir nehmen den kürzesten (wg. Umlauten)
             attrdict[n] = _shortest_unicode(attrdict[n])
-            
+
     if password:
         # try to bind with dn and password
         try:

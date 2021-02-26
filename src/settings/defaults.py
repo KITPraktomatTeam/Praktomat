@@ -358,7 +358,7 @@ def load_defaults(settings):
     # Set this to False to disable account changes via the website
     d.ACCOUNT_CHANGE_POSSIBLE = True
 
-    # Set this to True to automatically set user.mat_number = user.id 
+    # Set this to True to automatically set user.mat_number = user.id
     d.DUMMY_MAT_NUMBERS = False
 
 
@@ -373,14 +373,14 @@ def load_defaults(settings):
 	'accounts.ldap_auth.LDAPBackend',
 	'django.contrib.auth.backends.ModelBackend',
     )
-    d.LDAP_URI="ldap://ldap.DomainNAME.TOPLEVEL" 
+    d.LDAP_URI="ldap://ldap.DomainNAME.TOPLEVEL"
     d.LDAP_BASE="dc=DomainNAME,dc=TOPLEVEL"
 
 
 
     # Length of timeout applied whenever an external check that runs a students
     # submission is executed,
-    # for example: JUnitChecker, DejaGnuChecker    
+    # for example: JUnitChecker, DejaGnuChecker
     d.TEST_TIMEOUT=60  # but make sure to use ulimit -t 60 inside shell scripts!
 
     # Amount of memory available to the checker, in megabytes

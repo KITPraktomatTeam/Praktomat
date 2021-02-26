@@ -127,7 +127,7 @@ class User(BasicUser):
 
     def is_shibboleth_user(self):
         return not self.has_usable_password() and not self.is_ldap_user()
-	
+
     def is_ldap_user(self):
         return self.password == 'LDAP_AUTH'
 
@@ -186,8 +186,8 @@ class User(BasicUser):
 
     def clean(self):
         super(User, self).clean()
-        if settings.DUMMY_MAT_NUMBERS:			
-            self.mat_number = self.id			
+        if settings.DUMMY_MAT_NUMBERS:
+            self.mat_number = self.id
 
 
 
