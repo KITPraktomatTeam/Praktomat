@@ -4,7 +4,8 @@ import re
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.utils.html import escape
+from django.utils.html import escape, format_html
+from django.utils.safestring import mark_safe
 from checker.basemodels import Checker, CheckerResult, CheckerFileField, truncated_log, CheckerEnvironment
 from checker.admin import    CheckerInline, AlwaysChangedModelForm
 from utilities.safeexec import execute_arglist
@@ -370,6 +371,9 @@ class CUnitChecker2(CheckerWithFile):
         environ = {}
 
         environ['UPLOAD_ROOT'] = settings.UPLOAD_ROOT
+        environ['LANG'] = settings.LANG
+        environ['LANGUAGE'] = settings.LANGUAGE
+
         script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
 
         cmd_par = self._test_par.split(' ') if self._test_par else []
@@ -389,6 +393,9 @@ class CUnitChecker2(CheckerWithFile):
         return result
 
 class UnitCheckerCopyForm(AlwaysChangedModelForm):
+    class Meta:
+        model = CUnitChecker2
+        fields = '__all__'
 
     def __init__(self, **args):
         """ override default values for the model fields """
@@ -411,13 +418,15 @@ class UnitCheckerCopyForm(AlwaysChangedModelForm):
             if 'file' in self.cleaned_data:
                 file = self.cleaned_data['file']
                 basename = os.path.basename(file.name)
-                force = self.cleaned_data.get('force_save')
+                force = self.data['force_save'] if 'force_save' in self.data else None
 
                 if not force:
                     if not (filename == basename):
                         from django import forms
-                        self.fields['force_save'] = forms.BooleanField(initial=True, widget=forms.HiddenInput())
-                        raise forms.ValidationError(_('You should check \"Filename\" value. The correct name could be: ')+basename)
+                        myerrmsg="%s \n %s \n %s"%(_('You should check \"Filename\" value. The correct name could be: '), basename , _('But you can save your given name for renaming file: just continue.'))
+                        myerrmsg=mark_safe(format_html("%s %s"%(myerrmsg,
+							      '<input type="hidden" id="force_save" name="force_save" value="1" />' )))
+                        self.add_error('filename',myerrmsg)
                     else:
                         return filename
                 else:
