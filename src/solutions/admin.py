@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
 
 from django.contrib import admin
 from solutions.models import Solution, SolutionFile
@@ -28,10 +30,61 @@ class SolutionFileInline(admin.TabularInline):
     readonly_fields=["mime_type", "file"]
 
 
+class IsLatestOfOnlyFailedFilter(admin.SimpleListFilter):
+    title = 'is_latest_of_only_failed'
+    parameter_name = 'latest_of_only_failed'
+
+    def lookups(self, request, model_admin):
+        return (
+          ('Yes','Yes'),
+          ('No','No'),
+        )
+
+    def queryset(self, request, queryset):
+        value = self.value()
+
+        q=queryset
+#        print(type(q))
+#        print(q)
+        filterlist=[]
+
+        for solution in q:
+#           print("=====")
+#           print("TaskID:" , solution.task_id)
+#           print(solution)
+           successfull_solution_from_user_for_task_available = solution.final or  [ s for s in Solution.objects.all().filter(author=solution.author, task=solution.task) if s.final]
+#           print("successfull_solution_from_user_for_task_available:", successfull_solution_from_user_for_task_available)
+           is_latest_failed_attempt = (not solution.final) and (Solution.objects.all().filter(task=solution.task, author=solution.author).aggregate(Max('number'))['number__max'] == solution.number)
+#           print("is_latest_failed_attempt:", is_latest_failed_attempt)
+           latestfailed = (not successfull_solution_from_user_for_task_available) and is_latest_failed_attempt
+#           print("latestfailed:",latestfailed)
+           if True == latestfailed:
+#               print("FOUND, put to list" )
+               filterlist += [solution.id]
+#        print("===============")
+#        print(type(filterlist))
+#        print(filterlist)
+#        print("===============")
+        if value == 'Yes':
+          return queryset.filter(pk__in=filterlist)
+        elif value == 'No':
+          return queryset.exclude(pk__in=filterlist)
+        return queryset
+
+
+#    def latest_of_only_failed(self, solution):
+#        successfull_solution_from_user_for_task_available = solution.final or  [ s for s in Solution.objects.all().filter(author=solution.author, task=solution.task) if s.final]
+#        is_latest_failed_attempt = (not solution.final) and (Solution.objects.all().filter(task=solution.task, author=solution.author).aggregate(Max('number'))['number__max'] == solution.number)
+#        return (not successfull_solution_from_user_for_task_available) and is_latest_failed_attempt
+
+
+
+
+
 class SolutionAdmin(admin.ModelAdmin):
     model = Solution
     list_display = ["edit", "view_url", "download_url", "run_checker_url", "task", "show_author", "number", "creation_date", "final", "accepted", "tests_failed", "latest_of_only_failed", "plagiarism"]
-    list_filter = ["task", "author", "author__groups", "creation_date", "final", "accepted", "warnings", "plagiarism"]
+    list_filter = ["task", "author", "author__groups", "creation_date", IsLatestOfOnlyFailedFilter ,"final", "accepted", "warnings", "plagiarism"]
     fieldsets = ((None, {
                     'fields': ( "task", "show_author", "creation_date", ("final", "accepted", "warnings"), "plagiarism", 'useful_links')
                 }),)
@@ -94,6 +147,7 @@ class SolutionAdmin(admin.ModelAdmin):
                            reverse('admin:accounts_user_change', args=(instance.author.pk,)),
                            instance.author)
     show_author.short_description = 'Solution author'
+    show_author.admin_order_field = 'author'
 
     def useful_links(self, instance):
         if instance.pk:
@@ -113,5 +167,7 @@ class SolutionAdmin(admin.ModelAdmin):
         is_latest_failed_attempt = (not solution.final) and (Solution.objects.all().filter(task=solution.task, author=solution.author).aggregate(Max('number'))['number__max'] == solution.number)
         return (not successfull_solution_from_user_for_task_available) and is_latest_failed_attempt
     latest_of_only_failed.boolean = True
+
+
 
 admin.site.register(Solution, SolutionAdmin)
