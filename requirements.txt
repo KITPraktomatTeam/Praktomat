@@ -2,7 +2,7 @@
 sqlparse
 Django~=2.2.0
 Markdown
-Pygments
+Pygments~=2.7.0
 chardet
 django-extensions
 
