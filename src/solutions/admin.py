@@ -99,7 +99,7 @@ class SolutionAdmin(admin.ModelAdmin):
     #wie have to implement the behavior of get_queryset to simulate a return of SQL's ORDER BY
 
     def get_queryset(self, request):
-        queryset = super().get_queryset(request)
+        queryset = super(SolutionAdmin,self).get_queryset(request)
         from django.db.models import BooleanField
         from django.db.models import Exists, OuterRef , F , Value
         from django.db.models.expressions import RawSQL
