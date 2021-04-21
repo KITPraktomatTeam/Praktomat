@@ -7,7 +7,8 @@ Django~=2.2;python_version>="3.5"
 django-admin-view-permission;python_version<="3.4"
 # M2Crypto # has been removed by commit "use hashlib+smime for upload verification mails instead of M2Crypto" (19.1.2018)
 Markdown
-Pygments~=2.7.0
+Pygments~=2.5.2;python_version<="2.7"
+Pygments~=2.7.0;python_version>="3.4"
 chardet
 django-extensions
 
