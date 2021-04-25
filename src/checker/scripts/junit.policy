@@ -5,4 +5,18 @@ grant {
 	permission java.io.FilePermission "${user.dir}${/}data${/}-", "read";
 	permission java.lang.RuntimePermission "accessDeclaredMembers";
 	permission java.lang.RuntimePermission "getStackTrace";
+	
+	
+	//Console IO
+	permission java.lang.RuntimePermission "setIO";
+	
+        // Funktionalitaet genutzt von JUNIT-PARAMS konfigurieren
+	permission java.lang.RuntimePermission "writeFileDescriptor";
+	permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
+	permission java.util.PropertyPermission "JUnitParams.flat","read";
+
+	//to enable JUNIT and JUNIT-PARAMS Tests for nested unnamed classes
+	permission java.lang.RuntimePermission "createSecurityManager";
+	permission java.lang.RuntimePermission "setSecurityManager";
+	permission java.io.FilePermission "/home/praktomat/inst/2021t/work-data/SolutionSandbox/*", "read"; //TODO: update for every instance: how we can do this more generic?
 };

@@ -1,0 +1,20 @@
+{% load i18n %}{% autoescape off %}{% trans "Hello " %}{{solution.author}},
+
+your previous final solution of task "{{solution.task}}" has failed after task-corrections. We are sorry for that.
+
+Sadly, you have to submit a new solution. 
+
+You can view your now last failed solution here: {{protocol}}://{{ domain }}{% url "solution_detail" solution_id=solution.id %}
+
+Your upload included these files:
+{% for file in solution.solutionfile_set.all %}
+	{% with file.get_signature as signature %}{{file}} [MD5:{{file.get_hash}}] {% if signature %}[SIGNATURE:{{signature}}]{% endif %} {% endwith%}
+{% endfor %}
+
+Please note that you have *not* completed the task yet.
+
+{% trans "Thanks for using our site!" %}
+
+{% blocktrans %}The {{ site_name }} team{% endblocktrans %}
+
+{% endautoescape %}

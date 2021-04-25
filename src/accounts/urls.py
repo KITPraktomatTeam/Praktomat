@@ -10,6 +10,7 @@ from django.contrib import admin
 # for some reason include('django.contrib.auth.urls') wouldn't work with {% url ... %} aka reverse()
 from django.contrib.auth import views as auth_views
 
+# TODO check if URLS are working after solving merge conflicts
 urlpatterns = [
     url(r'^shib_login/$', accounts.shib_views.shib_login, name='shib_login'),
     url(r'^shib_hello/$', accounts.shib_views.shib_hello, name='shib_hello'),
