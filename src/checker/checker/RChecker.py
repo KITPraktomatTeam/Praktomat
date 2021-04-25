@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 
 from pipes import quote
 import shutil, os, re, subprocess
@@ -76,9 +78,13 @@ class RChecker(Checker):
                 scriptname = R_files[0]
 
         args = ["Rscript", scriptname]
+        environ = {}
+        environ['LANG'] = settings.LANG
+        environ['LANGUAGE'] = settings.LANGUAGE
         (output, error, exitcode, timed_out, oom_ed) = execute_arglist(
             args,
-            env.tmpdir(),
+            working_directory=env.tmpdir(),
+            environment_variables=environ,
             timeout=settings.TEST_TIMEOUT,
             fileseeklimit=settings.TEST_MAXFILESIZE,
             maxmem=settings.TEST_MAXMEM,

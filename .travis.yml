@@ -1,16 +1,46 @@
 language: python
 
 python:
+ - "2.7"
  - "3.5"
+ - "3.6"
+ - "3.7"
+ - "3.8"
+ - "3.9"
 
 install:
  - sudo apt-get update
  - sudo apt-get install swig libsasl2-dev libssl-dev libpq-dev
  - sudo apt-get install openjdk-8-jdk dejagnu checkstyle gcj-jdk
- - sudo apt-get install r-base
+ - sudo apt-get install r-base wget
+
+ # taken from https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/use-conda-with-travis-ci.html
+ - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
+     wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
+   else
+     wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+   fi
+ - bash miniconda.sh -b -p $HOME/miniconda
+ - source "$HOME/miniconda/etc/profile.d/conda.sh"
+ - hash -r
+ - conda config --set always_yes yes --set changeps1 no
+ - conda update -q conda
+ # Useful for debugging any issues with conda
+ - conda info -a
+ - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION wheel setuptools pip
+ - conda activate test-environment
  - pip install -r requirements.txt
+ - pip install coverage
+ - conda list
  - pip freeze
  - python --version && python -c "import sqlite3; print(\"... uses pysqlite \" + sqlite3.version +\" with SQLite \" + sqlite3.sqlite_version);"
 
 script:
- - ./src/manage-test.py test accounts attestation checker configuration solutions tasks
+ - mkdir ../debug-data
+ - mkdir ../test-data
+ - ./src/manage-test.py test accounts attestation checker configuration solutions tasks hbrs_tests
+
+after_success:
+ - coverage run --branch --omit='*/node_modules/*,*/migrations/*' --source='./src' ./src/manage-test.py test accounts attestation checker configuration solutions tasks hbrs_tests
+ - coverage report
+ 
