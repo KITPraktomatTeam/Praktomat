@@ -31,6 +31,7 @@ install:
  - conda activate test-environment
  - pip install -r requirements.txt
  - pip install coverage
+ - conda list
  - pip freeze
  - python --version && python -c "import sqlite3; print(\"... uses pysqlite \" + sqlite3.version +\" with SQLite \" + sqlite3.sqlite_version);"
 
