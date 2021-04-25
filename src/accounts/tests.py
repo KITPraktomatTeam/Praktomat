@@ -1,4 +1,9 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
 from utilities.TestSuite import TestCase
+
 from accounts.models import User
 from django.contrib.auth.models import Group
 from django.urls import reverse
