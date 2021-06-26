@@ -120,6 +120,7 @@ class WarningScriptCheckerFormSet(forms.BaseInlineFormSet):
             PY2 = sys.version_info[0] == 2
             PY3 = sys.version_info[0] == 3
             if PY3:
+                #because Djangos FileField open do not know to handle a newline parameter, we call open from io directly
                 from io import open as alias_open
                 script.file = alias_open(script.path,mode="r",newline=None)
             else:
