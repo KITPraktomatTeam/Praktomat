@@ -120,7 +120,8 @@ class WarningScriptCheckerFormSet(forms.BaseInlineFormSet):
             PY2 = sys.version_info[0] == 2
             PY3 = sys.version_info[0] == 3
             if PY3:
-                script.open(mode="r",newline="U")
+                from io import open as alias_open
+                script.file = alias_open(script.path,mode="r",newline=None)
             else:
                 script.open(mode="rU")
 
