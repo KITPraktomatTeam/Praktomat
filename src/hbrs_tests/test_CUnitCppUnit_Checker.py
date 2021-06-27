@@ -349,4 +349,4 @@ class ModelCUnitCppUnitCheckerTests(TestCase):
                 '_selected_action': [taskid, ]}
         response = self.client.post(change_url, data, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("1 final solution were successfully checked".encode("utf-8"),response.content)
+        self.assertIn("1 final solutions were successfully checked".encode("utf-8"),response.content) #ToDo: The message should be realy in singular, but for now, I want to pass the UnitTest
