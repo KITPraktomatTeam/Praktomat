@@ -8,28 +8,27 @@
 #    Klassen-Bibliothek statt (java-sandbox.jar).
 # 3. Die Ausfuehrung findet mit einer leeren policy statt.
 #
-# Da der Praktomat als suid praktomat l‰uft,...
+# Da der Praktomat als suid praktomat l√§uft,...
 
 if [ ! -n "$JAVAC" ]
 then
    JAVAC=javac
 fi
 
-if [ ! -n "$JCFDUMP" ]
+if [ ! -n "$JAVAP" ]
 then
-   JCFDUMP=jcf-dump
+   JAVAP=javap
 fi
 
 umask o+rwx
 
 # Falls Packages erlaubt sind:
-# -d . 
+# -d .
 
 # Falls JCOV-Analyse benutzt wird:
 # -Xjcov
 
 # Kompilierung als User Praktomat
-# JfcDump als HTTP?
 #if /usr/bin/sudo -u praktomat \
 
 # -encoding UTF-8
@@ -37,26 +36,26 @@ if $JAVAC \
  -classpath . \
  -nowarn \
  -d . \
- "$@" 
+ "$@"
 then
   RETCODE=$?
-  if [ -n "$JCFDUMP" ]
+  if [ -n "$JAVAP" ]
   then
-    if find -name '*.class' | xargs $JCFDUMP | grep -q 'native Signature'
+    if find -name '*.class' | xargs $JAVAP | grep -q ' native '
     then
 	echo 'Bitte benutzen Sie keine "native" Methoden zur Loesung.'
 	exit 1
     fi
-    if find -name '*.class' | xargs $JCFDUMP | egrep -q 'This class: [0-9]+=(java\.|javax\.|sun\.|sunw\.)'
+    if find -name '*.class' | xargs $JAVAP | egrep -q '^class (java\.|javax\.|sun\.|sunw\.)'
     then
 	echo 'Bitte benutzen Sie keine "System-packages" Methoden zur Loesung.'
 	exit 1
     fi
   else
-    echo 'Warning: jcf-dump not found, Submission was not checked for Usage of native Code'
+    echo 'Warning: javap not found, Submission was not checked for Usage of native Code'
     exit $RETCODE
   fi
-else		
+else
     echo $?
     exit $?
 fi

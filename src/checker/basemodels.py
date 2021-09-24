@@ -54,7 +54,7 @@ class Checker(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     order = models.IntegerField(help_text = _('Determines the order in which the checker will start. Not necessary continuously!'))
 
-    task = models.ForeignKey(Task)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
 
     public = models.BooleanField(default=True, help_text = _('Test results are displayed to the submitter.'))
     required = models.BooleanField(default=False, help_text = _('The test must be passed to submit the solution.'))
@@ -143,6 +143,12 @@ class CheckerEnvironment:
         """ Returns the list of source files. [(name, content)...] """
         return self._sources
 
+    def string_sources(self):
+        """ Returns the list of string-like source files,
+            so it excludes byte-like content. [(name, content)...] """
+        return [(name, content) for (name, content) in self._sources
+                                if isinstance(content, str)]
+
     def add_source(self, path, content):
         """ Add source to the list of source files. [(name, content)...] """
         self._sources.append((path, content))
@@ -187,8 +193,8 @@ class CheckerResult(models.Model):
         - The time of the run. """
 
     from solutions.models import Solution
-    solution = models.ForeignKey(Solution)
-    content_type = models.ForeignKey(ContentType)
+    solution = models.ForeignKey(Solution, on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     checker = GenericForeignKey('content_type', 'object_id')
 
@@ -236,7 +242,8 @@ class CheckerResult(models.Model):
     def add_artefact(self, filename, path):
         assert os.path.isfile(path)
         artefact = CheckerResultArtefact(result = self, filename=filename)
-        artefact.file.save(filename, File(open(path, 'rb')))
+        with open(path, 'rb') as fd:
+            artefact.file.save(filename, File(fd))
 
 def get_checkerresultartefact_upload_path(instance, filename):
     result = instance.result
@@ -251,7 +258,7 @@ def get_checkerresultartefact_upload_path(instance, filename):
 
 class CheckerResultArtefact(models.Model):
 
-    result = models.ForeignKey(CheckerResult, related_name='artefacts')
+    result = models.ForeignKey(CheckerResult, related_name='artefacts', on_delete=models.CASCADE)
     filename = models.CharField(max_length=128)
     file = models.FileField(
         upload_to = get_checkerresultartefact_upload_path,

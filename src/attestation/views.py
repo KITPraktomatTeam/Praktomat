@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.forms.models import modelformset_factory
 from django.db.models import Count
 from django.db import transaction
@@ -230,14 +230,14 @@ def attestation_list(request, task_id):
                 return access_denied(request)
             for attestation in publishable_tutorial:
                 attestation.publish(request, request.user)
-        return HttpResponseRedirect(reverse('attestation_list', args=[task_id]))
+            return HttpResponseRedirect(reverse('attestation_list', args=[task_id]))
 
         if request.POST['what'] == 'all':
             if not request.user.is_trainer:
                 return access_denied(request)
             for attestation in publishable_all:
                 attestation.publish(request, request.user)
-        return HttpResponseRedirect(reverse('attestation_list', args=[task_id]))
+            return HttpResponseRedirect(reverse('attestation_list', args=[task_id]))
 
     show_author = not get_settings().anonymous_attestation or request.user.is_tutor or request.user.is_trainer or published
 
@@ -357,7 +357,7 @@ def edit_attestation(request, attestation_id):
     show_author = not get_settings().anonymous_attestation
     show_run_checkers = get_settings().attestation_allow_run_checkers
     htmlinjectors = HtmlInjector.objects.filter(task = solution.task, inject_in_attestation_edit = True)
-    htmlinjector_snippets = [ injector.html_file.read() for injector in htmlinjectors ]
+    htmlinjector_snippets = [ injector.html_file.read().decode("utf-8") for injector in htmlinjectors ]
 
     return render(request,
         "attestation/attestation_edit.html",
@@ -400,7 +400,7 @@ def view_attestation(request, attestation_id):
         withdrawable = may_modify and attest.published
 
         htmlinjectors = HtmlInjector.objects.filter(task = attest.solution.task, inject_in_attestation_view = True)
-        htmlinjector_snippets = [ injector.html_file.read() for injector in htmlinjectors ]
+        htmlinjector_snippets = [ injector.html_file.read().decode("utf-8") for injector in htmlinjectors ]
 
         return render(request,
             "attestation/attestation_view.html",

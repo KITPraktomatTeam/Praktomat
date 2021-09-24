@@ -13,6 +13,7 @@ from django.contrib.auth.forms import UserCreationForm as UserBaseCreationForm, 
 from django.core.mail import send_mail
 from django.utils.http import int_to_base36
 from django.utils.safestring import mark_safe
+from django import forms
 from configuration import get_settings
 
 from accounts.models import User
@@ -63,7 +64,7 @@ class MyRegistrationForm(UserBaseCreationForm):
         user = super(MyRegistrationForm, self).save()
 
         # default group: user
-        user.groups = Group.objects.filter(name='User')
+        user.groups.set(Group.objects.filter(name='User'))
 
         # disable user until activated via email
         user.is_active=False
@@ -120,6 +121,9 @@ class AdminUserChangeForm(UserBaseChangeForm):
     class Meta:
         model = User
         fields = "__all__"
+        widgets = {
+            'user_text': forms.Textarea,
+        }
 
     def clean(self):
         # Require a mat number only if user is in group "User".
@@ -162,8 +166,15 @@ class ImportTutorialAssignmentForm(forms.Form):
     name_coloum = forms.IntegerField(required=True, initial = 0, help_text = "The index of the field containing the name of the tutorial.")
     mat_coloum = forms.IntegerField(required=True, initial = 1, help_text = "The index of the field containing the mat number of the user.")
 
+class ImportUserTextsForm(forms.Form):
+    csv_file = forms.FileField(required=True, help_text = "The csv file containing the tutorial name and the students' mat number.")
+    delimiter = forms.CharField(required=True, max_length = 1, initial = ";", help_text = "A one-character string used to separate fields.")
+    quotechar = forms.CharField(required=True, max_length = 1, initial = "|", help_text = "A one-character string used to quote fields.")
 
 class ImportMatriculationListForm(forms.Form):
     mat_number_file = forms.FileField(required=True, help_text = "A text file consisting of one matriculation number per line.")
     remove_others = forms.BooleanField(required=False, initial = True, help_text = "Also remove all users from the group if they are not listed here.")
     create_users = forms.BooleanField(required=False, initial = False, help_text = "If a matriculation number is not known yet, create a stub user object")
+
+class AcceptDisclaimerForm(forms.Form):
+    accept_disclaimer = forms.BooleanField(required=True, initial = False, help_text = "You need to accept the disclaimer before using the site.")

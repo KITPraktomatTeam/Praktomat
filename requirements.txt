@@ -1,8 +1,8 @@
 # workaround for debug-toolbar/sqlparse incompatibility, see http://stackoverflow.com/questions/38479063/django-debug-toolbar-breaking-on-admin-while-getting-sql-stats
 sqlparse
-Django~=1.11.0
+Django~=2.2.0
 Markdown
-Pygments
+Pygments~=2.7.0
 chardet
 django-extensions
 
@@ -13,5 +13,4 @@ django-tinymce
 django-debug-toolbar
 docutils
 psycopg2-binary
-selenium
 

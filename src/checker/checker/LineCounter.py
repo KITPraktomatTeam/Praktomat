@@ -46,7 +46,7 @@ class LineCounter(Checker):
         in_long_comment = 0
 
         # Here's how to access the sources.
-        for (name, content) in env.sources():
+        for (name, content) in env.string_sources():
             assert not in_long_comment
             in_short_comment = 0
 

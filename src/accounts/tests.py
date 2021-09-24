@@ -1,16 +1,19 @@
-from utilities.TestSuite import TestCase, SeleniumTestCase
+from utilities.TestSuite import TestCase
 from accounts.models import User
 from django.contrib.auth.models import Group
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from io import StringIO
 
 
-class TestViewsSelenium(SeleniumTestCase):
+class TestLogin(TestCase):
     def test_login(self):
-        self.loginAsUser()
-        self.assertIn("/tasks/", self.selenium.current_url)
-        user_tools = self.selenium.find_element_by_id('user-tools')
-        self.assertIn("Welcome, user", user_tools.text)
+        response = self.client.get('/accounts/login/')
+        self.assertTrue('username' in response.context['form'].fields)
+        self.assertTrue('password' in response.context['form'].fields)
+        response2 = self.client.post('/accounts/login/',
+                           {'username':'user', 'password':'demo'},
+                           follow=True)
+        self.assertTrue(b'Welcome, user' in response2.content)
 
 
 class TestViews(TestCase):

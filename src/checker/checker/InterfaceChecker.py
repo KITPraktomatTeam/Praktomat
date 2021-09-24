@@ -47,7 +47,7 @@ class InterfaceChecker(Checker):
         extExp = baseExp + "[0-9a-zA-Z_, ]*"
 
         # Iterate through sources and find out which interfaces were implemented
-        for (name, content) in env.sources():
+        for (name, content) in env.string_sources():
             for interface in [self.interface1, self.interface2, self.interface3, self.interface4, self.interface5, self.interface6, self.interface7]: ##self.interface_set.all()
 
                 iname = interface ##.name

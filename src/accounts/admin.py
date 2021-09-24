@@ -2,11 +2,12 @@
 
 from random import randint
 from django.utils.translation import ugettext_lazy as _
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.auth.models import User as UserBase, Group
 from django.contrib.auth.admin import UserAdmin as UserBaseAdmin, GroupAdmin as GroupBaseAdmin
 from django.db.models import Count
 from django.db.transaction import atomic
+from django.shortcuts import get_object_or_404
 from accounts.models import User, Tutorial
 from accounts.forms import AdminUserCreationForm, AdminUserChangeForm
 
@@ -14,14 +15,14 @@ import accounts.views
 
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 
 class UserAdmin(UserBaseAdmin):
     model = User
 
     # add active status
-    list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'is_trainer', 'is_tutor', 'is_coordinator', 'email', 'date_joined', 'is_failed_attempt', 'programme' )
+    list_display = ('username', 'first_name', 'last_name', 'mat_number', 'tutorial', 'is_active', 'accepted_disclaimer', 'is_trainer', 'is_tutor', 'is_coordinator', 'email', 'date_joined', 'is_failed_attempt', 'programme' )
     list_filter = ('groups', 'tutorial', 'is_staff', 'is_superuser', 'is_active', 'programme')
     search_fields = ['username', 'first_name', 'last_name', 'mat_number', 'email']
     date_hierarchy = 'date_joined'
@@ -31,9 +32,10 @@ class UserAdmin(UserBaseAdmin):
     fieldsets = (
             (None, {'fields': ('username', 'password', 'useful_links')}),
             (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'mat_number', 'programme')}),
-            (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',)}),
+            (_('Permissions'), {'fields': ('is_active', 'accepted_disclaimer', 'is_staff', 'is_superuser',)}),
             (_('Groups'), {'fields': ('groups', 'tutorial')}),
             (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+            (_('Custom text'), {'fields': ('user_text',)}),
         )
 
     form = AdminUserChangeForm
@@ -106,6 +108,7 @@ class UserAdmin(UserBaseAdmin):
         from django.conf.urls import url
         my_urls = [url(r'^import/$', accounts.views.import_user, name='user_import')]
         my_urls += [url(r'^import_tutorial_assignment/$', accounts.views.import_tutorial_assignment, name='import_tutorial_assignment')]
+        my_urls += [url(r'^import_user_texts/$', accounts.views.import_user_texts, name='import_user_texts')]
         return my_urls + urls
 
     def useful_links(self, instance):
@@ -119,7 +122,23 @@ class UserAdmin(UserBaseAdmin):
                 )
         else:
             return ""
-    useful_links.allow_tags = True
+
+    def save_model(self, request, obj, form, change):
+        """ give a user both superuser and staff rights if he obtains the trainer role """
+        if change:
+            was_trainer = get_object_or_404(User, pk=obj.id).is_trainer
+            is_trainer = "Trainer" in [g.name for g in form.cleaned_data['groups']]
+            if is_trainer and not was_trainer and not (obj.is_staff and obj.is_superuser):
+                obj.is_superuser = True
+                obj.is_staff = True
+                messages.warning(request, 'The user "%s" was automatically made staff member and superuser (because he was made a trainer)' % obj)
+            obj.save()
+        else:
+            # need to save object to set many2many relationship
+            obj.save()
+            obj.groups.set(Group.objects.filter(name='User'))
+            obj.save()
+
 
 # This should work in Django 1.4 :O
 # from django.contrib.admin import SimpleListFilter
@@ -162,8 +181,7 @@ class TutorialAdmin(admin.ModelAdmin):
         }
 
     def view_url(self, tutorial):
-        return '<a href="%s">View</a>' % (reverse('tutorial_overview', args=[tutorial.id]))
-    view_url.allow_tags = True
+        return mark_safe('<a href="%s">View</a>' % (reverse('tutorial_overview', args=[tutorial.id])))
     view_url.short_description = 'View (Tutor Site)'
 
 admin.site.register(Tutorial, TutorialAdmin)

@@ -27,10 +27,9 @@ class Task(models.Model):
     submission_date = models.DateTimeField(help_text = _("The time up until the user has time to complete the task. This time will be extended by one hour for those who just missed the deadline."))
     supported_file_types = models.CharField(max_length=1000, default ="^(text/.*|image/.*|application/pdf)$", help_text = _("Regular Expression describing the mime types of solution files that the user is allowed to upload."))
     max_file_size = models.IntegerField(default=1000, help_text = _("The maximum size of an uploaded solution file in kilobyte."))
-    model_solution = models.ForeignKey('solutions.Solution', blank=True,
-            null=True, related_name='model_solution_task')
+    model_solution = models.ForeignKey('solutions.Solution', on_delete=models.SET_NULL, blank=True, null=True, related_name='model_solution_task')
     all_checker_finished = models.BooleanField(default=False, editable=False, help_text = _("Indicates whether the checker which don't run immediately on submission have been executed."))
-    final_grade_rating_scale = models.ForeignKey('attestation.RatingScale', null=True, help_text = _("The scale used to mark the whole solution."))
+    final_grade_rating_scale = models.ForeignKey('attestation.RatingScale', on_delete=models.SET_NULL, null=True, help_text = _("The scale used to mark the whole solution."))
     warning_threshold = models.DecimalField(max_digits=8, decimal_places=2, default=0, help_text = _("If the student has less points in his tasks than the sum of their warning thresholds, display a warning."))
     only_trainers_publish = models.BooleanField(default=False, help_text = _("Indicates that only trainers may publish attestations. Otherwise, tutors may publish final attestations within their tutorials."))
     jplag_up_to_date = models.BooleanField(default=False, help_text = _("No new solution uploads since the last jPlag run"))
@@ -95,7 +94,7 @@ class Task(models.Model):
 
     @staticmethod
     def jplag_languages():
-        return { 'Java':     { 'param': 'java17', 'files': '.java,.JAVA' },
+        return { 'Java':     { 'param': 'java19', 'files': '.java,.JAVA' },
                  'R':        { 'param': 'text',   'files': '.R' },
                  'Python':   { 'param': 'text',   'files': '.py' },
                  'Isabelle': { 'param': 'text',   'files': '.thy' },
@@ -136,6 +135,7 @@ class Task(models.Model):
         # run jplag
         args = [settings.JVM,
                 "-jar", settings.JPLAGJAR,
+                "-s",
                 "-l", jplag_settings['param'],
                 "-p", jplag_settings['files'],
                 "-r", path,
@@ -147,7 +147,8 @@ class Task(models.Model):
         shutil.rmtree(tmp)
 
         # write log file
-        file(os.path.join(path, "jplag.txt"), 'w').write(output)
+        with open(os.path.join(path, "jplag.txt"), 'w') as fd:
+            fd.write(output)
 
         # mark jplag as up-to-date
         self.jplag_up_to_date = True
@@ -155,12 +156,16 @@ class Task(models.Model):
 
 
     @classmethod
-    def export_Tasks(cls, qureyset):
+    def export_Tasks(cls, queryset):
         """ Serializes a task queryset and related checkers to xml and bundels it with all files into a zipfile  """
         from solutions.models import Solution, SolutionFile
+        from attestation.models import RatingScaleItem
 
         # fetch tasks, media objects, checker and serialize
-        task_objects = list(qureyset)
+        task_objects = list(queryset)
+        # prevent duplication of exported RatingScale objects
+        rating_scale_objects = list( {t.final_grade_rating_scale for t in task_objects if t.final_grade_rating_scale} )
+        rating_scale_item_objects = list( RatingScaleItem.objects.filter(scale__in=rating_scale_objects) )
         media_objects = list( MediaFile.objects.filter(task__in=task_objects) )
         model_solution_objects = list( Solution.objects.filter(model_solution_task__in=task_objects) )
         model_solution_file_objects = list( SolutionFile.objects.filter(solution__in=model_solution_objects) )
@@ -169,7 +174,8 @@ class Task(models.Model):
         checker_app = apps.get_app_config('checker')
         checker_classes = [x for x in checker_app.get_models() if issubclass(x, Checker)]
         checker_objects = sum([list(x.objects.filter(task__in=task_objects)) for x in checker_classes], [])
-        data = serializers.serialize("xml", task_objects + media_objects + checker_objects + model_solution_objects + model_solution_file_objects)
+        # serialize RatingScale objects first since they are used by tasks
+        data = serializers.serialize("xml", rating_scale_objects + rating_scale_item_objects + task_objects + media_objects + checker_objects + model_solution_objects + model_solution_file_objects)
 
         # fetch files
         files = []
@@ -193,11 +199,14 @@ class Task(models.Model):
 
     @classmethod
     @transaction.atomic
-    def import_Tasks(cls, zip_file, solution_author):
+    def import_Tasks(cls, zip_file, solution_author, is_template=True):
         from solutions.models import Solution, SolutionFile
+        from attestation.models import RatingScale, RatingScaleItem
+
         zip = zipfile.ZipFile(zip_file, 'r')
         data = zip.read('data.xml').decode('utf-8')
         task_id_map = {}
+        scale_map = {}
         solution_id_map = {}
         old_solution_to_new_task_map = {}
         solution_list = []
@@ -207,13 +216,22 @@ class Task(models.Model):
             object.id = None
             if isinstance(object, Task):
                 # save all tasks and their old id
-                object.publication_date = date.max
+                if is_template:
+                    object.publication_date = date.max
                 deserialized_object.save()
                 task_id_map[old_id] = object.id
                 old_solution_to_new_task_map[object.model_solution_id] = object.id
                 object.model_solution = None
-                object.final_grade_rating_scale = None
+                object.final_grade_rating_scale = None if is_template else scale_map.get(object.final_grade_rating_scale_id)
                 deserialized_object.save()
+            elif isinstance(object, RatingScale):
+                if not is_template:
+                    deserialized_object.save()
+                    scale_map[old_id] = object
+            elif isinstance(object, RatingScaleItem):
+                if not is_template:
+                    object.scale = scale_map[object.scale_id]
+                    deserialized_object.save()
             else:
                 # save modelsolution, media and checker, update task id
                 if isinstance(object, SolutionFile):
@@ -251,12 +269,12 @@ def get_htmlinjectorfile_storage_path(instance, filename):
 
 class MediaFile(models.Model):
 
-    task = models.ForeignKey(Task)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
     media_file = DeletingFileField(upload_to=get_mediafile_storage_path, max_length=500)
 
 
 class HtmlInjector(models.Model):
-    task = models.ForeignKey(Task)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
     inject_in_solution_view      = models.BooleanField(
         default=False,
         help_text = _("Indicates whether HTML code shall be injected in public  solution views, e.g.: in https://praktomat.cs.kit.edu/2016_WS_Abschluss/solutions/5710/")

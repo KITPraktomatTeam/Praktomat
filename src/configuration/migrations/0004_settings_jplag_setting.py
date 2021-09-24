@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='settings',
             name='jplag_setting',
-            field=models.CharField(default=b'Java', help_text=b'Default settings for jPlag', max_length=200),
+            field=models.CharField(default='Java', help_text=b'Default settings for jPlag', max_length=200),
         ),
     ]

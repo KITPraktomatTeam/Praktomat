@@ -6,7 +6,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 from django.http import HttpResponseRedirect, HttpResponse
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.views.decorators.cache import cache_control
 from django.template import loader
 from django.conf import settings
@@ -65,7 +65,12 @@ def solution_list(request, task_id, user_id=None):
                     'site_name': settings.SITE_NAME,
                     'solution': solution,
                 }
+                if user_id:
+                    # in case someone else uploaded the solution, add this to the email
+                    c['uploader'] = request.user
                 with tempfile.NamedTemporaryFile(mode='w+') as tmp:
+                    tmp.write("Content-Type: text/plain; charset=utf-8\n")
+                    tmp.write("Content-Transfer-Encoding: quoted-printable\n\n")
                     tmp.write(t.render(c))
                     tmp.seek(0)
                     [signed_mail, __, __, __, __]  = execute_arglist(["openssl", "smime", "-sign", "-signer", settings.CERTIFICATE, "-inkey", settings.PRIVATE_KEY, "-in", tmp.name], ".", unsafe=True)
@@ -127,7 +132,7 @@ def test_upload_student(request, task_id):
     else:
         formset = SolutionFormSet()
 
-    return render("solutions/solution_test_upload.html", {"formset": formset, "task":task})
+    return render(request, "solutions/solution_test_upload.html", {"formset": formset, "task":task})
 
 @login_required
 def solution_detail(request, solution_id, full):
@@ -155,7 +160,7 @@ def solution_detail(request, solution_id, full):
             htmlinjectors = HtmlInjector.objects.filter(task = solution.task, inject_in_solution_full_view = True)
         else:
             htmlinjectors = HtmlInjector.objects.filter(task = solution.task, inject_in_solution_view      = True)
-        htmlinjector_snippets = [ injector.html_file.read() for injector in htmlinjectors ]
+        htmlinjector_snippets = [ injector.html_file.read().decode("utf-8") for injector in htmlinjectors ]
 
 
 
@@ -172,17 +177,20 @@ def solution_detail(request, solution_id, full):
                      )
 
 @login_required
-def solution_download(request, solution_id, full):
+def solution_download(request, solution_id, include_checker_files, include_artifacts):
     solution = get_object_or_404(Solution, pk=solution_id)
-    if (not (solution.author == request.user or request.user.is_tutor or request.user.is_trainer)):
+    allowed_tutor = request.user.is_tutor and solution.author.tutorial in request.user.tutored_tutorials.all()
+    allowed_user = solution.author == request.user and not include_checker_files and not include_artifacts
+    if not (request.user.is_trainer or allowed_tutor or allowed_user):
         return access_denied(request)
-    zip_file = get_solutions_zip([solution], full and (request.user.is_tutor or request.user.is_trainer))
+
+    zip_file = get_solutions_zip([solution], include_checker_files, include_artifacts)
     response = HttpResponse(zip_file.read(), content_type="application/zip")
     response['Content-Disposition'] = 'attachment; filename=Solution.zip'
     return response
 
 @login_required
-def solution_download_for_task(request, task_id, full):
+def solution_download_for_task(request, task_id, include_checker_files, include_artifacts):
     if not (request.user.is_tutor or request.user.is_trainer):
         return access_denied(request)
 
@@ -190,7 +198,7 @@ def solution_download_for_task(request, task_id, full):
     solutions = task.solution_set.filter(final=True)
     if not request.user.is_trainer:
         solutions = solutions.filter(author__tutorial__id__in=request.user.tutored_tutorials.values_list('id', flat=True))
-    zip_file = get_solutions_zip(solutions, full)
+    zip_file = get_solutions_zip(solutions, include_checker_files, include_artifacts)
     response = HttpResponse(zip_file.read(), content_type="application/zip")
     response['Content-Disposition'] = 'attachment; filename=Solutions.zip'
     return response

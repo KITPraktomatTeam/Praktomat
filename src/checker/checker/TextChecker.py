@@ -44,7 +44,7 @@ class TextChecker(Checker):
         gotoFind = ""
 
         # search the sources
-        for (name, content) in env.sources():
+        for (name, content) in env.string_sources():
             lines = self._getLines(content)
             lineNum = 1
             for line in lines:

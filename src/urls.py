@@ -2,7 +2,7 @@ from django.conf.urls import url, include
 from django.views.generic.base import RedirectView
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 import sys
 import os
 
@@ -15,7 +15,6 @@ import accounts.urls
 import tinymce.urls
 
 from django.contrib import admin
-admin.autodiscover()
 
 urlpatterns = [
     # Index page
@@ -26,7 +25,7 @@ urlpatterns = [
     url(r'^admin/tasks/task/(?P<task_id>\d+)/final_solutions', tasks.views.download_final_solutions, name="download_final_solutions"),
     url(r'^admin/attestation/ratingscale/generate', attestation.views.generate_ratingscale, name="generate_ratingscale"),
     url(r'^admin/doc/', include(django.contrib.admindocs.urls)),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
 
     # Login and Registration
     url(r'^accounts/', include(accounts.urls)),
@@ -41,12 +40,14 @@ urlpatterns = [
     # Solutions
     url(r'^solutions/(?P<solution_id>\d+)/$', solutions.views.solution_detail, name='solution_detail',kwargs={'full' : False}),
     url(r'^solutions/(?P<solution_id>\d+)/full/$', solutions.views.solution_detail, name='solution_detail_full', kwargs={'full': True}),
-    url(r'^solutions/(?P<solution_id>\d+)/download$', solutions.views.solution_download, name='solution_download',kwargs={'full' : False}),
-    url(r'^solutions/(?P<solution_id>\d+)/download/(?P<full>full)/$', solutions.views.solution_download, name='solution_download'),
+    url(r'^solutions/(?P<solution_id>\d+)/download$', solutions.views.solution_download, name='solution_download', kwargs={'include_checker_files' : False, 'include_artifacts' : False}),
+    url(r'^solutions/(?P<solution_id>\d+)/download/artifacts/$', solutions.views.solution_download, name='solution_download_artifacts', kwargs={'include_checker_files' : False, 'include_artifacts' : True}),
+    url(r'^solutions/(?P<solution_id>\d+)/download/full/$', solutions.views.solution_download, name='solution_download_full', kwargs={'include_checker_files' : True, 'include_artifacts' : True}),
     url(r'^solutions/(?P<solution_id>\d+)/run_checker$', solutions.views.solution_run_checker, name='solution_run_checker'),
     url(r'^tasks/(?P<task_id>\d+)/checkerresults/$', solutions.views.checker_result_list, name='checker_result_list'),
-    url(r'^tasks/(?P<task_id>\d+)/solutiondownload$', solutions.views.solution_download_for_task, name='solution_download_for_task',kwargs={'full' : False}),
-    url(r'^tasks/(?P<task_id>\d+)/solutiondownload/(?P<full>full)/$', solutions.views.solution_download_for_task, name='solution_download_for_task'),
+    url(r'^tasks/(?P<task_id>\d+)/solutiondownload$', solutions.views.solution_download_for_task, name='solution_download_for_task', kwargs={'include_checker_files' : False, 'include_artifacts' : False}),
+    url(r'^tasks/(?P<task_id>\d+)/solutiondownload/artifacts/$', solutions.views.solution_download_for_task, name='solution_download_for_task_artifacts', kwargs={'include_checker_files' : False, 'include_artifacts' : True}),
+    url(r'^tasks/(?P<task_id>\d+)/solutiondownload/full/$', solutions.views.solution_download_for_task, name='solution_download_for_task_full', kwargs={'include_checker_files' : True, 'include_artifacts' : True}),
     url(r'^tasks/(?P<task_id>\d+)/solutionupload/$', solutions.views.solution_list, name='solution_list'),
     url(r'^tasks/(?P<task_id>\d+)/solutionupload/user/(?P<user_id>\d+)$', solutions.views.solution_list, name='solution_list'),
     url(r'^tasks/(?P<task_id>\d+)/solutionupload/test/$', solutions.views.test_upload, name='upload_test_solution'),

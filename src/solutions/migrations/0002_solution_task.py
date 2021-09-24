@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='solution',
             name='task',
-            field=models.ForeignKey(to='tasks.Task'),
+            field=models.ForeignKey(to='tasks.Task', on_delete=models.CASCADE),
         ),
     ]
