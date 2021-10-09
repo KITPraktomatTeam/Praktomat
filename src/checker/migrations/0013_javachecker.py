@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('class_name', models.CharField(help_text='The fully qualified name of the test case class (without .class)', max_length=100)),
                 ('test_description', models.TextField(help_text='Description of the Testcase. To be displayed on Checker Results page when checker is unfolded.')),
                 ('name', models.CharField(help_text='Name of the Testcase. To be displayed as title on Checker Results page', max_length=100)),
-                ('task', models.ForeignKey(to='tasks.Task')),
+                ('task', models.ForeignKey(to='tasks.Task', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
