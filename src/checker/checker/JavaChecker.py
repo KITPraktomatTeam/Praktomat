@@ -49,8 +49,13 @@ class JavaChecker(Checker):
 
         script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'scripts')
         environ['POLICY'] = os.path.join(script_dir, "junit.policy")
-        cmd = [settings.JVM_SECURE, "-cp", settings.JAVA_CUSTOM_LIBS + ":*", self.class_name, env.tmpdir(),
-            str(env.user().id), str(env.user().mat_number), str(env.solution().id)]
+        cmd = [settings.JVM_SECURE, "-cp", settings.JAVA_CUSTOM_LIBS + ":*", self.class_name, 
+            env.tmpdir(),
+            str(env.user().id),
+            str(env.user().mat_number),
+            str(env.user().first_name),
+            str(env.user().last_name),
+            str(env.solution().id)]
         [output, error, exitcode, timed_out, oom_ed] = execute_arglist(cmd, env.tmpdir(), environment_variables=environ,
             timeout=settings.TEST_TIMEOUT, fileseeklimit=settings.TEST_MAXFILESIZE, extradirs=[script_dir])
 
