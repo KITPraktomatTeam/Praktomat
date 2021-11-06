@@ -1,12 +1,13 @@
+<div>
 {% if filenames %}
-<div>{{ filenames|length }} <tt>Java</tt> user-submitted files found for compilation: {% for javafile in filenames%} {{ javafile }} &nbsp; {% endfor %}</div>
+    {{ filenames|length }} <tt>Java</tt> user-submitted files found for compilation: {% for javafile in filenames%} {{ javafile }} &nbsp; {% endfor %}
+{% else %}
+    No <tt>Java</tt> user-submitted input files found.
+{% endif %}
+</div>
 {% if output %}
 <div>Java compiler output:</div>
 <pre>{{output|safe}}</pre>
 {% else %}
 <div>The Java compiler produced no messages.</div>
 {% endif %}
-{% else %}
-<div>No Java input files found.</div>
-{% endif %}
-

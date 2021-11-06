@@ -26,7 +26,7 @@
 					    window.open("{% url "solution_download" solution_id=solution.id %}","Download");
 					    return false;
 					  } else if (id == "download_full") {
-					    window.open("{% url "solution_download" solution_id=solution.id full="full" %}","Download");
+					    window.open("{% url "solution_download_full" solution_id=solution.id %}","Download");
 					    return false;
 					  } else
 					    return true;
@@ -37,7 +37,7 @@
 			// ACE setup
 			// General plan:
 			//  * JQuery-UI Tab with one tab per file, but only one panel
-			//  * One session per file, stored via .data at the tab 
+			//  * One session per file, stored via .data at the tab
 			//  * Switching tabs changes the session
 			//  * Switching copies(!) the errorlist to a visible part
 			//  * Every change is directly reflected in the hidden textarea
@@ -86,8 +86,8 @@
 {% block breadcrumbs %} {{block.super}} > <a href={% url "task_detail" task_id=solution.task.id%}>{{solution.task.title}}</a> > <a href={% url "attestation_list" solution.task_id %}>My attestations</a> > Attestation {% endblock %}
 {% block content %}<div id='attestation_edit'>
 
-<form enctype="multipart/form-data" method="post" action="">{% csrf_token %}	
-	
+<form enctype="multipart/form-data" method="post" action="">{% csrf_token %}
+
 <div id="form_actions">
 	<input type="submit" value="Save/Preview"/ id="id_save">
 	<input type="button" value="Discard/Back" onClick="parent.location='{% url "attestation_list" solution.task_id %}'">
@@ -96,8 +96,8 @@
 <h1>{{solution.task.title}}</h1>
 <p id='author'>{% if show_author%} Solution by: {{solution.author}} {% endif %}</p>
 
-	
-	
+
+
 	<div id="tabs">
 		<ul>
 			<li><a href="#task">Task</a></li>
@@ -110,25 +110,25 @@
 			<li><a href="#download"><span class="ui-icon ui-icon-circle-triangle-s"></span>Download</a></li>
 			<li><a href="#download_full"><span class="ui-icon ui-icon-circle-triangle-s"></span>Download (incl. checker files)</a></li>
 		</ul>
-		
+
 		<div id="task">
 			<h1 class="heading">Task</h1>
 			{{solution.task.description|safe}}
 		</div>
-		
+
 		{% if model_solution %}
 		<div id="model_solution">
 				{% with model_solution.allCheckerResults as results %}
 					{% include "solutions/checker_results_inline.html" %}
-				{% endwith %}	
+				{% endwith %}
 				<br/>
 				{% with model_solution.solutionfile_set.all as solutionfiles %}
 					{% include "solutions/solution_files_inline.html" %}
 				{% endwith %}
 		</div>
 		{% endif %}
-		
-		
+
+
 		<div id="solution">
 			<h1 class="heading">Checker results</h1>
 			{% if show_run_checkers %}
@@ -146,7 +146,7 @@
 			{% endwith %}
 		</div>
 
-		
+
 		<div id="annotated_solution_files">
 			<h1 class="heading">Checker results</h1>
 			{% if show_run_checkers %}
@@ -160,7 +160,7 @@
 			{% endwith %}
 			<h1 class="heading">Annotated solution files</h1>
 			<div id="file_form_set">
-				{% with attestFileFormSet as formset %}	
+				{% with attestFileFormSet as formset %}
 					{% include "forms/formset_as_div.html" %}
 				{% endwith %}
 			</div>
@@ -183,10 +183,10 @@
 		<div id="attestation">
 			<h1 class="heading">Attestation</h1>
 
-				{% with attestForm as form %}	
+				{% with attestForm as form %}
 					{% include "forms/form_as_div.html" %}
 				{% endwith %}
-				{% with ratingResultFormSet as formset %}	
+				{% with ratingResultFormSet as formset %}
 					{% include "forms/formset_as_div.html" %}
 				{% endwith %}
 
@@ -195,7 +195,7 @@
 		  <a href="{% url "solution_download" solution_id=solution.id %}">Download</a>
 		</div>
 		<div id="download_full">
-		  <a href="{% url "solution_download" solution_id=solution.id full="full" %}">Download</a>
+		  <a href="{% url "solution_download_full" solution_id=solution.id %}">Download</a>
 		</div>
 	</div>
 </form>

@@ -14,11 +14,11 @@ class TextChecker(Checker):
     """ Checks if the specified text is included in a submitted file """
 
     #Code OTH Regensburg Francesco Cucinotta
-    SET_OF_CHOICES = [(0,'The text must not be in the solution'),
-                      (1,'The text has to be in the solution'),]
+    SET_OF_CHOICES = [(0, 'The text must not be in the solution'),
+                      (1, 'The text has to be in the solution'),]
 
     text = models.TextField()
-    choices = models.IntegerField(default=1, verbose_name='Select:', choices=SET_OF_CHOICES,blank=False)
+    choices = models.IntegerField(default=1, verbose_name='Select:', choices=SET_OF_CHOICES, blank=False)
 
 
     def title(self):
@@ -28,7 +28,7 @@ class TextChecker(Checker):
     @staticmethod
     def description():
         """ Returns a description for this Checker. """
-        return u"Diese Prüfung ist bestanden, wenn der eingegebene Text in einer Lösung gefunden wird."
+        return "Diese Prüfung ist bestanden, wenn der eingegebene Text in einer Lösung gefunden wird."
 
 
     def run(self, env):
@@ -44,7 +44,7 @@ class TextChecker(Checker):
         gotoFind = ""
 
         # search the sources
-        for (name, content) in env.sources():
+        for (name, content) in env.string_sources():
             lines = self._getLines(content)
             lineNum = 1
             for line in lines:
@@ -83,7 +83,7 @@ class TextChecker(Checker):
             if self.choices == 1:
                 if len(occurances) <= 0:
                     passed = 0
-                    log = "<strong>" + "'" + escape(self.text) + "'" + "</strong>" + u" kommt nicht in Ihrer Lösung vor!"
+                    log = "<strong>" + "'" + escape(self.text) + "'" + "</strong>" + " kommt nicht in Ihrer Lösung vor!"
                 else:
                     log = "<strong>" + "'" + escape(self.text) + "'" + "</strong>" + " kommt an folgenden Stellen vor<br>"
                     for (name, num) in occurances:
@@ -95,10 +95,10 @@ class TextChecker(Checker):
                 passed = 0
         else:
             if self.choices == 1:
-                log = "<strong>" + "'" + escape(self.text) + "'" + "</strong>" + u" kommt nicht in Ihrer Lösung vor!"
+                log = "<strong>" + "'" + escape(self.text) + "'" + "</strong>" + " kommt nicht in Ihrer Lösung vor!"
                 passed = 0
             elif self.choices == 0:
-                log = "<strong>"+"'"+escape(self.text)+"'"+"</strong>" + u" kommt nicht in Ihrer Lösung vor!"
+                log = "<strong>"+"'"+escape(self.text)+"'"+"</strong>" + " kommt nicht in Ihrer Lösung vor!"
 
 
         result.set_log(log)
@@ -111,7 +111,7 @@ class TextChecker(Checker):
         lines = text.split("\n")
         return lines
 
-from checker.admin import	CheckerInline
+from checker.admin import    CheckerInline
 
 class TextCheckerInline(CheckerInline):
     model = TextChecker

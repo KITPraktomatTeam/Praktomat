@@ -1,46 +1,6 @@
 {% extends "base.html" %}
 {% load highlight %} {% load i18n  %}
-{% block extrahead %}{{ block.super }}
-<script type="text/javascript">	
-	
-	
-	var editor;
-	window.onload = function() {
-		calculate();		
-	};	
-	
-	function calculate(){
-	
-		{% include "attestation/rating_scale_items_js_inline.html" %}
-				
-		var all_grades = new Array();
-		var all_plagiarism = new Array();
-		$('.user_row').each(function(index) {
-			var grades=new Array();
-			var plagiarism=new Array();
-			var result;
-			$(this).find('.grade_cell').each(function(index) {
-				grades[index] = $(this).data('score');
-				plagiarism[index] = $(this).data('plagiarism') == 'yes';
-
-			});
-			all_grades[index] = grades;
-			all_plagiarism[index] = plagiarism;
-			});
-		for (index in all_grades){
-			var grades = all_grades[index];
-			var plagiarism = all_plagiarism[index];
-			var result;
-			try{
-				{{script.script|safe}};
-			} catch(e) {
-			}
-			$("#calculated_grade_cell"+index).text(result);
-		}
-	}
-	
-</script>
-{% endblock %} 
+{% block extrahead %}{{ block.super }}{% endblock %}
 {% block breadcrumbs %} {{block.super}} > Rating Overview {% endblock %}
 {% block content %}<div id="tutorial">
 
@@ -52,13 +12,13 @@
 	{% endfor %}
 	</ul>
 {% endif %}
-	
+
 <h2>{{tutorial.name}}</h2>
 {% for tutor in tutorial.tutors.all %}
 	{% if not forloop.first %}, {% endif %}
 	{{tutor}}
 {% endfor %}
-	
+
 <div>
 	<table class="noLinkHighlight">
 		<tr>
@@ -68,33 +28,30 @@
 				<th><div class="heading">Rating Aspects</div></th>
 			{% endfor %}
 			<th><div class="heading" id="calculated_grade_heading">Calculated grade</div></th>
-			<th><div class="heading">Final grade</div></th>	
+			<th><div class="heading">Final grade</div></th>
 		</tr>
-		{% for user, attestations in rating_list %}
+		{% for user, attestations, _, calculated_grade in rating_list %}
 			<tr class="{% cycle 'odd' 'even' %} user_row">
 				<td><a href="mailto:{{user.email}}">{{user.get_full_name}}</a></td>
-				{% for attestation in attestations %}
-				<td class="grade_cell"
-				    {% if attestation.solution.plagiarism %}
-				        data-plagiarism="yes"
-				    {% else %}
-				      {% if attestation.final_grade %}
-				        data-score="{{attestation.final_grade}}"
-				      {% endif %}
-				    {% endif %}
-				>
+
+				{% for attestation, solution in attestations %}
+				<td class="grade_cell">
 					{% if attestation.id %}
-					<a href="{% url "view_attestation" attestation_id=attestation.id%}">
+						<a href="{% url "view_attestation" attestation_id=attestation.id%}">
 					{% endif %}
 
 					{% if attestation.final_grade %}
 						{{attestation.final_grade}}
 					{% else %}
-						-
+						{% if solution %}
+							?
+						{% else %}
+							-
+						{% endif %}
 					{% endif %}
 
-				        {% if attestation.solution.plagiarism %}
-					  <span class="icon ui-icon-alert icon-red" title="Marked as plagiarism"></span>
+					{% if solution.plagiarism %}
+						<span class="icon ui-icon-alert icon-red" title="Marked as plagiarism"></span>
 					{% endif %}
 
 
@@ -108,14 +65,16 @@
 					{% for ratingresult in attestation.ratingresult_set.all%}
 						 {{ratingresult.rating.aspect.name}}: <span class="mark">{{ratingresult.mark}}</span>
 					{%endfor%}
-					] 
+					]
 				</td>
 				{% endfor %}
-				<td class="calculated_grade_cell" id="calculated_grade_cell{{forloop.counter0}}"></td>
+				<td class="calculated_grade_cell">
+					{{ calculated_grade }}
+				</td>
 				<td>
 					{% if final_grades_published %}
 						{{user.final_grade}}
-					{% endif %}	
+					{% endif %}
 				</td>
 			</tr>
 		{% endfor %}
@@ -125,11 +84,11 @@
 				<td>{{average}}</td>
 				<td></td>
 				{% endfor %}
-			</tr> 
+			</tr>
 	</table>
 	<br/>
-	<a href="mailto:?bcc={% for user, attestations in rating_list %}{{user.email}},{% endfor %}"><span class="icon ui-icon-mail-closed"></span>Email all users</a>
-	
+	<a href="mailto:?bcc={% for user, _, _, _ in rating_list %}{{user.email}},{% endfor %}"><span class="icon ui-icon-mail-closed"></span>Email all users</a>
+
 </div>
 </div>
 {% endblock %}

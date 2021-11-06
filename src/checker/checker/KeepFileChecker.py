@@ -14,25 +14,24 @@ from django.contrib import admin
 
 
 class KeepFileChecker(Checker):
-	filename = models.CharField(max_length=500, blank=True, help_text=_("The name of the file to preserve (e.g. out.txt)"))
+    filename = models.CharField(max_length=500, blank=True, help_text=_("The name of the file to preserve (e.g. out.txt)"))
 
-	def title(self):
-		return "Keep file %s" % self.filename
+    def title(self):
+        return "Keep file %s" % self.filename
 
-	def run(self, env):
-		path = os.path.join(env.tmpdir(),self.filename)
+    def run(self, env):
+        path = os.path.join(env.tmpdir(), self.filename)
 
-		result = self.create_result(env)
-		if os.path.isfile(path):
-			result.add_artefact(self.filename, path)
-			result.set_passed(True)
-		else:
-			result.set_log("<p>Could not find file <tt>%s</tt>.</p>" % escape(self.filename))
-			result.set_passed(False)
+        result = self.create_result(env)
+        if os.path.isfile(path):
+            result.add_artefact(self.filename, path)
+            result.set_passed(True)
+        else:
+            result.set_log("<p>Could not find file <tt>%s</tt>.</p>" % escape(self.filename))
+            result.set_passed(False)
 
-		return result
+        return result
 
-from checker.admin import	CheckerInline
+from checker.admin import    CheckerInline
 class KeepFileCheckerInline(CheckerInline):
-	model = KeepFileChecker
-
+    model = KeepFileChecker

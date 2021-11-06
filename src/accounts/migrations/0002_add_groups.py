@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 
@@ -8,17 +8,17 @@ def add_groups(apps, schema_editor):
     trainer = Group.objects.get_or_create(name="Trainer")[0]
     Permissions = apps.get_model("auth", "Permission")
     permissions = Permissions.objects.filter(codename__in=[
-        u'add_tutorial', u'change_tutorial', u'delete_tutorial',
-        u'add_userprofile', u'change_userprofile', u'delete_userprofile',
-        u'add_rating', u'change_rating', u'delete_rating',
-        u'add_ratingaspect',  u'change_ratingaspect', u'delete_ratingaspect',
-        u'add_ratingscale', u'change_ratingscale', u'delete_ratingscale',
-        u'add_ratingscaleitem', u'change_ratingscaleitem', u'delete_ratingscaleitem',
-        u'add_user', u'change_user', u'delete_user',
-        u'add_mediafile', u'change_mediafile', u'delete_mediafile',
-        u'add_task', u'change_task', u'delete_task',
-        u'change_solution',
-        u'change_chunk','change_settings',
+        'add_tutorial', 'change_tutorial', 'delete_tutorial',
+        'add_userprofile', 'change_userprofile', 'delete_userprofile',
+        'add_rating', 'change_rating', 'delete_rating',
+        'add_ratingaspect',  'change_ratingaspect', 'delete_ratingaspect',
+        'add_ratingscale', 'change_ratingscale', 'delete_ratingscale',
+        'add_ratingscaleitem', 'change_ratingscaleitem', 'delete_ratingscaleitem',
+        'add_user', 'change_user', 'delete_user',
+        'add_mediafile', 'change_mediafile', 'delete_mediafile',
+        'add_task', 'change_task', 'delete_task',
+        'change_solution',
+        'change_chunk', 'change_settings',
         ])
 
     trainer.permissions.add(*permissions)
