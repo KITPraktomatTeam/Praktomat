@@ -39,7 +39,8 @@ script:
  - mkdir ../debug-data
  - mkdir ../test-data
  # since praktomat.wsgi depends on existent path env/lib where env is sibling folder of praktomat folder
- - ln -s /home/travis/miniconda/envs/test-environment $TRAVIS_BUILD_DIR/env
+ - echo $TRAVIS_BUILD_DIR
+ - ln -s /home/travis/miniconda/envs/test-environment /home/travis/build/ifrh/env
  - ./src/manage-test.py test accounts attestation checker configuration solutions tasks hbrs_tests
 
 after_success:
