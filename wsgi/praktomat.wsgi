@@ -12,6 +12,8 @@ import pathlib
 if PY2 :
     env_lib_path = pathlib.Path(join(dirname(dirname(dirname(__file__))), "env", "lib"))
     subdirs = [str(p) for p in env_lib_path.iterdir() if p.is_dir()]
+    print(type(subdirs))
+    print (subdirs)
     python_path = [p for p in subdirs if basename(p).startswith("python2.")][0]
 
 if PY3 :
