@@ -9,7 +9,7 @@ django-extensions
 # It appears that due to the pull-request https://github.com/aljosa/django-tinymce/pull/103 merged in django-tinymce==2.4.0, jquery is loaded after our onw jquery
 # loaded in admin-sites. Using an old version of django-tinymce (2.3.x) is not possible because it uses methods removed between Django 1.8 and 1.11.
 # We might want to use the django-admin provieded jquery in our admin-site jquery snippets?!?!?
-ddjango-tinymce~=2.8;python_version<="3.5"  # because 3.0.1 and 3.0.2 gave error messages with python 3.5 and lower
+django-tinymce~=2.8;python_version<="3.5"  # because 3.0.1 and 3.0.2 gave error messages with python 3.5 and lower
 django-tinymce~=3.0;python_version>="3.6"
 django-debug-toolbar
 docutils
