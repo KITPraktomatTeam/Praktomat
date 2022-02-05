@@ -156,4 +156,3 @@ class Builder(Checker):
             'cmdline' : os.path.basename(args[0]) + ' ' +  reduce(lambda parm, ps: parm + ' ' + ps, args[1:], ''),
             'regexp' : self.rxarg()
         })
-

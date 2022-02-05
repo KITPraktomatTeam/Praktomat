@@ -180,7 +180,7 @@ def load_defaults(settings):
         else:
             import uuid
             d.SECRET_KEY = uuid.uuid4().hex
-            os.fdopen(os.open(secret_keyfile, os.O_WRONLY | os.O_CREAT, 0o600), 'w').write(SECRET_KEY)
+            os.fdopen(os.open(secret_keyfile, os.O_WRONLY | os.O_CREAT, 0o600), 'w').write(d.SECRET_KEY)
 
 
     # Templates
@@ -299,7 +299,7 @@ def load_defaults(settings):
     # Alternatively: Run everything in a docker instance, to provide higher
     # insulation. Should not be used together with USEPRAKTOMATTESTER.
 
-    # It is recomendet to use DOCKER and not a tester account
+    # It is recomended to use DOCKER and not a tester account
     # for using Docker from https://github.com/nomeata/safe-docker
     # Use docker to test submission
 
@@ -375,7 +375,8 @@ def load_defaults(settings):
     d.MIMETYPE_ADDITIONAL_EXTENSIONS = \
         [("text/plain", ".properties"),
          ("text/x-r-script", ".R"),
-         ("text/x-isabelle", ".thy")]
+         ("text/x-isabelle", ".thy"),
+         ("text/x-lean", ".lean"),]
 
     # Subclassed TestSuitRunner to prepopulate unit test database.
     d.TEST_RUNNER = 'utilities.TestSuite.TestSuiteRunner'

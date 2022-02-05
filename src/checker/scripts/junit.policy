@@ -2,15 +2,15 @@ grant {
 	permission java.util.PropertyPermission "user.home","read";
 	permission java.io.FilePermission "/home/praktomat/junit.properties", "read";
 	permission java.io.FilePermission "/home/tester/junit.properties", "read";
-	permission java.io.FilePermission "${user.dir}${/}data${/}-", "read";
+	permission java.io.FilePermission "${user.dir}${/}data${/}-", "read";            // user.dir is the current working directory where JVM was started. , see https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
 	permission java.lang.RuntimePermission "accessDeclaredMembers";
 	permission java.lang.RuntimePermission "getStackTrace";
-	
-	
+
+
 	//Console IO
 	permission java.lang.RuntimePermission "setIO";
-	
-        // Funktionalitaet genutzt von JUNIT-PARAMS konfigurieren
+
+        // enable to use JUNIT-PARAMS
 	permission java.lang.RuntimePermission "writeFileDescriptor";
 	permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
 	permission java.util.PropertyPermission "JUnitParams.flat","read";

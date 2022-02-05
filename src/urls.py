@@ -16,7 +16,19 @@ import tinymce.urls
 
 from django.contrib import admin
 
+from django.contrib.staticfiles.storage import staticfiles_storage
+
+
+favicon_view_static = RedirectView.as_view(url=settings.BASE_PATH+'static/favicon.ico', permanent=True)
+favicon_view = RedirectView.as_view(url=staticfiles_storage.url('favicon.ico'), permanent=True)
+
+
 urlpatterns = [
+    #favicon.ico
+    url('favicon.ico', favicon_view),
+    url(r'^.*favicon\.ico$', favicon_view_static),
+
+
     # Index page
     url(r'^$', RedirectView.as_view(pattern_name='task_list', permanent=True), name="index"),
 

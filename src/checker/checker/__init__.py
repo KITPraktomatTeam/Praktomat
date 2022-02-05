@@ -14,4 +14,3 @@ __all__ = [    "AnonymityChecker",
             "RChecker",
             "KeepFileChecker",
           ]
-
