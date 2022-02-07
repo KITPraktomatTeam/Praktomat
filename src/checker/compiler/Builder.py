@@ -506,4 +506,3 @@ class Builder(Checker):
             'regexp' : self.rxarg(),
             'debug'  : False
         })
-

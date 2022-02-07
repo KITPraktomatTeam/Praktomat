@@ -14,6 +14,7 @@ from django.urls import reverse
 from django.conf import settings
 from django.contrib import messages
 import django.utils.timezone
+from django.conf import settings
 
 from tasks.models import Task
 from solutions.forms import ModelSolutionFormSet
@@ -55,6 +56,7 @@ def taskList(request):
                       'threshold': threshold,
                       'calculated_grade': calculated_grade,
                       'user_text': request.user.user_text,
+                      'show_contact_link': settings.SHOW_CONTACT_LINK,
                   })
 
 @login_required
