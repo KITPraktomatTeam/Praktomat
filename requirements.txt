@@ -28,5 +28,5 @@ pathlib;python_version<"3"
 #modules used in fix bug #255 in safeexec.py
 psutil
 
-#for LDAP support make sure, that ldap module libldap2-dev is installed on your operation system
+#for LDAP support make sure, that ldap packages libsasl2-dev and libldap2-dev are installed on your operation system
 python-ldap
