@@ -1,20 +1,37 @@
 {% extends "base.html" %}
-{% load i18n %} {% load chunks %}
+{% load i18n %} {% load chunks %} {% load motd %}
+
+{% block extrahead %}{{ block.super }}
+<script type="application/javascript">
+
+function resize(id) {
+    var iframe = document.getElementById(id);
+    var height = iframe.contentWindow.document.body.scrollHeight;
+    // if we have content, we need to extend the iframe
+    // because we need to include space for the invisible scrollbar
+    iframe.height = (height == 0) ? 0 : height + 35;
+};
+
+</script>
+{% endblock %}
 
 {% block breadcrumbs %}
 	{{ block.super }} &gt; {% trans 'Login' %}
 {% endblock %}
 
 {% block content %}<div id="login">
-{% chunk "Login Message" %}	
 
-<div id="form">	
+{% motd %}
+
+{% chunk "Login Message" %}
+
+<div id="form">
     {% if REGISTRATION_POSSIBLE %}
 	<span class="icon ui-icon-triangle-1-e"></span><a href="{% url "registration_register" %}">Registration</a>
 	/
-	{% endif %} 
+	{% endif %}
 	<span class="icon ui-icon-triangle-1-e"></span><a href="{% url "password_reset" %}">Retrieve password</a>
-	
+
 	<form method="post" action=".">{% csrf_token %}
 	    {% include "forms/form_as_div.html" %}
 		<input type="submit" value="Login" />

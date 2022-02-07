@@ -11,7 +11,7 @@
 {% block content %}
 <form enctype="multipart/form-data" method="post" action="">{% csrf_token %}
     <div>
-    	{% include "forms/formset_as_div.html" %}
+        {% include "forms/formset_as_div.html" %}
         <div class="submit-row" style="overflow: auto;">
             <input type="submit" value="Save" class="default" name="_save">
         </div>

@@ -17,7 +17,7 @@ var IsabelleHighlightRules = function() {
         "assumes|shows|obtains|and|begin|end|where|in|fixes|for|imports"
     );
     var keyword3 = (
-        "case|show|thus|obtain"
+        "case|show|thus|obtain|fix"
     );
     var improper = (
         "apply|done|prefer|defer"

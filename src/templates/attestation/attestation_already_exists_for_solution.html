@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block extrahead %}{{ block.super }}
-<script type="text/javascript" src="{{STATIC_URL}}/frameworks/dotdotdot/jquery.dotdotdot-packed.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}/frameworks/dotdotdot/jquery.dotdotdot.js"></script>
 {% endblock %}
 {% block breadcrumbs %} {{block.super}} > <a href={% url "task_detail" task_id=task.id%}>{{task.title}}</a> > Attestations{% endblock %}
 {% block content %}<div id='attestation_list'>
@@ -18,7 +18,7 @@
 
 		<div id="Solutions">
 			<div>There already are Attestations for the <a href={% url "solution_detail" solution_id=solution.id %}>specified solution</a>. Do you want to <a href={% url "new_attestation_for_solution" solution_id=solution.id force_create='force_create'%}>force the creation</a> of another Attestation?
-			
+
 			</div>
 			<h2>{% trans "Existing Attestationss" %}</h2>
 			{% for attestation in attestations%}
