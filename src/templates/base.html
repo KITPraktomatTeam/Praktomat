@@ -18,7 +18,11 @@
 
 	<link type="text/css" rel="stylesheet" href="{% static "frameworks/jquery/jquery-ui-theme.css" %}" />
 	<link type="text/css" rel="stylesheet" href="{% static "styles/style.css" %}" />
-	{% block extrahead %}{% endblock %}
+	{% block extrahead %}
+        <link rel="shortcut icon" href="{% static 'favicon.ico' %}" />
+        <link rel="icon" href="{% static 'favicon.ico' %}" />
+        {% endblock %}
+
 	<title>{{ site_name|default:"Praktomat" }} {% block title %}{% endblock %}</title>
 </head>
 

@@ -83,6 +83,7 @@ Prerequisites: 3rd-Party libraries and programms
     libmysqlclient-dev (or: default-libmysqlclient-dev)
     libsasl2-dev
     libssl-dev
+    libffi-dev
     openssl (for signing E-Mails)
     swig
     libapache2-mod-xsendfile (version 0.12; or install version 1.0 manually)
