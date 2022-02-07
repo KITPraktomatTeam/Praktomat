@@ -15,4 +15,5 @@ __all__ = [    "AnonymityChecker",
             "RChecker",
             "KeepFileChecker",
             "CUnitChecker_v2",
+            "DiffChecker",
           ]
