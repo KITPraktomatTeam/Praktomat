@@ -8,10 +8,10 @@ also a moderated [mailing list] for Praktomat administrators:
 praktomat-users@lists.kit.edu.
 
 
-A note about Python 2 
+A note about Python 2
 =============
-Since `pip` will drop support for Python 2 in Jannuary 2020, 
-we don't support Python 2 any more. But at time of writing that note, you can use 
+Since `pip` will drop support for Python 2 in January 2020,
+we don't support Python 2 any more. But at time of writing that note, you can use
 Praktomat with Python 2.
 
 General setup
@@ -20,11 +20,11 @@ General setup
 You need Python 3.5 and a recent version of pip. We also highly recommend to
 use virtualenv so your system Python installation remains clean.
 
-If you are having trouble with 
+If you are having trouble with
 
     pip install
 
-and get a **No matching distribution found** or **Could not fetch URL** error, 
+and get a **No matching distribution found** or **Could not fetch URL** error,
 try adding -v to the command to get more information:
 
     pip install --upgrade -v pip
@@ -38,7 +38,7 @@ To fix this, it might help to run the following command:
 
     pip install -U pip virtualenv setuptools wheel urllib3[secure]
 
-Prerequisites: Database and Webserver 
+Prerequisites: Database and Webserver
 ============
   We recommend to run Praktomat within Apache, using Postgresql as
   database.
@@ -51,30 +51,30 @@ Prerequisites: Database and Webserver
     libapache2-mod-macro       (<= Ubuntu 14, removed in Ubuntu 16)
     libapache2-mod-wsgi        (for using with Python2)
     libapache2-mod-wsgi-py3    (for using with Python3)
-    libapache2-mod-xsendfile   
+    libapache2-mod-xsendfile   (version 0.12; or install version 1.0 manually)
 
 Pitfalls while Systemupgrades
 ============
   In Ubuntu 16 the package `apache2-mpm-worker` has been merged into `apache2`.
   Before upgrading to Ubuntu 16 or higher and you are in Ubuntu 14 or lower versions, than you have to edit
 
-    /var/lib/apt/extended_state 
-    
+    /var/lib/apt/extended_state
+
   there change entry
-  
+
     Package: apache2
     Architecture: amd64
     Auto-Installed: 1
-    
+
   to
-  
+
     Auto-Installed: 0
-    
+
   If you don't change that value, apache2 package becomes deleted while upgrading Ubuntu.
-  
+
 Prerequisites: 3rd-Party libraries and programms
 ============
-  
+
   Praktomat requires some 3rd-Party libraries programs to run.
   On a Ubuntu/Debian System, these can be installed by installing the following packages:
 
@@ -83,6 +83,7 @@ Prerequisites: 3rd-Party libraries and programms
     libmysqlclient-dev (or: default-libmysqlclient-dev)
     libsasl2-dev
     libssl-dev
+    openssl (for signing E-Mails)
     swig
     libapache2-mod-xsendfile (version 0.12; or install version 1.0 manually)
     libapache2-mod-wsgi-py3
@@ -92,17 +93,21 @@ Prerequisites: 3rd-Party libraries and programms
     junit4
     dejagnu
     gcj-jdk (gcj compiler)
-    r-base
 
     git-core
+
+    r-base
+
 
   If youre going to use Praktomat to check Haskell submissions, you will also require the packages:
 
     ghc libghc-test-framework-dev libghc-test-framework-hunit-dev libghc-test-framework-quickcheck2-dev
 
- For Checkstyle, we recommend getting checkstyle-all-4.4.jar
+ For Checkstyle, we recommend getting checkstyle-all-4.4.jar or checkstyle-8.14-all.jar
 
-    http://sourceforge.net/projects/checkstyle/files/checkstyle/4.4/
+    https://github.com/checkstyle/checkstyle/releases/
+
+  Documentation for checkstyle please see: https://checkstyle.org/
 
  If you want your users to submit Isabelle theories, add the following line to
  /etc/mime.types:
@@ -120,7 +125,44 @@ Python 3.5
     python-psycopg2
     python-virtualenv
 
-Developer setup
+Some words of folder layout to Developer, Testing and Deployment-Setup
+=====================================================
+
+We have changed the folder layout, to keep repository-folders clean.
+The name PraktomatSupport was ambiguous to us, so we change it.
+=> Folders for UPLOAD_ROOT and SANDBOX_DIR and STATIC_ROOT changed.
+
+Python variable UPLOAD_ROOT points to debug-data, test-data or work-data
+dependig on manage-devel.py, manage-test.py or manage-local.py.
+
+Python variable SANDBOX_DIR points to a folder inside UPLOAD_ROOT.
+
+Semester folder:
+```
+.
+  |-Praktomat   <= this is only the repository
+  |  |-documentation
+  |  |-media
+  |  |-examples
+  |  |-src
+  |  |-docker-image
+  |  |-wsgi
+  |-static
+  |-debug-data
+  |  |-CheckerFiles
+  |  |-SolutionArchive
+  |  |-SolutionSandbox
+  |-work-data
+  |  |-CheckerFiles
+  |  |-SolutionArchive
+  |  |-SolutionSandbox
+  |-test-data
+  |  |-CheckerFiles
+  |  |-SolutionArchive
+  |  |-SolutionSandbox
+```
+
+Developer and Tester setup
 ===============
 
 Clone this repo and install the required python libs to either your system-wide
@@ -136,10 +178,16 @@ pip install -r Praktomat/requirements.txt
 ```
 
 The initial database setup follows.
+In standard development configuration `Praktomat/src/settings/devel.py`
+and in configuration `Praktomat/src/settings/test.py` for running django unit tests against Praktomat
+the databases are SQLite files.
+   - 'UPLOAD_ROOT+/Database+PRAKTOMAT_ID' for development
+   - 'UPLOAD_ROOT+/DjangoTestDatabase+PRAKTOMAT_ID' for unittesting
+which are created by python on the fly.
 
 ```bash
 cd Praktomat
-mkdir data
+mkdir ../debug-data/
 ./src/manage-devel.py migrate --noinput
 ./src/manage-devel.py createsuperuser
 ```
@@ -148,6 +196,21 @@ Start the development server.
 
 ```bash
 ./src/manage-devel.py runserver
+```
+
+or
+
+```bash
+pip install Werkzeug
+./src/manage-devel.py runserver_plus
+```
+
+to run django unit tests
+
+```bash
+cd Praktomat
+mkdir ../test-data/
+./src/manage-test.py test accounts attestation checker configuration solutions tasks hbrs_tests
 ```
 
 
@@ -166,18 +229,23 @@ pip install -r Praktomat/requirements.txt
 
 Now create a database. Using postgres on Ubuntu, this might work for creating
 a database "praktomat_default". Also edit `pg_hba.conf` to allow the access.
+Your database-system should be configured to UTF-8.
 
 ```bash
 sudo -u postgres createuser -DRS praktomat
-sudo -u postgres createdb -O praktomat praktomat_default
+sudo -u postgres createdb --encoding UTF8 -O praktomat praktomat_default
+sudo -u postgres createdb --encoding UTF8 -O praktomat praktomat_<PRAKTOMAT_ID>
 ```
 
-Configure Praktomat in `Praktomat/src/settings/local.py`, which contains all settings and paths for your deployment system.
+The postfix <PRAKTOMAT_ID> of database name in above creation statement have to reflect the value of the python variable PRAKTOMAT_ID in `Praktomat/src/settings/local.py`.
+
+Configure Praktomat in `Praktomat/src/settings/local.py`, which contains all settings and paths for your deployment system, too.
 
 Create the upload directory, populate the database:
 
 ```bash
-mkdir PraktomatSupport
+cd Praktomat
+mkdir ../work-data/
 ./Praktomat/src/manage-local.py collectstatic --noinput --link
 ./Praktomat/src/manage-local.py migrate --noinput
 ```
@@ -186,7 +254,13 @@ It should now be possible to start the deployment server with:
 ```bash
 ./Praktomat/src/manage-local.py runserver
 ```
-If you want to deploy the project using mod_wsgi in apache you could use `documentation/apache_praktomat_wsgi.conf` as a starting point. Don't forget to install `mod_xsendfile` to serve uploaded files.
+
+  If you want to deploy the project using mod_wsgi in apache you could use `documentation/apache_praktomat_wsgi.conf` as a starting point. Don't forget to install `mod_xsendfile` to serve uploaded files.
+
+  And if your Praktomat running on apache should handle non-ASCII filenames correctly, than the easyest way is activating UTF-8 support inside apache.
+  Debian runs Apache with the LANG=C locale by default, which breaks uploading files with special characters in their names at least when running with mod_wsgi.
+  Activating a UTF-8 locale in /etc/apache2/envvars should resolve the issue. ( see https://code.djangoproject.com/ticket/6009#comment:18 )
+
 
 Adding the first user
 ---------------------

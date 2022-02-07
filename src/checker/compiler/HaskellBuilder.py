@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.utils.encoding import python_2_unicode_compatible
 
 """
 A Haskell compiler.
@@ -49,7 +48,10 @@ class HaskellBuilder(Builder):
 
         filenames = [name for name in self.get_file_names(env)]
         args = [self.compiler()] + self.flags(env) + filenames + self.libs()
-        [output, _, _, _, _]  = execute_arglist(args, env.tmpdir(), self.environment())
+        environ = self.environment()
+        environ['LANG'] = settings.LANG
+        environ['LANGUAGE'] = settings.LANGUAGE
+        [output, _, _, _, _]  = execute_arglist(args, env.tmpdir(), environ)
 
         has_main = re.search(r"^Linking ([^ ]*) ...$", output, re.MULTILINE)
         if has_main: self._detected_main = has_main.group(1)
