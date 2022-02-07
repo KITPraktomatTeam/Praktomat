@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
 
 import os
 from pipes import quote
@@ -89,11 +91,12 @@ class Builder(Checker):
         """ Return true if there are any warnings in OUTPUT """
         return re.compile(self._rx_warnings, re.MULTILINE).search(output) != None
 
+    @python_2_unicode_compatible
     class NotFoundError(Exception):
-            def __init__(self, description):
-                self.description = description
-            def __str__(self):
-                return self.description
+        def __init__(self, description):
+            self.description = description
+        def __str__(self):
+            return self.description
 
     def main_module(self, env):
         """ Creates the name of the main module from the (first) source file name. """

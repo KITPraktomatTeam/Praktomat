@@ -1,3 +1,8 @@
+# -*- encoding: utf-8 -*-
+
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
+
 from datetime import date, datetime, timedelta
 import tempfile
 import zipfile
@@ -19,7 +24,7 @@ from configuration import get_settings
 from utilities.deleting_file_field import DeletingFileField
 from utilities.safeexec import execute_arglist
 
-
+@python_2_unicode_compatible
 class Task(models.Model):
     title = models.CharField(max_length=100, help_text = _("The name of the task"))
     description = models.TextField(help_text = _("Description of the assignment."))
@@ -59,8 +64,8 @@ class Task(models.Model):
         count = check_multiple(final_solutions, True)
 
         if self.expired():
-                self.all_checker_finished = True
-                self.save()
+            self.all_checker_finished = True
+            self.save()
         return final_solutions.count()
 
     def get_checkers(self):
@@ -226,7 +231,7 @@ class Task(models.Model):
             # but we do not want to save RatingScale or RatingScaleItem, if equivalent elements are in database already.
             object.id = None
             if isinstance(object, Task):
-                # save all tasks and their old id
+            # save all tasks and their old id
                 if is_template:
                     object.publication_date = date.max
                 deserialized_object.save()
