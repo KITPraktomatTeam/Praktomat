@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
 
 import zipfile
 import tempfile
@@ -27,6 +29,7 @@ from configuration import get_settings
 for (mimetype, extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
     mimetypes.add_type(mimetype, extension, strict=True)
 
+@python_2_unicode_compatible
 class Solution(models.Model):
     """ """
 
@@ -43,7 +46,8 @@ class Solution(models.Model):
     final = models.BooleanField( default = False, help_text = _('Indicates whether this solution is the last (accepted) of the author.'))
 
     def __str__(self):
-        return str(self.task) + ":" + str(self.author) + ":" + str(self.number)
+        return "%s:%s:%s" % (self.task, self.author , self.number)
+        #return str(self.task) + ":" + str(self.author) + ":" + str(self.number)
 
     def allCheckerResults(self):
         results = self.checkerresult_set.all().prefetch_related('artefacts')
@@ -113,6 +117,7 @@ def get_solutionfile_upload_path(instance, filename):
     solution = instance.solution
     return 'SolutionArchive/Task_' + str(solution.task.id) + '/User_' + solution.author.username.replace("/","\u2044") + '/Solution_' + str(solution.id) + '/' + filename
 
+@python_2_unicode_compatible
 class SolutionFile(models.Model):
     """docstring for SolutionFile"""
 
@@ -140,7 +145,14 @@ class SolutionFile(models.Model):
                     new_solution_file = SolutionFile(solution=self.solution)
                     temp_file = tempfile.NamedTemporaryFile()                                    # autodeleted
                     temp_file.write(zip.open(zip_file_name).read())
-                    zip_file_name = zip_file_name  if isinstance(zip_file_name, str) else str(zip_file_name, errors='replace')
+                    import sys  # stay python 2 python 3 compatible
+                    PY2 = sys.version_info[0] == 2
+                    PY3 = sys.version_info[0] == 3
+                    if PY3:
+                        string_types = str
+                    else:
+                        string_types = unicode
+                    zip_file_name = zip_file_name  if isinstance(zip_file_name, string_types) else string_types(zip_file_name, errors='replace')
                     new_solution_file.file.save(zip_file_name, File(temp_file), save=True)        # need to check for filenames begining with / or ..?
         else:
             self.mime_type = mimetypes.guess_type(self.file.name)[0]
@@ -166,7 +178,22 @@ class SolutionFile(models.Model):
 
     def path(self):
         """ path of file relative to the zip file, which once contained it """
-        return self.file.name[len(get_solutionfile_upload_path(self, '')):]
+        # dont use length of filename as in original Code but use reg-expression!!
+        # Original Code was:
+        # return self.file.name[len(get_solutionfile_upload_path(self, '')):]
+
+        # Fix for: https://github.com/KITPraktomatTeam/Praktomat/issues/232
+        # It is realy saver not to use the length, i.e. if someone resubmit a solution via button and the new solution-number switched
+        # from xxxx to yyyyy, the first letter of filename get lost if here only the length was used!!
+
+        # TODO: Refactoring at the end of file there is a regexpr-based function "id_for_path(path)"
+        #       should or could we used that function here?
+        #
+        # This fix for https://github.com/KITPraktomatTeam/Praktomat/issues/232
+        # is used at H-BRS since May 2016 (Robert Hartmann)
+        mytmpPattern = r'^SolutionArchive/Task_\d+/User_\S+/Solution_\d+/(.+)'
+        return re.match(mytmpPattern, self.file.name).group(1) # for playing with reg see:  http://pythex.org/
+
 
     def content(self):
         """docstring for content"""
@@ -255,7 +282,15 @@ def get_solutions_zip(solutions,include_copy_checker_files=False,include_artifac
 
         # We need to pass unicode strings to ZipInfo to ensure that it sets bit
         # 11 appropriately if the filename contains non-ascii characters.
-        assert isinstance(base_name, str)
+        import sys  # stay python 2 python 3 compatible
+        PY2 = sys.version_info[0] == 2
+        PY3 = sys.version_info[0] == 3
+        if PY3:
+            string_types = str
+        else:
+            string_types = unicode
+
+        assert isinstance(base_name, string_types)
 
         checkstyle_checker_files = []
         script_checker_files     = []
@@ -294,7 +329,16 @@ def get_solutions_zip(solutions,include_copy_checker_files=False,include_artifac
 
         for (name, file) in solution_files + createfile_checker_files + checkstyle_checker_files + script_checker_files + artefact_files:
             zippath = os.path.normpath(base_name + name)
-            assert isinstance(zippath, str)
+
+            import sys  # stay python 2 python 3 compatible
+            PY2 = sys.version_info[0] == 2
+            PY3 = sys.version_info[0] == 3
+            if PY3:
+                string_types = str
+            else:
+                string_types = unicode
+
+            assert isinstance(zippath, string_types)
             try: # Do not overwrite files from the solution by checker files
                 zip.getinfo(zippath)
             except KeyError:

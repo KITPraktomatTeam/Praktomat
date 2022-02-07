@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
+
 from datetime import date, datetime, timedelta
 import tempfile
 import zipfile
@@ -19,7 +24,7 @@ from configuration import get_settings
 from utilities.deleting_file_field import DeletingFileField
 from utilities.safeexec import execute_arglist
 
-
+@python_2_unicode_compatible
 class Task(models.Model):
     title = models.CharField(max_length=100, help_text = _("The name of the task"))
     description = models.TextField(help_text = _("Description of the assignment."))
@@ -59,8 +64,8 @@ class Task(models.Model):
         count = check_multiple(final_solutions, True)
 
         if self.expired():
-                self.all_checker_finished = True
-                self.save()
+            self.all_checker_finished = True
+            self.save()
         return final_solutions.count()
 
     def get_checkers(self):
@@ -140,8 +145,11 @@ class Task(models.Model):
                 "-p", jplag_settings['files'],
                 "-r", path,
                 tmp]
+        environ={}
+        environ['LANG'] = settings.LANG
+        environ['LANGUAGE'] = settings.LANGUAGE
         [output, error, exitcode, timed_out, oom_ed] = \
-         execute_arglist(args, path, unsafe=True)
+         execute_arglist(args, path, environment_variables=environ, unsafe=True)
 
         # remove solution copies
         shutil.rmtree(tmp)
@@ -204,7 +212,16 @@ class Task(models.Model):
         from attestation.models import RatingScale, RatingScaleItem
 
         zip = zipfile.ZipFile(zip_file, 'r')
-        data = zip.read('data.xml').decode('utf-8')
+
+        import sys
+        PY2 = sys.version_info[0] == 2
+        PY3 = sys.version_info[0] == 3
+        data = ""
+        if PY3:
+            data = zip.read('data.xml').decode('utf-8') #py3
+        else:
+            data = zip.read('data.xml') #Py2
+
         task_id_map = {}
         scale_map = {}
         solution_id_map = {}
@@ -213,25 +230,68 @@ class Task(models.Model):
         for deserialized_object in serializers.deserialize("xml", data):
             object = deserialized_object.object
             old_id = object.id
+            #since Django Debug Toolbar didn't catch logger output, I print to console while in debugging mode
+            #import logging
+            #logger = logging.getLogger(__name__)
+            #logger.error("Test!")
+            #print("======================================")
+            #print('OldID: %s -- Type: %s '%(str(old_id) , str(type(object))))
+            #print("======================================")
+
+            # from Django docs: "if the pk attribute in the serialized data doesn’t exist or is null, a new instance will be saved to the database."
+            # we want to save a task always as new database entry, therefor we set the object.id to None.
+            # but we do not want to save RatingScale or RatingScaleItem, if equivalent elements are in database already.
             object.id = None
             if isinstance(object, Task):
-                # save all tasks and their old id
+            # save all tasks and their old id
                 if is_template:
                     object.publication_date = date.max
                 deserialized_object.save()
                 task_id_map[old_id] = object.id
+                #print("======================================")
+                #print('OldID: %s -- NewID: %s -- Name: %s '%(str(old_id) , str(task_id_map[old_id]) , str(object.title)))
+                #print("======================================")
                 old_solution_to_new_task_map[object.model_solution_id] = object.id
                 object.model_solution = None
                 object.final_grade_rating_scale = None if is_template else scale_map.get(object.final_grade_rating_scale_id)
                 deserialized_object.save()
+
             elif isinstance(object, RatingScale):
                 if not is_template:
-                    deserialized_object.save()
-                    scale_map[old_id] = object
+                    dbobject=RatingScale.objects.filter(name=object.name).order_by('id').first()
+                    #if there is no RatingScale with the name in database, we save the deserialized_object, else we are reusing existent data.
+                    if dbobject is None:
+                        deserialized_object.save()
+                        scale_map[old_id] = object
+                        #print("======================================")
+                        #print('>> OldID: %s -- NewID: %s -- Name: %s '%(str(old_id) , str(scale_map[old_id].id) , str(object)))
+                        #print("======================================")
+                    else:
+                        scale_map[old_id] = dbobject
+                        #print("======================================")
+                        #print('>> OldID: %s -- ReusingID: %s -- Name: %s '%(str(old_id) , str(scale_map[old_id].id) , str(object)))
+                        #print("======================================")
+                    #print (scale_map)
+                    #print("===============")
+
             elif isinstance(object, RatingScaleItem):
                 if not is_template:
-                    object.scale = scale_map[object.scale_id]
-                    deserialized_object.save()
+                    #if there is no RatingScaleItem with the same name for corresponding RatingScale in database,
+                    #we save the deserialized_object, else we are reusing existent data.
+                    #The consequence is: If you where importing tasks from different praktomat instances having differences in names of RatingScaleItems
+                    #but using same name for RatingScale, than these ScaleItems become merge into the same RatingScale.
+                    dbobject=RatingScaleItem.objects.filter(name=object.name, scale=scale_map[object.scale_id].id ).order_by('id').first()
+                    if dbobject is None:
+                        object.scale = scale_map[object.scale_id]
+                        deserialized_object.save()
+                        #print("======================================")
+                        #print('>> OldID: %s -- NewID: %s -- Name: %s '%(str(old_id) , str(object.id) , str(object)))
+                        #print("======================================")
+                    #else:
+                        #print("======================================")
+                        #print('>> OldID: %s -- ReusingID: %s -- Name: %s '%(str(old_id) , str(dbobject.id) , str(dbobject)))
+                        #print("======================================")
+
             else:
                 # save modelsolution, media and checker, update task id
                 if isinstance(object, SolutionFile):

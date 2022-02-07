@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 
 import re
 
@@ -78,6 +80,8 @@ class JUnitChecker(Checker):
         environ['JAVA'] = settings.JVM
         script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'scripts')
         environ['POLICY'] = os.path.join(script_dir, "junit.policy")
+        environ['LANG'] = settings.LANG
+        environ['LANGUAGE'] = settings.LANGUAGE
 
         cmd = [settings.JVM_SECURE, "-cp", settings.JAVA_LIBS[self.junit_version]+":.", self.runner(), self.class_name]
         [output, error, exitcode, timed_out, oom_ed] = execute_arglist(cmd, env.tmpdir(), environment_variables=environ, timeout=settings.TEST_TIMEOUT, fileseeklimit=settings.TEST_MAXFILESIZE, extradirs=[script_dir])

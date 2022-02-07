@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
+
+
 import datetime
 import re
 import hashlib
@@ -22,6 +28,7 @@ def validate_mat_number(value):
     if regex:
         RegexValidator("^"+regex+"$", message="This is not a valid student number.", code="")(value)
 
+@python_2_unicode_compatible
 class User(BasicUser):
     # all fields need to be null-able in order to create user
     tutorial = models.ForeignKey('Tutorial', on_delete=models.SET_NULL, null=True, blank=True, help_text = _("The tutorial the student belongs to."))
@@ -195,6 +202,7 @@ def create_user_for_basicuser(sender, **kwargs):
         u.save()
 signals.post_save.connect(create_user_for_basicuser, sender=BasicUser)
 
+@python_2_unicode_compatible
 class Tutorial(models.Model):
     name = models.CharField(max_length=100, blank=True, help_text=_("The name of the tutorial"))
     # A Tutorial may have many tutors as well as a Tutor may have multiple tutorials

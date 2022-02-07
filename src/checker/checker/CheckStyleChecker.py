@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 import shutil, os, re, subprocess
 from django.conf import settings
@@ -32,11 +33,16 @@ class CheckStyleChecker(Checker):
         copy_file(self.configuration.path, config_path)
 
         # Run the tests
+        environ = {}
+        environ['LANG'] = settings.LANG
+        environ['LANGUAGE'] = settings.LANGUAGE
+
         args = [settings.JVM, "-cp", settings.CHECKSTYLEALLJAR, "-Dbasedir=.", "com.puppycrawl.tools.checkstyle.Main", "-c", "checks.xml"] + [name for (name, content) in env.sources()]
-        [output, error, exitcode, timed_out, oom_ed] = execute_arglist(args, env.tmpdir())
+        [output, error, exitcode, timed_out, oom_ed] = execute_arglist(args, working_directory=env.tmpdir(),environment_variables=environ)
 
         # Remove Praktomat-Path-Prefixes from result:
-        output = re.sub(r"^"+re.escape(env.tmpdir())+"/+", "", output, flags=re.MULTILINE)
+        #output = re.sub(r"^"+re.escape(env.tmpdir())+"/+", "", output, flags=re.MULTILINE)
+        output = re.sub(r""+re.escape(env.tmpdir())+"/+","",output,flags=re.MULTILINE)
 
         result = self.create_result(env)
 

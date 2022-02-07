@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 """
 A Java bytecode compiler for construction.
@@ -31,7 +32,10 @@ class ClassFileGeneratingBuilder(Builder):
             for filename in files:
                 if filename.endswith(".class"):
                     class_files.append(filename)
-                    [classinfo, _, _, _, _]  = execute_arglist([settings.JAVAP, os.path.join(dirpath, filename)], env.tmpdir(), self.environment(), unsafe=True)
+                    environ=self.environment()
+                    environ['LANG'] = settings.LANG
+                    environ['LANGUAGE'] = settings.LANGUAGE
+                    [classinfo, _, _, _, _]  = execute_arglist([settings.JAVAP, os.path.join(dirpath, filename)], env.tmpdir(), environ, unsafe=True)
                     if classinfo.find(main_method) >= 0 or classinfo.find(main_method_varargs) >= 0:
                         main_class_name = class_name.search(classinfo, re.MULTILINE).group(5)
                         return main_class_name
@@ -51,7 +55,7 @@ class JavaBuilder(ClassFileGeneratingBuilder):
     def libs(self):
         def toPath(lib):
             if lib=="junit3":
-                 return settings.JUNIT38_JAR
+                return settings.JUNIT38_JAR
             return lib
 
         required_libs = super(JavaBuilder, self).libs()

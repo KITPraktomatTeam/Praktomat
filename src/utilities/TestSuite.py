@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from django.test.runner import DiscoverRunner
 from django.test import TestCase as DjangoTestCase
 from django.conf import settings
@@ -36,7 +39,11 @@ class TestCase(DjangoTestCase):
 
     def assertRedirectsToView(self, response, view):
         """ Asserts whether the request was redirected to a specifivc view function. """
-        from urllib.parse import urlparse
+        from six import PY2
+        if PY2:
+            from urlparse import urlparse
+        else:
+            from urllib.parse import urlparse
         from django.urls import resolve
         self.assertTrue(hasattr(response, 'redirect_chain'),
                         msg="Please use client.get(...,follow=True) with assertRedirectsToView")

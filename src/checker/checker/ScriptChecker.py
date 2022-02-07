@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 
 import os, re, string
 
@@ -59,6 +61,8 @@ class ScriptChecker(Checker):
         environ['SCALA'] = settings.SCALA
         environ['POLICY'] = settings.JVM_POLICY
         environ['PROGRAM'] = env.program() or ''
+        environ['LANG'] = settings.LANG
+        environ['LANGUAGE'] = settings.LANGUAGE
 
         script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'scripts')
 
@@ -111,7 +115,17 @@ class WarningScriptCheckerFormSet(forms.BaseInlineFormSet):
             script.file.close()
 
             # In Universal Newline mode, python will collect encountered newlines
-            script.open(mode="r")
+
+            import sys
+            PY2 = sys.version_info[0] == 2
+            PY3 = sys.version_info[0] == 3
+            if PY3:
+                #because Djangos FileField open do not know to handle a newline parameter, we call open from io directly
+                from io import open as alias_open
+                script.file = alias_open(script.path,mode="r",newline=None)
+            else:
+                script.open(mode="rU")
+
             # make sure self.newlines is populated
             script.readline()
             script.readline()

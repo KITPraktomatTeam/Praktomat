@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 
 """
 TextChecker.
@@ -55,13 +57,13 @@ class TextChecker(Checker):
                     if line.find('/*') >= 0:
                         parts = line.split('/*')
                         if parts[0].find(self.text) >= 0:
-                             occurances.append((name, lineNum))
+                            occurances.append((name, lineNum))
                         inComment = False
 
                 if not inComment:
-                        parts = line.split('//')
-                        if parts[0].find(self.text) >= 0:
-                             occurances.append((name, lineNum))
+                    parts = line.split('//')
+                    if parts[0].find(self.text) >= 0:
+                        occurances.append((name, lineNum))
 
 
                 else:
@@ -73,7 +75,7 @@ class TextChecker(Checker):
                         inComment = False
 
                 if line.find(self.text) >= 0:
-                        gotoFind = 1
+                    gotoFind = 1
 
                 lineNum += 1
 

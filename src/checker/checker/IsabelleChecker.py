@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 
 from pipes import quote
 import shutil, os, re, subprocess
@@ -52,8 +54,10 @@ class IsabelleChecker(Checker):
         for t in additional_thys + user_thys:
             args += ["-T", t]
         args += ["-l", self.logic]
-
-        (output, error, exitcode, timed_out, oom_ed) = execute_arglist(args, env.tmpdir(), timeout=settings.TEST_TIMEOUT, error_to_output=False)
+        environ={}
+        environ['LANG'] = settings.LANG
+        environ['LANGUAGE'] = settings.LANGUAGE
+        (output, error, exitcode, timed_out, oom_ed) = execute_arglist(args, working_directory=env.tmpdir(), environment_variables=environ, timeout=settings.TEST_TIMEOUT, error_to_output=False)
 
         if timed_out:
             output += "\n\n---- check aborted after %d seconds ----\n" % settings.TEST_TIMEOUT
