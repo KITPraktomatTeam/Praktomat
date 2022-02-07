@@ -96,6 +96,8 @@ Prerequisites: 3rd-Party libraries and programms
     gcj-jdk (gcj compiler)
 
     git-core
+    
+    libldap2-dev (if you want to use python-ldap==2.3.13 for connecting to ldap)
 
     r-base
 
