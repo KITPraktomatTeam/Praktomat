@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import os
+import mod_wsgi
 from os.path import join, dirname, basename
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings.local'
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.%s' % mod_wsgi.process_group)
 
 import sys
 PY2 = sys.version_info[0] == 2
