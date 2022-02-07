@@ -13,6 +13,7 @@ install:
  - sudo apt-get install swig libsasl2-dev libssl-dev libpq-dev
  - sudo apt-get install openjdk-8-jdk dejagnu checkstyle gcj-jdk
  - sudo apt-get install r-base wget
+ - sudo apt-get install libcunit1-dev libcppunit-dev
 
  # taken from https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/use-conda-with-travis-ci.html
  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
