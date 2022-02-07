@@ -225,6 +225,10 @@ USESAFEDOCKER = True
 # If you use "libapache2-mod-xsendfile", this flag needs to be set to False
 MOD_XSENDFILE_V1_0 = True
 
+# Does Apache use "mod_xsendfile" version 1.0?
+# If you use "libapache2-mod-xsendfile", this flag needs to be set to False
+MOD_XSENDFILE_V1_0 = True
+
 # Our VM has 4 cores, so lets try to use them
 NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 6
 # But not with Isabelle, which is memory bound
