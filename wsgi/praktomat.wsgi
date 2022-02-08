@@ -2,7 +2,28 @@
 import os
 import mod_wsgi
 from os.path import join, dirname, basename
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.%s' % mod_wsgi.process_group)
+
+# For allowing more flexibility and reduce merge conflicts in Praktomat settings:
+# As mentioned in https://github.com/KITPraktomatTeam/Praktomat/pull/279
+# it is possible to use a settings file to configure Praktomat
+# which is not src/settings/local.py, src/settings/test.py or src/settings/devel.py
+# and tell apache in its config file how it is named:
+# For instance with
+#       SetEnv DJANGO_SETTINGS_MODULE settings.own
+# In Praktomat macro for apache, see documentation/apache_praktomat_wsgi.conf,
+# which could copied into /etc/apache2/sites-enabled/default-ssl.conf,
+# there the option process-group for WSGIScriptAlias
+# and the first parameter as name for WSGIDaemonProcess
+# are set to the value "local".
+# If DJANGO_SETTINGS_MODULE is not set i.e. via SetEnv for apache,
+# than we use the value of process group.
+# if that value for process group is not available, i.e. while running a unit test against praktomat.wsgi,
+# than we fall back to "local".
+# If DJANGO_SETTINGS_MODULE is allready defined, than we do not overwrite it.
+# DJANGO_SETTINGS_MODULE can be created via SetEnv for apache
+# or via calling ./src/manage-test.py or ./src/manage-devel.py or ./src/manage-local.py
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.%s' % repr(os.environ.get('mod_wsgi.process_group','local')))
 
 import sys
 PY2 = sys.version_info[0] == 2
