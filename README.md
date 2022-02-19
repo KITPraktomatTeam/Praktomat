@@ -14,11 +14,22 @@ Since `pip` will drop support for Python 2 in January 2020,
 we don't support Python 2 any more. But at time of writing that note, you can use
 Praktomat with Python 2.
 
+Python 3.5
+==========
+  The Praktomat currently requires Python 3.5
+
+  On Ubuntu 16.04, Python3.5 is installed by default,
+  but you may need to install the packages
+
+    python-setuptools
+    python-psycopg2
+    python-virtualenv
+
 General setup
 =============
 
-You need Python 3.5 and a recent version of pip. We also highly recommend to
-use virtualenv so your system Python installation remains clean.
+You need the latest version that is compatible with the Python version used. 
+We also highly recommend to use virtualenv so your system Python installation remains clean.
 
 If you are having trouble with
 
@@ -115,16 +126,6 @@ Prerequisites: 3rd-Party libraries and programms
 
     text/x-isabelle thy
 
-Python 3.5
-==========
-  The Praktomat currently requires Python 3.5
-
-  On Ubuntu 16.04, Python3.5 is installed by default,
-  but you may need to install the packages
-
-    python-setuptools
-    python-psycopg2
-    python-virtualenv
 
 Some words of folder layout to Developer, Testing and Deployment-Setup
 =====================================================
@@ -171,6 +172,14 @@ Praktomat/src/settings/test.py
 Praktomat/src/checker/scripts/cTestrunner
 Praktomat/src/checker/scripts/junit.policy
 ```
+
+You can deactivate checkers and compilers in your local Praktomat instance,
+just comment them out in ``` src/checker/checker/__init__.py ``` and ``` src/checker/checker/__init__.py ```.
+Do not forget to create and run a django migration in that case.
+
+If you exchange Praktomat-Tasks (export and import) than the instance, which is used to import the task,
+must have activated all needed checkers and compilers which are configured in the that task.
+
 
 Developer and Tester setup
 ===============
