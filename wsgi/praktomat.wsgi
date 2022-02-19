@@ -12,18 +12,25 @@ from os.path import join, dirname, basename
 #       SetEnv DJANGO_SETTINGS_MODULE settings.own
 # In Praktomat macro for apache, see documentation/apache_praktomat_wsgi.conf,
 # which could copied into /etc/apache2/sites-enabled/default-ssl.conf,
-# there the option process-group for WSGIScriptAlias
+# there is the option process-group for WSGIScriptAlias
 # and the first parameter as name for WSGIDaemonProcess
-# are set to the value "local".
+# both are set to the value "local_$id".
 # If DJANGO_SETTINGS_MODULE is not set i.e. via SetEnv for apache,
-# than we use the value of process group.
-# if that value for process group is not available, i.e. while running a unit test against praktomat.wsgi,
+# than we use the value of process-group to determine the required value for DJANGO_SETTINGS_MODULE.
+# If the value for process-group is not available, i.e. while running a unit test against praktomat.wsgi,
 # than we fall back to "local".
 # If DJANGO_SETTINGS_MODULE is allready defined, than we do not overwrite it.
 # DJANGO_SETTINGS_MODULE can be created via SetEnv for apache
 # or via calling ./src/manage-test.py or ./src/manage-devel.py or ./src/manage-local.py
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.%s' % repr(os.environ.get('mod_wsgi.process_group','local')))
+try:
+    from mod_wsgi import process_group
+except ImportError:
+    settings_module = 'local'
+else:
+    settings_module = str(repr(process_group)).strip("'").strip("\"").strip().split("_",1)[0] # We take the substring infront of the underscore, or all if no underscore is there.
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.%s' % (settings_module)) # only set DJANGO_SETTINGS_MODULE if it is not setted at moment
 
 import sys
 PY2 = sys.version_info[0] == 2
@@ -44,7 +51,6 @@ if PY3 :
 import site
 site.addsitedir(join(python_path, "site-packages"))
 
-import sys
 sys.path.append(join(dirname(dirname(__file__)), "src"))
 
 import warnings

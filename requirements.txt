@@ -31,5 +31,5 @@ psutil
 #for LDAP support make sure, that ldap packages libsasl2-dev and libldap2-dev are installed on your operation system
 python-ldap
 
-#for unit test of praktomat.wsgi
+#needed for praktomat.wsgi not only in unit tests for it
 mod_wsgi # make sure, that you have called : sudo apt-get install apache2-dev

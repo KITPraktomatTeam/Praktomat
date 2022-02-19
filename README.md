@@ -40,8 +40,7 @@ To fix this, it might help to run the following command:
 
 Prerequisites: Database and Webserver
 ============
-  We recommend to run Praktomat within Apache, using Postgresql as
-  database.
+  We recommend to run Praktomat within Apache, using PostgreSQL as database management system.
 
   On a Debian or Ubuntu System, install the packages
 
@@ -52,6 +51,7 @@ Prerequisites: Database and Webserver
     libapache2-mod-wsgi        (for using with Python2)
     libapache2-mod-wsgi-py3    (for using with Python3)
     libapache2-mod-xsendfile   (version 0.12; or install version 1.0 manually)
+    apache2-dev                (used by pip while installing mod_wsgi)
 
 Pitfalls while Systemupgrades
 ============
@@ -96,7 +96,7 @@ Prerequisites: 3rd-Party libraries and programms
     gcj-jdk (gcj compiler)
 
     git-core
-    
+
     libldap2-dev (if you want to use python-ldap==2.3.13 for connecting to ldap)
 
     r-base
@@ -163,6 +163,15 @@ Semester folder:
   |  |-CheckerFiles
   |  |-SolutionArchive
   |  |-SolutionSandbox
+```
+
+In some files there are information that you have to change for your need:
+```
+Praktomat/src/settings/devel.py
+Praktomat/src/settings/local.py
+Praktomat/src/settings/test.py
+Praktomat/src/checker/scripts/cTestrunner
+Praktomat/src/checker/scripts/junit.policy
 ```
 
 Developer and Tester setup
@@ -290,8 +299,12 @@ Update
 2. backup your database (seriously!)
 
 3. update the static files and the database:
+    a) If you want to reuse your current database entries, you have to ensure, that
+       the name of the database inside settings files fits to your needs.
+    b) Folders for UPLOAD_ROOT and SANDBOX_DIR and STATIC_ROOT changed with "merge marathon" in February 2022.
 
 ```bash
+./Praktomat/src/manage-local.py makemigrations
 ./Praktomat/src/manage-local.py migrate --noinput
 ./Praktomat/src/manage-local.py collectstatic --noinput --link
 ```
@@ -346,6 +359,12 @@ PhpBB integration
 =================
 
 To access the praktomat usersessions from an phpBB follow the instructions in `src/sessionprofile/phpbb/README.txt`.
+
+
+CUnit CPPUnit Checker
+=================
+
+For configuration please have a look into README_feature_CUnitCppUnit_Checker.txt.
 
 
 [Bug tracker]: https://github.com/KITPraktomatTeam/Praktomat/issues
