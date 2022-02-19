@@ -86,8 +86,6 @@ Prerequisites: 3rd-Party libraries and programms
     libffi-dev
     openssl (for signing E-Mails)
     swig
-    libapache2-mod-xsendfile (version 0.12; or install version 1.0 manually)
-    libapache2-mod-wsgi-py3
 
     openjdk-11-jdk (or: openjdk-8-jdk)
     junit
