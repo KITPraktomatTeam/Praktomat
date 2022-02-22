@@ -14,11 +14,22 @@ Since `pip` will drop support for Python 2 in January 2020,
 we don't support Python 2 any more. But at time of writing that note, you can use
 Praktomat with Python 2.
 
+Python 3.5
+==========
+  The Praktomat currently requires Python 3.5
+
+  On Ubuntu 16.04, Python3.5 is installed by default,
+  but you may need to install the packages
+
+    python-setuptools
+    python-psycopg2
+    python-virtualenv
+
 General setup
 =============
 
-You need Python 3.5 and a recent version of pip. We also highly recommend to
-use virtualenv so your system Python installation remains clean.
+You need the latest version that is compatible with the Python version used. 
+We also highly recommend to use virtualenv so your system Python installation remains clean.
 
 If you are having trouble with
 
@@ -40,8 +51,7 @@ To fix this, it might help to run the following command:
 
 Prerequisites: Database and Webserver
 ============
-  We recommend to run Praktomat within Apache, using Postgresql as
-  database.
+  We recommend to run Praktomat within Apache, using PostgreSQL as database management system.
 
   On a Debian or Ubuntu System, install the packages
 
@@ -52,6 +62,7 @@ Prerequisites: Database and Webserver
     libapache2-mod-wsgi        (for using with Python2)
     libapache2-mod-wsgi-py3    (for using with Python3)
     libapache2-mod-xsendfile   (version 0.12; or install version 1.0 manually)
+    apache2-dev                (used by pip while installing mod_wsgi)
 
 Pitfalls while Systemupgrades
 ============
@@ -86,8 +97,6 @@ Prerequisites: 3rd-Party libraries and programms
     libffi-dev
     openssl (for signing E-Mails)
     swig
-    libapache2-mod-xsendfile (version 0.12; or install version 1.0 manually)
-    libapache2-mod-wsgi-py3
 
     openjdk-11-jdk (or: openjdk-8-jdk)
     junit
@@ -96,7 +105,7 @@ Prerequisites: 3rd-Party libraries and programms
     gcj-jdk (gcj compiler)
 
     git-core
-    
+
     libldap2-dev (if you want to use python-ldap==2.3.13 for connecting to ldap)
 
     r-base
@@ -117,16 +126,6 @@ Prerequisites: 3rd-Party libraries and programms
 
     text/x-isabelle thy
 
-Python 3.5
-==========
-  The Praktomat currently requires Python 3.5
-
-  On Ubuntu 16.04, Python3.5 is installed by default,
-  but you may need to install the packages
-
-    python-setuptools
-    python-psycopg2
-    python-virtualenv
 
 Some words of folder layout to Developer, Testing and Deployment-Setup
 =====================================================
@@ -164,6 +163,23 @@ Semester folder:
   |  |-SolutionArchive
   |  |-SolutionSandbox
 ```
+
+In some files there are information that you have to change for your need:
+```
+Praktomat/src/settings/devel.py
+Praktomat/src/settings/local.py
+Praktomat/src/settings/test.py
+Praktomat/src/checker/scripts/cTestrunner
+Praktomat/src/checker/scripts/junit.policy
+```
+
+You can deactivate checkers and compilers in your local Praktomat instance,
+just comment them out in ``` src/checker/checker/__init__.py ``` and ``` src/checker/checker/__init__.py ```.
+Do not forget to create and run a django migration in that case.
+
+If you exchange Praktomat-Tasks (export and import) than the instance, which is used to import the task,
+must have activated all needed checkers and compilers which are configured in the that task.
+
 
 Developer and Tester setup
 ===============
@@ -290,8 +306,12 @@ Update
 2. backup your database (seriously!)
 
 3. update the static files and the database:
+    a) If you want to reuse your current database entries, you have to ensure, that
+       the name of the database inside settings files fits to your needs.
+    b) Folders for UPLOAD_ROOT and SANDBOX_DIR and STATIC_ROOT changed with "merge marathon" in February 2022.
 
 ```bash
+./Praktomat/src/manage-local.py makemigrations
 ./Praktomat/src/manage-local.py migrate --noinput
 ./Praktomat/src/manage-local.py collectstatic --noinput --link
 ```
@@ -346,6 +366,12 @@ PhpBB integration
 =================
 
 To access the praktomat usersessions from an phpBB follow the instructions in `src/sessionprofile/phpbb/README.txt`.
+
+
+CUnit CPPUnit Checker
+=================
+
+For configuration please have a look into README_feature_CUnitCppUnit_Checker.txt.
 
 
 [Bug tracker]: https://github.com/KITPraktomatTeam/Praktomat/issues
