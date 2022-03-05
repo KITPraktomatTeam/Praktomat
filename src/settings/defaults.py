@@ -377,6 +377,7 @@ def load_defaults(settings):
     )
     d.LDAP_URI="ldap://ldap.DAMANENAME.TOPLEVEL" 
     d.LDAP_BASE="dc=DAMANENAME,dc=TOPLEVEL"
+    d.LDAP_AUTO_CREATE_LOCAL_USER = True
 
 
     # Length of timeout applied whenever an external check that runs a students

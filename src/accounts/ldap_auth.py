@@ -49,7 +49,9 @@ class LDAPBackend:
                                                      ldapUser['sn']])
             localuser.save()
         else:
-            #print("auto-create local user", username)
+            if not settings.LDAP_AUTO_CREATE_LOCAL_USER:
+                return None
+            # Auto create local user on first login
             localuser = create_localuser_from_ldapuser(username, ldapUser)
         # LDAP-Group-Adapter aufrufen
         for lga in _ldap_group_adapters:
