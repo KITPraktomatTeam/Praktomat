@@ -54,7 +54,7 @@ class SolutionFileForm(ModelForm):
                         (type, encoding) = mimetypes.guess_type(filename)
                         ignorred = SolutionFile.ignorred_file_names_re.search(filename)
                         supported = type and supported_types_re.match(type)
-                        is_text_file = not ignorred and type.startswith("text")
+                        is_text_file = not ignorred and type and type.startswith("text")
                         if not ignorred and not supported:
                             raise forms.ValidationError(_("The file '%(file)s' of guessed mime type '%(type)s' in this zip file is not supported." %{'file':filename, 'type':type}))
                         if is_text_file and contains_NUL_char(zip.read(filename)):
