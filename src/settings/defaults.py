@@ -402,9 +402,11 @@ def load_defaults(settings):
 
     d.MIMETYPE_ADDITIONAL_EXTENSIONS = \
         [("text/plain", ".properties"),
-         ("text/x-r-script", ".R"),
+         ("text/x-gradle", ".gradle"),
+         ("text/x-gradle", ".gradle.kts"),
          ("text/x-isabelle", ".thy"),
-         ("text/x-lean", ".lean"),]
+         ("text/x-lean", ".lean"),
+         ("text/x-r-script", ".R"),]
 
     # Subclassed TestSuitRunner to prepopulate unit test database.
     d.TEST_RUNNER = 'utilities.TestSuite.TestSuiteRunner'
