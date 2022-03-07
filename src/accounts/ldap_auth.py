@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # SB HBRS
 from accounts.models import User
+from configuration import get_settings
 from django.contrib.auth.models import Group
 from django.contrib.auth.hashers import check_password
 from django.conf import settings
@@ -49,7 +50,7 @@ class LDAPBackend:
                                                      ldapUser['sn']])
             localuser.save()
         else:
-            if not settings.LDAP_AUTO_CREATE_LOCAL_USER:
+            if not get_settings().new_users_via_sso:
                 return None
             # Auto create local user on first login
             localuser = create_localuser_from_ldapuser(username, ldapUser)
