@@ -135,6 +135,8 @@ class CheckerEnvironment:
         self._sources = []
         for file in solution.solutionfile_set.all().order_by('file'):
             self._sources.append((file.path(), file.content()))
+        # Associated task for this solution
+        self._task = solution.task
         # Submitter of this program
         self._user = solution.author
         # Executable program
@@ -174,6 +176,9 @@ class CheckerEnvironment:
         """ Add source to the list of source files. [(name, content)...] """
         self._sources.append((path, content))
 
+    def task(self):
+        """ Returns the associated task for this solution. """
+        return self._task
 
     def user(self):
         """ Returns the submitter of this program (class User). """

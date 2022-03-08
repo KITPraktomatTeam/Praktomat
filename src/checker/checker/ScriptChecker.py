@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 
-import os, re, string
+import os, re, string, sys
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -52,6 +52,8 @@ class ScriptChecker(Checker):
         args = [path] + filenames
 
         environ = {}
+        environ['TASK_ID'] = str(env.task().id)
+        environ['TASK_TITLE'] = str(env.task().title).encode(sys.getfilesystemencoding(), 'ignore').decode() # The title may include invalid characters (e.g. umlauts) -> ignore them
         environ['USER'] = str(env.user().id)
         environ['USER_MATR'] = str(env.user().mat_number)
         environ['SOLUTION_ID'] = str(env.solution().id)
@@ -116,7 +118,6 @@ class WarningScriptCheckerFormSet(forms.BaseInlineFormSet):
 
             # In Universal Newline mode, python will collect encountered newlines
 
-            import sys
             PY2 = sys.version_info[0] == 2
             PY3 = sys.version_info[0] == 3
             if PY3:
