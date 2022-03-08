@@ -73,6 +73,7 @@ class ScriptChecker(Checker):
                             timeout=settings.TEST_TIMEOUT,
                             maxmem=settings.TEST_MAXMEM,
                             fileseeklimit=settings.TEST_MAXFILESIZE,
+                            filenumberlimit=settings.TEST_MAXFILENUMBER,
                             extradirs = [script_dir],
                             )
         output = force_text(output, errors='replace')

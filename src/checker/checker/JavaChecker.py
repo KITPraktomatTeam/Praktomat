@@ -57,7 +57,7 @@ class JavaChecker(Checker):
             str(env.user().last_name),
             str(env.solution().id)]
         [output, error, exitcode, timed_out, oom_ed] = execute_arglist(cmd, env.tmpdir(), environment_variables=environ,
-            timeout=settings.TEST_TIMEOUT, fileseeklimit=settings.TEST_MAXFILESIZE, extradirs=[script_dir])
+            timeout=settings.TEST_TIMEOUT, fileseeklimit=settings.TEST_MAXFILESIZE, filenumberlimit=settings.TEST_MAXFILENUMBER, extradirs=[script_dir])
 
         result = self.create_result(env)
 
