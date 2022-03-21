@@ -372,8 +372,8 @@ def load_defaults(settings):
 	    'accounts.ldap_auth.LDAPBackend',
 	    d.AUTH_BACKEND,
     )
-    d.LDAP_URI="ldap://ldap.DAMANENAME.TOPLEVEL" 
-    d.LDAP_BASE="dc=DAMANENAME,dc=TOPLEVEL"
+    d.LDAP_URI="ldap://ldap.DOMAINNAME.TOPLEVEL" 
+    d.LDAP_BASE="dc=DOMAINNAME,dc=TOPLEVEL"
 
 
     # Length of timeout applied whenever an external check that runs a students
