@@ -395,6 +395,9 @@ def load_defaults(settings):
     # JUnitChecker, ScriptChecker,
     d.TEST_MAXLOGSIZE=64
 
+    # Maximum number of open file descriptors for a checker.
+    d.TEST_MAXFILENUMBER=128
+
     d.NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 1
 
     d.MIMETYPE_ADDITIONAL_EXTENSIONS = \

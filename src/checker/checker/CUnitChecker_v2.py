@@ -378,7 +378,7 @@ class CUnitChecker2(CheckerWithFile):
 
         cmd_par = self._test_par.split(' ') if self._test_par else []
         cmd = [os.path.join(script_dir,self.runner()),self._test_name] + cmd_par
-        [output, error, exitcode,timed_out, oom_ed] = execute_arglist(cmd, env.tmpdir(),environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE, extradirs=[script_dir])
+        [output, error, exitcode,timed_out, oom_ed] = execute_arglist(cmd, env.tmpdir(),environment_variables=environ,timeout=settings.TEST_TIMEOUT,fileseeklimit=settings.TEST_MAXFILESIZE, filenumberlimit=settings.TEST_MAXFILENUMBER, extradirs=[script_dir])
 
         #result = self.create_result(env)
 

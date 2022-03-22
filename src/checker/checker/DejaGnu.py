@@ -133,6 +133,7 @@ class DejaGnuTester(Checker, DejaGnu):
                         environment_variables=environ,
                         timeout=settings.TEST_TIMEOUT,
                         fileseeklimit=settings.TEST_MAXFILESIZE,
+                        filenumberlimit=settings.TEST_MAXFILENUMBER,
                         extradirs=[env.tmpdir(), script_dir]
                         )
         output = encoding.get_unicode(output)

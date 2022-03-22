@@ -114,7 +114,7 @@ class HaskellTestFrameWorkChecker(CheckerWithFile):
         environ['LANGUAGE'] = settings.LANGUAGE
 
         cmd = ["./"+self.module_binary_name(), "--maximum-generated-tests=1000"]
-        [output, error, exitcode, timed_out, oom_ed] = execute_arglist(cmd, env.tmpdir(), environment_variables=environ, timeout=settings.TEST_TIMEOUT, fileseeklimit=settings.TEST_MAXFILESIZE)
+        [output, error, exitcode, timed_out, oom_ed] = execute_arglist(cmd, env.tmpdir(), environment_variables=environ, timeout=settings.TEST_TIMEOUT, fileseeklimit=settings.TEST_MAXFILESIZE, filenumberlimit=settings.TEST_MAXFILENUMBER)
 
         result = self.create_result(env)
 
