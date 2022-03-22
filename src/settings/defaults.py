@@ -122,11 +122,6 @@ def load_defaults(settings):
         'accounts.middleware.DisclaimerAcceptanceMiddleware',
     ]
 
-    # needed since Django 1.11 in order to show the 'Deactivated' page
-    d.AUTH_BACKEND = 'django.contrib.auth.backends.AllowAllUsersModelBackend'
-
-    d.AUTHENTICATION_BACKENDS = (d.AUTH_BACKEND,)
-
     d.DEFAULT_FILE_STORAGE = 'utilities.storage.UploadStorage'
 
     # URL and file paths
@@ -363,6 +358,8 @@ def load_defaults(settings):
     # Set this to True to automatically set user.mat_number = user.id
     d.DUMMY_MAT_NUMBERS = False
 
+    # needed since Django 1.11 in order to show the 'Deactivated' page
+    d.AUTH_BACKEND = 'django.contrib.auth.backends.AllowAllUsersModelBackend'
 
     #TODO: Code refactoring: make it more flexible, to change between LDAP or Shibboleth support!
 
@@ -372,11 +369,11 @@ def load_defaults(settings):
 
     d.LDAP_ENABLED = False
     d.AUTHENTICATION_BACKENDS = (
-	'accounts.ldap_auth.LDAPBackend',
-	'django.contrib.auth.backends.ModelBackend',
+	    'accounts.ldap_auth.LDAPBackend',
+	    d.AUTH_BACKEND,
     )
-    d.LDAP_URI="ldap://ldap.DAMANENAME.TOPLEVEL" 
-    d.LDAP_BASE="dc=DAMANENAME,dc=TOPLEVEL"
+    d.LDAP_URI="ldap://ldap.DOMAINNAME.TOPLEVEL" 
+    d.LDAP_BASE="dc=DOMAINNAME,dc=TOPLEVEL"
 
 
     # Length of timeout applied whenever an external check that runs a students
