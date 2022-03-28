@@ -247,12 +247,11 @@ pip install -r Praktomat/requirements.txt
 ```
 
 Now create a database. Using postgres on Ubuntu, this might work for creating
-a database "praktomat_default". Also edit `pg_hba.conf` to allow the access.
+a database "praktomat_<PRAKTOMAT_ID>". Also edit `pg_hba.conf` to allow the access.
 Your database-system should be configured to UTF-8.
 
 ```bash
 sudo -u postgres createuser -DRS praktomat
-sudo -u postgres createdb --encoding UTF8 -O praktomat praktomat_default
 sudo -u postgres createdb --encoding UTF8 -O praktomat praktomat_<PRAKTOMAT_ID>
 ```
 
