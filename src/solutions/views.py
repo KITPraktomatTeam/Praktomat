@@ -156,7 +156,14 @@ def solution_list(request, task_id, user_id=None):
                          send_mail(_("%s submission confirmation") % settings.SITE_NAME, t.render(c), None, [solution.author.email])
 
 
-            if solution.accepted or get_settings().accept_all_solutions:
+            current_final_solution = Solution.objects.filter(task=task, author=author, final=True).first()
+            newer_final_solution_existing = False
+            if current_final_solution is not None:
+                if current_final_solution.creation_date > solution.creation_date:
+                    # The student (re-)submitted another final solution while the checkers were running
+                    # This can't be the final solution anymore
+                    newer_final_solution_existing = True
+            if (solution.accepted or get_settings().accept_all_solutions) and not newer_final_solution_existing:
                 solution.final = True
                 solution.save()
 
