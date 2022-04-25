@@ -221,6 +221,9 @@ def solution_detail(request, solution_id, full):
 
     if full and not (request.user.is_trainer or request.user.is_tutor or request.user.is_superuser):
         return access_denied(request)
+    
+    if request.user.is_user and get_settings().hide_solutions_of_expired_tasks and solution.task.expired():
+        return access_denied(request)
 
     accept_all_solutions = get_settings().accept_all_solutions
 
@@ -260,7 +263,8 @@ def solution_download(request, solution_id, include_checker_files, include_artif
     solution = get_object_or_404(Solution, pk=solution_id)
     allowed_tutor = request.user.is_tutor and solution.author.tutorial in request.user.tutored_tutorials.all()
     allowed_user = solution.author == request.user and not include_checker_files and not include_artifacts
-    if not (request.user.is_trainer or allowed_tutor or allowed_user):
+    hide = request.user.is_user and get_settings().hide_solutions_of_expired_tasks and solution.task.expired()
+    if not (request.user.is_trainer or allowed_tutor or allowed_user) or hide:
         return access_denied(request)
 
     zip_file = get_solutions_zip([solution], include_checker_files, include_artifacts)

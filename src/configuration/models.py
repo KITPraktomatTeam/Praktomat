@@ -130,6 +130,12 @@ class Settings(models.Model):
                 default='Java',
                 help_text="Default settings for jPlag"
             )
+    
+    hide_solutions_of_expired_tasks = \
+            models.BooleanField(
+                default=False,
+                help_text="If enabled, solutions (incl. attestations) of expired tasks are not accessible for students."
+            )
 
 @python_2_unicode_compatible
 class Chunk(models.Model):
