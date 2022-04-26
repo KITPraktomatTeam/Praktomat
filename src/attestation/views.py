@@ -378,7 +378,7 @@ def edit_attestation(request, attestation_id):
 @login_required
 def view_attestation(request, attestation_id):
     attest = get_object_or_404(Attestation, pk=attestation_id)
-    hide = request.user.is_user and get_settings().hide_solutions_of_expired_tasks and solution.task.expired()
+    hide = request.user.is_user and get_settings().hide_solutions_of_expired_tasks and attest.solution.task.expired()
     may_modify = attest.author == request.user or request.user.is_trainer
     may_view = (attest.solution.author == request.user and not hide) or request.user.is_tutor or may_modify
     if not may_view:
