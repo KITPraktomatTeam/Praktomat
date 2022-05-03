@@ -2,7 +2,7 @@
 
 while processing solution "{{ solution }}" of task "{{ solution.task }}"
 from user {{ solution.author }} at {{ datetime }}
-an exception occured in checker "{{ checker }}".
+an exception occurred in checker "{{ checker }}".
 
 ERROR was {{ errormsg }}
 
