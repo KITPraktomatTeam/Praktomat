@@ -313,7 +313,7 @@ class TestChecker(TestCase):
         # TODO: This is duplicated from solutions/forms.py. Where should this go?
         for (mimetype, extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
             mimetypes.add_type(mimetype, extension, strict=True)
-        print(mimetypes.knownfiles)
+        print(mimetypes.types_map['.R'])
         solution_file = SolutionFile(solution = self.solution)
         solution_file.mime_type=mimetypes.guess_type('example.R')[0]
         self.assertIsNotNone(solution_file.mime_type, "Mimetype for example.R shouldn't be None")
