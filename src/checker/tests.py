@@ -312,8 +312,8 @@ class TestChecker(TestCase):
         for (mimetype, extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
             mimetypes.add_type(mimetype, extension, strict=True)
         solution_file = SolutionFile(solution = self.solution)
+        solution_file.mime_type=mimetypes.guess_type('example.R')[0]
         with open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)) as fd:
-            solution_file.mime_type=mimetypes.guess_type('example.R')[0]
             solution_file.file.save('example.R', File(fd))
 
         RChecker.RChecker.objects.create(
@@ -338,8 +338,8 @@ class TestChecker(TestCase):
         for (mimetype, extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
             mimetypes.add_type(mimetype, extension, strict=True)
         solution_file = SolutionFile(solution = self.solution)
+        solution_file.mime_type=mimetypes.guess_type('example.R')[0]
         with open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)) as fd:
-            solution_file.mime_type=mimetypes.guess_type('example.R')[0]
             solution_file.file.save('example.R', File(fd))
 
         RChecker.RChecker.objects.create(
@@ -365,8 +365,8 @@ class TestChecker(TestCase):
         for (mimetype, extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
             mimetypes.add_type(mimetype, extension, strict=True)
         solution_file = SolutionFile(solution = self.solution)
+        solution_file.mime_type=mimetypes.guess_type('example.R')[0]
         with open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)) as fd:
-            solution_file.mime_type=mimetypes.guess_type('example.R')[0]
             solution_file.file.save('example.R', File(fd))
 
         RChecker.RChecker.objects.create(
@@ -390,12 +390,13 @@ class TestChecker(TestCase):
         for (mimetype, extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
             mimetypes.add_type(mimetype, extension, strict=True)
         solution_file = SolutionFile(solution = self.solution)
+        solution_file.mime_type=mimetypes.guess_type('example.R')[0]
         with open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)) as fd:
-            solution_file.mime_type=mimetypes.guess_type('example.R')[0]
             solution_file.file.save('example.R', File(fd))
+
         solution_file2 = SolutionFile(solution = self.solution)
+        solution_file2.mime_type=mimetypes.guess_type('example.R')[0]
         with open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)) as fd:
-            solution_file2.mime_type=mimetypes.guess_type('example.R')[0]
             solution_file2.file.save('example2.R', File(fd))
 
         RChecker.RChecker.objects.create(
