@@ -308,13 +308,14 @@ class TestChecker(TestCase):
 
     def test_r_checker(self):
         import mimetypes
+        mimetypes.init()
+        self.assertTrue(mimetypes.inited)
         # TODO: This is duplicated from solutions/forms.py. Where should this go?
         for (mimetype, extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
             mimetypes.add_type(mimetype, extension, strict=True)
         solution_file = SolutionFile(solution = self.solution)
         solution_file.mime_type=mimetypes.guess_type('example.R')[0]
         self.assertIsNotNone(solution_file.mime_type, "Mimetype for example.R shouldn't be None")
-        print(solution_file.mime_type)
         with open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)) as fd:
             solution_file.file.save('example.R', File(fd))
 
@@ -336,6 +337,7 @@ class TestChecker(TestCase):
 
     def test_r_checker_2(self):
         import mimetypes
+        mimetypes.init()
         # TODO: This is duplicated from solutions/forms.py. Where should this go?
         for (mimetype, extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
             mimetypes.add_type(mimetype, extension, strict=True)
@@ -364,6 +366,7 @@ class TestChecker(TestCase):
 
     def test_r_checker_3(self):
         import mimetypes
+        mimetypes.init()
         # TODO: This is duplicated from solutions/forms.py. Where should this go?
         for (mimetype, extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
             mimetypes.add_type(mimetype, extension, strict=True)
@@ -390,6 +393,7 @@ class TestChecker(TestCase):
 
     def test_r_checker_4(self):
         import mimetypes
+        mimetypes.init()
         # TODO: This is duplicated from solutions/forms.py. Where should this go?
         for (mimetype, extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
             mimetypes.add_type(mimetype, extension, strict=True)
