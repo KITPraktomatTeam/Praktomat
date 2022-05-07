@@ -401,7 +401,7 @@ class TestChecker(TestCase):
 
         solution_file2 = SolutionFile(solution = self.solution)
         solution_file2.mime_type=mimetypes.guess_type('example2.R')[0]
-        with open(join(dirname(dirname(dirname(__file__))), 'examples', 'example2.R',)) as fd:
+        with open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)) as fd:
             solution_file2.file.save('example2.R', File(fd))
 
         RChecker.RChecker.objects.create(
