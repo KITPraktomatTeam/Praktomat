@@ -313,6 +313,8 @@ class TestChecker(TestCase):
             mimetypes.add_type(mimetype, extension, strict=True)
         solution_file = SolutionFile(solution = self.solution)
         solution_file.mime_type=mimetypes.guess_type('example.R')[0]
+        self.assertIsNotNone(solution_file.mime_type, "Mimetype for example.R shouldn't be None")
+        print(solution_file.mime_type)
         with open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)) as fd:
             solution_file.file.save('example.R', File(fd))
 
@@ -339,6 +341,7 @@ class TestChecker(TestCase):
             mimetypes.add_type(mimetype, extension, strict=True)
         solution_file = SolutionFile(solution = self.solution)
         solution_file.mime_type=mimetypes.guess_type('example.R')[0]
+        self.assertIsNotNone(solution_file.mime_type, "Mimetype for example.R shouldn't be None")
         with open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)) as fd:
             solution_file.file.save('example.R', File(fd))
 
@@ -366,6 +369,7 @@ class TestChecker(TestCase):
             mimetypes.add_type(mimetype, extension, strict=True)
         solution_file = SolutionFile(solution = self.solution)
         solution_file.mime_type=mimetypes.guess_type('example.R')[0]
+        self.assertIsNotNone(solution_file.mime_type, "Mimetype for example.R shouldn't be None")
         with open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)) as fd:
             solution_file.file.save('example.R', File(fd))
 
@@ -391,12 +395,13 @@ class TestChecker(TestCase):
             mimetypes.add_type(mimetype, extension, strict=True)
         solution_file = SolutionFile(solution = self.solution)
         solution_file.mime_type=mimetypes.guess_type('example.R')[0]
+        self.assertIsNotNone(solution_file.mime_type, "Mimetype for example.R shouldn't be None")
         with open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)) as fd:
             solution_file.file.save('example.R', File(fd))
 
         solution_file2 = SolutionFile(solution = self.solution)
-        solution_file2.mime_type=mimetypes.guess_type('example.R')[0]
-        with open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)) as fd:
+        solution_file2.mime_type=mimetypes.guess_type('example2.R')[0]
+        with open(join(dirname(dirname(dirname(__file__))), 'examples', 'example2.R',)) as fd:
             solution_file2.file.save('example2.R', File(fd))
 
         RChecker.RChecker.objects.create(
