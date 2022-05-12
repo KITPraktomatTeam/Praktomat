@@ -130,7 +130,7 @@ class Settings(models.Model):
                 default='Java',
                 help_text="Default settings for jPlag"
             )
-    
+
     hide_solutions_of_expired_tasks = \
             models.BooleanField(
                 default=False,
