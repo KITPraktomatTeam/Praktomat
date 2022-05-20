@@ -31,6 +31,7 @@ class SettingsAdmin(admin.ModelAdmin):
             ('Solutions and Attestations', {
                 'fields': (
                     'accept_all_solutions',
+                    'deadline_tolerance',
                     'anonymous_attestation',
                     'attestation_allow_run_checkers',
                     ('final_grades_arithmetic_option',

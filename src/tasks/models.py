@@ -29,7 +29,7 @@ class Task(models.Model):
     title = models.CharField(max_length=100, help_text = _("The name of the task"))
     description = models.TextField(help_text = _("Description of the assignment."))
     publication_date = models.DateTimeField(help_text = _("The time on which the user will see the task."))
-    submission_date = models.DateTimeField(help_text = _("The time up until the user has time to complete the task. This time will be extended by one hour for those who just missed the deadline."))
+    submission_date = models.DateTimeField(help_text = _("The time up until the user has time to complete the task. This time will be extended by the duration configured with the deadline tolerance setting for those who just missed the deadline."))
 
     submission_free_uploads = models.IntegerField(default=1, help_text =_("Number of submissions a user can make before waitdelta got active"))
     submission_waitdelta = models.IntegerField(default=0,help_text=_("Timedelta in minutes. The user must wait before submitting the next solution of same task: I removed the linear function: Timedelta multiplied with number of current uploads"))
@@ -61,7 +61,7 @@ class Task(models.Model):
 
     def expired(self):
         """returns whether the task has expired"""
-        return self.submission_date + timedelta(hours=1) < datetime.now()
+        return self.submission_date + get_settings().deadline_tolerance < datetime.now()
 
     def check_all_final_solutions(self):
         from checker.basemodels import check_multiple
