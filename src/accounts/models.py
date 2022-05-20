@@ -189,7 +189,17 @@ class User(BasicUser):
         if settings.DUMMY_MAT_NUMBERS:			
             self.mat_number = self.id			
 
-
+    def tutored_users(self):
+        tutored_users = None
+        if self.is_trainer or self.is_superuser:
+            tutored_users = User.objects.filter(groups__name="User", is_active=True).order_by('last_name')
+        elif self.is_tutor and get_settings().tutors_can_edit_solutions:
+            tutorials = Tutorial.objects.filter(tutors__id=self.id)
+            tutored_users = User.objects.none()
+            for tutorial in tutorials:
+                tutored_users |= User.objects.filter(groups__name="User", is_active=True, tutorial=tutorial)
+            tutored_users = tutored_users.order_by('last_name')
+        return tutored_users
 
 #    def save(self, force_insert=False, force_update=False, *args, **kwargs):
 #        """ prevent redundancy: staff iff. superuser or trainer """

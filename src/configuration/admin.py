@@ -32,6 +32,7 @@ class SettingsAdmin(admin.ModelAdmin):
                 'fields': (
                     'accept_all_solutions',
                     'deadline_tolerance',
+                    'tutors_can_edit_solutions',
                     'anonymous_attestation',
                     'attestation_allow_run_checkers',
                     ('final_grades_arithmetic_option',

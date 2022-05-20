@@ -33,13 +33,18 @@ from utilities.safeexec import execute_arglist
 @login_required
 @cache_control(must_revalidate=True, no_cache=True, no_store=True, max_age=0) #reload the page from the server even if the user used the back button
 def solution_list(request, task_id, user_id=None):
-    if (user_id and not request.user.is_trainer and not request.user.is_superuser):
+    has_extended_rights = request.user.is_trainer or request.user.is_superuser or (request.user.is_tutor and get_settings().tutors_can_edit_solutions)
+    if user_id and not has_extended_rights:
         return access_denied(request)
 
     task = get_object_or_404(Task, pk=task_id)
     author = get_object_or_404(User, pk=user_id) if user_id else request.user
     solutions = task.solution_set.filter(author = author).order_by('-id')
     final_solution = task.final_solution(author)
+
+    if has_extended_rights and not author in request.user.tutored_users():
+        # Tutor not responsible for this user
+        return access_denied(request)
 
     if task.publication_date >= datetime.now() and not request.user.is_trainer:
         raise Http404
@@ -64,14 +69,14 @@ def solution_list(request, task_id, user_id=None):
 
 
     if request.method == "POST":
-        if task.expired() and not request.user.is_trainer:
+        if task.expired() and not has_extended_rights:
             return access_denied(request)
 #       fight against multiple open browser window for cheating limits
 #       deep defense
         dap = datetime.now() # query datetime after returning from HTTP "post"-method again
         sap = solutions.count() # query solution counter after returning from HTTP "post"-method again
         uap = task.submission_maxpossible - sap
-        if not request.user.is_trainer and (
+        if not has_extended_rights and (
                                                ((task.submission_free_uploads < 0) or ((task.submission_free_uploads > 0) and (task.submission_free_uploads <= sap )))
                                                and ((task.submission_waitdelta > 0) and (dap < upload_next_possible_time))
                                             or
