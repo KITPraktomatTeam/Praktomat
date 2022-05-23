@@ -410,7 +410,8 @@ def load_defaults(settings):
          ("text/x-gradle", ".gradle.kts"),
          ("text/x-isabelle", ".thy"),
          ("text/x-lean", ".lean"),
-         ("text/x-r-script", ".R"),]
+         ("text/x-r-script", ".R"), 
+	 ("text/x-r-script", ".r"),]
 
     # Subclassed TestSuitRunner to prepopulate unit test database.
     d.TEST_RUNNER = 'utilities.TestSuite.TestSuiteRunner'
