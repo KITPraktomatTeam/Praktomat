@@ -1,0 +1,67 @@
+name: Run tests
+
+on:
+  push:
+    branches: [ master, github-actions ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    name: Run tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.5", "3.6", "3.7", "3.8", "3.9", "3.10"]
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install swig libsasl2-dev libssl-dev libpq-dev
+        sudo apt-get install openjdk-8-jdk dejagnu checkstyle # gcj-jdk is not available anymore
+        sudo apt-get install r-base wget
+        sudo apt-get install libcunit1-dev libcppunit-dev
+        sudo apt-get install apache2-dev  # needed for unit test of praktomat.wsgi , praktomat.wsgi used mod_wsgi, installing mod_wsgi via requirementsfile via pip needs apache2-dev
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-update-conda: true
+        miniconda-version: latest
+        python-version: ${{ matrix.python-version }}
+        activate-environment: test-environment
+        add-pip-as-python-dependency: true
+    - name: Conda info
+      run: conda info -a
+    - name: Install Python dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install coverage
+    - name: Conda list
+      run: conda list
+    - name: Pip freeze
+      run: pip freeze
+    - name: Display Python and SQLite version
+      run: |
+        python --version && python -c "import sqlite3; print(\"... uses pysqlite \" + sqlite3.version +\" with SQLite \" + sqlite3.sqlite_version);"
+    - name: Create upload root directories
+      run: |
+        mkdir ../debug-data
+        mkdir ../test-data
+    - name: Create symlink for environment
+      run: |
+        # since praktomat.wsgi depends on existent path env/lib where env is sibling folder of praktomat folder
+        ln -s $CONDA/envs/test-environment ../env
+        ls -la --time-style=long-iso ..
+    - name: Run tests
+      run: |
+        ./src/manage-test.py test accounts attestation checker configuration solutions tasks hbrs_tests
+    - name: Run test with code coverage
+      run: |
+        coverage run --branch --omit='*/node_modules/*,*/migrations/*' --source='./src' ./src/manage-test.py test accounts attestation checker configuration solutions tasks hbrs_tests
+    - name: Coverage report
+      run: coverage report
