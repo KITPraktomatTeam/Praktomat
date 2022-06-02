@@ -53,15 +53,24 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
 
     sudo_prefix = ["sudo", "-E", "-u", "tester"]
 
+    # Limit the size of files created during execution.
+    # In newer versions, R requires more to be started
+    # (see comment in RscriptChecker.py),
+    # even if it does not use it.
+    prlimit_prefix = ['prlimit', '--nofile=%d' % filenumberlimit]
+    if fileseeklimit is not None:
+        prlimit_prefix += ['--fsize=%d' % fileseeklimitbytes]
+
+    command = prlimit_prefix
 
     if unsafe:
-        command = []
+        pass
     elif settings.USEPRAKTOMATTESTER:
         #command = sudo_prefix
         #fixed: 22.11.2016, Robert Hartmann , H-BRS
-        command = deepcopy(sudo_prefix)
+        command += deepcopy(sudo_prefix)
     elif settings.USESAFEDOCKER:
-        command = ["sudo", "safe-docker"]
+        command += ["sudo", "safe-docker"]
         # for safe-docker, we cannot kill it ourselves, due to sudo, so
         # rely on the timeout provided by safe-docker
         if timeout is not None:
@@ -81,38 +90,18 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
         command += ["env"]
         for k, v in environment_variables.items():
             command += ["%s=%s" % (k, v)]
-    else:
-        command = []
 
     command += args[:]
 
-
     # TODO: Dont even read in output longer than fileseeklimit. This might be most conveniently done by supplying a file like object instead of PIPE
 
-    def prepare_subprocess():
-        # create a new session for the spawned subprocess using os.setsid,
-        # so we can later kill it and all children on timeout, taken from http://stackoverflow.com/questions/4789837/how-to-terminate-a-python-subprocess-launched-with-shell-true
-        os.setsid()
-        # Limit the size of files created during execution.
-        # In newer versions, R requires more to be started
-        # (see comment in RscriptChecker.py),
-        # even if it does not use it.
-        resource.setrlimit(resource.RLIMIT_NOFILE, (filenumberlimit, filenumberlimit))
-        if fileseeklimit is not None:
-            resource.setrlimit(resource.RLIMIT_FSIZE, (fileseeklimitbytes, fileseeklimitbytes))
-            if resource.getrlimit(resource.RLIMIT_FSIZE) != (fileseeklimitbytes, fileseeklimitbytes):
-                raise ValueError(resource.getrlimit(resource.RLIMIT_FSIZE))
     process = subprocess.Popen(
-
-
-
-
         command,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT if error_to_output else subprocess.PIPE,
         cwd=working_directory,
         env=environment,
-        preexec_fn=prepare_subprocess)
+        start_new_session=True)
 
     timed_out = False
     oom_ed = False
