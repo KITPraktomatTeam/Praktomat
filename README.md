@@ -89,6 +89,7 @@ Prerequisites: 3rd-Party libraries and programms
   Praktomat requires some 3rd-Party libraries programs to run.
   On a Ubuntu/Debian System, these can be installed by installing the following packages:
 
+    util-linux
     libpq-dev
     zlib1g-dev
     libmysqlclient-dev (or: default-libmysqlclient-dev)
