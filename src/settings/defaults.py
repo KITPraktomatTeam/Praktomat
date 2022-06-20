@@ -410,8 +410,9 @@ def load_defaults(settings):
          ("text/x-gradle", ".gradle.kts"),
          ("text/x-isabelle", ".thy"),
          ("text/x-lean", ".lean"),
-         ("text/x-r-script", ".R"), 
-	 ("text/x-r-script", ".r"),]
+         ("text/x-r-script", ".R"),
+         ("text/x-r-script", ".r"),# Fixes KITPraktomatTeam/Praktomat#336 as workaround for issue in Python 3.9.12 and above: Add filename extension with small letter r to dict of additional mimetypes , more information see issue Python stdlib  92455
+         ]
 
     # Subclassed TestSuitRunner to prepopulate unit test database.
     d.TEST_RUNNER = 'utilities.TestSuite.TestSuiteRunner'
