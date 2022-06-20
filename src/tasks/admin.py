@@ -88,25 +88,10 @@ class TaskAdmin(admin.ModelAdmin):
 
     def run_all_checkers_on_latest_only_failed(self,request, queryset):
         """ Rerun all checker on latest of only failed solutions including "not always" action """
-        from checker.basemodels import check_solution
-        from accounts.models import User
         start = timer()
         count = 0
         for task in queryset:
-            solution_queryset = task.solution_set
-            final_solutions_queryset = solution_queryset.filter(final=True)
-            finalusers = list(set(final_solutions_queryset.values('author').values_list('author', flat=True)))
-            only_failed_solution_set = solution_queryset.exclude(author__in=finalusers)
-
-            nonfinalusers = list( set(User.objects.all().values('id').values_list('id',flat=True)) - set(finalusers))
-
-            for user in User.objects.filter(id__in=nonfinalusers) :
-                users_only_failed_solution = only_failed_solution_set.filter(author=user).order_by('author','number')
-                ucount = int(users_only_failed_solution.count())
-                if ucount :
-                    latest_only_failed_solution=users_only_failed_solution.latest('number')
-                    check_solution(latest_only_failed_solution,True)
-                    count += 1
+            count += task.check_all_latest_only_failed_solutions()
         end = timer()
         self.message_user(request, "%d users with only failed solutions were checked (%d seconds elapsed)." % (count, end-start))
     run_all_checkers_on_latest_only_failed.short_description = "recheck only latest failed (Admin)"
