@@ -45,6 +45,12 @@ function resize(id) {
 
 <div style="font-size:18px;color:red;font-weight: bold;">{% if calculated_grade < threshold and user.is_user %}{% chunk 'warning message' %}{% endif %}</div>
 
+{% if user.is_user or user.is_trainer or user.is_superuser or user.is_coordinator %}
+	<div id="statistic_overview">
+		<h3><a href={% url "tasks_statistic" %} title="Boxplot diagramms">Task statistics as Boxplot diagramms</a></h3>
+	</div>
+{% endif %}
+
 {% regroup tasks by 0.expired as grouped_tasks %}
 
 <div>{% for group in grouped_tasks %}
@@ -73,6 +79,7 @@ function resize(id) {
 	<a>{% trans "No tasks to be submitted at the moment." %}</a>
 {% endfor %}</div>
 
+
 {% if user.is_user %}
 	{% if attestations %}
 		<div id="attestation_overview">
@@ -99,6 +106,5 @@ function resize(id) {
 		</div>
 	{% endif %}
 {% endif %}
-
 
 </div>{% endblock %}
