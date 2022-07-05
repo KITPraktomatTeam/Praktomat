@@ -43,8 +43,8 @@ script:
  # since praktomat.wsgi depends on existent path env/lib where env is sibling folder of praktomat folder
  - ln -s /home/travis/miniconda/envs/test-environment $TRAVIS_BUILD_DIR/../env
  - ls -la --time-style=long-iso $TRAVIS_BUILD_DIR/..
- - ./src/manage-test.py test accounts attestation checker configuration solutions tasks hbrs_tests
+ - ./src/manage-test.py test accounts attestation checker configuration solutions tasks taskstatistics hbrs_tests
 
 after_success:
- - coverage run --branch --omit='*/node_modules/*,*/migrations/*' --source='./src' ./src/manage-test.py test accounts attestation checker configuration solutions tasks hbrs_tests
+ - coverage run --branch --omit='*/node_modules/*,*/migrations/*' --source='./src' ./src/manage-test.py test accounts attestation checker configuration solutions tasks taskstatistics hbrs_tests
  - coverage report
