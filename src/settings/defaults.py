@@ -266,7 +266,6 @@ def load_defaults(settings):
     d.CXX_BINARY = 'c++'
     d.JAVA_BINARY = 'javac'
     d.JAVA_BINARY_SECURE = PRAKTOMAT_ROOT + '/src/checker/scripts/javac'
-    d.JAVA_GCC_BINARY = 'gcj'
     d.JVM = 'java'
     d.JVM_SECURE = PRAKTOMAT_ROOT + '/src/checker/scripts/java'
     d.JVM_POLICY = PRAKTOMAT_ROOT + '/src/checker/scripts/java.policy'
