@@ -113,6 +113,7 @@ def load_defaults(settings):
         'utilities',
         'settings',
         #'sessionprofile', #phpBB integration
+        'taskstatistics',
     )
 
     d.MIDDLEWARE = [
@@ -375,7 +376,7 @@ def load_defaults(settings):
 	    'accounts.ldap_auth.LDAPBackend',
 	    d.AUTH_BACKEND,
     )
-    d.LDAP_URI="ldap://ldap.DOMAINNAME.TOPLEVEL" 
+    d.LDAP_URI="ldap://ldap.DOMAINNAME.TOPLEVEL"
     d.LDAP_BASE="dc=DOMAINNAME,dc=TOPLEVEL"
 
 

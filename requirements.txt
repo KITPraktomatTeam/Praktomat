@@ -33,3 +33,7 @@ python-ldap
 
 #needed for praktomat.wsgi not only in unit tests for it
 mod_wsgi # make sure, that you have called : sudo apt-get install apache2-dev
+
+#needed for task statistic as boxplot diagrams
+pandas
+matplotlib
