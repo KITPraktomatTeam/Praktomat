@@ -175,7 +175,7 @@ class ModelCUnitCppUnitCheckerTests(TestCase):
         field_label = c._meta.get_field('_sol_flags').verbose_name
         self.assertEqual(field_label, 'MUT flags')
 
-    @skipIf('TRAVIS' in os_environ, "Since I have no time to figure out how path-information in cTestrunner has to be set for Travis, I skip this test for now")
+    @skipIf('CI' in os_environ, "Since I have no time to figure out how path-information in cTestrunner has to be set for GitHub Actions, I skip this test for now")
     def test_task_solutionview_student_upload_C_app(self):
         taskpath = join(dirname(__file__), 'test_C_app_Task' , 'TestC_app_TaskExport.zip')
         taskid = self.__myTestHelper_taskAdmin_load_and_store_Task_with_CUnitCppUnit_Checker(taskpath)
@@ -186,7 +186,7 @@ class ModelCUnitCppUnitCheckerTests(TestCase):
         value_C_app_Task=self.__myTestHelper_student_uploads_Solution(solutionpath,taskid)
         self.assertTrue(value_C_app_Task)
 
-    @skipIf('TRAVIS' in os_environ, "Since I have no time to figure out how path-information in cTestrunner has to be set for Travis, I skip this test for now")
+    @skipIf('CI' in os_environ, "Since I have no time to figure out how path-information in cTestrunner has to be set for GitHub Actions, I skip this test for now")
     def test_task_solutionview_student_upload_C_funcLib(self):
         taskpath = join(dirname(__file__), 'test_C_funcLib_Task' , 'TestC_funcLib_TaskExport.zip')
         taskid = self.__myTestHelper_taskAdmin_load_and_store_Task_with_CUnitCppUnit_Checker(taskpath)
