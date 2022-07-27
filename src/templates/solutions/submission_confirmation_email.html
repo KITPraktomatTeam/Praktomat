@@ -1,6 +1,6 @@
 {% load i18n %}{% autoescape off %}{% trans "Hello " %}{{solution.author}},
 
-{% if uploader %}a{% else %}your{% endif %} solution to the task "{{solution.task}}" has been successfully uploaded{% if uploader %} in your name by trainer {{uploader}}{% endif %} and is now your current final solution.
+{% if uploader %}a{% else %}your{% endif %} solution to the task "{{solution.task}}" has been successfully uploaded{% if uploader %} in your name by trainer {{uploader}}{% endif %}{% if not solution.final %}.{% else %} and is now your current final solution.{% endif %}
 
 You can view the uploaded solution here: {{protocol}}://{{ domain }}{% url "solution_detail" solution_id=solution.id %}
 

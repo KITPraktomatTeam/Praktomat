@@ -112,6 +112,17 @@ def solution_list(request, task_id, user_id=None):
             run_all_checker = bool(User.objects.filter(id=user_id, tutorial__tutors__pk=request.user.id) and task.expired() or request.user.is_trainer and task.expired() )
             solution.check_solution(run_all_checker)
 
+            current_final_solution = Solution.objects.filter(task=task, author=author, final=True).first()
+            newer_final_solution_existing = False
+            if current_final_solution is not None:
+                if current_final_solution.creation_date > solution.creation_date:
+                    # The student (re-)submitted another final solution while the checkers were running
+                    # This can't be the final solution anymore
+                    newer_final_solution_existing = True
+            if (solution.accepted or get_settings().accept_all_solutions) and not newer_final_solution_existing:
+                solution.final = True
+                solution.save()
+
             if solution.accepted:
                 # Send submission confirmation email
                 t = loader.get_template('solutions/submission_confirmation_email.html')
@@ -154,11 +165,6 @@ def solution_list(request, task_id, user_id=None):
                 else: #we are sending unsigned email
                     if solution.author.email:
                          send_mail(_("%s submission confirmation") % settings.SITE_NAME, t.render(c), None, [solution.author.email])
-
-
-            if solution.accepted or get_settings().accept_all_solutions:
-                solution.final = True
-                solution.save()
 
             return HttpResponseRedirect(reverse('solution_detail', args=[solution.id]))
     else:
