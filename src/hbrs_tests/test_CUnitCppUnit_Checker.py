@@ -107,11 +107,15 @@ class ModelCUnitCppUnitCheckerTests(TestCase):
             self.assertTemplateUsed(response,'solutions/solution_detail.html')
             self.assertNotIn("Upload solution denied for now".encode("utf-8"),response.content)
             #there should be no CUNIT missing error in response
-            self.assertNotIn("cannot find -lcunit".encode("utf-8"),response.content)
-            self.assertNotIn("fatal error: CUnit/Basic.h".encode("utf-8"),response.content)
+            if "cannot find -lcunit".encode("utf-8") in response.content:
+                self.fail("could not find Cunit installation. Fix your system installation.")
+            if "fatal error: CUnit/Basic.h".encode("utf-8") in response.content:
+                self.fail("could not find Cunit installation. Fix your system installation.")
             #there should be no CPPUNIT missing error in response
-            self.assertNotIn("cannot find -lcppunit".encode("utf-8"),response.content)
-            self.assertNotIn("fatal error: cppunit/TestFixture.h".encode("utf-8"),response.content)
+            if "cannot find -lcppunit".encode("utf-8") in response.content:
+                self.fail("could not find CPPunit installation. Fix your system installation.")
+            if "fatal error: cppunit/TestFixture.h".encode("utf-8") in response.content:
+                self.fail("could not find CPPunit installation. Fix your system installation.")
             self.assertIn("This is your current final solution".encode("utf-8"),response.content)
         return openedfile;
 
