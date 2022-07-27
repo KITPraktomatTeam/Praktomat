@@ -34,7 +34,8 @@ class SettingsAdmin(admin.ModelAdmin):
                     'anonymous_attestation',
                     'attestation_allow_run_checkers',
                     ('final_grades_arithmetic_option',
-                     'final_grades_plagiarism_option')
+                     'final_grades_plagiarism_option'),
+                    'hide_solutions_of_expired_tasks'
                 )
             }),
             ('Attestation Publishing/Viewing', {

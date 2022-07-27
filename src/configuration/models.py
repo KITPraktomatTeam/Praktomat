@@ -131,6 +131,12 @@ class Settings(models.Model):
                 help_text="Default settings for jPlag"
             )
 
+    hide_solutions_of_expired_tasks = \
+            models.BooleanField(
+                default=False,
+                help_text="If enabled, solutions (incl. attestations) of expired tasks are not accessible for students."
+            )
+
 @python_2_unicode_compatible
 class Chunk(models.Model):
     """ A Chunk is a piece of content associated with a unique key that can be inserted into any template with the use of a special template tag """
