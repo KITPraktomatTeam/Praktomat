@@ -143,6 +143,12 @@ class Settings(models.Model):
                 help_text="The duration by which the submission date for a task will be extended for those who just missed the deadline."
             )
 
+    tutors_can_edit_solutions = \
+            models.BooleanField(
+                default=False,
+                help_text="If enabled, tutors can also upload solutions for students in their tutorial."
+            )
+
 @python_2_unicode_compatible
 class Chunk(models.Model):
     """ A Chunk is a piece of content associated with a unique key that can be inserted into any template with the use of a special template tag """

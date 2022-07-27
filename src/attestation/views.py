@@ -186,7 +186,7 @@ def attestation_list(request, task_id):
         no_tutorial_stats = tutor_attestation_stats(task, None)
 
 
-    tutored_users = User.objects.filter(groups__name="User", is_active=True).order_by('last_name') if request.user.is_trainer or request.user.is_superuser else None
+    tutored_users = request.user.tutored_users()
 
     unattested_solutions = Solution.objects.filter(task = task, final=True, attestation = None)
     if request.user.is_tutor: # the trainer sees them all
