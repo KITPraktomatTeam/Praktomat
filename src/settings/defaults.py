@@ -20,7 +20,11 @@ def load_defaults(settings):
 
     # import settings so that we can conveniently use the settings here
     for k, v in settings.items():
-        if not isinstance(v, collections.abc.Callable) and not k.startswith('__'):
+        try:
+            from collections.abc import Callable  # noqa
+        except ImportError:
+            from collections import Callable  # noqa
+        if not isinstance(v, Callable) and not k.startswith('__'):
             globals()[k] = v
 
     class D(object):
