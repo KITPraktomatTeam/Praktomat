@@ -103,7 +103,6 @@ Prerequisites: 3rd-Party libraries and programms
     junit
     junit4
     dejagnu
-    gcj-jdk (gcj compiler)
 
     git-core
 
