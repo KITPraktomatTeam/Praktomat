@@ -24,6 +24,10 @@ from configuration import get_settings
 
 
 def validate_mat_number(value):
+    if settings.DUMMY_MAT_NUMBERS:
+        # If we're using dummy mat numbers, we don't care if they are valid
+        return True
+
     regex = get_settings().mat_number_validation_regex
     if regex:
         RegexValidator("^"+regex+"$", message="This is not a valid student number.", code="")(value)
