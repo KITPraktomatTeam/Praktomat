@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block extrahead %}{{ block.super }}
+{% endblock %}
+{% block breadcrumbs %}
+         {{ block.super }} &gt; Task statistics
+{% endblock %}
+{% block content %}
+<div id='task statistics'>
+
+ <h1>Task statistics</h1>
+  {% if messages %}
+  <ul class="messages">
+     {% for message in messages %}
+     <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+     {% endfor %}
+  </ul>
+  {% endif %}
+  {% if user.is_tutor or user.is_trainer or user.is_superuser %}
+  <a href={% url "tasks_statistic_download" %} id='download'><span class="ui-icon ui-icon-disk"></span>Download Task statistic [*.csv]</a></p>
+  {% endif %}
+  {% for graphic in graphics %}
+       <p>
+       <img src="data:image/png;base64, {{graphic|safe}}" alt="Boxplot diagramm for Task statistic number {{ forloop.counter }}" id="Boxplot_Task_statistic_{{ forloop.counter }}_img">
+       <br>
+       {% if user.is_tutor or user.is_trainer or user.is_superuser %}
+       <a href={% url "statistics" task_id=forloop.counter  %} title="Submission activities, Attestation activities, Grades, Runtimes">more statistics for Task {{forloop.counter}} </a>
+       {% endif %}</p>
+  {% endfor %}
+
+  {% if user.is_tutor or user.is_trainer or user.is_superuser %}
+  <h3> DEBUG-Data for Trainers, Tutors, Superusers </h3>
+  <table border="1" cellpadding="5" cellspacing="5">
+    {% for element in headlinedata %}
+        <tr><td>{{ element }}</td></tr>
+    {% endfor %}
+    {% for element in data %}
+        <tr><td>{{ forloop.counter }} : {{ element }}</td></tr>
+    {% endfor %}
+  </table>
+  <table border="1" cellpadding="5" cellspacing="5">
+    {% for element in data %}
+       {% if forloop.counter <= 1 %}
+       <tr> {% for k, v in element.items %} <td>{{ k }} </td> {% endfor %} </tr>
+       {% endif %}
+    {% endfor %}
+    {% for element in data %}
+       <tr> {% for k, v in element.items %} <td> {{ v }} </td> {% endfor %} </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+
+<div>{% endblock %}
+
