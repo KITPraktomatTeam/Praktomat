@@ -59,9 +59,9 @@ jobs:
         ls -la --time-style=long-iso ..
     - name: Run tests
       run: |
-        ./src/manage-test.py test accounts attestation checker configuration solutions tasks hbrs_tests
+        ./src/manage-test.py test accounts attestation checker configuration solutions tasks taskstatistics hbrs_tests
     - name: Run test with code coverage
       run: |
-        coverage run --branch --omit='*/node_modules/*,*/migrations/*' --source='./src' ./src/manage-test.py test accounts attestation checker configuration solutions tasks hbrs_tests
+        coverage run --branch --omit='*/node_modules/*,*/migrations/*' --source='./src' ./src/manage-test.py test accounts attestation checker configuration solutions tasks taskstatistics hbrs_tests
     - name: Coverage report
       run: coverage report
