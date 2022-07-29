@@ -42,7 +42,7 @@ def solution_list(request, task_id, user_id=None):
     solutions = task.solution_set.filter(author = author).order_by('-id')
     final_solution = task.final_solution(author)
 
-    if has_extended_rights and not author in request.user.tutored_users():
+    if user_id and request.user.is_tutor and not author in request.user.tutored_users():
         # Tutor not responsible for this user
         return access_denied(request)
 
