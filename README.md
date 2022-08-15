@@ -360,6 +360,18 @@ detection program [jPlag](https://jplag.ipd.kit.edu/). Do enable this support, y
  * Copy the resulting `.jar` file somewhere on the Praktomat server.
  * In the settings, set `JPLAGJAR = /full/path/to/jplag.jar`
 
+Automating the execution of checkers
+=================
+
+To automatically run all checkers for expired tasks where not all checkers are finished yet,
+there is a command called `runallcheckers`:
+```bash
+./Praktomat/src/manage-local.py runallcheckers
+```
+
+Use Cron (or something similar) to automate the execution of this command.
+Tutors can then automatically start attesting solutions without the need of
+an admin or trainer to manually run all checkers after a task expired.
 
 PhpBB integration
 =================
