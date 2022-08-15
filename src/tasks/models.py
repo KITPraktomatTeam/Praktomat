@@ -29,11 +29,11 @@ class Task(models.Model):
     title = models.CharField(max_length=100, help_text = _("The name of the task"))
     description = models.TextField(help_text = _("Description of the assignment."))
     publication_date = models.DateTimeField(help_text = _("The time on which the user will see the task."))
-    submission_date = models.DateTimeField(help_text = _("The time up until the user has time to complete the task. This time will be extended by one hour for those who just missed the deadline."))
+    submission_date = models.DateTimeField(help_text = _("The time up until the user has time to complete the task. This time will be extended by the duration configured with the deadline tolerance setting for those who just missed the deadline."))
 
     submission_free_uploads = models.IntegerField(default=1, help_text =_("Number of submissions a user can make before waitdelta got active"))
     submission_waitdelta = models.IntegerField(default=0,help_text=_("Timedelta in minutes. The user must wait before submitting the next solution of same task: I removed the linear function: Timedelta multiplied with number of current uploads"))
-    submission_maxpossible = models.IntegerField(default=-1,help_text=_("Number of uploads a user can submit for the same task. Value -1 means unlimited"))
+    submission_maxpossible = models.IntegerField(default=-1,help_text=_("Number of uploads a user can submit for the same task. Value -1 means unlimited")) 	
 
     supported_file_types = models.CharField(max_length=1000, default ="^(text/.*|image/.*|application/pdf)$", help_text = _("Regular Expression describing the mime types of solution files that the user is allowed to upload."))
     max_file_size = models.IntegerField(default=1000, help_text = _("The maximum size of an uploaded solution file in kilobyte."))
@@ -61,7 +61,7 @@ class Task(models.Model):
 
     def expired(self):
         """returns whether the task has expired"""
-        return self.submission_date + timedelta(hours=1) < datetime.now()
+        return self.submission_date + get_settings().deadline_tolerance < datetime.now()
 
     def check_all_final_solutions(self):
         from checker.basemodels import check_multiple
@@ -235,6 +235,17 @@ class Task(models.Model):
         for deserialized_object in serializers.deserialize("xml", data):
             object = deserialized_object.object
             old_id = object.id
+            #since Django Debug Toolbar didn't catch logger output, I print to console while in debugging mode
+            #import logging
+            #logger = logging.getLogger(__name__)
+            #logger.error("Test!")
+            #print("======================================")
+            #print('OldID: %s -- Type: %s '%(str(old_id) , str(type(object))))
+            #print("======================================")
+
+            # from Django docs: "if the pk attribute in the serialized data doesn’t exist or is null, a new instance will be saved to the database."
+            # we want to save a task always as new database entry, therefor we set the object.id to None.
+            # but we do not want to save RatingScale or RatingScaleItem, if equivalent elements are in database already.
             object.id = None
             if isinstance(object, Task):
             # save all tasks and their old id
@@ -242,18 +253,50 @@ class Task(models.Model):
                     object.publication_date = date.max
                 deserialized_object.save()
                 task_id_map[old_id] = object.id
+                #print("======================================")
+                #print('OldID: %s -- NewID: %s -- Name: %s '%(str(old_id) , str(task_id_map[old_id]) , str(object.title)))
+                #print("======================================")
                 old_solution_to_new_task_map[object.model_solution_id] = object.id
                 object.model_solution = None
                 object.final_grade_rating_scale = None if is_template else scale_map.get(object.final_grade_rating_scale_id)
                 deserialized_object.save()
+
             elif isinstance(object, RatingScale):
                 if not is_template:
-                    deserialized_object.save()
-                    scale_map[old_id] = object
+                    dbobject=RatingScale.objects.filter(name=object.name).order_by('id').first()
+                    #if there is no RatingScale with the name in database, we save the deserialized_object, else we are reusing existent data.
+                    if dbobject is None:
+                        deserialized_object.save()
+                        scale_map[old_id] = object
+                        #print("======================================")
+                        #print('>> OldID: %s -- NewID: %s -- Name: %s '%(str(old_id) , str(scale_map[old_id].id) , str(object)))
+                        #print("======================================")
+                    else:
+                        scale_map[old_id] = dbobject
+                        #print("======================================")
+                        #print('>> OldID: %s -- ReusingID: %s -- Name: %s '%(str(old_id) , str(scale_map[old_id].id) , str(object)))
+                        #print("======================================")
+                    #print (scale_map)
+                    #print("===============")
+
             elif isinstance(object, RatingScaleItem):
                 if not is_template:
-                    object.scale = scale_map[object.scale_id]
-                    deserialized_object.save()
+                    #if there is no RatingScaleItem with the same name for corresponding RatingScale in database,
+                    #we save the deserialized_object, else we are reusing existent data.
+                    #The consequence is: If you where importing tasks from different praktomat instances having differences in names of RatingScaleItems
+                    #but using same name for RatingScale, than these ScaleItems become merge into the same RatingScale.
+                    dbobject=RatingScaleItem.objects.filter(name=object.name, scale=scale_map[object.scale_id].id ).order_by('id').first()
+                    if dbobject is None:
+                        object.scale = scale_map[object.scale_id]
+                        deserialized_object.save()
+                        #print("======================================")
+                        #print('>> OldID: %s -- NewID: %s -- Name: %s '%(str(old_id) , str(object.id) , str(object)))
+                        #print("======================================")
+                    #else:
+                        #print("======================================")
+                        #print('>> OldID: %s -- ReusingID: %s -- Name: %s '%(str(old_id) , str(dbobject.id) , str(dbobject)))
+                        #print("======================================")
+
             else:
                 # save modelsolution, media and checker, update task id
                 if isinstance(object, SolutionFile):

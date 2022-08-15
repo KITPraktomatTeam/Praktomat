@@ -45,6 +45,7 @@ class CheckerForm(AlwaysChangedModelForm):
         #self.fields["_libs"].initial = ""
         # GCC accepts the following extensions for C++ files: ".cc", ".cxx", ".cpp", ".c++", ".C".
         self.fields["_file_pattern"].initial = r"^[a-zA-Z0-9_]*\.(c|C|cc|CC|cxx|CXX|c\+\+|C\+\+|cpp|CPP)$"
+        self.fields["required"].initial = True
 
 class CXXBuilderInline(CheckerInline):
     model = CXXBuilder

@@ -107,7 +107,7 @@ class UserAdmin(UserBaseAdmin):
         urls = super(UserAdmin, self).get_urls()
         from django.conf.urls import url
         my_urls = [url(r'^import/$', accounts.views.import_user, name='user_import')]
-        my_urls += [url(r'^import_ldap/$', accounts.views.import_ldap_user, name='ldap_user_import')]
+        my_urls += [url(r'^import_ldap/$', accounts.views.import_ldap_user, name='ldap_user_import')] 
         my_urls += [url(r'^import_tutorial_assignment/$', accounts.views.import_tutorial_assignment, name='import_tutorial_assignment')]
         my_urls += [url(r'^import_user_texts/$', accounts.views.import_user_texts, name='import_user_texts')]
         return my_urls + urls

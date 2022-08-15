@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 
-import os, re, string
+import os, re, string, sys
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -52,6 +52,8 @@ class ScriptChecker(Checker):
         args = [path] + filenames
 
         environ = {}
+        environ['TASK_ID'] = str(env.task().id)
+        environ['TASK_TITLE'] = str(env.task().title).encode(sys.getfilesystemencoding(), 'ignore').decode() # The title may include invalid characters (e.g. umlauts) -> ignore them
         environ['USER'] = str(env.user().id)
         environ['USER_MATR'] = str(env.user().mat_number)
         environ['SOLUTION_ID'] = str(env.solution().id)
@@ -73,6 +75,7 @@ class ScriptChecker(Checker):
                             timeout=settings.TEST_TIMEOUT,
                             maxmem=settings.TEST_MAXMEM,
                             fileseeklimit=settings.TEST_MAXFILESIZE,
+                            filenumberlimit=settings.TEST_MAXFILENUMBER,
                             extradirs = [script_dir],
                             )
         output = force_text(output, errors='replace')
@@ -116,11 +119,12 @@ class WarningScriptCheckerFormSet(forms.BaseInlineFormSet):
 
             # In Universal Newline mode, python will collect encountered newlines
 
-            import sys
             PY2 = sys.version_info[0] == 2
             PY3 = sys.version_info[0] == 3
             if PY3:
-                script.open(mode="r",newline="U")
+                #because Djangos FileField open do not know to handle a newline parameter, we call open from io directly
+                from io import open as alias_open
+                script.file = alias_open(script.path,mode="r",newline=None)
             else:
                 script.open(mode="rU")
 

@@ -33,13 +33,18 @@ from utilities.safeexec import execute_arglist
 @login_required
 @cache_control(must_revalidate=True, no_cache=True, no_store=True, max_age=0) #reload the page from the server even if the user used the back button
 def solution_list(request, task_id, user_id=None):
-    if (user_id and not request.user.is_trainer and not request.user.is_superuser):
+    has_extended_rights = request.user.is_trainer or request.user.is_superuser or (request.user.is_tutor and get_settings().tutors_can_edit_solutions)
+    if user_id and not has_extended_rights:
         return access_denied(request)
 
     task = get_object_or_404(Task, pk=task_id)
     author = get_object_or_404(User, pk=user_id) if user_id else request.user
     solutions = task.solution_set.filter(author = author).order_by('-id')
     final_solution = task.final_solution(author)
+
+    if has_extended_rights and not author in request.user.tutored_users():
+        # Tutor not responsible for this user
+        return access_denied(request)
 
     if task.publication_date >= datetime.now() and not request.user.is_trainer:
         raise Http404
@@ -64,14 +69,14 @@ def solution_list(request, task_id, user_id=None):
 
 
     if request.method == "POST":
-        if task.expired() and not request.user.is_trainer:
+        if task.expired() and not has_extended_rights:
             return access_denied(request)
 #       fight against multiple open browser window for cheating limits
 #       deep defense
         dap = datetime.now() # query datetime after returning from HTTP "post"-method again
         sap = solutions.count() # query solution counter after returning from HTTP "post"-method again
         uap = task.submission_maxpossible - sap
-        if not request.user.is_trainer and (
+        if not has_extended_rights and (
                                                ((task.submission_free_uploads < 0) or ((task.submission_free_uploads > 0) and (task.submission_free_uploads <= sap )))
                                                and ((task.submission_waitdelta > 0) and (dap < upload_next_possible_time))
                                             or
@@ -111,6 +116,17 @@ def solution_list(request, task_id, user_id=None):
             #run_all_checker = bool(User.objects.filter(id=user_id, tutorial__tutors__pk=request.user.id) or request.user.is_trainer)
             run_all_checker = bool(User.objects.filter(id=user_id, tutorial__tutors__pk=request.user.id) and task.expired() or request.user.is_trainer and task.expired() )
             solution.check_solution(run_all_checker)
+
+            current_final_solution = Solution.objects.filter(task=task, author=author, final=True).first()
+            newer_final_solution_existing = False
+            if current_final_solution is not None:
+                if current_final_solution.creation_date > solution.creation_date:
+                    # The student (re-)submitted another final solution while the checkers were running
+                    # This can't be the final solution anymore
+                    newer_final_solution_existing = True
+            if (solution.accepted or get_settings().accept_all_solutions) and not newer_final_solution_existing:
+                solution.final = True
+                solution.save()
 
             if solution.accepted:
                 # Send submission confirmation email
@@ -154,11 +170,6 @@ def solution_list(request, task_id, user_id=None):
                 else: #we are sending unsigned email
                     if solution.author.email:
                          send_mail(_("%s submission confirmation") % settings.SITE_NAME, t.render(c), None, [solution.author.email])
-
-
-            if solution.accepted or get_settings().accept_all_solutions:
-                solution.final = True
-                solution.save()
 
             return HttpResponseRedirect(reverse('solution_detail', args=[solution.id]))
     else:
@@ -221,6 +232,9 @@ def solution_detail(request, solution_id, full):
 
     if full and not (request.user.is_trainer or request.user.is_tutor or request.user.is_superuser):
         return access_denied(request)
+    
+    if request.user.is_user and get_settings().hide_solutions_of_expired_tasks and solution.task.expired():
+        return access_denied(request)
 
     accept_all_solutions = get_settings().accept_all_solutions
 
@@ -260,7 +274,8 @@ def solution_download(request, solution_id, include_checker_files, include_artif
     solution = get_object_or_404(Solution, pk=solution_id)
     allowed_tutor = request.user.is_tutor and solution.author.tutorial in request.user.tutored_tutorials.all()
     allowed_user = solution.author == request.user and not include_checker_files and not include_artifacts
-    if not (request.user.is_trainer or allowed_tutor or allowed_user):
+    hide = request.user.is_user and get_settings().hide_solutions_of_expired_tasks and solution.task.expired()
+    if not (request.user.is_trainer or allowed_tutor or allowed_user) or hide:
         return access_denied(request)
 
     zip_file = get_solutions_zip([solution], include_checker_files, include_artifacts)

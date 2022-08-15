@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # SB HBRS
 from accounts.models import User
+from configuration import get_settings
 from django.contrib.auth.models import Group
 from django.contrib.auth.hashers import check_password
 from django.conf import settings
@@ -21,7 +22,7 @@ class LDAPBackend:
     """
     Authenticate against our LDAP Database
     """
-    def authenticate(self, username=None, password=None):
+    def authenticate(self, request, username=None, password=None):
         # alle Usernamen werden klein geschrieben!
         if username:
             username = username.lower()
@@ -43,15 +44,16 @@ class LDAPBackend:
         if localuser:
             # aktuelle Userdaten aus LDAP uebernehmen
             localuser.email = ldapUser['mail']
-            localuser.first_name = _shortest_unicode([ldapUser['firstName'],
+            localuser.first_name = _select_attribute([ldapUser['firstName'],
                                                       ldapUser['givenName']])
-            localuser.last_name = _shortest_unicode([ldapUser['lastName'],
-                                                    ldapUser['sn']])
+            localuser.last_name = _select_attribute([ldapUser['lastName'],
+                                                     ldapUser['sn']])
             localuser.save()
         else:
-            return None
-            ##print "auto-create local user", username
-            #localuser = create_localuser_from_ldapuser(username, ldapUser)
+            if not get_settings().new_users_via_sso:
+                return None
+            # Auto create local user on first login
+            localuser = create_localuser_from_ldapuser(username, ldapUser)
         # LDAP-Group-Adapter aufrufen
         for lga in _ldap_group_adapters:
             lga(localuser)
@@ -67,24 +69,21 @@ class LDAPBackend:
         except User.DoesNotExist:
             return None
 
-def _shortest_unicode(l):
-    # liefert Eintrag aus Liste l, der im Unicode-Format die wenigsten
-    # Zeichen enthält
-    x = None
-    for y in l:
-        try:
-            if x is None or \
-               (len(unicode(y, 'utf-8')) > 0 and \
-                len(unicode(y, 'utf-8')) < len(unicode(x, 'utf-8'))):
-                x = y
-        except UnicodeError:
-            break
+def _select_attribute(l):
+    # Remove empty strings
+    valid_names = filter(lambda name: bool(name), l)
+    
+    # Select shortest entry due to umlauts
+    x = ''
+    for y in valid_names:
+        if not x or len(y) < len(x):
+            x = y
     return x
 
 def fetch_ldapuser_dict(uid, password=None):
     c = ldap.initialize(settings.LDAP_URI)
     # search distinguished name
-    filter = 'uid=%s' % uid.encode('utf-8')
+    filter = 'uid=%s' % uid
     attrlist = ['dn', 'mail', 'firstName', 'lastName', 'displayName', \
                 'personalTitle', 'uniqueIdentifier', 'givenName', 'sn']
     results = c.search_st(settings.LDAP_BASE, ldap.SCOPE_SUBTREE, filter, \
@@ -99,8 +98,8 @@ def fetch_ldapuser_dict(uid, password=None):
     attrdict['dn'] = dn
     attrdict['uid'] = uid
     # mail
-    if attrdict.has_key('mail'):
-        attrdict['mail'] = attrdict['mail'][0]
+    if 'mail' in attrdict:
+        attrdict['mail'] = attrdict['mail'][0].decode(encoding="utf-8")
     else:
         attrdict['mail'] = ''
     # firstName, lastName bereinigen
@@ -110,11 +109,11 @@ def fetch_ldapuser_dict(uid, password=None):
         if l == 0:
             attrdict[n] = ''
         elif l == 1:
-            attrdict[n] = attrdict[n][0]
+            attrdict[n] = attrdict[n][0].decode(encoding="utf-8")
         else:
             # mehrere Einträge, wir nehmen den kürzesten (wg. Umlauten)
-            attrdict[n] = _shortest_unicode(attrdict[n])
-
+            attrdict[n] = _select_attribute(attrdict[n]).decode(encoding="utf-8")
+            
     if password:
         # try to bind with dn and password
         try:
@@ -137,14 +136,10 @@ def create_localuser_from_ldapuser(username, ldapUser):
                                              email = ldapUser['mail'])
     localuser.password = 'LDAP_AUTH' # unverschluesselter String
     localuser.email = ldapUser['mail']
-    # first_name auswählen (kürzesten Eintrag von givenName und firstName,
-    # wegen Umlauten)
-    localuser.first_name = _shortest_unicode([ldapUser['firstName'],
-                                             ldapUser['givenName']])
-    # last_name auswählen (kürzesten Eintrag von sn und lastName,
-    # wegen Umlauten)
-    localuser.last_name = _shortest_unicode([ldapUser['lastName'],
-                                            ldapUser['sn']])
+    localuser.first_name = _select_attribute([ldapUser['firstName'],
+                                              ldapUser['givenName']])
+    localuser.last_name = _select_attribute([ldapUser['lastName'],
+                                             ldapUser['sn']])
     localuser.is_staff = False
     localuser.is_superuser = False
     localuser.save()

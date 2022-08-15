@@ -14,9 +14,23 @@ import utilities.views
 import accounts.urls
 import tinymce.urls
 
+import taskstatistics.views
+
 from django.contrib import admin
 
+from django.contrib.staticfiles.storage import staticfiles_storage
+
+
+favicon_view_static = RedirectView.as_view(url=settings.BASE_PATH+'static/favicon.ico', permanent=True)
+favicon_view = RedirectView.as_view(url=staticfiles_storage.url('favicon.ico'), permanent=True)
+
+
 urlpatterns = [
+    #favicon.ico
+    url('favicon.ico', favicon_view),
+    url(r'^.*favicon\.ico$', favicon_view_static),
+
+
     # Index page
     url(r'^$', RedirectView.as_view(pattern_name='task_list', permanent=True), name="index"),
 
@@ -36,6 +50,10 @@ urlpatterns = [
     #Tasks
     url(r'^tasks/$', tasks.views.taskList, name = 'task_list'),
     url(r'^tasks/(?P<task_id>\d+)/$', tasks.views.taskDetail, name='task_detail'),
+
+    #TasksStatistic
+    url(r'^tasks/statistic$', taskstatistics.views.tasks_statistic, name='tasks_statistic'),
+    url(r'^tasks/statistic/download$', taskstatistics.views.tasks_statistic_download, name='tasks_statistic_download'),
 
     # Solutions
     url(r'^solutions/(?P<solution_id>\d+)/$', solutions.views.solution_detail, name='solution_detail',kwargs={'full' : False}),

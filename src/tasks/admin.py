@@ -199,11 +199,11 @@ class TaskAdmin(admin.ModelAdmin):
                                         'request_user': myRequestUser,
                 }
                 if request.user.email and latestfailed_user_solution.author.email:
-                    send_mail(_("[%s] lost final submission confirmation") % settings.SITE_NAME, t.render(Context(c)), None, [request.user.email, latestfailed_user_solution.author.email])
+                    send_mail(_("[%s] lost final submission confirmation") % settings.SITE_NAME, t.render(c), None, [request.user.email, latestfailed_user_solution.author.email])
                 elif request.user.email and not latestfailed_user_solution.author.email:
-                    send_mail(_("[%s] lost final submission confirmation") % settings.SITE_NAME, t.render(Context(c)), None, [request.user.email])
+                    send_mail(_("[%s] lost final submission confirmation") % settings.SITE_NAME, t.render(c), None, [request.user.email])
                 elif not request.user.email and latestfailed_user_solution.author.email:
-                    send_mail(_("%s lost final submission confirmation") % settings.SITE_NAME, t.render(Context(c)), None, [latestfailed_user_solution.author.email])
+                    send_mail(_("%s lost final submission confirmation") % settings.SITE_NAME, t.render(c), None, [latestfailed_user_solution.author.email])
             end = timer()
             self.message_user(request, "Task %s : Checked %d authors lost their finals: LoopTimer: %d seconds elapsed "%(task.title, len(users_missing_in_new_final_solution),(end-start)),"warning")
         allend = timer()
@@ -222,6 +222,7 @@ class TaskAdmin(admin.ModelAdmin):
         end = timer()
         self.message_user(request, "State of attribute \"all_checker_finished\" at %d Tasks resetted to \"FALSE\": LoopTimer: %d " % (count, end-start),"warning")
     unset_all_checker_finished.short_description = "unset all checker finished (Admin)"
+
 
 
     def get_urls(self):

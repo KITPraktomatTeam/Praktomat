@@ -6,7 +6,7 @@
 {% trans "eMail Address:" %} {{ user.email }}
 {% trans "Full Name:" %}     {{ user }}
 
-{% blocktrans %}If you want allow this user to activate his account, please visit the following page{% endblocktrans %}:
+{% blocktrans %}If you want to allow this user to activate his account, please visit the following page{% endblocktrans %}:
 
 {{ protocol }}://{{ domain }}{% url "activation_allow" user_id=user.id %}
 

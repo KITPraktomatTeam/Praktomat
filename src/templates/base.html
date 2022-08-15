@@ -18,7 +18,11 @@
 
 	<link type="text/css" rel="stylesheet" href="{% static "frameworks/jquery/jquery-ui-theme.css" %}" />
 	<link type="text/css" rel="stylesheet" href="{% static "styles/style.css" %}" />
-	{% block extrahead %}{% endblock %}
+	{% block extrahead %}
+        <link rel="shortcut icon" href="{% static 'favicon.ico' %}" />
+        <link rel="icon" href="{% static 'favicon.ico' %}" />
+        {% endblock %}
+
 	<title>{{ site_name|default:"Praktomat" }} {% block title %}{% endblock %}</title>
 </head>
 
@@ -55,7 +59,7 @@
 		<div id="content">
 			<noscript><div id="javascripterror" class="ui-widget ui-state-error ui-corner-all notification">
 				<p><span class="ui-icon ui-icon-alert"></span>
-				<strong>Warnig:</strong> This site is designed to use Javascript! Enabling it is advised.</p>
+				<strong>Warning:</strong> This site is designed to use Javascript! Enabling it is advised.</p>
 			</div></noscript>
 			{% comment %} 4 use with messages framework
 				<div class="ui-widget ui-state-highlight ui-corner-all notification">

@@ -24,6 +24,10 @@ from configuration import get_settings
 
 
 def validate_mat_number(value):
+    if settings.DUMMY_MAT_NUMBERS:
+        # If we're using dummy mat numbers, we don't care if they are valid
+        return True
+
     regex = get_settings().mat_number_validation_regex
     if regex:
         RegexValidator("^"+regex+"$", message="This is not a valid student number.", code="")(value)
@@ -127,7 +131,7 @@ class User(BasicUser):
 
     def is_shibboleth_user(self):
         return not self.has_usable_password() and not self.is_ldap_user()
-
+	
     def is_ldap_user(self):
         return self.password == 'LDAP_AUTH'
 
@@ -186,10 +190,20 @@ class User(BasicUser):
 
     def clean(self):
         super(User, self).clean()
-        if settings.DUMMY_MAT_NUMBERS:
-            self.mat_number = self.id
+        if settings.DUMMY_MAT_NUMBERS:			
+            self.mat_number = self.id			
 
-
+    def tutored_users(self):
+        tutored_users = None
+        if self.is_trainer or self.is_superuser:
+            tutored_users = User.objects.filter(groups__name="User", is_active=True).order_by('last_name')
+        elif self.is_tutor and get_settings().tutors_can_edit_solutions:
+            tutorials = Tutorial.objects.filter(tutors__id=self.id)
+            tutored_users = User.objects.none()
+            for tutorial in tutorials:
+                tutored_users |= User.objects.filter(groups__name="User", is_active=True, tutorial=tutorial)
+            tutored_users = tutored_users.order_by('last_name')
+        return tutored_users
 
 #    def save(self, force_insert=False, force_update=False, *args, **kwargs):
 #        """ prevent redundancy: staff iff. superuser or trainer """

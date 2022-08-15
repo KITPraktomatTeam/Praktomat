@@ -37,10 +37,8 @@ if settings.ACCOUNT_CHANGE_POSSIBLE:
         url(r'^password/reset/complete/$', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
         url(r'^password/reset/done/$', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
         url(r'^register/$', accounts.views.register, name='registration_register'),
-	url(r'^change/$', accounts.views.change, name='registration_change'),
         url(r'^register/complete/$', TemplateView.as_view(template_name='registration/registration_complete.html'), name='registration_complete'),
         url(r'^register/allow/(?P<user_id>\d+)/$', accounts.views.activation_allow, name='activation_allow'),
         url(r'^activate/(?P<activation_key>.+)/$', accounts.views.activate, name='registration_activate'),
         url(r'^deactivated/$', accounts.views.deactivated, name='registration_deactivated'),
-
     ]

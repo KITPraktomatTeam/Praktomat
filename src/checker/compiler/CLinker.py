@@ -49,7 +49,7 @@ class CLinker(Linker, LibraryHelper, MainNeedHelper):
                         # Next let's shell out and search in object file for main
                         script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
                         cmd = [os.path.join(script_dir, self._OBJECTINSPECTOR)] + self._OBJINSPECT_PAR + [os.path.join(dirpath,filename)]
-                        [objinfo,error,exitcode,timed_out,oom_ed]  = execute_arglist(cmd , env.tmpdir(), self.environment(), timeout=settings.TEST_TIMEOUT, fileseeklimit=settings.TEST_MAXFILESIZE, extradirs=[script_dir])
+                        [objinfo,error,exitcode,timed_out,oom_ed]  = execute_arglist(cmd , env.tmpdir(), self.environment(), timeout=settings.TEST_TIMEOUT, fileseeklimit=settings.TEST_MAXFILESIZE, filenumberlimit=settings.TEST_MAXFILENUMBER, extradirs=[script_dir])
                         if exitcode != 0 :
                             raise self.NotFoundError("Internal Server Error. Processing files %s" % ",".join(obj_files)+"\n"+objinfo)
                         tmp = re.search(nm_rx, objinfo)
@@ -78,7 +78,7 @@ class CLinker(Linker, LibraryHelper, MainNeedHelper):
             if name.endswith(('.c','.C'))]
 
 
-        #ToDo: rethink if object files should add to env here - perhaps not!
+        #ToDo: rethink if object files should add to env here - perhaps not! ...
         # add these object files to env sources
         for f in o_solution_list:
             try:

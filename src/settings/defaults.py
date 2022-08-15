@@ -20,7 +20,11 @@ def load_defaults(settings):
 
     # import settings so that we can conveniently use the settings here
     for k, v in settings.items():
-        if not isinstance(v, collections.Callable) and not k.startswith('__'):
+        try:
+            from collections.abc import Callable  # noqa
+        except ImportError:
+            from collections import Callable  # noqa
+        if not isinstance(v, Callable) and not k.startswith('__'):
             globals()[k] = v
 
     class D(object):
@@ -109,6 +113,7 @@ def load_defaults(settings):
         'utilities',
         'settings',
         #'sessionprofile', #phpBB integration
+        'taskstatistics',
     )
 
     d.MIDDLEWARE = [
@@ -121,11 +126,6 @@ def load_defaults(settings):
         'accounts.middleware.LogoutInactiveUserMiddleware',
         'accounts.middleware.DisclaimerAcceptanceMiddleware',
     ]
-
-    # needed since Django 1.11 in order to show the 'Deactivated' page
-    d.AUTH_BACKEND = 'django.contrib.auth.backends.AllowAllUsersModelBackend'
-
-    d.AUTHENTICATION_BACKENDS = (d.AUTH_BACKEND,)
 
     d.DEFAULT_FILE_STORAGE = 'utilities.storage.UploadStorage'
 
@@ -180,7 +180,7 @@ def load_defaults(settings):
         else:
             import uuid
             d.SECRET_KEY = uuid.uuid4().hex
-            os.fdopen(os.open(secret_keyfile, os.O_WRONLY | os.O_CREAT, 0o600), 'w').write(SECRET_KEY)
+            os.fdopen(os.open(secret_keyfile, os.O_WRONLY | os.O_CREAT, 0o600), 'w').write(d.SECRET_KEY)
 
 
     # Templates
@@ -271,7 +271,6 @@ def load_defaults(settings):
     d.CXX_BINARY = 'c++'
     d.JAVA_BINARY = 'javac'
     d.JAVA_BINARY_SECURE = PRAKTOMAT_ROOT + '/src/checker/scripts/javac'
-    d.JAVA_GCC_BINARY = 'gcj'
     d.JVM = 'java'
     d.JVM_SECURE = PRAKTOMAT_ROOT + '/src/checker/scripts/java'
     d.JVM_POLICY = PRAKTOMAT_ROOT + '/src/checker/scripts/java.policy'
@@ -280,8 +279,10 @@ def load_defaults(settings):
     d.DEJAGNU_RUNTEST = '/usr/bin/runtest'
     d.CHECKSTYLEALLJAR = '/home/praktomat/contrib/checkstyle-8.14-all.jar'
     d.JUNIT38='junit'
-    d.JAVA_LIBS = { 'junit3' : '/usr/share/java/junit.jar', 'junit4' : '/usr/share/java/junit4.jar' }
+    d.JAVA_LIBS = { 'jun' : '/usr/share/java/junit.jar', 'junit4' : '/usr/share/java/junit4.jar' }
     d.JAVA_CUSTOM_LIBS = PRAKTOMAT_ROOT + '/lib/java/*'
+    d.JCFDUMP='jcf-dump'
+
     d.JAVAP='javap'
     d.GHC='ghc'
     d.SCALA='scala'
@@ -300,7 +301,7 @@ def load_defaults(settings):
     # Alternatively: Run everything in a docker instance, to provide higher
     # insulation. Should not be used together with USEPRAKTOMATTESTER.
 
-    # It is recomendet to use DOCKER and not a tester account
+    # It is recomended to use DOCKER and not a tester account
     # for using Docker from https://github.com/nomeata/safe-docker
     # Use docker to test submission
 
@@ -361,6 +362,8 @@ def load_defaults(settings):
     # Set this to True to automatically set user.mat_number = user.id
     d.DUMMY_MAT_NUMBERS = False
 
+    # needed since Django 1.11 in order to show the 'Deactivated' page
+    d.AUTH_BACKEND = 'django.contrib.auth.backends.AllowAllUsersModelBackend'
 
     #TODO: Code refactoring: make it more flexible, to change between LDAP or Shibboleth support!
 
@@ -370,12 +373,11 @@ def load_defaults(settings):
 
     d.LDAP_ENABLED = False
     d.AUTHENTICATION_BACKENDS = (
-	'accounts.ldap_auth.LDAPBackend',
-	'django.contrib.auth.backends.ModelBackend',
+	    'accounts.ldap_auth.LDAPBackend',
+	    d.AUTH_BACKEND,
     )
-    d.LDAP_URI="ldap://ldap.DomainNAME.TOPLEVEL"
-    d.LDAP_BASE="dc=DomainNAME,dc=TOPLEVEL"
-
+    d.LDAP_URI="ldap://ldap.DOMAINNAME.TOPLEVEL"
+    d.LDAP_BASE="dc=DOMAINNAME,dc=TOPLEVEL"
 
 
     # Length of timeout applied whenever an external check that runs a students
@@ -397,12 +399,20 @@ def load_defaults(settings):
     # JUnitChecker, ScriptChecker,
     d.TEST_MAXLOGSIZE=64
 
+    # Maximum number of open file descriptors for a checker.
+    d.TEST_MAXFILENUMBER=128
+
     d.NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 1
 
     d.MIMETYPE_ADDITIONAL_EXTENSIONS = \
         [("text/plain", ".properties"),
+         ("text/x-gradle", ".gradle"),
+         ("text/x-gradle", ".gradle.kts"),
+         ("text/x-isabelle", ".thy"),
+         ("text/x-lean", ".lean"),
          ("text/x-r-script", ".R"),
-         ("text/x-isabelle", ".thy")]
+         ("text/x-r-script", ".r"),# Fixes KITPraktomatTeam/Praktomat#336 as workaround for issue in Python 3.9.12 and above: Add filename extension with small letter r to dict of additional mimetypes , more information see issue Python stdlib  92455
+         ]
 
     # Subclassed TestSuitRunner to prepopulate unit test database.
     d.TEST_RUNNER = 'utilities.TestSuite.TestSuiteRunner'

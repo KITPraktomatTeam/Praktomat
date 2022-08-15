@@ -164,7 +164,10 @@ class CompilerOrLinker(Checker, IncludeHelper):
         args = [self.__runner] + self.output_flags(env) + filenames + self.connected_flags(env)
         script_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'scripts')
 
-        [output,error,exitcode,timed_out,oom_ed]  = execute_arglist(args, env.tmpdir(),self.environment(), extradirs=[script_dir])
+        myenviron = self.environment()
+        myenviron['LANG'] = settings.LANG
+        myenviron['LANGUAGE'] = settings.LANGUAGE
+        [output,error,exitcode,timed_out,oom_ed]  = execute_arglist(args, env.tmpdir(), myenviron, extradirs=[script_dir])
 
         output = escape(output)
         output = self.enhance_output(env, output)
@@ -503,4 +506,3 @@ class Builder(Checker):
             'regexp' : self.rxarg(),
             'debug'  : False
         })
-

@@ -128,7 +128,7 @@ def import_user(request):
 @staff_member_required
 def import_ldap_user(request):
        """ View in the admin """
-       if request.method == 'POST':
+       if request.method == 'POST': 
                form = ImportLDAPForm(request.POST)
                if form.is_valid():
                        tutorial = form.cleaned_data['tutorial']

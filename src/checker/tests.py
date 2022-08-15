@@ -307,7 +307,22 @@ class TestChecker(TestCase):
             self.assertTrue(checkerresult.passed, checkerresult.log)
 
     def test_r_checker(self):
+        import mimetypes
+        mimetypes.init()
+        self.assertTrue(mimetypes.inited)
+        # TODO: This is duplicated from solutions/forms.py. Where should this go?
+        for (mimetype, extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
+            mimetypes.add_type(mimetype, extension, strict=True)
         solution_file = SolutionFile(solution = self.solution)
+        solution_file.mime_type=mimetypes.guess_type('example.R')[0]
+        # Bughunting for Python 3.9.12 and above
+        # at time of bughunting ... uses pysqlite 2.6.0 with SQLite 3.38.3
+        # see https://github.com/KITPraktomatTeam/Praktomat/issues/336
+        #
+        # Unit Tests for R Checker fail : missing mimetype for example.R
+        # django.db.utils.IntegrityError: NOT NULL constraint failed: solutions_solutionfile.mime_type
+        self.assertEqual(str(mimetypes.types_map['.R']),solution_file.mime_type, "Mimetype for extension R should be guessed right")
+        self.assertIsNotNone(solution_file.mime_type, "Mimetype for example.R shouldn't be None")
         with open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)) as fd:
             solution_file.file.save('example.R', File(fd))
 
@@ -328,7 +343,20 @@ class TestChecker(TestCase):
             solution_file.delete()
 
     def test_r_checker_2(self):
+        import mimetypes
+        mimetypes.init()
+        # TODO: This is duplicated from solutions/forms.py. Where should this go?
+        for (mimetype, extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
+            mimetypes.add_type(mimetype, extension, strict=True)
         solution_file = SolutionFile(solution = self.solution)
+        solution_file.mime_type=mimetypes.guess_type('example.R')[0]
+        # Bughunting for Python 3.9.12 and above
+        # at time of bughunting ... uses pysqlite 2.6.0 with SQLite 3.38.3
+        # see https://github.com/KITPraktomatTeam/Praktomat/issues/336
+        #
+        # Unit Tests for R Checker fail : missing mimetype for example.R
+        # django.db.utils.IntegrityError: NOT NULL constraint failed: solutions_solutionfile.mime_type
+        self.assertIsNotNone(solution_file.mime_type, "Mimetype for example.R shouldn't be None")
         with open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)) as fd:
             solution_file.file.save('example.R', File(fd))
 
@@ -350,7 +378,20 @@ class TestChecker(TestCase):
                 solution_file.delete()
 
     def test_r_checker_3(self):
+        import mimetypes
+        mimetypes.init()
+        # TODO: This is duplicated from solutions/forms.py. Where should this go?
+        for (mimetype, extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
+            mimetypes.add_type(mimetype, extension, strict=True)
         solution_file = SolutionFile(solution = self.solution)
+        solution_file.mime_type=mimetypes.guess_type('example.R')[0]
+        # Bughunting for Python 3.9.12 and above
+        # at time of bughunting ... uses pysqlite 2.6.0 with SQLite 3.38.3
+        # see https://github.com/KITPraktomatTeam/Praktomat/issues/336
+        #
+        # Unit Tests for R Checker fail : missing mimetype for example.R
+        # django.db.utils.IntegrityError: NOT NULL constraint failed: solutions_solutionfile.mime_type
+        self.assertIsNotNone(solution_file.mime_type, "Mimetype for example.R shouldn't be None")
         with open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)) as fd:
             solution_file.file.save('example.R', File(fd))
 
@@ -370,10 +411,27 @@ class TestChecker(TestCase):
             solution_file.delete()
 
     def test_r_checker_4(self):
+        import mimetypes
+        mimetypes.init()
+        # TODO: This is duplicated from solutions/forms.py. Where should this go?
+        for (mimetype, extension) in settings.MIMETYPE_ADDITIONAL_EXTENSIONS:
+            mimetypes.add_type(mimetype, extension, strict=True)
         solution_file = SolutionFile(solution = self.solution)
+        solution_file.mime_type=mimetypes.guess_type('example.R')[0]
+        # Bughunting for Python 3.9.12 and above
+        # at time of bughunting ... uses pysqlite 2.6.0 with SQLite 3.38.3
+        # see https://github.com/KITPraktomatTeam/Praktomat/issues/336
+        #
+        # Unit Tests for R Checker fail : missing mimetype for example.R
+        # django.db.utils.IntegrityError: NOT NULL constraint failed: solutions_solutionfile.mime_type
+        #
+        # at one place let show the uncatched problem
+        # self.assertIsNotNone(solution_file.mime_type, "Mimetype for example.R shouldn't be None")
         with open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)) as fd:
             solution_file.file.save('example.R', File(fd))
+
         solution_file2 = SolutionFile(solution = self.solution)
+        solution_file2.mime_type=mimetypes.guess_type('example2.R')[0]
         with open(join(dirname(dirname(dirname(__file__))), 'examples', 'example.R',)) as fd:
             solution_file2.file.save('example2.R', File(fd))
 

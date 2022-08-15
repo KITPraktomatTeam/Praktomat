@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.utils.encoding import python_2_unicode_compatible
 
 from django.db import models
-from datetime import date
+from datetime import date, timedelta
 
 class Settings(models.Model):
     """ Singleton object containing site wide settings configurable by the trainer. """
@@ -129,6 +129,24 @@ class Settings(models.Model):
                 max_length=200,
                 default='Java',
                 help_text="Default settings for jPlag"
+            )
+
+    hide_solutions_of_expired_tasks = \
+            models.BooleanField(
+                default=False,
+                help_text="If enabled, solutions (incl. attestations) of expired tasks are not accessible for students."
+            )
+
+    deadline_tolerance = \
+            models.DurationField(
+                default=timedelta(hours=1),
+                help_text="The duration by which the submission date for a task will be extended for those who just missed the deadline."
+            )
+
+    tutors_can_edit_solutions = \
+            models.BooleanField(
+                default=False,
+                help_text="If enabled, tutors can also upload solutions for students in their tutorial."
             )
 
 @python_2_unicode_compatible
