@@ -62,7 +62,7 @@ class ModelCUnitCppUnitCheckerTests(TestCase):
             self.assertEqual(response.status_code, 200) # should work
             self.assertTemplateUsed(response,'admin/tasks/task/change_form.html')
             #print(response.content)
-            # since we imporded as template add grade scaling and dates to task
+            # since we imported as template add grade scaling and dates to task
             ratingScale=RatingScale()
             ratingScale.name="UnitTest"
             ratingScale.save()
@@ -231,7 +231,7 @@ class ModelCUnitCppUnitCheckerTests(TestCase):
         response = self.client.get('/admin/tasks/task/%s/change/'%(taskid))
         # name of  FileField file ends with "test_uebung11_NsIpkLQ.c"
         # value of CharField filename ends with "test_uebung11.c"
-        # there should be a form warning, if both names are differend,
+        # there should be a form warning, if both names are different,
         # but at least it should be possible to safe a different value in CharField as file name,
         # just for using the given filename inside the sandbox.
         # Therefor we test the form:
@@ -353,4 +353,4 @@ class ModelCUnitCppUnitCheckerTests(TestCase):
                 '_selected_action': [taskid, ]}
         response = self.client.post(change_url, data, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("1 final solutions were successfully checked".encode("utf-8"),response.content) #ToDo: The message should be realy in singular, but for now, I want to pass the UnitTest
+        self.assertIn("1 final solutions were successfully checked".encode("utf-8"),response.content) #ToDo: The message should be really in singular, but for now, I want to pass the UnitTest

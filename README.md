@@ -7,6 +7,34 @@ In case of bugs or feature requests, please use the [Bug tracker]. There is
 also a moderated [mailing list] for Praktomat administrators:
 praktomat-users@lists.kit.edu.
 
+A note about Python an Tcl/Tk
+=============
+
+ Since merge of feature boxplot-taskstatistic (cf https://github.com/KITPraktomatTeam/Praktomat/pull/345 )
+ users can have a look onto whisker-boxplot diagramms.
+ These diagrams where generated via `matplotlib`, which can be installed via `pip` and is listed in our `requirements` file.
+ `matplotlib` loads transitive `_tkinter` module, which you cannot install via `pip`, and which have dependencies to system libraries for Tcl/Tk. (There exists a package installable via `pip` named `tk` but that package has nothing to do with what you need...)
+
+ You can check, if your Python version and your system fullfill that dependencies in a shell:
+
+     python -c "import lzma" && python -c "import _tkinter" && python -c "import -c"matplotlib.pyplot as plt"
+
+ That commands should not produce any error messages.
+
+ If `lzma` couldn't be imported, than you need to install the system libraries:
+
+ If `_tkinter` failed to load, than perhaps on your system the `_tkinter` module can be installed for your Python on a seperate way.
+ In example on Debian you install the tkinter-support via system package manager:
+
+    apt install python-tk (that is for Python 2)
+    apt install python3-tk (that is for Python 3)
+
+ And of course you need tcl/tk on the system:
+
+    apt install tk tk-dev
+
+ Hind: Praktomat's DejaGnuChecker uses `dejagnu`, which is written in `expect`. And `expect` is using `Tcl`.
+
 
 A note about Python 2
 =============
@@ -28,7 +56,7 @@ Python 3.5
 General setup
 =============
 
-You need the latest version that is compatible with the Python version used. 
+You need the latest version that is compatible with the Python version used.
 We also highly recommend to use virtualenv so your system Python installation remains clean.
 
 If you are having trouble with
@@ -111,7 +139,7 @@ Prerequisites: 3rd-Party libraries and programms
     r-base
 
 
-  If youre going to use Praktomat to check Haskell submissions, you will also require the packages:
+  If you're going to use Praktomat to check Haskell submissions, you will also require the packages:
 
     ghc libghc-test-framework-dev libghc-test-framework-hunit-dev libghc-test-framework-quickcheck2-dev
 

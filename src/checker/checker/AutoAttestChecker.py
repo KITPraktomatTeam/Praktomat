@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-AutoAttestChecker (basierend auf S.B. (HBRS FB02,2013) updated by Robert Hartmann,HBRS FB02, 2013 - 2016,2020)
+AutoAttestChecker (based on code of S.B. (HBRS FB02,2013) updated by Robert Hartmann,HBRS FB02, 2013 - 2016,2020,2022)
 """
 import os, re
 import os.path
@@ -34,7 +34,7 @@ class AutoAttestChecker(Checker):
         self._meta.get_field('required').default = False
         self._meta.get_field('final').default = True
         self._meta.get_field('published').default = True
-        
+
     def clean(self):
         super(AutoAttestChecker, self).clean()
         if (self.required or self.always or self.public): raise ValidationError("Robert says: AutoAttestChecker have to be non-required, non-always, non-public")
@@ -47,9 +47,9 @@ class AutoAttestChecker(Checker):
     def description():
         """ Returns a description for this Checker. """
         return u"Dies ist keine Prüfung, sondern trägt eine automatische Attestation ein."
-    
+
     def run(self, env):
-        """ Runs tests in a special environment. Here's the actual work. 
+        """ Runs tests in a special environment. Here's the actual work.
         Returning CheckerResult. """
 
         checkers_passed = 0
@@ -64,12 +64,12 @@ class AutoAttestChecker(Checker):
 	#result = CheckerResult(checker=self)
         result = CheckerResult(checker=self,solution=env.solution())
         result.set_passed(checkers_failed == 0)
-	
-	
+
+
         if User.objects.filter(id=self.author_id).count() == 0:
             self.author_id = None    # warum nicht self.author ???
             return result
- 
+
 	# delete all old own Attestations for this solution.
         for a in Attestation.objects.filter(solution=env.solution(), author=self.author):
             a.delete()
@@ -79,13 +79,13 @@ class AutoAttestChecker(Checker):
             a.final = False
             a.published = False
             a.save()
-            
+
         # reset final solution
         s = env.solution().task.final_solution(env.solution().author)
         if s:
             s.final = False
             s.save()
-        
+
         # create new attestation
         if self.task.final_grade_rating_scale:
             grades = list(self.task.final_grade_rating_scale.ratingscaleitem_set.all())
@@ -97,9 +97,9 @@ class AutoAttestChecker(Checker):
 
                 new_final_solution = env.solution()
                 if new_final_solution:
-                    new_final_solution.final = True			
+                    new_final_solution.final = True
                     new_final_solution.save()
-    
+
                 a = Attestation(solution=env.solution(), author=self.author,
                                 public_comment=self.public_comment, private_comment=self.private_comment,
                                 final=self.final, published=self.published, published_on=datetime.now(),
@@ -114,7 +114,7 @@ class AutoAttestChecker(Checker):
                                 final_grade=grades[0])
                 a.save()
         return result
-    
+
 from checker.admin import    CheckerInline
 
 class AutoAttestInline(CheckerInline):

@@ -61,7 +61,7 @@ class Settings(models.Model):
     accept_all_solutions = \
             models.BooleanField(
                 default=False,
-                help_text="If enabled, solutions can become the final soution even if not all required checkers are passed."
+                help_text="If enabled, solutions can become the final solution even if not all required checkers are passed."
             )
 
     anonymous_attestation = \
