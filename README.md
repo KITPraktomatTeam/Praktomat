@@ -347,8 +347,8 @@ Create the upload directory, populate the database:
 ```bash
 cd Praktomat
 mkdir ../work-data/
-./Praktomat/src/manage-local.py collectstatic --noinput --link
-./Praktomat/src/manage-local.py migrate --noinput
+./src/manage-local.py collectstatic --noinput --link
+./src/manage-local.py migrate --noinput
 ```
 
 It should now be possible to start the deployment server with:
