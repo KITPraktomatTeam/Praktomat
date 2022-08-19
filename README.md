@@ -7,35 +7,6 @@ In case of bugs or feature requests, please use the [Bug tracker]. There is
 also a moderated [mailing list] for Praktomat administrators:
 praktomat-users@lists.kit.edu.
 
-A note about Python an Tcl/Tk
-=============
-
- Since merge of feature boxplot-taskstatistic (cf https://github.com/KITPraktomatTeam/Praktomat/pull/345 )
- users can have a look onto whisker-boxplot diagramms.
- These diagrams where generated via `matplotlib`, which can be installed via `pip` and is listed in our `requirements` file.
- `matplotlib` loads transitive `_tkinter` module, which you cannot install via `pip`, and which have dependencies to system libraries for Tcl/Tk. (There exists a package installable via `pip` named `tk` but that package has nothing to do with what you need...)
-
- You can check, if your Python version and your system fullfill that dependencies in a shell:
-
-     python -c "import lzma" && python -c "import _tkinter" && python -c "import -c"matplotlib.pyplot as plt"
-
- That commands should not produce any error messages.
-
- If `lzma` couldn't be imported, than you need to install the system libraries:
-
- If `_tkinter` failed to load, than perhaps on your system the `_tkinter` module can be installed for your Python on a seperate way.
- In example on Debian you install the tkinter-support via system package manager:
-
-    apt install python-tk (that is for Python 2)
-    apt install python3-tk (that is for Python 3)
-
- And of course you need tcl/tk on the system:
-
-    apt install tk tk-dev
-
- Hind: Praktomat's DejaGnuChecker uses `dejagnu`, which is written in `expect`. And `expect` is using `Tcl`.
-
-
 A note about Python 2
 =============
 Since `pip` will drop support for Python 2 in January 2020,
@@ -53,11 +24,12 @@ Python 3.5
     python-psycopg2
     python-virtualenv
 
+
 General setup
 =============
 
-You need the latest version that is compatible with the Python version used.
-We also highly recommend to use virtualenv so your system Python installation remains clean.
+You need the latest version of `pip`that is compatible with the Python version used.
+We also highly recommend to use `virtualenv` so your system Python installation remains clean.
 
 If you are having trouble with
 
@@ -92,6 +64,7 @@ Prerequisites: Database and Webserver
     libapache2-mod-xsendfile   (version 0.12; or install version 1.0 manually)
     apache2-dev                (used by pip while installing mod_wsgi)
 
+
 Pitfalls while Systemupgrades
 ============
   In Ubuntu 16 the package `apache2-mpm-worker` has been merged into `apache2`.
@@ -111,13 +84,86 @@ Pitfalls while Systemupgrades
 
   If you don't change that value, apache2 package becomes deleted while upgrading Ubuntu.
 
+Pitfalls after Praktomat-Update (Summer 2022)
+=================
+
+A note about `prlimit`
+----------
+  To make Praktomat compatible with newer Python versions, we introduce a dependency to binary executable program `prlimit`.
+
+    util-linux (containing prlimit)
+
+  If you have installed `util-linux` but the command `prlimit` remain unknown, your linux system may be too old.
+  On some circumstances you can build `prlimit` from scources ( more about this cf. https://github.com/KITPraktomatTeam/Praktomat/pull/342#issuecomment-1219445202 )
+
+
+ A note about SQLite3 and Praktomat's unit tests
+----------
+
+Unit tests which are testing Praktomat code are using `SQLite3` as database backend, depending on settings in `Praktomat/src/settings/test.py`.
+
+Since merge of feature boxplot-taskstatistic (cf https://github.com/KITPraktomatTeam/Praktomat/pull/345 ) at 2022-07-27
+your Python environment is using an to old `SQLite3` version, if tests fails with message:
+
+
+    django.db.utils.OperationalError: near "(": syntax error while migrating migrationfile taskstatistics.0001_initial_TaskStatisticsDBview
+
+
+In example `SQLite3` version 3.16.2 dated to 2017-01-06 is much to old to handle the hand written migration file `Praktomat/src/taskstatistics/migrations/0001_initial_TaskStatisticsDBview.py` correctly.
+
+Since that migration file use *SQL window functions*, which where standarized in `SQL:2003` and covered by `SQLite3` with version 3.25.0 dated to 2018-09-15. But, because of some bugs inside `SQLite3`, you cannot use that first version supporting *SQL window functions*, too.
+
+Please use `SQLite3` Version 3.38.5 from 2022-05-06, which works for our needs.
+
+Check your Python - SQLite dependency on command line via:
+
+```bash
+$ python -c "import sqlite3; print(\"... uses pysqlite \" + sqlite3.version +\" with SQLite \" + sqlite3.sqlite_version);"
+
+... uses pysqlite 2.6.0 with SQLite 3.38.5
+```
+
+
+A note about Python and dependencies to Tcl/Tk
+----------
+
+ Since merge of feature boxplot-taskstatistic (cf https://github.com/KITPraktomatTeam/Praktomat/pull/345 )
+ users can have a look onto whisker-boxplot diagrams.
+ These diagrams where generated via `matplotlib`, which can be installed via `pip` and is listed in our `requirements` file.
+ `matplotlib` loads transitive `_tkinter` module, which you cannot install via `pip`, and which have dependencies to system libraries for Tcl/Tk. (There exists a package installable via `pip` named `tk` but that package has nothing to do with what you need...)
+
+ You can check, if your Python version and your system fullfill that dependencies in a shell:
+
+     python -c "import lzma" && python -c "import _tkinter" && python -c "import -c"matplotlib.pyplot as plt"
+
+ That commands should not produce any error messages.
+
+ If `lzma` couldn't be imported, than you need to install the system library and dev package:
+
+    apt-get install liblzma-dev lzma -y -q
+
+ If `_tkinter` failed to load, than perhaps on your system the `_tkinter` module can be installed for your Python on a seperate way.
+ In example on Debian you install the tkinter-support via system package manager:
+
+    apt install python-tk -y -q (that is for Python 2)
+    apt install python3-tk -y -q (that is for Python 3)
+
+ And of course you need tcl/tk on the system:
+
+    apt install tk tk-dev
+
+**Hind:** Praktomat's DejaGnuChecker uses `dejagnu`, which is written in `expect`. And `expect` is using `Tcl`.
+
+
+
 Prerequisites: 3rd-Party libraries and programms
 ============
 
   Praktomat requires some 3rd-Party libraries programs to run.
   On a Ubuntu/Debian System, these can be installed by installing the following packages:
 
-    util-linux
+    util-linux (containing prlimit)
+
     libpq-dev
     zlib1g-dev
     libmysqlclient-dev (or: default-libmysqlclient-dev)
@@ -137,7 +183,6 @@ Prerequisites: 3rd-Party libraries and programms
     libldap2-dev (if you want to use python-ldap==2.3.13 for connecting to ldap)
 
     r-base
-
 
   If you're going to use Praktomat to check Haskell submissions, you will also require the packages:
 
@@ -202,7 +247,7 @@ Praktomat/src/checker/scripts/junit.policy
 ```
 
 You can deactivate checkers and compilers in your local Praktomat instance,
-just comment them out in ``` src/checker/checker/__init__.py ``` and ``` src/checker/checker/__init__.py ```.
+just comment them out in ``` src/checker/checker/__init__.py ``` and ``` src/checker/compiler/__init__.py ```.
 Do not forget to create and run a django migration in that case.
 
 If you exchange Praktomat-Tasks (export and import) than the instance, which is used to import the task,
@@ -257,11 +302,11 @@ to run django unit tests
 ```bash
 cd Praktomat
 mkdir ../test-data/
-./src/manage-test.py test accounts attestation checker configuration solutions tasks hbrs_tests
+./src/manage-test.py test accounts attestation checker configuration solutions tasks taskstatistics hbrs_tests
 ```
 
 
-Deployment installation
+Deployment installation (using Apache and PostgreSQL)
 =======================
 
 Like for the development version, clone the Praktomat and install its dependencies:
@@ -278,7 +323,17 @@ Now create a database. Using postgres on Ubuntu, this might work for creating
 a database "praktomat_<PRAKTOMAT_ID>". Also edit `pg_hba.conf` to allow the access.
 Your database-system should be configured to UTF-8.
 
+To find your `pg_hba.conf` run on server commandline
+
 ```bash
+cd / && cat $( sudo -u postgres psql -c 'SHOW config_file' | grep '\.conf') | grep 'pg_hba.conf' && cd ~
+```
+Edit that file to your needs. (Per default only connections to localhost are configured.)
+
+```bash
+sudo systemctl enable postgresql
+sudo systemctl start postgresql
+sudo systemctl status postgresql
 sudo -u postgres createuser -DRS praktomat
 sudo -u postgres createdb --encoding UTF8 -O praktomat praktomat_<PRAKTOMAT_ID>
 ```
@@ -302,6 +357,29 @@ It should now be possible to start the deployment server with:
 ```
 
   If you want to deploy the project using mod_wsgi in apache you could use `documentation/apache_praktomat_wsgi.conf` as a starting point. Don't forget to install `mod_xsendfile` to serve uploaded files.
+
+```bash
+sudo systemctl enable apache2
+sudo a2enmod macro
+sudo a2enmod xsendfile
+sudo a2enmod ssl
+sudo a2ensite default-ssl
+```
+Change /etc/apache2/sites-enabled/default-ssl.conf by inserting information `ServerAdmin` and `ServerName` after line `<VirtualHost _default_:443>`
+
+```
+  ServerAdmin fill in valid e-mail-adress to reach servers admin.
+  ServerName  fill in FQDN of server (matching to HTTPS-Certificate.)
+```
+And copy the complete Apache-Macro `Praktomat` from `documentation/apache_praktomat_wsgi.conf`, with modification for your needs, just before
+the `<VirtualHost _default_:443>`-Entries. Use the `Praktomat` Apache-Macro inside the `<VirtualHost _default_:443>`-Entries like you can see in
+usage example `<VirtualHost *:80>` in `documentation/apache_praktomat_wsgi.conf`.
+
+Start `Apache`.
+```bash
+sudo systemctl start apache2
+sudo systemctl status apache2
+```
 
   And if your Praktomat running on apache should handle non-ASCII filenames correctly, than the easyest way is activating UTF-8 support inside apache.
   Debian runs Apache with the LANG=C locale by default, which breaks uploading files with special characters in their names at least when running with mod_wsgi.
@@ -354,6 +432,11 @@ submissions from the system:
    prefixed with `sudo -u tester --`. For this to work you need to add a user
    `tester` which is also a member of the default group of the user that runs
    the praktomat (usually `praktomat`).
+   ```bash
+   sudo adduser tester --disabled-password
+   sudo usermod tester -a -G praktomat
+   sudo usermod www-data -a -G praktomat
+   ```
  * With `USESAFEDOCKER = True`, external commands are prefixed with
    `safe-docker`, which you need to have installed. You can fetch it from
    http://github.com/nomeata/safe-docker
