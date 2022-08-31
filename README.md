@@ -103,7 +103,7 @@ A note about `prlimit`
 Unit tests which are testing Praktomat code are using `SQLite3` as database backend, depending on settings in `Praktomat/src/settings/test.py`.
 
 Since merge of feature boxplot-taskstatistic (cf https://github.com/KITPraktomatTeam/Praktomat/pull/345 ) at 2022-07-27
-your Python environment is using an to old `SQLite3` version, if tests fails with message:
+your Python environment is using an too old `SQLite3` version, if tests fails with message:
 
 
     django.db.utils.OperationalError: near "(": syntax error while migrating migrationfile taskstatistics.0001_initial_TaskStatisticsDBview
