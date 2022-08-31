@@ -138,12 +138,12 @@ A note about Python and dependencies to Tcl/Tk
 
  That commands should not produce any error messages.
 
- If `lzma` couldn't be imported, than you need to install the system library and dev package:
+ If `lzma` couldn't be imported, then you need to install the system library and dev package:
 
     apt-get install liblzma-dev lzma -y -q
 
- If `_tkinter` failed to load, than perhaps on your system the `_tkinter` module can be installed for your Python on a seperate way.
- In example on Debian you install the tkinter-support via system package manager:
+ If `_tkinter` failed to load, then perhaps on your system the `_tkinter` module can be installed for your Python on a separate way.
+ In example, on Debian you install the tkinter-support via system package manager:
 
     apt install python-tk -y -q (that is for Python 2)
     apt install python3-tk -y -q (that is for Python 3)
