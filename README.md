@@ -109,9 +109,9 @@ your Python environment is using an to old `SQLite3` version, if tests fails wit
     django.db.utils.OperationalError: near "(": syntax error while migrating migrationfile taskstatistics.0001_initial_TaskStatisticsDBview
 
 
-In example `SQLite3` version 3.16.2 dated to 2017-01-06 is much to old to handle the hand written migration file `Praktomat/src/taskstatistics/migrations/0001_initial_TaskStatisticsDBview.py` correctly.
+In example, `SQLite3` version 3.16.2 dated to 2017-01-06 is much too old to handle the handwritten migration file `Praktomat/src/taskstatistics/migrations/0001_initial_TaskStatisticsDBview.py` correctly.
 
-Since that migration file use *SQL window functions*, which where standarized in `SQL:2003` and covered by `SQLite3` with version 3.25.0 dated to 2018-09-15. But, because of some bugs inside `SQLite3`, you cannot use that first version supporting *SQL window functions*, too.
+That migration file uses *SQL window functions*, which were standardized in `SQL:2003` and covered by `SQLite3` with version 3.25.0 dated to 2018-09-15. But, because of some bugs inside `SQLite3`, you cannot use that first version supporting *SQL window functions*, too.
 
 Please use `SQLite3` Version 3.38.5 from 2022-05-06, which works for our needs.
 
