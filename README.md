@@ -152,7 +152,7 @@ A note about Python and dependencies to Tcl/Tk
 
     apt install tk tk-dev
 
-**Hind:** Praktomat's DejaGnuChecker uses `dejagnu`, which is written in `expect`. And `expect` is using `Tcl`.
+**Hint:** Praktomat's DejaGnuChecker uses `dejagnu`, which is written in `expect`. And `expect` is using `Tcl`.
 
 
 
