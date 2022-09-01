@@ -243,6 +243,7 @@ Praktomat/src/settings/devel.py
 Praktomat/src/settings/local.py
 Praktomat/src/settings/test.py
 Praktomat/src/checker/scripts/cTestrunner
+Praktomat/src/checker/scripts/java.policy
 Praktomat/src/checker/scripts/junit.policy
 ```
 
