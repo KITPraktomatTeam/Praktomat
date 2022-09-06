@@ -122,7 +122,7 @@ class TaskAdmin(admin.ModelAdmin):
 
     def run_all_uploadtime_checkers_on_all(self, request, queryset):
         """ Rerun on all solutions all checkers which are running at uploadtime """
-        from checker.basemodels import check_multiple
+        from checker.basemodels import check_multiple, check_solution
         from accounts.models import User
         from django.template import Context, loader
         from django.contrib.sites.requests import RequestSite
@@ -151,7 +151,8 @@ class TaskAdmin(admin.ModelAdmin):
             if  solution_set.count() > 1 :
                 check_multiple(solution_set,False)  # just run upload-time_checkers  ... should we ignore Testuploads?
             elif  solution_set.count() == 1 :
-                check_solution(latest_only_failed_solution,False)
+                for solution in solution_set :
+                    check_solution(solution,False)
 
             new_accepted_solution_set = Solution.objects.filter(task=task.id , accepted=True , testupload=False ).order_by('author', 'number')
             users_with_accepted_solutions = list(set(
