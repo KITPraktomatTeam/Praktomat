@@ -79,13 +79,13 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
             timeout += 5
         if maxmem is not None:
             command += ["--memory", "%sm" % maxmem]
+        # ensure ulimit
+        command += ["--ulimit", "nofile=%d" % filenumberlimit]
+        if fileseeklimit:
+            command += ["--ulimit", "fsize=%d" % fileseeklimitbytes]
         for d in extradirs:
             command += ["--dir", d]
         command += ["--"]
-        # ensure ulimit
-        if fileseeklimit:
-            # Doesn’t work yet: http://stackoverflow.com/questions/25789425
-            command += ["bash", "-c", 'ulimit -f %d; exec \"$@\"' % fileseeklimit, "ulimit-helper"]
         # add environment
         command += ["env"]
         for k, v in environment_variables.items():
