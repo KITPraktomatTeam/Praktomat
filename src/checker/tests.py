@@ -187,7 +187,8 @@ class TestChecker(TestCase):
             self.solution.check_solution()
             for checkerresult in self.solution.checkerresult_set.all():
                 self.assertIn('1', checkerresult.log, "Test did not even start?")
-                self.assertIn('Timeout occured!', checkerresult.log, "Test result does not mention timeout")
+                self.assertIn('Timeout occurred!', checkerresult.log, "Test result does not mention timeout")
+                # (string 'Timeout occurred!' defined in checker/basemodels.py : CheckerResult.set_log)
                 self.assertFalse(checkerresult.passed, "Test succeed (no timeout?)")
                 self.assertNotIn('done', checkerresult.log, "Test did finish (no timeout?)")
 
@@ -209,7 +210,8 @@ class TestChecker(TestCase):
             for checkerresult in self.solution.checkerresult_set.all():
                 self.assertIn('Begin', checkerresult.log, "Test did not even start? (%s)" % checkerresult.log)
                 self.assertNotIn('End', checkerresult.log, "Test did finish (no timeout?) (%s)" % checkerresult.log)
-                #self.assertIn('Timeout occured!', checkerresult.log, "Test result does not mention timeout")
+                #self.assertIn('Timeout occurred!', checkerresult.log, "Test result does not mention timeout")
+                # (string 'Timeout occurred!' defined in checker/basemodels.py : CheckerResult.set_log)
                 self.assertFalse(checkerresult.passed, "Test succeed (no timeout?)")
 
 
@@ -229,7 +231,8 @@ class TestChecker(TestCase):
             for checkerresult in self.solution.checkerresult_set.all():
                 self.assertIn('Begin', checkerresult.log, "Test did not even start?")
                 self.assertNotIn('End', checkerresult.log, "Test did finish (no timeout?)")
-                self.assertIn('Timeout occured!', checkerresult.log, "Test result does not mention timeout")
+                self.assertIn('Timeout occurred!', checkerresult.log, "Test result does not mention timeout")
+                # (string 'Timeout occurred!' defined in checker/basemodels.py : CheckerResult.set_log)
                 self.assertFalse(checkerresult.passed, "Test succeed (no timeout?)")
 
     def test_text_checker(self):

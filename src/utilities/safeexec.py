@@ -41,7 +41,7 @@ def kill_proc_tree(pid, including_parent=False):
 		parent.wait(5)
 
 def execute_arglist(args, working_directory, environment_variables={}, timeout=None, maxmem=None, fileseeklimit=None, extradirs=[], unsafe=False, error_to_output=True, filenumberlimit=128):
-    """ Wrapper to execute Commands with the praktomat testuser. Excpects Command as list of arguments, the first being the execeutable to run. """
+    """ Wrapper to execute Commands with the praktomat testuser. Expects Command as list of arguments, the first being the executable to run. """
     assert isinstance(args, list)
 
     command = args[:]

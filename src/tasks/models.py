@@ -33,7 +33,7 @@ class Task(models.Model):
 
     submission_free_uploads = models.IntegerField(default=1, help_text =_("Number of submissions a user can make before waitdelta got active"))
     submission_waitdelta = models.IntegerField(default=0,help_text=_("Timedelta in minutes. The user must wait before submitting the next solution of same task: I removed the linear function: Timedelta multiplied with number of current uploads"))
-    submission_maxpossible = models.IntegerField(default=-1,help_text=_("Number of uploads a user can submit for the same task. Value -1 means unlimited")) 	
+    submission_maxpossible = models.IntegerField(default=-1,help_text=_("Number of uploads a user can submit for the same task. Value -1 means unlimited"))
 
     supported_file_types = models.CharField(max_length=1000, default ="^(text/.*|image/.*|application/pdf)$", help_text = _("Regular Expression describing the mime types of solution files that the user is allowed to upload."))
     max_file_size = models.IntegerField(default=1000, help_text = _("The maximum size of an uploaded solution file in kilobyte."))
@@ -72,6 +72,27 @@ class Task(models.Model):
             self.all_checker_finished = True
             self.save()
         return final_solutions.count()
+
+    def check_all_latest_only_failed_solutions(self):
+        from checker.basemodels import check_solution
+        from accounts.models import User
+        solution_queryset = self.solution_set
+        final_solutions_queryset = solution_queryset.filter(final=True)
+        final_users = set(final_solutions_queryset.values_list('author', flat=True))
+
+        # All solutions from users without a final solution
+        only_failed_solution_set = solution_queryset.exclude(author__in=final_users)
+        # Users without a final solution (maybe without an upload at all)
+        non_final_users = set(User.objects.all().values_list('id', flat=True)) - final_users
+
+        count = 0
+        for user in non_final_users:
+            users_only_failed_solutions = only_failed_solution_set.filter(author=user)
+            if users_only_failed_solutions.count() > 0:
+                latest_only_failed_solution = users_only_failed_solutions.latest('number')
+                check_solution(latest_only_failed_solution, True)
+                count += 1
+        return count
 
     def get_checkers(self):
         from checker.basemodels import Checker
@@ -170,7 +191,7 @@ class Task(models.Model):
 
     @classmethod
     def export_Tasks(cls, queryset):
-        """ Serializes a task queryset and related checkers to xml and bundels it with all files into a zipfile  """
+        """ Serializes a task queryset and related checkers to xml and bundles it with all files into a zipfile  """
         from solutions.models import Solution, SolutionFile
         from attestation.models import RatingScaleItem
 

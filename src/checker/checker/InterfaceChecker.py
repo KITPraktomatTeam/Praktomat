@@ -112,7 +112,7 @@ class InterfaceChecker(Checker):
 ##    name = models.CharField(max_length=100, help_text=_("The name of the interface that must be implemeted."))
 ##
 ##    class Meta:
-##        # Requiered for syncdb as of django 1.0.2 - the same as in Checker class!
+##        # Required for syncdb as of django 1.0.2 - the same as in Checker class!
 ##        app_label = 'checker'
 
 

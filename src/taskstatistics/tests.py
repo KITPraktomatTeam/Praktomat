@@ -125,7 +125,7 @@ class TasksStatisticTest(TestCase):
         #print(context)
         html_output = render_to_string('taskstatistics/overview.html', context)
         #print(html_output)
-        self.assertNotIn("<table" , html_output , "There shouln't be a html table on statistic overview page for non trainers.")
+        self.assertNotIn("<table" , html_output , "There shouldn't be a html table on statistic overview page for non trainers.")
         self.assertNotIn("median" , html_output )
         self.client.login(username='trainer', password='demo')
         responseC = self.client.get('/tasks/statistic')

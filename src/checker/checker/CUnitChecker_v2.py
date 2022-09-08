@@ -86,7 +86,7 @@ class IgnoringCXXBuilder2(CXXBuilder):
 
 
 class CUnitChecker2(CheckerWithFile):
-    """ New Checker for CUnit and CPPUnit Unittests """ # code based upon JUnitChecker but has changet so much to become completly independent from JUnitChecker
+    """ New Checker for CUnit and CPPUnit Unittests """ # code based upon JUnitChecker but has changed so much to become completly independent from JUnitChecker
 # You can write testcode with
 # https://sourceforge.net/projects/cunit/
 # https://sourceforge.net/projects/cppunit/
@@ -460,7 +460,7 @@ class CUnitChecker2Inline(CheckerInline):
 
 
 
-# A more advanced example: By overwriting the form of the checkerinline the initial values of the inherited atributes can be overritten.
+# A more advanced example: By overwriting the form of the checkerinline the initial values of the inherited attributes can be overritten.
 # An other example would be to validate the inputfields in the form. (See Django documentation)
 #class ExampleForm(AlwaysChangedModelForm):
     #def __init__(self, **args):

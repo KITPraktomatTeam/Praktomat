@@ -252,7 +252,7 @@ class CheckerResult(models.Model):
     def set_log(self, log,timed_out=False,truncated=False,oom_ed=False):
         """ Sets the log of the Checker run. timed_out and truncated indicated if appropriate error messages shall be appended  """
         if timed_out:
-            log = '<div class="error">Timeout occured!</div>' + log
+            log = '<div class="error">Timeout occurred!</div>' + log
         if truncated:
             log = '<div class="error">Output too long, truncated</div>' + log
         if oom_ed:
@@ -420,8 +420,10 @@ def run_checks(solution, env, run_all):
             else:
                 # make non passed result
                 # this as well as the dependency check should propably go into checker class
+                # TODO: Move code to checker class ?
                 result = checker.create_result(env)
-                result.set_log("Checker konnte nicht ausgeführt werden, da benötigte Checker nicht bestanden wurden.")
+                #result.set_log("Checker konnte nicht ausgeführt werden, da benötigte Checker nicht bestanden wurden.")
+                result.set_log("Checker failed to run because required checkers failed.")
                 result.set_passed(False)
 
             elapsed_time = time.time() - start_time

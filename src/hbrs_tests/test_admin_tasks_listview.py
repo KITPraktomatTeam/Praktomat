@@ -14,7 +14,7 @@ class ModelTaskAdminTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        # ö , ä , ü = 0xC3 0xB6 , 0xC3 0xA4 , 0xC3 0xBC : Buchstaben als UTF8-codiert
+        # ö , ä , ü = 0xC3 0xB6 , 0xC3 0xA4 , 0xC3 0xBC : letters coded in UTF8
         cls.umlautStudent = User.objects.create_user(username='umlautUser', first_name="LastNameAsUTF8" , last_name=(b'\xC3\xB6\xC3\xA4\xC3\xBC').decode('utf-8'), email='user@praktomat.local', password='demü', is_staff=False, is_superuser=False)
         cls.umlautStudent.mat_number = 424242
         cls.umlautStudent.save()
@@ -32,7 +32,7 @@ class ModelTaskAdminTests(TestCase):
         all_tasks = list(Task.objects.order_by('id').values())
         self.assertEqual(all_tasks[-1]['title'],"German Umlauts äöü")
         self.assertEqual(all_tasks[-1]['description'],"Fußball is soccer. German umlauts are äöü")
-        # ö , ä , ü = 0xC3 0xB6 , 0xC3 0xA4 , 0xC3 0xBC : Buchstaben als UTF8-codiert
+        # ö , ä , ü = 0xC3 0xB6 , 0xC3 0xA4 , 0xC3 0xBC : letters coded in UTF8
         self.assertEqual(all_tasks[-1]['title'].encode('utf-8'),b"German Umlauts \xC3\xA4\xC3\xB6\xC3\xBC")
         app_label = "tasks"
         model_name = "task"

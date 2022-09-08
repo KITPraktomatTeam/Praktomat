@@ -24,7 +24,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install swig libsasl2-dev libssl-dev libpq-dev
-        sudo apt-get install openjdk-8-jdk dejagnu checkstyle # gcj-jdk is not available anymore
+        sudo apt-get install openjdk-8-jdk dejagnu checkstyle
         sudo apt-get install r-base wget
         sudo apt-get install libcunit1-dev libcppunit-dev
         sudo apt-get install apache2-dev  # needed for unit test of praktomat.wsgi , praktomat.wsgi used mod_wsgi, installing mod_wsgi via requirementsfile via pip needs apache2-dev
@@ -59,9 +59,9 @@ jobs:
         ls -la --time-style=long-iso ..
     - name: Run tests
       run: |
-        ./src/manage-test.py test accounts attestation checker configuration solutions tasks hbrs_tests
+        ./src/manage-test.py test accounts attestation checker configuration solutions tasks taskstatistics hbrs_tests
     - name: Run test with code coverage
       run: |
-        coverage run --branch --omit='*/node_modules/*,*/migrations/*' --source='./src' ./src/manage-test.py test accounts attestation checker configuration solutions tasks hbrs_tests
+        coverage run --branch --omit='*/node_modules/*,*/migrations/*' --source='./src' ./src/manage-test.py test accounts attestation checker configuration solutions tasks taskstatistics hbrs_tests
     - name: Coverage report
       run: coverage report
