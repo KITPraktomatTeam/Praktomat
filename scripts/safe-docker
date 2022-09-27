@@ -22,7 +22,7 @@ GetOptions (
 	"timeout=i" => \$timeout,
 	"memory=s" => \$maxmemory,
 	'ulimit=s' => \@ulimits,
-	"writeable" => \$writable,
+	"writable" => \$writable,
 	"no-uid-mod" => \$no_uid_mod,
 )
 or die("Error in command line arguments\n");
