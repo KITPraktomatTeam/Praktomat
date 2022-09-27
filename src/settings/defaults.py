@@ -310,6 +310,20 @@ def load_defaults(settings):
 
     d.USESAFEDOCKER = False
 
+    # The path where the safe-docker script is located
+    # By default, it is assumed to be accessible through your PATH.
+    d.SAFE_DOCKER_PATH = "safe-docker"
+
+    # The name of the Docker image to use for executing checkers
+    d.DOCKER_IMAGE_NAME = "safe-docker"
+
+    # If the file system of the Docker container should be writable or read-only
+    d.DOCKER_CONTAINER_WRITABLE = False
+
+    # If the UID and GID of the user in a Docker container should be set to the one running Praktomat
+    # When this is set to false, checkers may run as root (depending on the image).
+    d.DOCKER_UID_MOD = True
+
 
     # be sure that you change file permission
     # sudo chown praktomat:tester praktomat/src/checker/scripts/java

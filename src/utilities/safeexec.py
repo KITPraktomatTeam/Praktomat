@@ -70,7 +70,8 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
         #fixed: 22.11.2016, Robert Hartmann , H-BRS
         command += deepcopy(sudo_prefix)
     elif settings.USESAFEDOCKER:
-        command += ["sudo", "safe-docker"]
+        command += ["sudo", settings.SAFE_DOCKER_PATH]
+        command += ["--image", settings.DOCKER_IMAGE_NAME]
         # for safe-docker, we cannot kill it ourselves, due to sudo, so
         # rely on the timeout provided by safe-docker
         if timeout is not None:
@@ -79,6 +80,10 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
             timeout += 5
         if maxmem is not None:
             command += ["--memory", "%sm" % maxmem]
+        if settings.DOCKER_CONTAINER_WRITABLE:
+            command += ["--writable"]
+        if not settings.DOCKER_UID_MOD:
+            command += ["--no-uid-mod"]
         # ensure ulimit
         command += ["--ulimit", "nofile=%d" % filenumberlimit]
         if fileseeklimit:

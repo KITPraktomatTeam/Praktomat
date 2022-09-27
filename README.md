@@ -327,14 +327,15 @@ submissions from the system:
    `tester` which is also a member of the default group of the user that runs
    the praktomat (usually `praktomat`).
  * With `USESAFEDOCKER = True`, external commands are prefixed with
-   `safe-docker`, which you need to have installed. You can fetch it from
-   http://github.com/nomeata/safe-docker
+   `safe-docker`, which you need to have installed. You can find it in the `scripts` directory of this repository.
 
    For this to work you need to have a docker image named `safe-docker`
    installed, which needs to have all required dependencies installed. A
    suggested docker image is available in `docker-image`, so to get started simply run
 
         sudo docker build -t safe-docker docker-image
+
+   If your image is named differently, set the image name through the setting `DOCKER_IMAGE_NAME`.
 
 We recommend `USESAFEDOCKER`, as that is what we test in practice.
 
