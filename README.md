@@ -339,6 +339,8 @@ submissions from the system:
 
 We recommend `USESAFEDOCKER`, as that is what we test in practice.
 
+When using `safe-docker` while Praktomat itself is already running inside a Docker container, you need to have a BusyBox image available. It is required for some temporary containers.
+
 The Praktomat tries to limit the resources available to the student submissions:
 
  * The runtime of the submission can be limited (setting `TEST_TIMEOUT`)
