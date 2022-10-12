@@ -225,6 +225,7 @@ class CheckerResult(models.Model):
     checker = GenericForeignKey('content_type', 'object_id')
 
     passed = models.BooleanField(default=True,  help_text=_('Indicates whether the test has been passed'))
+    passed_with_warning = models.BooleanField(default=False, help_text=_('Indicates whether the test has been passed with a warning'))
     log = models.TextField(help_text=_('Text result of the checker'))
     creation_date = models.DateTimeField(auto_now_add=True)
     runtime = models.IntegerField(default=0, help_text=_('Runtime in milliseconds'))
@@ -264,6 +265,11 @@ class CheckerResult(models.Model):
         """ Sets the passing state of the Checker. """
         assert isinstance(passed, int)
         self.passed = passed
+
+    def set_passed_with_warning(self, passed_with_warning):
+        """ Sets the passed with warning flag of the Checker. """
+        assert isinstance(passed_with_warning, bool)
+        self.passed_with_warning = passed_with_warning
 
     def add_artefact(self, filename, path):
         assert os.path.isfile(path)
@@ -437,5 +443,7 @@ def run_checks(solution, env, run_all):
 
             if result.passed:
                 passed_checkers.add(checker.__class__)
+                if result.passed_with_warning and checker.show_publicly(result.passed):
+                    solution.warnings = True
     solution.accepted = solution_accepted
     solution.save()
