@@ -11,8 +11,8 @@
 			{% if not result.only_title %}<a class="checkerinline" href="#{{result.title}}" title="{{result.title}}" >{% endif %}
 			<span class="ui-icon {{result.only_title|yesno:'icon-none,ui-icon-triangle-1-s'}}"></span>
 			{{result.title}} <span class="{{result.public|yesno:',ui-icon ui-icon-locked icon-orange'}}"></span>:
-			<span class="{% if result.passed %} passed {% else %}{% if result.required %} error {% else %} warning {% endif %}{% endif %}">
-				{{result.passed|yesno:_("passed, failed")}} {% if result.passed %} {% else %} {% if result.required %} {% else %} (but not required) {% endif %} {% endif %}
+			<span class="{% if result.passed %} {% if result.passed_with_warning %} warning {% else %} passed {% endif %} {% else %}{% if result.required %} error {% else %} warning {% endif %}{% endif %}">
+				{{result.passed|yesno:_("passed, failed")}} {% if result.passed %} {% if result.passed_with_warning %} with warning {% endif %} {% else %} {% if result.required %} {% else %} (but not required) {% endif %} {% endif %}
 			</span>
 			<!-- <span class="checkertime">{{ result.runtime }} ms</span> -->
 			{% if not result.only_title %}</a>{% endif %}
