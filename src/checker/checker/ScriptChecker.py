@@ -13,6 +13,8 @@ from checker.admin import    CheckerInline, AlwaysChangedModelForm
 from utilities.safeexec import execute_arglist
 from utilities.file_operations import *
 
+EXIT_CODE_PASSED_WITH_WARNING = 121
+
 class ScriptChecker(Checker):
 
     name = models.CharField(max_length=100, default="Externen Tutor ausführen", help_text=_("Name to be displayed on the solution detail page."))
@@ -29,7 +31,7 @@ class ScriptChecker(Checker):
     @staticmethod
     def description():
         """ Returns a description for this Checker. """
-        return "Diese Prüfung wird bestanden, wenn das externe Programm keinen Fehlercode liefert."
+        return "This checker succeeds if the external program doesn't return an error code (exit code is 0). Exit code 121 means that the checker passed with a warning. Everything else means that the checker failed."
 
 
     def path_relative_to_sandbox(self):
@@ -89,7 +91,10 @@ class ScriptChecker(Checker):
             output = '<pre>' + escape(output) + '</pre>'
 
         result.set_log(output, timed_out=timed_out, truncated=truncated, oom_ed=oom_ed)
-        result.set_passed(not exitcode and not timed_out and not oom_ed and not truncated)
+
+        exitcode_ok = exitcode == 0 or exitcode == EXIT_CODE_PASSED_WITH_WARNING
+        result.set_passed(exitcode_ok and not timed_out and not oom_ed and not truncated)
+        result.set_passed_with_warning(result.passed and exitcode == EXIT_CODE_PASSED_WITH_WARNING)
 
         return result
 
