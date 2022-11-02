@@ -324,6 +324,10 @@ def load_defaults(settings):
     # When this is set to false, checkers may run as root (depending on the image).
     d.DOCKER_UID_MOD = True
 
+    # The path which to additionally mount into the checker container
+    # If this is set to none, no additional directory will get mounted.
+    d.DOCKER_CONTAINER_EXTERNAL_DIR = None
+
 
     # be sure that you change file permission
     # sudo chown praktomat:tester praktomat/src/checker/scripts/java

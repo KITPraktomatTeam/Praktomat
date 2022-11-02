@@ -15,6 +15,7 @@ my $maxmemory = "1G";
 my $ulimits = ();
 my $writable = "";
 my $no_uid_mod = "";
+my $external_dir = "";
 
 GetOptions (
 	"image=s" => \$image,
@@ -24,6 +25,7 @@ GetOptions (
 	'ulimit=s' => \@ulimits,
 	"writable" => \$writable,
 	"no-uid-mod" => \$no_uid_mod,
+	"external=s" => \$external_dir,
 )
 or die("Error in command line arguments\n");
 
@@ -84,6 +86,9 @@ if ($no_uid_mod ne "1") {
 	push @cmd, (sprintf "--user=%d:%d", $uid, $gid);
 }
 add_dir($_, ":ro") for @dirs;
+if ($external_dir ne "") {
+	push @cmd, "--volume=${external_dir}:/external:ro";
+}
 add_dir($cwd, "");
 push @cmd, (sprintf "--workdir=%s", $cwd);
 push @cmd, "--name", $containername;

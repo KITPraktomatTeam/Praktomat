@@ -90,6 +90,9 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
             command += ["--ulimit", "fsize=%d" % fileseeklimitbytes]
         for d in extradirs:
             command += ["--dir", d]
+        # Add specified external directory
+        if settings.DOCKER_CONTAINER_EXTERNAL_DIR is not None:
+            command += ["--external", settings.DOCKER_CONTAINER_EXTERNAL_DIR]
         command += ["--"]
         # add environment
         command += ["env"]
