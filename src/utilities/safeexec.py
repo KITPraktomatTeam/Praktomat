@@ -84,6 +84,9 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
             command += ["--writable"]
         if not settings.DOCKER_UID_MOD:
             command += ["--no-uid-mod"]
+        if settings.DOCKER_CONTAINER_HOST_NET:
+            # Allow accessing the host network
+            command += ["--host-net"]
         # ensure ulimit
         command += ["--ulimit", "nofile=%d" % filenumberlimit]
         if fileseeklimit:

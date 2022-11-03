@@ -16,6 +16,7 @@ my $ulimits = ();
 my $writable = "";
 my $no_uid_mod = "";
 my $external_dir = "";
+my $host_net = "";
 
 GetOptions (
 	"image=s" => \$image,
@@ -26,6 +27,7 @@ GetOptions (
 	"writable" => \$writable,
 	"no-uid-mod" => \$no_uid_mod,
 	"external=s" => \$external_dir,
+	"host-net" => \$host_net,
 )
 or die("Error in command line arguments\n");
 
@@ -76,7 +78,12 @@ sub add_dir {
 	}
 }
 
-push @cmd, qw!docker run --rm --sig-proxy --tmpfs /tmp --tmpfs /run --tmpfs /home --net=none!;
+push @cmd, qw!docker run --rm --sig-proxy --tmpfs /tmp --tmpfs /run --tmpfs /home!;
+if ($host_net eq "1") {
+	push @cmd, "--net=host";
+} else {
+	push @cmd, "--net=none";
+}
 if ($writable ne "1") {
 	push @cmd, "--read-only";
 }

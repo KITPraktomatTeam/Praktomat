@@ -328,6 +328,10 @@ def load_defaults(settings):
     # If this is set to none, no additional directory will get mounted.
     d.DOCKER_CONTAINER_EXTERNAL_DIR = None
 
+    # If the Docker container should be able to access the host's network
+    # When this is set to false, the container does not have any access to the network.
+    d.DOCKER_CONTAINER_HOST_NET = False
+
 
     # be sure that you change file permission
     # sudo chown praktomat:tester praktomat/src/checker/scripts/java
