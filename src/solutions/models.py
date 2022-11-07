@@ -104,6 +104,9 @@ class Solution(models.Model):
     def textSolutionFiles(self):
         return [file for file in self.solutionfile_set.all() if (not file.isBinary()) ]
 
+    def displayableSolutionFiles(self):
+        return [file for file in self.solutionfile_set.all() if (not file.isBinary() or file.isImage() or file.isEmbeddable())]
+
 
 def until_critical(l):
     res = []

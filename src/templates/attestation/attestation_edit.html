@@ -122,7 +122,7 @@
 					{% include "solutions/checker_results_inline.html" %}
 				{% endwith %}
 				<br/>
-				{% with model_solution.solutionfile_set.all as solutionfiles %}
+				{% with model_solution.displayableSolutionFiles as solutionfiles %}
 					{% include "solutions/solution_files_inline.html" %}
 				{% endwith %}
 		</div>
@@ -141,7 +141,7 @@
 				{% include "solutions/checker_results_inline.html" %}
 			{% endwith %}
 			<br/>
-			{% with solution.solutionfile_set.all as solutionfiles %}
+			{% with solution.displayableSolutionFiles as solutionfiles %}
 				{% include "solutions/solution_files_inline.html" %}
 			{% endwith %}
 		</div>

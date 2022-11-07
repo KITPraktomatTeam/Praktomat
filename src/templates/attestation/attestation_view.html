@@ -111,7 +111,7 @@
 {% if user.is_trainer or user.is_tutor %}
 <h2>{% trans "Original Files" %}</h2>
 <div class="filetabs">
-{% with attest.solution.solutionfile_set.all as solutionfiles %}
+{% with attest.solution.displayableSolutionFiles as solutionfiles %}
         {% include "solutions/solution_files_inline.html" %}
 {% endwith %}
 </div>
