@@ -347,8 +347,7 @@ The Praktomat tries to limit the resources available to the student submissions:
  * The maximum amount of memory used can be limited (setting `TEST_MAXMEM`,
    only supported with `USESAFEDOCKER`).
  * The maximum size of a file produced by a user submission (setting
-   `TEST_MAXFILESIZE`, currently not supported with `USESAFEDOCKER`, until
-   http://stackoverflow.com/questions/25789425 is resolved)
+   `TEST_MAXFILESIZE`)
 
 At the time of writing, the amount of diskspace available to the user is
 unlimited, which can probably be exploited easily.
