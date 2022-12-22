@@ -29,8 +29,8 @@ class SolutionFileForm(ModelForm):
     def clean_file(self):
         data = self.cleaned_data['file']
         task = self.cleaned_data['solution'].task
-        max_file_size_kb = task.max_file_size
-        max_file_size = 1024 * max_file_size_kb
+        max_file_size_kib = task.max_file_size
+        max_file_size = 1024 * max_file_size_kib
         supported_types_re = re.compile(task.supported_file_types)
         if data:
             contenttype = mimetypes.guess_type(data.name)[0] # don't rely on the browser: data.content_type could be wrong or empty
@@ -47,7 +47,8 @@ class SolutionFileForm(ModelForm):
                     zip = zipfile.ZipFile(data)
                     if zip.testzip():
                         raise forms.ValidationError(_('The zip file seems to be corrupt.'))
-                    if sum(fileinfo.file_size for fileinfo in zip.infolist()) > 1000000:
+                    if sum(fileinfo.file_size for fileinfo in zip.infolist()) > max_file_size:
+                        # Protect against zip bombs
                         raise forms.ValidationError(_('The zip file is too big.'))
                     for fileinfo in zip.infolist():
                         filename = fileinfo.filename
@@ -61,7 +62,7 @@ class SolutionFileForm(ModelForm):
                             raise forms.ValidationError(_("The plain text file '%(file)s' in this zip file contains a NUL character, which is not supported." %{'file':filename}))
                         # check whole zip instead of contained files
                         #if fileinfo.file_size > max_file_size:
-                        #    raise forms.ValidationError(_("The file '%(file)s' is bigger than %(size)KiB which is not suported." %{'file':fileinfo.filename, 'size':max_file_size_kb}))
+                        #    raise forms.ValidationError(_("The file '%(file)s' is bigger than %(size)KiB which is not suported." %{'file':fileinfo.filename, 'size':max_file_size_kib}))
                 except forms.ValidationError:
                     raise
                 except:
@@ -69,7 +70,7 @@ class SolutionFileForm(ModelForm):
             elif tartype_re.match(contenttype):
                 raise forms.ValidationError(_('Tar files are not supported, please upload the files individually or use a zip file.'))
             if data.size > max_file_size:
-                raise forms.ValidationError(_("The file '%(file)s' is bigger than %(size)KiB which is not suported." %{'file':data.name, 'size':max_file_size_kb}))
+                raise forms.ValidationError(_("The file '%(file)s' is bigger than %(size)d KiB which is not supported." %{'file':data.name, 'size':max_file_size_kib}))
             return data
 
 class MyBaseInlineFormSet(BaseInlineFormSet):

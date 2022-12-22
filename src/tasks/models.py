@@ -36,7 +36,7 @@ class Task(models.Model):
     submission_maxpossible = models.IntegerField(default=-1,help_text=_("Number of uploads a user can submit for the same task. Value -1 means unlimited")) 	
 
     supported_file_types = models.CharField(max_length=1000, default ="^(text/.*|image/.*|application/pdf)$", help_text = _("Regular Expression describing the mime types of solution files that the user is allowed to upload."))
-    max_file_size = models.IntegerField(default=1000, help_text = _("The maximum size of an uploaded solution file in kilobyte."))
+    max_file_size = models.IntegerField(default=1000, help_text = _("The maximum size of an uploaded solution file in kibibyte."))
     model_solution = models.ForeignKey('solutions.Solution', on_delete=models.SET_NULL, blank=True, null=True, related_name='model_solution_task')
     all_checker_finished = models.BooleanField(default=False, editable=False, help_text = _("Indicates whether the checker which don't run immediately on submission have been executed."))
     final_grade_rating_scale = models.ForeignKey('attestation.RatingScale', on_delete=models.SET_NULL, null=True, help_text = _("The scale used to mark the whole solution."))
