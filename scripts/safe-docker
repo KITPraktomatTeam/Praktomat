@@ -1,0 +1,146 @@
+#!/usr/bin/perl
+#
+# © 2014 Joachim Breitner <breitner@kit.edu>
+# Licensed under the The MIT License (MIT)
+
+use Getopt::Long;
+use IPC::Run qw/ start run timeout /;
+use Cwd;
+use Data::GUID;
+
+my $image = 'safe-docker';
+my @dirs = ();
+my $timeout = 60;
+my $maxmemory = "1G";
+my $ulimits = ();
+my $writable = "";
+my $no_uid_mod = "";
+my $external_dir = "";
+my $host_net = "";
+
+GetOptions (
+	"image=s" => \$image,
+	"dir=s" => \@dirs,
+	"timeout=i" => \$timeout,
+	"memory=s" => \$maxmemory,
+	'ulimit=s' => \@ulimits,
+	"writable" => \$writable,
+	"no-uid-mod" => \$no_uid_mod,
+	"external=s" => \$external_dir,
+	"host-net" => \$host_net,
+)
+or die("Error in command line arguments\n");
+
+# Now @ARGV is the command to run
+die "Missing command\n" unless @ARGV;
+
+die "Missing option --image \n" unless $image;
+
+die "Needs to be run under sudo\n" unless ($< == 0 and exists $ENV{SUDO_UID});
+
+my $uid = $ENV{SUDO_UID};
+die "Cannot run as user root" unless $uid > 0;
+my $gid = $ENV{SUDO_GID};
+die "Cannot run as group root" unless $gid > 0;
+
+my $containername = sprintf "secure-tmp-%s", Data::GUID->new->as_string;
+
+my $cwd = getcwd;
+
+die "CWD contains a :" if $cwd =~ /:/;
+for (@dirs) {
+	die "--dir $_ contains a :" if $_ =~ /:/;
+}
+
+
+my @cmd;
+my @volumes;
+
+sub add_dir {
+	my ($dir, $ro) = @_;
+	if (-f "/.dockerenv") {
+		$dir =~ s!/*$!/!; # Add trailing slash if not existing
+		my $volumename = sprintf "tmp-%s", Data::GUID->new->as_string;
+		run ["docker", "volume", "create", $volumename], \undef, '>/dev/null';
+		my $helpername = "tmp-helper-${volumename}";
+		run ["docker", "run", "-d", "--volume=${volumename}:${dir}", "--name", $helpername, "busybox", "sleep", "infinity"], \undef, '>/dev/null';
+		run ["docker", "cp", "${dir}.", "${helpername}:${dir}"], \undef, '>/dev/null';
+		run ["docker", "exec", $helpername, "chown", "-R", "${uid}:${gid}", $dir], \undef, '>/dev/null';
+		run ["docker", "kill", $helpername], \undef, '>/dev/null';
+		push @cmd, "--volume=${volumename}:${dir}${ro}";
+		push @volumes, {
+			"container" => $helpername,
+			"dir" => $dir,
+			"volume" => $volumename
+		};
+	} else {
+		push @cmd, "--volume=${dir}:${dir}${ro}";
+	}
+}
+
+push @cmd, qw!docker run --rm --sig-proxy --tmpfs /tmp --tmpfs /run --tmpfs /home!;
+if ($host_net eq "1") {
+	push @cmd, "--net=host";
+} else {
+	push @cmd, "--net=none";
+}
+if ($writable ne "1") {
+	push @cmd, "--read-only";
+}
+push @cmd, (sprintf "--memory=%s", $maxmemory);
+push @cmd, (sprintf "--ulimit=%s", $_) for @ulimits;
+if ($no_uid_mod ne "1") {
+	push @cmd, (sprintf "--user=%d:%d", $uid, $gid);
+}
+add_dir($_, ":ro") for @dirs;
+if ($external_dir ne "") {
+	push @cmd, "--volume=${external_dir}:/external:ro";
+}
+add_dir($cwd, "");
+push @cmd, (sprintf "--workdir=%s", $cwd);
+push @cmd, "--name", $containername;
+push @cmd, $image;
+push @cmd, @ARGV;
+
+sub clean_and_exit {
+	my $exit_code = shift;
+
+	for my $volume_entry (@volumes) {
+		my $helpername = %$volume_entry{"container"};
+		my $dir = %$volume_entry{"dir"};
+		my $volumename = %$volume_entry{"volume"};
+		run ["docker", "cp", "${helpername}:${dir}.", $dir], \undef, '>/dev/null';
+		run ["docker", "container", "rm", $helpername], \undef, '>/dev/null';
+		run ["docker", "volume", "rm", $volumename], \undef, '>/dev/null';
+	}
+
+	exit $exit_code;
+}
+
+sub kill_docker {
+	run ["docker", "kill", $containername], \undef, '>/dev/null';
+	# magic value
+	clean_and_exit(23);
+}
+use sigtrap qw/handler kill_docker normal-signals/;
+
+
+# print @cmd;
+my $h = start \@cmd, timeout ($timeout);
+
+
+eval {
+	my $ret = $h->finish;
+};
+if ($@) {
+	my $x = $@;
+	kill_docker;
+}
+
+# This is the observed behaviour for out-of-memory, so lets report that as a
+# special value
+if ($h->result == 255 or $h->result == 137) {
+	clean_and_exit(24);
+}
+
+clean_and_exit($h->result);

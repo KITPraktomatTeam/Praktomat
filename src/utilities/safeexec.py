@@ -70,7 +70,8 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
         #fixed: 22.11.2016, Robert Hartmann , H-BRS
         command += deepcopy(sudo_prefix)
     elif settings.USESAFEDOCKER:
-        command += ["sudo", "safe-docker"]
+        command += ["sudo", settings.SAFE_DOCKER_PATH]
+        command += ["--image", settings.DOCKER_IMAGE_NAME]
         # for safe-docker, we cannot kill it ourselves, due to sudo, so
         # rely on the timeout provided by safe-docker
         if timeout is not None:
@@ -79,13 +80,23 @@ def execute_arglist(args, working_directory, environment_variables={}, timeout=N
             timeout += 5
         if maxmem is not None:
             command += ["--memory", "%sm" % maxmem]
+        if settings.DOCKER_CONTAINER_WRITABLE:
+            command += ["--writable"]
+        if not settings.DOCKER_UID_MOD:
+            command += ["--no-uid-mod"]
+        if settings.DOCKER_CONTAINER_HOST_NET:
+            # Allow accessing the host network
+            command += ["--host-net"]
+        # ensure ulimit
+        command += ["--ulimit", "nofile=%d" % filenumberlimit]
+        if fileseeklimit:
+            command += ["--ulimit", "fsize=%d" % fileseeklimitbytes]
         for d in extradirs:
             command += ["--dir", d]
+        # Add specified external directory
+        if settings.DOCKER_CONTAINER_EXTERNAL_DIR is not None:
+            command += ["--external", settings.DOCKER_CONTAINER_EXTERNAL_DIR]
         command += ["--"]
-        # ensure ulimit
-        if fileseeklimit:
-            # Doesn’t work yet: http://stackoverflow.com/questions/25789425
-            command += ["bash", "-c", 'ulimit -f %d; exec \"$@\"' % fileseeklimit, "ulimit-helper"]
         # add environment
         command += ["env"]
         for k, v in environment_variables.items():

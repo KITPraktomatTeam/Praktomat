@@ -327,8 +327,7 @@ submissions from the system:
    `tester` which is also a member of the default group of the user that runs
    the praktomat (usually `praktomat`).
  * With `USESAFEDOCKER = True`, external commands are prefixed with
-   `safe-docker`, which you need to have installed. You can fetch it from
-   http://github.com/nomeata/safe-docker
+   `safe-docker`, which you need to have installed. You can find it in the `scripts` directory of this repository.
 
    For this to work you need to have a docker image named `safe-docker`
    installed, which needs to have all required dependencies installed. A
@@ -336,7 +335,11 @@ submissions from the system:
 
         sudo docker build -t safe-docker docker-image
 
+   If your image is named differently, set the image name through the setting `DOCKER_IMAGE_NAME`.
+
 We recommend `USESAFEDOCKER`, as that is what we test in practice.
+
+When using `safe-docker` while Praktomat itself is already running inside a Docker container, you need to have a BusyBox image available. It is required for some temporary containers.
 
 The Praktomat tries to limit the resources available to the student submissions:
 
@@ -344,8 +347,7 @@ The Praktomat tries to limit the resources available to the student submissions:
  * The maximum amount of memory used can be limited (setting `TEST_MAXMEM`,
    only supported with `USESAFEDOCKER`).
  * The maximum size of a file produced by a user submission (setting
-   `TEST_MAXFILESIZE`, currently not supported with `USESAFEDOCKER`, until
-   http://stackoverflow.com/questions/25789425 is resolved)
+   `TEST_MAXFILESIZE`)
 
 At the time of writing, the amount of diskspace available to the user is
 unlimited, which can probably be exploited easily.
