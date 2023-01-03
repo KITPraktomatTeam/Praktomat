@@ -28,7 +28,7 @@ Python 3.5
 General setup
 =============
 
-You need the latest version that is compatible with the Python version used. 
+You need the latest version that is compatible with the Python version used.
 We also highly recommend to use virtualenv so your system Python installation remains clean.
 
 If you are having trouble with
@@ -189,7 +189,7 @@ Python installation or inside a designated virtualenv (recommended).
 The following describes a recommended setup using virtualenv.
 
 ```bash
-git clone --recursive git://github.com/KITPraktomatTeam/Praktomat.git
+git clone --recursive https://github.com/KITPraktomatTeam/Praktomat.git
 virtualenv -p python3 --system-site-packages env/
 . env/bin/activate
 pip install -U pip virtualenv setuptools wheel urllib3[secure]
@@ -239,7 +239,7 @@ Deployment installation
 Like for the development version, clone the Praktomat and install its dependencies:
 
 ```bash
-git clone --recursive git://github.com/KITPraktomatTeam/Praktomat.git
+git clone --recursive https://github.com/KITPraktomatTeam/Praktomat.git
 virtualenv -p python3 --system-site-packages env/
 . env/bin/activate
 pip install -U pip virtualenv setuptools wheel urllib3[secure]
@@ -370,7 +370,7 @@ To access the praktomat usersessions from an phpBB follow the instructions in `s
 CUnit CPPUnit Checker
 =================
 
-For configuration please have a look into README_feature_CUnitCppUnit_Checker.txt.
+For configuration please have a look into `README_feature_CUnitCppUnit_Checker.txt`.
 
 
 [Bug tracker]: https://github.com/KITPraktomatTeam/Praktomat/issues
