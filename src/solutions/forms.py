@@ -47,8 +47,9 @@ class SolutionFileForm(ModelForm):
                     zip = zipfile.ZipFile(data)
                     if zip.testzip():
                         raise forms.ValidationError(_('The zip file seems to be corrupt.'))
-                    if sum(fileinfo.file_size for fileinfo in zip.infolist()) > max_file_size:
+                    if sum(fileinfo.file_size for fileinfo in zip.infolist()) > ( max_file_size * len(zip.infolist()) ) :
                         # Protect against zip bombs
+                        # but allow that a zip-file can be the same size like the sum of all file sizes would be, if files would have been uploaded seperately.
                         raise forms.ValidationError(_('The zip file is too big.'))
                     for fileinfo in zip.infolist():
                         filename = fileinfo.filename
