@@ -66,7 +66,6 @@ if match:
 else:
     raise NotImplementedError("Autoconfig for PRAKTOMAT_ID %s not possible", PRAKTOMAT_ID)
 
-
 # The URL where this site is reachable. 'http://localhost:8000/' in case of the
 # development server.
 BASE_HOST = 'https://praktomat.cs.kit.edu'
@@ -124,6 +123,8 @@ ADMINS = [
 
 SERVER_EMAIL = 'praktomat@i44vm3.info.uni-karlsruhe.de'
 
+try: MIRROR
+except NameError: MIRROR = False
 
 if MIRROR:
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
@@ -228,7 +229,7 @@ MOD_XSENDFILE_V1_0 = True
 # Our VM has 4 cores, so lets try to use them
 NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 6
 # But not with Isabelle, which is memory bound
-if match.group('tba') is not None:
+if match and match.group('tba') is not None:
     NUMBER_OF_TASKS_TO_BE_CHECKED_IN_PARALLEL = 1
 
 
