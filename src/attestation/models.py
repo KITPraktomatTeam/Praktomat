@@ -65,7 +65,9 @@ class Attestation(models.Model):
                  + ([get_settings().attestation_reply_to]  if get_settings().attestation_reply_to else [])
         headers = {'Reply-To': ', '.join(reply_to)} if reply_to else None
         email = EmailMessage(subject, body, None, (email,), headers = headers)
-        email.send()
+        #to check if the user has selected the checkbox on the 'Change Account' page to confirm their willingness to receive attestation emails ('True' by default)
+        if User.attestationEmails:
+            email.send()
 
     def withdraw(self, request, by):
         self.published = False
