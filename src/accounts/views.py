@@ -69,6 +69,29 @@ def change(request):
         form = UserChangeForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
+            #to get the value of the 'attestationEmails' checkbox.
+            attestationEmails = request.POST.get('attestationEmails')
+            #to change the values of the value of the checkbox to 'True' or 'False'
+            is_checked = bool(attestationEmails)
+            if is_checked:
+                attestationEmails = 'True'
+            else:
+                attestationEmails = 'False'
+            #to get the value of the 'uploadConfirmEmails' checkbox.
+            uploadConfirmEmails = request.POST.get('uploadConfirmEmails')
+            #to change the values of the value of the checkbox to 'True' or 'False'
+            is_checked = bool(uploadConfirmEmails)
+            if is_checked:
+                uploadConfirmEmails = 'True'
+            else:
+                uploadConfirmEmails = 'False'
+            #to save the values of the 'attestationEmails' and 'uploadConfirmEmails' checkboxes.
+            user = form.save(commit=False)
+            attestationEmails = form.cleaned_data['attestationEmails']
+            uploadConfirmEmails = form.cleaned_data['uploadConfirmEmails']
+            user.attestationEmails = attestationEmails
+            user.uploadConfirmEmails = uploadConfirmEmails
+            user.save()
             return HttpResponseRedirect(reverse('task_list'))
     else:
         form = UserChangeForm(instance=request.user)
