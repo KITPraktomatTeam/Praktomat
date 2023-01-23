@@ -55,7 +55,8 @@ class JavaChecker(Checker):
             str(env.user().mat_number),
             str(env.user().first_name),
             str(env.user().last_name),
-            str(env.solution().id)]
+            str(env.solution().id),
+            str(env.user().username)]
         [output, error, exitcode, timed_out, oom_ed] = execute_arglist(cmd, env.tmpdir(), environment_variables=environ,
             timeout=settings.TEST_TIMEOUT, fileseeklimit=settings.TEST_MAXFILESIZE, filenumberlimit=settings.TEST_MAXFILENUMBER, extradirs=[script_dir])
 
