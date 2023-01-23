@@ -28,7 +28,7 @@ Python 3.5
 General setup
 =============
 
-You need the latest version that is compatible with the Python version used. 
+You need the latest version that is compatible with the Python version used.
 We also highly recommend to use virtualenv so your system Python installation remains clean.
 
 If you are having trouble with
@@ -319,7 +319,7 @@ Security
 ========
 
 Besides the security provided by Java (via the Security Manager Profiles found
-in `src/checker/scripts/`), the praktomat supports two way to insulate student
+in `src/checker/scripts/`, which you could change to your needs), the praktomat supports two way to insulate student
 submissions from the system:
 
  * With `USEPRAKTOMATTESTER = True` in the settings, external commands are

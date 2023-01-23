@@ -10,6 +10,10 @@
 #
 # Da der Praktomat als suid praktomat läuft,...
 
+# using *-sandbox.jar has been removed some years ago,
+# but you can recreate and use them,
+# see : https://github.com/KITPraktomatTeam/Praktomat/issues/350#issuecomment-1234011974
+
 if [ ! -n "$JAVAC" ]
 then
    JAVAC=javac

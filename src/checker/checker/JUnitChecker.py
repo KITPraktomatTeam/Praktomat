@@ -91,6 +91,12 @@ class JUnitChecker(Checker):
         (output, truncated) = truncated_log(output)
         output = '<pre>' + escape(self.test_description) + '\n\n======== Test Results ======\n\n</pre><br/><pre>' + escape(output) + '</pre>'
 
+        #TODO this is just a workaround for the deprecation of Java Security Manager (since java 17)
+        # the warnings occur because the java (alias-)script ../scripts/java that is called by Praktomat sets the command line option to use java security manager
+        # problem is that these warning occur also in the output of the JUnit-checker and irritate the students
+        output = output.replace("WARNING: A command line option has enabled the Security Manager\n","")
+        output = output.replace("WARNING: The Security Manager is deprecated and will be removed in a future release\n","")
+
 
         result.set_log(output, timed_out=timed_out or oom_ed, truncated=truncated, oom_ed=oom_ed)
         result.set_passed(not exitcode and not timed_out and not oom_ed and self.output_ok(output) and not truncated)
