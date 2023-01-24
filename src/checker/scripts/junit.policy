@@ -1,8 +1,14 @@
+// Set as $POLICY and used by Praktomat's JUnitChecker.py , JavaChecker.py : interaction with ./src/checker/scripts/java
 grant {
 	permission java.util.PropertyPermission "user.home","read";
 	permission java.io.FilePermission "/home/praktomat/junit.properties", "read";
 	permission java.io.FilePermission "/home/tester/junit.properties", "read";
-	permission java.io.FilePermission "${user.dir}${/}data${/}-", "read";            // user.dir is the current working directory where JVM was started. , see https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
+
+	// user.dir is the current working directory where JVM was started. , see https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
+        permission java.util.PropertyPermission "user.dir", "read"; /// user.dir contains the name of a temporary folder inside work-data/SolutionSandbox
+        permission java.io.FilePermission "${user.dir}" , "read";   // allow to read user.dir, where uploaded files were stored temporary
+        permission java.io.FilePermission "${user.dir}${/}-" , "read"; // allow to read directory and recursivly all files and subdirectories
+
 	permission java.lang.RuntimePermission "accessDeclaredMembers";
 	permission java.lang.RuntimePermission "getStackTrace";
 
@@ -18,5 +24,22 @@ grant {
 	//to enable JUNIT and JUNIT-PARAMS Tests for nested unnamed classes
 	permission java.lang.RuntimePermission "createSecurityManager";
 	permission java.lang.RuntimePermission "setSecurityManager";
-	permission java.io.FilePermission "/home/praktomat/inst/2021t/work-data/SolutionSandbox/*", "read"; //TODO: update for every instance: how we can do this more generic?
 };
+
+// Settings for own java-based TestFrameworks started via JUnitChecker or JavaChecker
+// The following block can be seen as an example how to configure an own java based Testframework.
+/*
+grant codeBase "file:db-checker-praktomat-1.0-SNAPSHOT.jar" {
+        permission java.lang.RuntimePermission "loadLibrary.dbm_core";
+        permission java.lang.RuntimePermission "createClassLoader";
+        permission java.util.PropertyPermission "user.dir", "read"; // get current working dir
+        permission java.io.FilePermission "${user.dir}" , "read";
+        permission java.io.FilePermission "${user.dir}${/}-" , "read";
+//        Following information about special pathnames taken from Java 18 API class FilePermission:
+//        permission java.io.FilePermission "*" , "read"; // read all files in current directory
+        permission java.io.FilePermission "-", "read";  // read all files in current directory and recursivly all files and subdirectories
+//        permission java.io.FilePermission "<<ALL FILES>>", "read"; // read all files on disc ...
+        permission java.io.FilePermission "debug.log", "write";
+        permission java.lang.RuntimePermission "setIO"; // change sysout, stderr, stdin
+};
+*/

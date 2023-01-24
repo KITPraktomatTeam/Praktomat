@@ -137,6 +137,11 @@ class DejaGnuTester(Checker, DejaGnu):
                         extradirs=[env.tmpdir(), script_dir]
                         )
         output = encoding.get_unicode(output)
+        #TODO this is just a workaround for the deprecation of Java Security Manager (since java 17)
+        # the warnings occur because the java (alias-)script ../scripts/java that is called by Praktomat sets the command line option to use java security manager
+        # problem is that these warning occur also in the output of the JUnit-checker and irritate the students
+        output = output.replace("WARNING: A command line option has enabled the Security Manager\n","")
+        output = output.replace("WARNING: The Security Manager is deprecated and will be removed in a future release\n","")
 
         try:
             with open(os.path.join(testsuite, program_name + ".sum"),"rb") as fd:

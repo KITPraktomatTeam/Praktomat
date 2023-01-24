@@ -88,6 +88,13 @@ class ScriptChecker(Checker):
         if not self.returns_html or truncated or timed_out or oom_ed:
             output = '<pre>' + escape(output) + '</pre>'
 
+
+        #TODO this is just a workaround for the deprecation of Java Security Manager (since java 17)
+        # the warnings occure because the java (alis-)script ../scripts/java that is called by Praktomat sets the command line to use java security manager
+        # problem is that these warning occure also in the output of the TestFW started by ScriptChecker and irritate the students.
+        output = output.replace("WARNING: A command line option has enabled the Security Manager\n","")
+        output = output.replace("WARNING: The Security Manager is deprecated and will be removed in a future release\n","")
+
         result.set_log(output, timed_out=timed_out, truncated=truncated, oom_ed=oom_ed)
         result.set_passed(not exitcode and not timed_out and not oom_ed and not truncated)
 
