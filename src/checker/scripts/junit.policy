@@ -27,7 +27,8 @@ grant {
 };
 
 // Settings for own java-based TestFrameworks started via JUnitChecker or JavaChecker
-
+// The following block can be seen as an example how to configure an own java based Testframework.
+/*
 grant codeBase "file:db-checker-praktomat-1.0-SNAPSHOT.jar" {
         permission java.lang.RuntimePermission "loadLibrary.dbm_core";
         permission java.lang.RuntimePermission "createClassLoader";
@@ -41,3 +42,4 @@ grant codeBase "file:db-checker-praktomat-1.0-SNAPSHOT.jar" {
         permission java.io.FilePermission "debug.log", "write";
         permission java.lang.RuntimePermission "setIO"; // change sysout, stderr, stdin
 };
+*/
