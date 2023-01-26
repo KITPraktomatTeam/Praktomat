@@ -69,29 +69,22 @@ def change(request):
         form = UserChangeForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            #to get the value of the 'attestationEmails' checkbox.
-            attestationEmails = request.POST.get('attestationEmails')
+            #to get the value of the 'attestation_emails' checkbox.
+            attestation_emails = request.POST.get('attestation_emails')
             #to change the values of the value of the checkbox to 'True' or 'False'
-            is_checked = bool(attestationEmails)
+            is_checked = bool(attestation_emails)
             if is_checked:
-                attestationEmails = 'True'
+                attestation_emails = 'True'
             else:
-                attestationEmails = 'False'
-            #to get the value of the 'uploadConfirmEmails' checkbox.
-            uploadConfirmEmails = request.POST.get('uploadConfirmEmails')
+                attestation_emails = 'False'
+            #to get the value of the 'upload_confirm_emails' checkbox.
+            upload_confirm_emails = request.POST.get('upload_confirm_emails')
             #to change the values of the value of the checkbox to 'True' or 'False'
-            is_checked = bool(uploadConfirmEmails)
+            is_checked = bool(upload_confirm_emails)
             if is_checked:
-                uploadConfirmEmails = 'True'
+                upload_confirm_emails = 'True'
             else:
-                uploadConfirmEmails = 'False'
-            #to save the values of the 'attestationEmails' and 'uploadConfirmEmails' checkboxes.
-            user = form.save(commit=False)
-            attestationEmails = form.cleaned_data['attestationEmails']
-            uploadConfirmEmails = form.cleaned_data['uploadConfirmEmails']
-            user.attestationEmails = attestationEmails
-            user.uploadConfirmEmails = uploadConfirmEmails
-            user.save()
+                upload_confirm_emails = 'False'
             return HttpResponseRedirect(reverse('task_list'))
     else:
         form = UserChangeForm(instance=request.user)
