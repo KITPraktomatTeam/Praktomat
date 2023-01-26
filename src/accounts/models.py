@@ -42,10 +42,10 @@ class User(BasicUser):
     activation_key=models.CharField(_('activation key'), max_length=40, editable=False)
     user_text=models.CharField(null=True, blank=True, max_length=500, help_text = _("Custom text which will be shown to this student."))
     accepted_disclaimer=models.BooleanField(default=False, help_text="Whether the user accepted the disclaimer.")
-    #'attestationEmails' to check whether the user wishes to receive an email notification for each attestation.
-    attestationEmails = models.BooleanField(default=True, help_text="recive confirmation Email for each task has been attested.")
-    #'uploadConfirmEmails' to check whether the user wishes to receive an email notification for each upload they make.
-    uploadConfirmEmails = models.BooleanField(default=False, help_text="recive confirmation Email for each file has been uploaded.")
+    #'attestation_emails' to check whether the user wishes to receive an email notification for each attestation.
+    attestation_emails = models.BooleanField(default=True, help_text="recive confirmation Email for each task has been attested.")
+    #'upload_confirm_emails' to check whether the user wishes to receive an email notification for each upload they make.
+    upload_confirm_emails = models.BooleanField(default=False, help_text="recive confirmation Email for each file has been uploaded.")
 
     # Use UserManager to get the create_user method, etc.
     objects = UserManager()
