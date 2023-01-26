@@ -169,7 +169,7 @@ def solution_list(request, task_id, user_id=None):
 
                 else: #we are sending unsigned email
                     #one of the checks is: if the user has selected the checkbox on the 'Change Account' page to confirm their willingness to receive an email fo each file upload ('False' by default)
-                    if solution.author.email and User.uploadConfirmEmails:
+                    if solution.author.email and User.upload_confirm_emails:
                          send_mail(_("%s submission confirmation") % settings.SITE_NAME, t.render(c), None, [solution.author.email])
 
             return HttpResponseRedirect(reverse('solution_detail', args=[solution.id]))
