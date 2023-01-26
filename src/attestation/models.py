@@ -66,7 +66,7 @@ class Attestation(models.Model):
         headers = {'Reply-To': ', '.join(reply_to)} if reply_to else None
         email = EmailMessage(subject, body, None, (email,), headers = headers)
         #to check if the user has selected the checkbox on the 'Change Account' page to confirm their willingness to receive attestation emails ('True' by default)
-        if User.attestationEmails:
+        if User.attestation_emails:
             email.send()
 
     def withdraw(self, request, by):
