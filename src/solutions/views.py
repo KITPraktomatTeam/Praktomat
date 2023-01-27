@@ -168,7 +168,8 @@ def solution_list(request, task_id, user_id=None):
                          message.send() # any PY2-PY3 problem in here ?
 
                 else: #we are sending unsigned email
-                    #one of the checks is: if the user has selected the checkbox on the 'Change Account' page to confirm their willingness to receive an email fo each file upload ('False' by default)
+                    #one of the checks is: if the user has selected the checkbox on the 'Change Account' page to confirm 
+                    #their willingness to receive an email fo each file upload ('False' by default)
                     if solution.author.email and User.upload_confirm_emails:
                          send_mail(_("%s submission confirmation") % settings.SITE_NAME, t.render(c), None, [solution.author.email])
 
