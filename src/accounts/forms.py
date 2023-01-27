@@ -104,8 +104,8 @@ class UserChangeForm(forms.ModelForm):
     # overriding modelfields to ensure required fields are provided
     first_name = forms.CharField(max_length = 30, required=True)
     last_name = forms.CharField(max_length = 30, required=True)
-    attestation_emails = forms.BooleanField(help_text="recive Email for each task attestation.", required=False)
-    upload_confirm_emails = forms.BooleanField(help_text="recive submission Email for each upload.", required=False)
+    attestation_emails = forms.BooleanField(help_text="Receive a confirmation email for each task that has been attested.", required=False)
+    upload_confirm_emails = forms.BooleanField(help_text="Recive a confirmation Email for each file that has been uploaded.", required=False)
     #email = forms.EmailField(required=True)
 
     class Meta:
