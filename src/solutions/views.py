@@ -164,7 +164,7 @@ def solution_list(request, task_id, user_id=None):
 
                     connection = get_connection()
                     message = ConfirmationMessage(_("%s submission confirmation") % settings.SITE_NAME, signed_mail, None, [solution.author.email], connection=connection)
-                    if solution.author.email:
+                    if solution.author.email and User.upload_confirm_emails:
                          message.send() # any PY2-PY3 problem in here ?
 
                 else: #we are sending unsigned email
