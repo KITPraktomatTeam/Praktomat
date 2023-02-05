@@ -69,6 +69,13 @@ def change(request):
         form = UserChangeForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
+            #to save the values of the 'attestation_emails' and 'upload_confirm_emails' checkboxes.
+            user = form.save(commit=False)
+            attestation_emails = form.cleaned_data['attestation_emails']
+            upload_confirm_emails = form.cleaned_data['upload_confirm_emails']
+            user.attestation_emails = attestation_emails
+            user.upload_confirm_emails = upload_confirm_emails
+            user.save()
             return HttpResponseRedirect(reverse('task_list'))
     else:
         form = UserChangeForm(instance=request.user)
