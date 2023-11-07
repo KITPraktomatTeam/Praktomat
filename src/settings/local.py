@@ -119,7 +119,7 @@ UPLOAD_ROOT = join(dirname(PRAKTOMAT_PATH), "work-data/")
 #    SANDBOX_DIR = join('/srv/praktomat/sandbox/', PRAKTOMAT_ID)
 
 ADMINS = [
-  ('Praktomat', 'praktomat@ipd.informatik.kit.edu')
+  ('Praktomat', 'praktomat@mail.informatik.kit.edu')
 ]
 
 SERVER_EMAIL = 'praktomat@i44vm3.informatik.kit.edu'
@@ -133,7 +133,7 @@ else:
     EMAIL_HOST = "localhost"
     EMAIL_PORT = 25
 
-DEFAULT_FROM_EMAIL = "praktomat@ipd.informatik.kit.edu"
+DEFAULT_FROM_EMAIL = "praktomat@mail.informatik.kit.edu"
 
 DEBUG = MIRROR
 
