@@ -122,7 +122,7 @@ ADMINS = [
   ('Praktomat', 'praktomat@mail.informatik.kit.edu')
 ]
 
-SERVER_EMAIL = 'praktomat@i44vm3.informatik.kit.edu'
+SERVER_EMAIL = 'praktomat@i44vm3.ipd.kit.edu'
 
 
 if MIRROR:
